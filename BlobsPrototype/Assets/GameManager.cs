@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour 
 {
+	public GameObject missionView;
+	public GameObject breedingView;
 	public List<Blob> blobs;
 	public GameObject grid;
 	public UILabel genderLabel;
@@ -12,6 +14,8 @@ public class GameManager : MonoBehaviour
 	public UILabel countLabel;
 	public UILabel qualityLabel;
 	public UILabel averageQualityLabel;
+	public UILabel goldLabel;
+	public UILabel mateButtonLabel;
 	public UISlider mateProgressBar;
 	public UISlider deleteProgressBar;
 	public UIButton mateButton;
@@ -25,9 +29,11 @@ public class GameManager : MonoBehaviour
 	public float maleMateDelay = 10f;
 	public float femaleMateDelay = 3f;
 	public float chanceForMutation = .8f;
-
-	Color maleColor = new Color(0.53f, 0.7f, 0.9f, 1f);
-	Color femaleColor = new Color(0.7f, 0.58f, 0.41f, 1f);
+	public int gold = 100;
+	public int breedCost = 5;
+	public int breedBaseCost = 5;
+	public int breedCostMax = 50;
+	public int sellValue = 5;
 
 	int curSelectedIndex;
 	Blob recentFather;
@@ -39,6 +45,9 @@ public class GameManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		breedingView.SetActive(true);
+		missionView.SetActive(false);
+
 		curSelectedIndex = 0;
 		blobs = new List<Blob>();
 
@@ -63,7 +72,6 @@ public class GameManager : MonoBehaviour
 		deleteProgressBar.value = 0f;
 		deleteButton.isEnabled = false;
 		culling = false;
-
 	}
 
 	void UpdateGrid()
@@ -118,9 +126,15 @@ public class GameManager : MonoBehaviour
 
 		float averageQuality = cummulativeQuality / blobs.Count;
 		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
-		averageQualityLabel.text = "Average Quality: " + averageQuality.ToString() + " (" + Blob.GetQualityStringFromValue(averageQuality) + ")";
+		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
 
+		float mod = (float)Blob.GetQualityFromValue(averageQuality) - 1f;
+		breedCost = breedBaseCost + (int)((mod / 4f) * (breedCostMax - breedBaseCost));
+		mateButtonLabel.text = "Breed (" + breedCost.ToString() + "g)";
+
+		goldLabel.text = "Gold: " + gold.ToString() + "g";
 	}
+
 
 	void AddBlob(Blob newBlob)
 	{
@@ -181,6 +195,9 @@ public class GameManager : MonoBehaviour
 
 	public void PressMateButton()
 	{
+		if (gold < breedCost)
+			return;
+
 		mateButton.isEnabled = false;
 		mateProgressBar.value = 0;
 
@@ -215,6 +232,8 @@ public class GameManager : MonoBehaviour
 		randomIndex = Random.Range(0, femaleBlobs.Count);
 		femaleBlob = femaleBlobs[randomIndex];
 
+		gold -= breedCost;
+
 		mateBlobs(maleBlob, femaleBlob);
 	}
 
@@ -226,10 +245,8 @@ public class GameManager : MonoBehaviour
 		BlobCell bc = getBlobCell(blob);
 		bc.progressBar.value = 0f;
 		blobs.RemoveAt(curSelectedIndex);
+		gold+=sellValue;
 		UpdateGrid();
-
-		if (blobs.Count < maxBlobs)
-			mateButton.enabled = true;
 	}
 
 
@@ -368,6 +385,12 @@ public class GameManager : MonoBehaviour
 			return true;
 
 		return false;
+	}
+
+	public void MissionsButtonPressed()
+	{
+		breedingView.SetActive(false);
+		missionView.SetActive(true);
 	}
 
 	// Update is called once per frame
