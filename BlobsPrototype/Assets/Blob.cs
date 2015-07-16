@@ -54,6 +54,7 @@ public class Blob
 	public BlobTrait trait;
 	public BlobJob job;
 	public bool onMission = false;
+	public int age = 0;
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{

@@ -8,17 +8,26 @@ public class MissionManager : MonoBehaviour
 	public GameManager gm;
 	public List<Mission> missions;
 	public GameObject missionPanel;
+	public UISlider progressBar;
 
-	float mins5 = 60f * 5f;
+	int curMissionIndex = 0;
+	int maxMissions = 6;
+	float missionSpawnTime = 1f;//60f * 3f;
+	float missionSpawnTimer = 0f;
 
 	// Use this for initialization
 	void Start () 
 	{
 		missions = new List<Mission>();
+	}
 
+
+	void SpawnMission()
+	{
 		Mission mission = new Mission();
+		mission.SetRandomMissionValues();
 		missions.Add(mission);
-		updateMisisonList();
+		updateMissionList();
 	}
 
 
@@ -30,7 +39,7 @@ public class MissionManager : MonoBehaviour
 	}
 
 
-	void updateMisisonList()
+	void updateMissionList()
 	{
 		foreach(Transform missionCell in missionPanel.transform)
 		{
@@ -43,15 +52,18 @@ public class MissionManager : MonoBehaviour
 				MissionCell mc = cell.GetComponent<MissionCell>();
 				int timeMin = (int)((mission.duration - mission.durationCounting) / 60f);
 				int timeSec = (int)((mission.duration - mission.durationCounting) % 60f);
-				mc.durationLabel.text = timeMin.ToString() + "m " + timeSec.ToString() + "s";
-				mc.chanceLabel.text = "0%";//((int)(mission.GetSuccessChance() * 100f)).ToString() + "%";
-				mc.rewardLabel.text = ((int)mission.reward).ToString() + "g";
+				mc.durationLabel.text = ((timeMin > 0) ? timeMin.ToString() + "m " : "") + ((mission.active) ? (timeSec.ToString() + "s") : "");
+				mc.rewardLabel.text = "Reward: " + ((int)mission.reward).ToString() + "g";
 				mc.requirementLabel.text = "Requirements: none";
 
 				if(mission.blob == null)
 				{
 					mc.blobContainer.SetActive(false);
 					mc.startButton.isEnabled = false;
+					UISprite bg = mc.blobButton.GetComponent<UISprite>();
+					bg.color = new Color(0.584f, 0.471f, 0.349f, 1f);
+					mc.blobButton.defaultColor = bg.color;
+					mc.blobButton.hover = bg.color;
 				}
 				else
 				{
@@ -62,6 +74,10 @@ public class MissionManager : MonoBehaviour
 					sprites[1].color = Blob.GetColorFromEnum(mission.blob.color);
 					sprites[2].color = Color.white;
 					sprites[3].enabled = !mission.blob.male;
+					UISprite bg = mc.blobButton.GetComponent<UISprite>();
+					bg.color = (mission.blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
+					mc.blobButton.defaultColor = bg.color;
+					mc.blobButton.hover = bg.color;
 				}
 			}
 			else
@@ -72,22 +88,36 @@ public class MissionManager : MonoBehaviour
 	}
 
 
+	public void PressSelectButton()
+	{
+		Mission mission = missions[curMissionIndex];
+		mission.blob = gm.blobs[gm.curSelectedIndex];
+		mission.blob.onMission = true;
+		gm.EnableSelectMode(false);
+		gm.breedingView.SetActive(false);
+		gm.missionView.SetActive(true);
+		updateMissionList();
+	}
+
+
 	public void PressMissionItemBlob(int index)
 	{
+		curMissionIndex = index;
 		Mission mission = missions[index];
 
 		if (mission.blob == null)
 		{
-			mission.blob = gm.blobs[0];
-			mission.blob.onMission = true;
+			gm.EnableSelectMode(true);
+			gm.breedingView.SetActive(true);
+			gm.missionView.SetActive(false);
+			gm.UpdateGrid();
 		}
 		else
 		{
 			mission.blob.onMission = false;
 			mission.blob = null;
+			updateMissionList();
 		}
-
-		updateMisisonList();
 	}
 
 	
@@ -95,22 +125,23 @@ public class MissionManager : MonoBehaviour
 	{
 		Mission mission = missions[index];
 
-		if(!mission.active)
+		if(!mission.active) //start
 		{
 			mission.active = true;
 			
 			MissionCell mc = GetMissionCell(mission);
 			UILabel startButtonLabel = mc.startButton.GetComponentInChildren<UILabel>();
-			startButtonLabel.text = "Collect";
+			startButtonLabel.text = "";
 			mc.startButton.isEnabled = false;
 			mc.blobButton.isEnabled = false;
 		}
-		else
+		else //collect
 		{
 			mission.blob.onMission = false;
-			gm.AddGold(mission.reward);
+			if(mission.successful)
+				gm.AddGold(mission.reward);
 			missions.Remove(mission);
-			updateMisisonList();
+			updateMissionList();
 		}
 	}
 
@@ -118,13 +149,44 @@ public class MissionManager : MonoBehaviour
 	void MissionReady(Mission mission)
 	{
 		MissionCell mc = GetMissionCell(mission);
+		UILabel startButtonLabel = mc.startButton.GetComponentInChildren<UILabel>();
+
+		float missionResult = Random.Range(0f,1f);
+		float successChance = mission.GetSuccessChance(mission.blob);
+		if (missionResult > successChance)
+			mission.successful = false;
+
+		if(mission.successful)
+			startButtonLabel.text = "Collect";
+		else
+			startButtonLabel.text = "Failed";
+
 		mc.startButton.isEnabled = true;
+	}
+
+
+	public void BreedingButtonPressed()
+	{
+		gm.breedingView.SetActive(true);
+		gm.missionView.SetActive(false);
+		gm.UpdateGrid();
 	}
 
 
 	// Update is called once per frame
 	void Update () 
 	{
+		if (missions.Count < maxMissions)
+		{
+			missionSpawnTimer -= Time.deltaTime;
+			progressBar.value = 1f - (missionSpawnTimer / missionSpawnTime);
+			if (missionSpawnTimer <= 0f)
+			{
+				missionSpawnTimer = missionSpawnTime;
+				SpawnMission();
+			}
+		}
+
 		foreach(Mission mission in missions)
 		{
 			if (!mission.active)
@@ -135,7 +197,7 @@ public class MissionManager : MonoBehaviour
 			mc.slider.value = 1f - (mission.durationCounting / mission.duration);
 			int timeMin = (int)((mission.duration - mission.durationCounting) / 60f);
 			int timeSec = (int)((mission.duration - mission.durationCounting) % 60f);
-			mc.durationLabel.text = timeMin.ToString() + "m " + timeSec.ToString() + "s";
+			mc.durationLabel.text = ((timeMin > 0) ? timeMin.ToString() + "m " : "") + ((mission.active) ? (timeSec.ToString() + "s") : "");
 
 			if (mission.durationCounting >= mission.duration)
 			{
@@ -145,10 +207,5 @@ public class MissionManager : MonoBehaviour
 		}
 	}
 
-	public void BreedingButtonPressed()
-	{
-		gm.breedingView.SetActive(true);
-		gm.missionView.SetActive(false);
-		gm.UpdateGrid();
-	}
+
 }

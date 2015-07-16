@@ -7,20 +7,21 @@ public class Mission
 	public float duration;
 	public float durationCounting;
 	public int reward;
-	public float baseSuccessChance;
+	public int ageRequirement;
 	public float requirementBonus;
 	public BlobJob jobRequirement;
 	public BlobTrait traitRequirement;
 	public BlobColor colorRequirement;
 	public Blob blob;
 	public bool active;
+	public bool successful;
 
 
 	public Mission()
 	{
-		duration = 30f;
+		ageRequirement = 1;
+		duration = 3f;
 		durationCounting = 0f;
-		baseSuccessChance = 1f;
 		requirementBonus = 0f;
 		reward = 30;
 		jobRequirement = BlobJob.None;
@@ -28,12 +29,13 @@ public class Mission
 		colorRequirement = BlobColor.None;
 		blob = null;
 		active = false;
+		successful = true;
 	}
 
 	public float GetSuccessChance(Blob blob)
 	{
-		float chance = baseSuccessChance;
-		float otherbonusTotal = 1f - baseSuccessChance;
+		float chance = 1f;
+		float otherbonusTotal = 1f - chance;
 		float reqCount = 0;
 		if (jobRequirement != BlobJob.None)
 			reqCount++;
@@ -58,7 +60,75 @@ public class Mission
 				chance += piece;
 		}
 
+
+		chance = Mathf.Round(chance * 100f) / 100f;
+
 		return chance;
+	}
+
+
+	public void SetRandomMissionValues()
+	{
+		int random = Random.Range(0,10);
+
+		duration = 60f;
+		switch (random)
+		{
+		case 0: 
+			duration *= 5f;
+			reward = 100;
+			ageRequirement = 3;
+			break;
+
+		case 1: 
+			duration *= 5f;
+			reward = 200;
+			ageRequirement = 10;
+			break;
+
+		case 3: 
+			duration *= 5f;
+			reward = 250;
+			ageRequirement = 15;
+			break;
+
+		case 4: 
+			duration *= 2f;
+			reward = 20;
+			ageRequirement = 1;
+			break;
+
+		case 5: 
+			duration *= 2f;
+			reward = 30;
+			ageRequirement = 3;
+			break;
+
+		case 6: 
+			duration *= 2f;
+			reward = 40;
+			ageRequirement = 10;
+			break;
+
+		case 7: 
+			duration *= 1f;
+			reward = 10;
+			ageRequirement = 1;
+			break;
+
+		case 8: 
+			duration *= 1f;
+			reward = 15;
+			ageRequirement = 5;
+			break;
+
+		case 9: 
+			duration *= 1f;
+			reward = 20;
+			ageRequirement = 10;
+			break;
+
+		}
 	}
 
 }

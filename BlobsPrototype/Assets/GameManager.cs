@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 	public GameObject breedingView;
 	public List<Blob> blobs;
 	public GameObject grid;
+	public GameObject selectModeCover;
 	public UILabel genderLabel;
 	public UILabel colorLabel;
 	public UILabel genotypeLabel;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
 	public UILabel qualityLabel;
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
+	public UILabel ageLabel;
 	public UILabel mateButtonLabel;
 	public UISlider mateProgressBar;
 	public UISlider deleteProgressBar;
@@ -34,12 +36,13 @@ public class GameManager : MonoBehaviour
 	public int breedBaseCost = 5;
 	public int breedCostMax = 50;
 	public int sellValue = 5;
+	public int curSelectedIndex;
 
-	int curSelectedIndex;
 	Blob recentFather;
 	Blob recentMother;
 	Blob recentBaby;
 	bool culling;
+	bool selectMode = false;
 	List<Blob> maleBlobs;
 	List<Blob> femaleBlobs;
 
@@ -52,6 +55,7 @@ public class GameManager : MonoBehaviour
 
 		breedingView.SetActive(true);
 		missionView.SetActive(false);
+		selectModeCover.SetActive(false);
 
 		curSelectedIndex = 0;
 		blobs = new List<Blob>();
@@ -78,6 +82,13 @@ public class GameManager : MonoBehaviour
 		deleteProgressBar.value = 0f;
 		deleteButton.isEnabled = false;
 		culling = false;
+	}
+
+
+	public void EnableSelectMode(bool enable)
+	{
+		selectMode = enable;
+		selectModeCover.SetActive(enable);
 	}
 
 
@@ -148,6 +159,15 @@ public class GameManager : MonoBehaviour
 	}
 
 
+	void AgeAllBlobs()
+	{
+		foreach(Blob blob in blobs)
+		{
+			blob.age++;
+		}
+	}
+
+
 	void AddBlob(Blob newBlob)
 	{
 		blobs.Add(newBlob);
@@ -194,7 +214,7 @@ public class GameManager : MonoBehaviour
 		genotypeLabel.text = "Genotype: " + Blob.GetNameFromEnum(blob.allele1) + 
 			(blob.allele2 != 0 ? ("/" + Blob.GetNameFromEnum(blob.allele2)) : "");
 		qualityLabel.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
-
+		ageLabel.text = "Age: " + blob.age.ToString();
 		if (blob.male)
 		{
 			genderLabel.text = "Gender: Male";
@@ -303,6 +323,8 @@ public class GameManager : MonoBehaviour
 		bc = getBlobCell(recentMother);
 		bc.progressBar.value = 1f;
 		bc.fillSpeed = femaleMateDelay;
+
+		AgeAllBlobs();
 	}
 
 
