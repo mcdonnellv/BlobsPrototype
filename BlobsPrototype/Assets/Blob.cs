@@ -21,6 +21,27 @@ public enum BlobQuality
 	Outstanding = 5, 
 };
 
+public enum BlobJob
+{
+	None,
+	Farmer,
+	Merchant,
+	Builder,
+	Fighter,
+};
+
+public enum BlobTrait
+{
+	None,
+	Hardy,
+	Wise,
+	Smart,
+	Charming,
+	Strong,
+	Nimble,
+};
+
+
 public class Blob 
 {
 	public bool male;
@@ -30,6 +51,9 @@ public class Blob
 	public BlobColor allele2;
 	public bool alive = true;
 	public float quality = 1f;
+	public BlobTrait trait;
+	public BlobJob job;
+	public bool onMission = false;
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{

@@ -40,11 +40,16 @@ public class GameManager : MonoBehaviour
 	Blob recentMother;
 	Blob recentBaby;
 	bool culling;
+	List<Blob> maleBlobs;
+	List<Blob> femaleBlobs;
 
 	
 	// Use this for initialization
 	void Start ()
 	{
+		maleBlobs = new List<Blob>();
+		femaleBlobs = new List<Blob>();
+
 		breedingView.SetActive(true);
 		missionView.SetActive(false);
 
@@ -67,6 +72,7 @@ public class GameManager : MonoBehaviour
 		AddBlob(blob);
 	
 		UpdateGrid();
+		AddGold(0);
 
 		mateProgressBar.value = 1f;
 		deleteProgressBar.value = 0f;
@@ -74,7 +80,8 @@ public class GameManager : MonoBehaviour
 		culling = false;
 	}
 
-	void UpdateGrid()
+
+	public void UpdateGrid()
 	{
 		int i=0;
 		float cummulativeQuality = 0;
@@ -88,15 +95,19 @@ public class GameManager : MonoBehaviour
 				GameObject cell = blobCell.gameObject;
 				cell.SetActive(true);
 
-
 				UIButton button = cell.GetComponentInChildren<UIButton>();
-
+				BlobCell bc = cell.GetComponent<BlobCell>();
+				UISprite bg = cell.GetComponent<UISprite>();
 				UILabel[] labels = cell.GetComponentsInChildren<UILabel>();
+				UISprite[] sprites = cell.GetComponentsInChildren<UISprite>();
+
+				bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
+				button.defaultColor = bg.color;
+				button.hover = bg.color;
+
 				labels[0].text = "";
 				labels[1].text = (blob.male) ? "" : (maxBreedcount - blob.breedCount).ToString();
 				labels[2].text = (blob == recentFather) ? "Dad" : (blob == recentMother) ? "Mom" : (blob == recentBaby) ? "Baby" : "";
-				UISprite[] sprites = cell.GetComponentsInChildren<UISprite>();
-
 				sprites[3].enabled = !blob.male;
 
 				if(blob.alive == false)
@@ -116,6 +127,9 @@ public class GameManager : MonoBehaviour
 					sprites[2].color = Color.white;
 					labels[1].color = Color.white;
 				}
+
+				bc.OnMissionLabel.SetActive(blob.onMission);
+
 			}
 			else
 			{
@@ -131,8 +145,6 @@ public class GameManager : MonoBehaviour
 		float mod = (float)Blob.GetQualityFromValue(averageQuality) - 1f;
 		breedCost = breedBaseCost + (int)((mod / 4f) * (breedCostMax - breedBaseCost));
 		mateButtonLabel.text = "Breed (" + breedCost.ToString() + "g)";
-
-		goldLabel.text = "Gold: " + gold.ToString() + "g";
 	}
 
 
@@ -195,7 +207,7 @@ public class GameManager : MonoBehaviour
 
 	public void PressMateButton()
 	{
-		if (gold < breedCost)
+		if(gold < breedCost || matingPairExists(false) == false)
 			return;
 
 		mateButton.isEnabled = false;
@@ -208,32 +220,9 @@ public class GameManager : MonoBehaviour
 			culling  = false;
 		}
 
-		Blob maleBlob;
-		Blob femaleBlob;
-
-		List<Blob> maleBlobs = new List<Blob>();
-		List<Blob> femaleBlobs = new List<Blob>();
-
-		foreach(Blob blob in blobs)
-		{
-			BlobCell bc = getBlobCell(blob);
-			if(bc.progressBar.value != 0 || !blob.alive)
-				continue;
-
-			if(blob.male)
-				maleBlobs.Add(blob);
-			else if (blob.breedCount < maxBreedcount)
-				femaleBlobs.Add(blob);
-		}
-
-		int randomIndex = Random.Range(0, maleBlobs.Count);
-		maleBlob = maleBlobs[randomIndex];
-
-		randomIndex = Random.Range(0, femaleBlobs.Count);
-		femaleBlob = femaleBlobs[randomIndex];
-
-		gold -= breedCost;
-
+		Blob maleBlob = maleBlobs[Random.Range(0, femaleBlobs.Count)];
+		Blob femaleBlob = femaleBlobs[Random.Range(0, femaleBlobs.Count)];
+		AddGold(-breedCost);
 		mateBlobs(maleBlob, femaleBlob);
 	}
 
@@ -245,8 +234,16 @@ public class GameManager : MonoBehaviour
 		BlobCell bc = getBlobCell(blob);
 		bc.progressBar.value = 0f;
 		blobs.RemoveAt(curSelectedIndex);
-		gold+=sellValue;
+		AddGold(sellValue);
 		UpdateGrid();
+		UpdateInfoTextWithBlob(blobs[curSelectedIndex]);
+	}
+
+
+	public void AddGold(int toAdd)
+	{
+		gold += toAdd;
+		goldLabel.text = "Gold: " + gold.ToString() + "g";
 	}
 
 
@@ -327,7 +324,7 @@ public class GameManager : MonoBehaviour
 
 	void CheckGameOver()
 	{
-		if (matingPairExists(false) == false)
+		if (matingPairExists(true) == false)
 			gameOverObject.SetActive(true);
 
 		bool hasBlue = false;
@@ -356,21 +353,24 @@ public class GameManager : MonoBehaviour
 
 	public void BlobCellProgressDone(BlobCell blobCell)
 	{
-		if (matingPairExists(true) && mateProgressBar.value == 1f)
+		if (matingPairExists(false) && mateProgressBar.value == 1f)
 			mateButton.isEnabled = true;
 	}
 
 
-	bool matingPairExists(bool considerProgressBar)
+	bool matingPairExists(bool gameOverCheck)
 	{
-		List<Blob> maleBlobs = new List<Blob>();
-		List<Blob> femaleBlobs = new List<Blob>();
+		maleBlobs = new List<Blob>();
+		femaleBlobs = new List<Blob>();
 		
 		foreach(Blob blob in blobs)
 		{
 			BlobCell bc = getBlobCell(blob);
-			if(considerProgressBar && bc.progressBar.value > 0)
-				continue;
+			if(!gameOverCheck)
+			{
+				if (bc.progressBar.value > 0 || blob.onMission)
+					continue;
+			}
 
 			if( !blob.alive)
 				continue;
@@ -387,11 +387,13 @@ public class GameManager : MonoBehaviour
 		return false;
 	}
 
+
 	public void MissionsButtonPressed()
 	{
 		breedingView.SetActive(false);
 		missionView.SetActive(true);
 	}
+
 
 	// Update is called once per frame
 	void Update () 
@@ -403,7 +405,7 @@ public class GameManager : MonoBehaviour
 			if(mateProgressBar.value >= 1f)
 			{
 				mateProgressBar.value = 1f;
-				if (matingPairExists(true))
+				if (matingPairExists(false))
 					mateButton.isEnabled = true;
 			}
 		}

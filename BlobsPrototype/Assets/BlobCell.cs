@@ -8,6 +8,7 @@ public class BlobCell : MonoBehaviour
 	public UISlider progressBar;
 	public UIButton button;
 	public float fillSpeed = 1f;
+	public GameObject OnMissionLabel;
 
 	// Use this for initialization
 	public void Pressed () 
