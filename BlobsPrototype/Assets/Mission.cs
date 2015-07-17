@@ -34,9 +34,11 @@ public class Mission
 
 	public float GetSuccessChance(Blob blob)
 	{
+		float agePenalty = .25f;
 		float chance = 1f;
 		float otherbonusTotal = 1f - chance;
 		float reqCount = 0;
+
 		if (jobRequirement != BlobJob.None)
 			reqCount++;
 
@@ -44,6 +46,9 @@ public class Mission
 			reqCount++;
 
 		if (colorRequirement != BlobColor.None)
+			reqCount++;
+
+		if (ageRequirement > 0)
 			reqCount++;
 
 		if (reqCount > 0)
@@ -58,6 +63,11 @@ public class Mission
 
 			if (colorRequirement != BlobColor.None && colorRequirement == blob.color)
 				chance += piece;
+
+			if (ageRequirement > 0)
+				chance -= agePenalty * (ageRequirement - blob.age);
+
+			chance = (chance < 0f) ? 0f : ((chance > 1f) ? 1f : chance);
 		}
 
 
@@ -75,31 +85,31 @@ public class Mission
 		switch (random)
 		{
 		case 0: 
-			duration *= 5f;
+			duration *= 10f;
 			reward = 100;
 			ageRequirement = 3;
 			break;
 
 		case 1: 
-			duration *= 5f;
+			duration *= 10f;
 			reward = 200;
 			ageRequirement = 10;
 			break;
 
 		case 3: 
-			duration *= 5f;
+			duration *= 10f;
 			reward = 250;
 			ageRequirement = 15;
 			break;
 
 		case 4: 
-			duration *= 2f;
+			duration *= 5f;
 			reward = 20;
 			ageRequirement = 1;
 			break;
 
 		case 5: 
-			duration *= 2f;
+			duration *= 5f;
 			reward = 30;
 			ageRequirement = 3;
 			break;
@@ -111,19 +121,19 @@ public class Mission
 			break;
 
 		case 7: 
-			duration *= 1f;
+			duration *= 2f;
 			reward = 10;
 			ageRequirement = 1;
 			break;
 
 		case 8: 
-			duration *= 1f;
+			duration *= 2f;
 			reward = 15;
 			ageRequirement = 5;
 			break;
 
 		case 9: 
-			duration *= 1f;
+			duration *= 2f;
 			reward = 20;
 			ageRequirement = 10;
 			break;

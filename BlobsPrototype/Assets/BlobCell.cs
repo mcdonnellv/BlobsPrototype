@@ -7,8 +7,8 @@ public class BlobCell : MonoBehaviour
 	public GameManager gm;
 	public UISlider progressBar;
 	public UIButton button;
-	public float fillSpeed = 1f;
 	public GameObject OnMissionLabel;
+	public bool showProgressBar = false;
 
 	// Use this for initialization
 	public void Pressed () 
@@ -19,16 +19,8 @@ public class BlobCell : MonoBehaviour
 
 	void Update () 
 	{
-		if(progressBar.value > 0f)
-		{
-			progressBar.value -= Time.deltaTime * (1f / fillSpeed);
-			
-			if(progressBar.value <= 0f)
-			{
-				progressBar.value = 0f;
-				gm.BlobCellProgressDone(this);
-			}
-		}
+		if(showProgressBar)
+			progressBar.value = 1f - gm.yearProgressBar.value;
 	}
 
 }
