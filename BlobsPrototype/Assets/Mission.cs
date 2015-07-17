@@ -15,6 +15,7 @@ public class Mission
 	public Blob blob;
 	public bool active;
 	public bool successful;
+	public float successChance;
 
 
 	public Mission()
@@ -30,6 +31,7 @@ public class Mission
 		blob = null;
 		active = false;
 		successful = true;
+		successChance = 1f;
 	}
 
 	public float GetSuccessChance(Blob blob)
@@ -87,54 +89,54 @@ public class Mission
 		case 0: 
 			duration *= 10f;
 			reward = 100;
-			ageRequirement = 3;
+			ageRequirement = 20;
 			break;
 
 		case 1: 
 			duration *= 10f;
-			reward = 200;
-			ageRequirement = 10;
+			reward = 300;
+			ageRequirement = 30;
 			break;
 
 		case 3: 
 			duration *= 10f;
-			reward = 250;
-			ageRequirement = 15;
+			reward = 500;
+			ageRequirement = 40;
 			break;
 
 		case 4: 
 			duration *= 5f;
-			reward = 20;
+			reward = 40;
 			ageRequirement = 1;
 			break;
 
 		case 5: 
 			duration *= 5f;
-			reward = 30;
-			ageRequirement = 3;
+			reward = 60;
+			ageRequirement = 10;
 			break;
 
 		case 6: 
 			duration *= 2f;
-			reward = 40;
-			ageRequirement = 10;
+			reward = 80;
+			ageRequirement = 20;
 			break;
 
 		case 7: 
 			duration *= 2f;
-			reward = 10;
+			reward = 20;
 			ageRequirement = 1;
 			break;
 
 		case 8: 
 			duration *= 2f;
-			reward = 15;
+			reward = 30;
 			ageRequirement = 5;
 			break;
 
 		case 9: 
 			duration *= 2f;
-			reward = 20;
+			reward = 40;
 			ageRequirement = 10;
 			break;
 

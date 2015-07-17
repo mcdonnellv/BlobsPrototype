@@ -18,53 +18,65 @@ public class GameManager : MonoBehaviour
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
 	public UILabel ageLabel;
-	public UILabel mateButtonLabel;
+	public UILabel breedButtonLabel;
 	public UILabel yearLabel;
 	public UILabel missionButtonLabel;
-	public UISlider mateProgressBar;
+	public UISlider breedProgressBar;
 	public UISlider yearProgressBar;
-	public UIButton mateButton;
-	public UIButton deleteButton;
+	public UIButton breedButton;
+	public UIButton sellButton;
 	public UIButton missionButton;
 	public GameObject gameOverObject;
 	public GameObject winnerObject;
-	public int maxBreedcount = 3;
+
 	public float yearFillTime;
-	public float mateBarFillTime;
-	public int maxBlobs = 20;
-	//public float maleMateDelay = 10f;
-	//public float femaleMateDelay = 3f;
-	public float chanceForMutation = .8f;
-	public int gold = 100;
-	public int breedCost = 5;
-	public int breedBaseCost = 5;
-	public int breedCostMax = 50;
-	public int sellValue = 5;
+	public float breedBarFillTime;
+	public float chanceForMutation;
+	public int maxBlobs;
+	public int gold;
+	public int breedCost;
+	public int breedBaseCost;
+	public int breedCostMax;
+	public int sellValue;
 	public int curSelectedIndex;
-	public int breedingAge = 2;
-	public int mateTimesPerYear = 4;
+	public int breedingAge;
+	public int breedTimesPerYear;
+	public int maxBreedcount;
 
 	Blob recentFather;
 	Blob recentMother;
 	Blob recentBaby;
-	bool selectMode = false;
+	bool selectMode;
 	List<Blob> maleBlobs;
 	List<Blob> femaleBlobs;
-	int year = 0;
+	int year;
 
 	
 	// Use this for initialization
 	void Start ()
 	{
+		chanceForMutation = .8f;
+		maxBlobs = 20;
+		gold = 100;
+		breedCost = 10;
+		breedBaseCost = 10;
+		breedCostMax = 100;
+		sellValue = 3;
+		curSelectedIndex = 0;
+		breedingAge = 2;
+		breedTimesPerYear = 4;
+		maxBreedcount = 3;
+		year = 0;
+		selectMode = false;
+
 		maleBlobs = new List<Blob>();
 		femaleBlobs = new List<Blob>();
+		blobs = new List<Blob>();
 
 		breedingView.SetActive(true);
 		missionView.SetActive(false);
 		selectModeCover.SetActive(false);
 
-		curSelectedIndex = 0;
-		blobs = new List<Blob>();
 
 		Blob blob = new Blob();
 		blob.color = BlobColor.Blue;
@@ -86,11 +98,11 @@ public class GameManager : MonoBehaviour
 		UpdateGrid();
 		AddGold(0);
 
-		mateProgressBar.value = 1f;
+		breedProgressBar.value = 1f;
 		yearProgressBar.value = 0f;
 
 		yearFillTime = 30f;
-		mateBarFillTime = yearFillTime / mateTimesPerYear;
+		breedBarFillTime = yearFillTime / breedTimesPerYear;
 	}
 
 
@@ -105,6 +117,9 @@ public class GameManager : MonoBehaviour
 	{
 		if (breedingView.activeSelf == false)
 			return;
+
+		if (CanEnableBreedButton())
+			breedButton.isEnabled = true;
 
 
 		int i = 0;
@@ -152,6 +167,19 @@ public class GameManager : MonoBehaviour
 					labels[1].color = Color.white;
 				}
 
+				if (blob.onMission)
+				{
+					bc.onMissionLabel.SetActive(true);
+					UILabel missionLabel = bc.onMissionLabel.GetComponentInChildren<UILabel>();
+					missionLabel.text = "On Mission";
+					foreach (Mission mission in mm.missions)
+						if(mission.blob == blob && mm.isMissionReadyForCollecting(mission))
+							missionLabel.text = "Mission Done";
+				}
+				else 
+					bc.onMissionLabel.SetActive(false);
+
+				//scale
 				float a = (float)(blob.age > 3 ? 3 : blob.age);
 				float s = .3f + (.7f * (a / 3f));
 				if(s > 1f)
@@ -160,10 +188,6 @@ public class GameManager : MonoBehaviour
 				sprites[1].SetDimensions(pixels, pixels);
 				sprites[2].SetDimensions(pixels, pixels);
 				sprites[3].SetDimensions(pixels, pixels);
-				bc.OnMissionLabel.SetActive(blob.onMission);
-
-				bc.progressBar.value = (blob.matedThisYear) ? 1f : 0f;
-
 			}
 			else
 			{
@@ -178,7 +202,25 @@ public class GameManager : MonoBehaviour
 
 		float mod = (float)Blob.GetQualityFromValue(averageQuality) - 1f;
 		breedCost = breedBaseCost + (int)((mod / 4f) * (breedCostMax - breedBaseCost));
-		mateButtonLabel.text = "Breed (" + breedCost.ToString() + "g)";
+		breedButtonLabel.text = "Breed (" + breedCost.ToString() + "g)";
+	}
+
+
+	bool CanEnableBreedButton()
+	{
+		if (matingPairExists(false) == false)
+			return false;
+
+		if (breedProgressBar.value < 1f)
+			return false;
+
+		if (blobs.Count >= maxBlobs)
+			return false;
+
+		if (gold < breedCost)
+			return false;
+
+		return true;
 	}
 
 
@@ -187,10 +229,13 @@ public class GameManager : MonoBehaviour
 		foreach(Blob blob in blobs)
 		{
 			BlobCell bc = getBlobCell(blob);
+			bc.showProgressBar = false;
 			bc.progressBar.value = 0f;
-			BlobCellProgressDone(bc);
 			blob.age++;
+			blob.breededThisYear = false;
 		}
+
+		UpdateGrid();
 	}
 
 
@@ -211,7 +256,7 @@ public class GameManager : MonoBehaviour
 	{
 		blobs.Add(newBlob);
 		if (blobs.Count >= maxBlobs)
-			mateButton.enabled = false;
+			breedButton.isEnabled = false;
 	}
 
 
@@ -244,24 +289,28 @@ public class GameManager : MonoBehaviour
 	
 	}
 
-	public void PressMateButton()
+	public void PressBreedButton()
 	{
 		if(gold < breedCost || matingPairExists(false) == false)
 			return;
 
-		mateButton.isEnabled = false;
-		mateProgressBar.value = 0;
+		breedButton.isEnabled = false;
+		breedProgressBar.value = 0;
 
 		Blob maleBlob = maleBlobs[Random.Range(0, maleBlobs.Count)];
 		Blob femaleBlob = femaleBlobs[Random.Range(0, femaleBlobs.Count)];
 		AddGold(-breedCost);
-		MateBlobs(maleBlob, femaleBlob);
+		BreedBlobs(maleBlob, femaleBlob);
 	}
 
 
-	public void PressDeleteButton()
+	public void PressSellButton()
 	{
 		Blob blob = blobs[curSelectedIndex];
+
+		if (blob.onMission)
+			return;
+
 		BlobCell bc = getBlobCell(blob);
 		bc.progressBar.value = 0f;
 		blobs.RemoveAt(curSelectedIndex);
@@ -281,15 +330,15 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	void MateBlobs(Blob maleBlob, Blob femaleBlob)
+	void BreedBlobs(Blob maleBlob, Blob femaleBlob)
 	{
 		recentFather = maleBlob;
 		recentMother = femaleBlob;
 		
 		maleBlob.breedCount++;
 		femaleBlob.breedCount++;
-		maleBlob.matedThisYear = true;
-		femaleBlob.matedThisYear = true;
+		maleBlob.breededThisYear = true;
+		femaleBlob.breededThisYear = true;
 
 		getBlobCell(maleBlob).showProgressBar = true;
 		getBlobCell(femaleBlob).showProgressBar = true;
@@ -342,11 +391,9 @@ public class GameManager : MonoBehaviour
 
 		BlobCell bc = getBlobCell(recentFather);
 		bc.progressBar.value = 1f;
-		//bc.fillSpeed = maleMateDelay;
 
 		bc = getBlobCell(recentMother);
 		bc.progressBar.value = 1f;
-		//bc.fillSpeed = femaleMateDelay;
 	}
 
 
@@ -392,17 +439,6 @@ public class GameManager : MonoBehaviour
 		{
 			winnerObject.SetActive(true);
 		}
-	}
-
-
-	public void BlobCellProgressDone(BlobCell blobCell)
-	{
-		if (matingPairExists(false) && mateProgressBar.value == 1f)
-			mateButton.isEnabled = true;
-
-		Blob blob = blobs[blobCell.transform.GetSiblingIndex()];
-		blob.matedThisYear = false;
-		blobCell.showProgressBar = false;
 	}
 
 
@@ -456,8 +492,6 @@ public class GameManager : MonoBehaviour
 				yearProgressBar.value = 0f;
 				year++;
 				AgeAllBlobs();
-				if(breedingView.activeSelf)
-					UpdateGrid();
 
 				if(missionView.activeSelf)
 					mm.UpdateMissionList();
@@ -467,15 +501,15 @@ public class GameManager : MonoBehaviour
 			}
 		}
 
-		if(mateProgressBar.value < 1f)
+		if(breedProgressBar.value < 1f)
 		{
-			mateProgressBar.value += Time.deltaTime * (1f / mateBarFillTime);
+			breedProgressBar.value += Time.deltaTime * (1f / breedBarFillTime);
 
-			if(mateProgressBar.value >= 1f)
+			if(breedProgressBar.value >= 1f)
 			{
-				mateProgressBar.value = 1f;
-				if (matingPairExists(false))
-					mateButton.isEnabled = true;
+				breedProgressBar.value = 1f;
+				if (CanEnableBreedButton())
+					breedButton.isEnabled = true;
 			}
 		}
 	}

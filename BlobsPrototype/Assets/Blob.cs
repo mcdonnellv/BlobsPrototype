@@ -55,7 +55,7 @@ public class Blob
 	public BlobJob job;
 	public bool onMission = false;
 	public int age = 0;
-	public bool matedThisYear = false;
+	public bool breededThisYear = false;
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{

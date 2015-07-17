@@ -9,20 +9,25 @@ public class MissionManager : MonoBehaviour
 	public List<Mission> missions;
 	public GameObject missionPanel;
 	public UISlider progressBar;
-	public float missionSpawnTimeMins = 3f;
+	public float missionSpawnTimeMins;
 
-	int curMissionIndex = 0;
-	int maxMissions = 6;
-	public float missionSpawnTimer = 0f;
+	int curMissionIndex;
+	int maxMissions;
+	public float missionSpawnTimer;
 
 	// Use this for initialization
 	void Start () 
 	{
+		missionSpawnTimeMins = 3f;
+		curMissionIndex = 0;
+		maxMissions = 6;
+		missionSpawnTimer = 0f;
+
 		missions = new List<Mission>();
 
 		Mission mission = new Mission();
 		mission.duration = 2f * 60f;
-		mission.reward = 10;
+		mission.reward = 20;
 		mission.ageRequirement = 1;
 		missions.Add(mission);
 
@@ -47,6 +52,11 @@ public class MissionManager : MonoBehaviour
 		int index = missions.IndexOf(mission);
 		GameObject cell = missionPanel.transform.GetChild(index).gameObject;
 		return cell.GetComponent<MissionCell>();
+	}
+
+	public bool isMissionReadyForCollecting(Mission mission)
+	{
+		return (mission.active == true && mission.durationCounting == mission.duration);
 	}
 
 
@@ -97,21 +107,16 @@ public class MissionManager : MonoBehaviour
 					sprites[2].color = Color.white;
 					sprites[3].enabled = !mission.blob.male;
 
-					float a = (float)(mission.blob.age > 3 ? 3 : mission.blob.age);
-					float s = .3f + (.7f * (a / 3f));
-					if(s > 1f)
-						s = 1f;
-					int pixels = (int)(s * 50f);
-					sprites[1].SetDimensions(pixels, pixels);
-					sprites[2].SetDimensions(pixels, pixels);
-					sprites[3].SetDimensions(pixels, pixels);
-
 					UISprite bg = mc.blobButton.GetComponent<UISprite>();
 					bg.color = (mission.blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 					mc.blobButton.defaultColor = bg.color;
 					mc.blobButton.hover = bg.color;
 
-					float successChance = mission.GetSuccessChance(mission.blob);
+
+					if(mission.active == false)
+						mission.successChance = mission.GetSuccessChance(mission.blob);
+
+					float successChance = mission.successChance;
 					mc.chanceLabel.text = (successChance * 100f).ToString() + "%\n Chance";
 					if (successChance >= 1f)
 						mc.chanceLabel.color = Color.green;
@@ -120,7 +125,7 @@ public class MissionManager : MonoBehaviour
 					else
 						mc.chanceLabel.color = Color.red;
 
-					if(mission.active == true && mission.durationCounting == mission.duration)
+					if (isMissionReadyForCollecting(mission))
 					{
 						mc.startButton.isEnabled = true;
 						mc.startButton.GetComponent<UISprite>().depth = 8;
@@ -130,6 +135,16 @@ public class MissionManager : MonoBehaviour
 						else
 							startButtonLabel.text = "Failed";
 					}
+
+					//scale
+					float a = (float)(mission.blob.age > 3 ? 3 : mission.blob.age);
+					float s = .3f + (.7f * (a / 3f));
+					if(s > 1f)
+						s = 1f;
+					int pixels = (int)(s * 50f);
+					sprites[1].SetDimensions(pixels, pixels);
+					sprites[2].SetDimensions(pixels, pixels);
+					sprites[3].SetDimensions(pixels, pixels);
 				}
 			}
 			else
@@ -195,17 +210,16 @@ public class MissionManager : MonoBehaviour
 			mc.blobButton.isEnabled = false;
 			mc.startButton.GetComponent<UISprite>().depth = 0;
 
+			mission.successChance = mission.GetSuccessChance(mission.blob);
 		}
 	}
 
 
 	void MissionReady(Mission mission)
 	{
-		MissionCell mc = GetMissionCell(mission);
-		float missionResult = Random.Range(0f,1f);
-		float successChance = mission.GetSuccessChance(mission.blob);
-		if (missionResult > successChance)
-			mission.successful = false;
+		float rand = Random.Range(0f,1f);
+		mission.successful = (rand <= mission.successChance);
+
 		UpdateMissionList();
 	}
 
@@ -230,29 +244,30 @@ public class MissionManager : MonoBehaviour
 				missionSpawnTimer = missionSpawnTimeMins * 60;
 				SpawnMission();
 			}
-		}
 
-		foreach(Mission mission in missions)
-		{
-			if (!mission.active)
-				continue;
-
-			if (mission.durationCounting == mission.duration)
-				continue;
-
-			mission.durationCounting += Time.deltaTime;
-			MissionCell mc = GetMissionCell(mission);
-			mc.slider.value = 1f - (mission.durationCounting / mission.duration);
-			int timeMin = (int)((mission.duration - mission.durationCounting) / 60f);
-			int timeSec = (int)((mission.duration - mission.durationCounting) % 60f);
-			mc.durationLabel.text = ((timeMin > 0) ? timeMin.ToString() + "m " : "") + ((mission.active) ? (timeSec.ToString() + "s") : "");
-
-			if (mission.durationCounting >= mission.duration)
+			foreach(Mission mission in missions)
 			{
-				mission.durationCounting = mission.duration;
-				MissionReady(mission);
+				if (!mission.active)
+					continue;
+				
+				if (mission.durationCounting == mission.duration)
+					continue;
+				
+				mission.durationCounting += Time.deltaTime;
+				MissionCell mc = GetMissionCell(mission);
+				mc.slider.value = 1f - (mission.durationCounting / mission.duration);
+				int timeMin = (int)((mission.duration - mission.durationCounting) / 60f);
+				int timeSec = (int)((mission.duration - mission.durationCounting) % 60f);
+				mc.durationLabel.text = ((timeMin > 0) ? timeMin.ToString() + "m " : "") + ((mission.active) ? (timeSec.ToString() + "s") : "");
+				
+				if (mission.durationCounting >= mission.duration)
+				{
+					mission.durationCounting = mission.duration;
+					MissionReady(mission);
+				}
 			}
 		}
+
 	}
 
 

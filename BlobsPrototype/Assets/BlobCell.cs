@@ -7,7 +7,7 @@ public class BlobCell : MonoBehaviour
 	public GameManager gm;
 	public UISlider progressBar;
 	public UIButton button;
-	public GameObject OnMissionLabel;
+	public GameObject onMissionLabel;
 	public bool showProgressBar = false;
 
 	// Use this for initialization
@@ -21,6 +21,8 @@ public class BlobCell : MonoBehaviour
 	{
 		if(showProgressBar)
 			progressBar.value = 1f - gm.yearProgressBar.value;
+		else
+			progressBar.value = 0f;
 	}
 
 }
