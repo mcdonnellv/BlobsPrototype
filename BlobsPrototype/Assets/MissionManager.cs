@@ -62,6 +62,9 @@ public class MissionManager : MonoBehaviour
 
 	public void UpdateMissionList()
 	{
+		return;
+
+
 		if (gm.missionView.activeSelf == false)
 			return;
 
@@ -177,7 +180,7 @@ public class MissionManager : MonoBehaviour
 			gm.EnableSelectMode(true);
 			gm.breedingView.SetActive(true);
 			gm.missionView.SetActive(false);
-			gm.UpdateGrid();
+			//gm.UpdateGrid();
 		}
 		else
 		{
@@ -228,7 +231,7 @@ public class MissionManager : MonoBehaviour
 	{
 		gm.breedingView.SetActive(true);
 		gm.missionView.SetActive(false);
-		gm.UpdateGrid();
+		//gm.UpdateGrid();
 	}
 
 

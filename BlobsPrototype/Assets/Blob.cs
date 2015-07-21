@@ -56,6 +56,10 @@ public class Blob
 	public bool onMission = false;
 	public int age = 0;
 	public bool breededThisYear = false;
+	public Blob mom;
+	public Blob dad;
+	public bool hasHatched;
+	public float hatchTime;
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{
