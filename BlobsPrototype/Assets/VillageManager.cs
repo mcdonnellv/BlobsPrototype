@@ -11,6 +11,7 @@ public class VillageManager : MonoBehaviour
 	public UILabel sellButtonLabel;
 	public UILabel tributeLabel;
 	public UILabel moveLabel;
+	public bool villageExists;
 	int maxBlobs;
 	int curSelectedIndex;
 	float tribute;
@@ -26,6 +27,7 @@ public class VillageManager : MonoBehaviour
 		tribute = 0;
 		maxTribute = 0;
 		PressGridItem(0);
+		villageExists = false;
 	}
 
 
@@ -134,6 +136,9 @@ public class VillageManager : MonoBehaviour
 
 	public void UpdateAllBlobCells()
 	{
+		if(blobs == null)
+			return;
+
 		foreach(Blob blob in blobs)
 			blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
 		if(curSelectedIndex > blobs.Count)

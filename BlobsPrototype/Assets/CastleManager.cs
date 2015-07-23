@@ -11,6 +11,7 @@ public class CastleManager : MonoBehaviour
 	public List<Blob> blobs;
 	public UILabel sellButtonLabel;
 	public UILabel moveLabel;
+	public bool castleExists;
 	int maxBlobs;
 	int curSelectedIndex;
 
@@ -22,6 +23,7 @@ public class CastleManager : MonoBehaviour
 		blobs = new List<Blob>();
 		maxBlobs = 20;
 		PressGridItem(0);
+		castleExists = false;
 	}
 	
 	
@@ -99,6 +101,9 @@ public class CastleManager : MonoBehaviour
 	
 	public void UpdateAllBlobCells()
 	{
+		if(blobs == null)
+			return;
+
 		foreach(Blob blob in blobs)
 			blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
 		if(curSelectedIndex > blobs.Count)

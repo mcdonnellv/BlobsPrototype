@@ -9,6 +9,8 @@ public class NurseryManager : MonoBehaviour
 	public BlobPanel blobPanel;
 	public InfoPanel infoPanel;
 	public UIButton breedButton;
+	public UIButton toVillageButton;
+	public UIButton toCastleButton;
 	public UILabel breedButtonLabel;
 	public UILabel sellButtonLabel;
 	public UISlider breedProgressBar;
@@ -51,11 +53,16 @@ public class NurseryManager : MonoBehaviour
 
 		PressGridItem(0);
 		breedProgressBar.value = 1f;
+		toVillageButton.gameObject.SetActive(false);
+		toCastleButton.gameObject.SetActive(false);
 	}
 
 
 	void AddBlob(Blob newBlob)
 	{
+		if (blobs.Count >= maxBlobs)
+			return;
+
 		blobs.Add(newBlob);
 		newBlob.hatchTime = Time.time + gm.blobHatchDelay;
 		if (CanEnableBreedButton())
@@ -221,6 +228,9 @@ public class NurseryManager : MonoBehaviour
 
 	public void SpawnEgg(Blob egg)
 	{
+		if (blobs.Count >= maxBlobs)
+			return;
+
 		AddBlob(egg);
 		int index = blobs.IndexOf(egg);
 		blobPanel.UpdateBlobCellWithBlob(index, egg);
@@ -229,8 +239,12 @@ public class NurseryManager : MonoBehaviour
 
 	public void UpdateAllBlobCells()
 	{
+		if(blobs == null)
+			return;
+
 		foreach(Blob blob in blobs)
 			blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
+
 		if(curSelectedIndex > blobs.Count)
 			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
 	}

@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 	public UIButton missionButton;
 	public UIButton rightNavButton;
 	public UIButton leftNavButton;
+	public UIButton buildButton;
 	public GameObject gameOverObject;
 	public GameObject winnerObject;
 	public UICamera gameCam;
@@ -43,6 +44,8 @@ public class GameManager : MonoBehaviour
 	public int breedingAge;
 	public int maxBreedcount;
 	public int year;
+	public int villageCost;
+	public int castleCost;
 
 
 	bool selectMode;
@@ -50,7 +53,7 @@ public class GameManager : MonoBehaviour
 
 	void Start ()
 	{
-		t = .1f;
+		t = .5f;
 
 		blobHatchDelay = 40f * t;
 		breedReadyDelay = 10f * t;
@@ -67,11 +70,14 @@ public class GameManager : MonoBehaviour
 		breedCost = 10;
 		breedBaseCost = 10;
 		breedCostMax = 100;
-		sellValue = 3;
+		sellValue = 15;
 		breedingAge = 1;
 		maxBreedcount = 3;
 		tributeGoldPerQuality = 2f;
 		tributeMaxMulitplier = 5f;
+
+		villageCost = 150;
+		castleCost = 800;
 
 		selectMode = false;
 
@@ -86,6 +92,8 @@ public class GameManager : MonoBehaviour
 		Vector3 pos = gameCam.transform.localPosition;
 		pos.x = 740f * 2;
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
+		rightNavButton.gameObject.SetActive(false);
+		leftNavButton.gameObject.SetActive(false);
 	}
 
 
@@ -135,6 +143,18 @@ public class GameManager : MonoBehaviour
 	{
 		gold += val;
 		goldLabel.text = "Gold: " + gold.ToString();
+
+		UILabel label = buildButton.GetComponentInChildren<UILabel>();
+		if (!vm.villageExists)
+		{
+			label.text = "Build Village     " + villageCost.ToString() + "g";
+			buildButton.isEnabled = (gold >= villageCost);
+		}
+		else if (!cm.castleExists)
+		{
+			label.text = "Build Castle     " + castleCost.ToString() + "g";
+			buildButton.isEnabled = (gold >= castleCost);
+		}
 	}
 
 	void AgeAllBlobs()
@@ -204,6 +224,10 @@ public class GameManager : MonoBehaviour
 		float sw = 740f;
 		Vector3 pos = gameCam.transform.localPosition;
 		pos.x += (pos.x >= sw*3) ? 0f : sw;
+
+		if (pos.x >= sw*2 && vm.villageExists == false)
+			rightNavButton.gameObject.SetActive(false);
+
 		if (pos.x >= sw*3)
 			rightNavButton.gameObject.SetActive(false);
 
@@ -216,10 +240,34 @@ public class GameManager : MonoBehaviour
 		float sw = 740f;
 		Vector3 pos = gameCam.transform.localPosition;
 		pos.x -= (pos.x <= sw*1) ? 0f : sw;
+
+		if (pos.x <= sw*2 && cm.castleExists == false)
+			leftNavButton.gameObject.SetActive(false);
+
 		if (pos.x <= sw*1)
 			leftNavButton.gameObject.SetActive(false);
 
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
+	}
+
+
+	public void BuildButtonPressed()
+	{
+		if (!vm.villageExists)
+		{
+			vm.villageExists = true;
+			AddGold(-villageCost);
+			nm.toVillageButton.gameObject.SetActive(true);
+			rightNavButton.gameObject.SetActive(true);
+		}
+		else if (!cm.castleExists)
+		{
+			cm.castleExists = true;
+			AddGold(-castleCost);
+			buildButton.gameObject.SetActive(false);
+			nm.toCastleButton.gameObject.SetActive(true);
+			leftNavButton.gameObject.SetActive(true);
+		}
 	}
 
 
