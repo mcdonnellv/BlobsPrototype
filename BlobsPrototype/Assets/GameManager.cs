@@ -6,60 +6,61 @@ public class GameManager : MonoBehaviour
 {
 	public MissionManager mm;
 	public NurseryManager nm;
+	public VillageManager vm;
+	public CastleManager cm;
 	public GameObject missionView;
 	public GameObject breedingView;
 	public List<Blob> blobs;
 	public GameObject grid;
 	public GameObject selectModeCover;
-	public UILabel genderLabel;
-	public UILabel colorLabel;
-	public UILabel genotypeLabel;
-	public UILabel countLabel;
-	public UILabel qualityLabel;
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
-	public UILabel ageLabel;
-	public UILabel breedButtonLabel;
 	public UILabel yearLabel;
 	public UILabel missionButtonLabel;
-	public UISlider breedProgressBar;
 	public UISlider yearProgressBar;
-	public UIButton breedButton;
-	public UIButton sellButton;
 	public UIButton missionButton;
+	public UIButton rightNavButton;
+	public UIButton leftNavButton;
 	public GameObject gameOverObject;
 	public GameObject winnerObject;
-
+	public UICamera gameCam;
+	public float blobHatchDelay;
+	public float breedReadyDelay;
 	public float yearFillTime;
-	public float yearProgress;
-	public float breedBarFillTime;
+	public float yearFillDelay;
 	public float chanceForMutation;
+	public float breedBarFillTime;
+	public float tributeGoldPerQuality;
+	public float tributeMaxMulitplier;
+	public float blobGoldProductionSpeed;
+	public float t;
 	public int maxBlobs;
 	public int gold;
 	public int breedCost;
 	public int breedBaseCost;
 	public int breedCostMax;
 	public int sellValue;
-	public int curSelectedIndex;
 	public int breedingAge;
-	public int breedTimesPerYear;
 	public int maxBreedcount;
+	public int year;
 
-	Blob recentFather;
-	Blob recentMother;
-	Blob recentBaby;
+
 	bool selectMode;
-	List<Blob> maleBlobs;
-	List<Blob> femaleBlobs;
-	int year;
-	public float blobHatchTime;
 
-	
-	// Use this for initialization
+
 	void Start ()
 	{
-		blobHatchTime = 3f;// * 60f;
-		yearProgress = 0f;
+		t = .1f;
+
+		blobHatchDelay = 40f * t;
+		breedReadyDelay = 10f * t;
+		breedBarFillTime = 1f * t;
+		blobGoldProductionSpeed = 10f;
+
+		year = 0;
+		yearFillDelay = 90f * t;
+		yearFillTime = Time.time + yearFillDelay;
+
 		chanceForMutation = .8f;
 		maxBlobs = 20;
 		gold = 100;
@@ -67,16 +68,12 @@ public class GameManager : MonoBehaviour
 		breedBaseCost = 10;
 		breedCostMax = 100;
 		sellValue = 3;
-		curSelectedIndex = 0;
-		breedingAge = 2;
-		breedTimesPerYear = 4;
+		breedingAge = 1;
 		maxBreedcount = 3;
-		year = 0;
-		selectMode = false;
+		tributeGoldPerQuality = 2f;
+		tributeMaxMulitplier = 5f;
 
-		maleBlobs = new List<Blob>();
-		femaleBlobs = new List<Blob>();
-		blobs = new List<Blob>();
+		selectMode = false;
 
 		breedingView.SetActive(true);
 		missionView.SetActive(false);
@@ -84,11 +81,11 @@ public class GameManager : MonoBehaviour
 
 		AddGold(0);
 
-		breedProgressBar.value = 1f;
 		yearProgressBar.value = 0f;
 
-		yearFillTime = 30f;
-		breedBarFillTime = yearFillTime / breedTimesPerYear;
+		Vector3 pos = gameCam.transform.localPosition;
+		pos.x = 740f * 2;
+		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
 	}
 
 
@@ -101,36 +98,66 @@ public class GameManager : MonoBehaviour
 
 	public void UpdateAverageQuality()
 	{
-
-		float cummulativeQuality = 0;
-
-		// iterate thru blobs
-
-		float averageQuality = cummulativeQuality / blobs.Count;
-		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
+		float averageQuality = GetAverageQuality();
 		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
-
-		float mod = (float)Blob.GetQualityFromValue(averageQuality) - 1f;
-		breedCost = breedBaseCost + (int)((mod / 4f) * (breedCostMax - breedBaseCost));
-		breedButtonLabel.text = "Breed (" + breedCost.ToString() + "g)";
 	}
 
+	public float GetAverageQuality()
+	{
+		float cummulativeQuality = 0f;
+		int totalBlobs = 0;
+		
+		// iterate thru nursery blobs
+		if(nm.blobs != null)
+		{
+			totalBlobs += nm.blobs.Count;
+			foreach (Blob blob in nm.blobs)
+				if(blob.hasHatched)
+					cummulativeQuality += blob.quality;
+		}
+
+		// iterate thru village blobs
+		if(vm.blobs != null)
+		{
+			totalBlobs += vm.blobs.Count;
+			foreach (Blob blob in vm.blobs)
+				cummulativeQuality += blob.quality;
+		}
+
+		float averageQuality = cummulativeQuality / totalBlobs;
+		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
+
+		return averageQuality;
+
+	}
 
 	public void  AddGold(int val)
 	{
 		gold += val;
+		goldLabel.text = "Gold: " + gold.ToString();
 	}
 
 	void AgeAllBlobs()
 	{
-		foreach(Blob blob in nm.blobs)
+		if (nm.blobs != null)
 		{
-			blob.age++;
-			blob.breededThisYear = false;
+			foreach(Blob blob in nm.blobs)
+			{
+				blob.age++;
+				blob.breededThisYear = false;
+			}
+		}
+
+		if (vm.blobs != null)
+		{
+			foreach(Blob blob in vm.blobs)
+			{
+				blob.age++;
+			}
 		}
 
 		nm.UpdateAllBlobCells();
-		nm.infoPanel.UpdateWithBlob(nm.blobs[nm.curSelectedIndex]);
+		vm.UpdateAllBlobCells();
 	}
 
 
@@ -163,10 +190,7 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-
-
-
-
+	
 	public void MissionsButtonPressed()
 	{
 		breedingView.SetActive(false);
@@ -174,19 +198,45 @@ public class GameManager : MonoBehaviour
 		mm.UpdateMissionList();
 	}
 	
+	public void RightNavButtonPressed()
+	{
+		leftNavButton.gameObject.SetActive(true);
+		float sw = 740f;
+		Vector3 pos = gameCam.transform.localPosition;
+		pos.x += (pos.x >= sw*3) ? 0f : sw;
+		if (pos.x >= sw*3)
+			rightNavButton.gameObject.SetActive(false);
+
+		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
+	}
+
+	public void LeftNavButtonPressed()
+	{
+		rightNavButton.gameObject.SetActive(true);
+		float sw = 740f;
+		Vector3 pos = gameCam.transform.localPosition;
+		pos.x -= (pos.x <= sw*1) ? 0f : sw;
+		if (pos.x <= sw*1)
+			leftNavButton.gameObject.SetActive(false);
+
+		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
+	}
+
 
 	// Update is called once per frame
 	void Update () 
 	{
-		if(yearProgress < 1f)
+		if (yearFillTime > 0f)
 		{
-			yearProgress += Time.deltaTime * (1f / yearFillTime);
-
-			if(yearProgress >= 1f)
+			yearProgressBar.value = 1f - ((yearFillTime - Time.time) / yearFillDelay);
+			yearProgressBar.value = yearProgressBar.value > 1f ? 1f : yearProgressBar.value;
+			
+			if (yearFillTime < Time.time)
 			{
-				yearProgress = 0f;
 				year++;
+				yearLabel.text = "Year: " + year.ToString();
 				AgeAllBlobs();
+				yearFillTime = yearFillDelay + Time.time;
 			}
 		}
 	}

@@ -161,7 +161,7 @@ public class MissionManager : MonoBehaviour
 	public void PressSelectButton()
 	{
 		Mission mission = missions[curMissionIndex];
-		mission.blob = gm.blobs[gm.curSelectedIndex];
+		//mission.blob = gm.blobs[gm.curSelectedIndex];
 		mission.blob.onMission = true;
 		gm.EnableSelectMode(false);
 		gm.breedingView.SetActive(false);

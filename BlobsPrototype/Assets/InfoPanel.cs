@@ -94,6 +94,9 @@ public class InfoPanel : MonoBehaviour
 		theBlob.age = 0;
 		UpdateWithBlob(theBlob);
 		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), theBlob);
+
+		gm.UpdateAverageQuality();
+		gm.nm.UpdateBreedCost();
 	}
 
 	// Update is called once per frame
@@ -101,7 +104,11 @@ public class InfoPanel : MonoBehaviour
 	{
 		if (theBlob != null && !theBlob.hasHatched)
 		{
-			progress.value = theBlob.hatchTime / gm.blobHatchTime;
+			if (theBlob != null && !theBlob.hasHatched)
+			{
+				progress.value = 1f - ((theBlob.hatchTime - Time.time) / gm.blobHatchDelay);
+				progress.value = progress.value > 1f ? 1f : progress.value;
+			}
 
 			if (progress.value >= 1f && button.isEnabled == false)
 				button.isEnabled = true;

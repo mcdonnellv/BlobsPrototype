@@ -49,17 +49,32 @@ public class Blob
 	public int breedCount;
 	public BlobColor allele1;
 	public BlobColor allele2;
-	public bool alive = true;
-	public float quality = 1f;
+	public bool alive;
+	public float quality;
 	public BlobTrait trait;
 	public BlobJob job;
-	public bool onMission = false;
-	public int age = 0;
-	public bool breededThisYear = false;
+	public bool onMission;
+	public int age;
+	public bool breededThisYear;
 	public Blob mom;
 	public Blob dad;
+	public Blob egg;
 	public bool hasHatched;
 	public float hatchTime;
+	public float breedReadyTime;
+	public float goldProductionTime;
+
+	public Blob()
+	{
+		alive = true;
+		quality = 1f;
+		onMission = false;
+      	age = 0;
+		breededThisYear = false;
+		hasHatched = false;
+		hatchTime = Time.time;
+		breedReadyTime = Time.time;
+	}
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{
