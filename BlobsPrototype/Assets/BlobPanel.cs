@@ -55,7 +55,7 @@ public class BlobPanel : MonoBehaviour
 		UILabel[] labels = bc.GetComponentsInChildren<UILabel>();
 		labels[0].text = (blob.male || blob.age < gm.breedingAge || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
 
-		bc.body.color = Blob.GetColorFromEnum(blob.color);
+		bc.body.color = blob.color;
 
 		float a = (float)(blob.age > 2 ? 2 : blob.age);
 		float s = .4f + (.6f * (a / 2f));

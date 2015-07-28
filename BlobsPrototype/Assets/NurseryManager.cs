@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class NurseryManager : MonoBehaviour
 {
@@ -33,21 +34,22 @@ public class NurseryManager : MonoBehaviour
 		blobs = new List<Blob>();
 
 		Blob blob = new Blob();
-		blob.color = BlobColor.Blue;
-		blob.allele1 = blob.color;
+
 		blob.male = true;
 		blob.age = 5;
 		blob.hasHatched = true;
+		blob.mutations.Add(gm.mum.GetMutationByName("Blue"));
+		blob.color = blob.GetBodyColor();
 		infoPanel.UpdateWithBlob(blob);
 		blobs.Add(blob);
 		blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
 		
 		blob = new Blob();
-		blob.color = BlobColor.Blue;
-		blob.allele1 = blob.color;
 		blob.male = false;
 		blob.age = 5;
 		blob.hasHatched = true;
+		blob.mutations.Add(gm.mum.GetMutationByName("Blue"));
+		blob.color = blob.GetBodyColor();
 		blobs.Add(blob);
 		blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
 
@@ -181,8 +183,6 @@ public class NurseryManager : MonoBehaviour
 		blob.hasHatched = false;
 		blob.mom = mom;
 		blob.dad = dad;
-		blob.color = Random.Range(0, 2) == 0 ? dad.color : mom.color;
-		blob.allele1 = blob.color;
 		int totalEggs = GetTotalEggs();
 
 		//safety spawn female
@@ -192,35 +192,63 @@ public class NurseryManager : MonoBehaviour
 			blob.male = (Random.Range(0, 2) == 0) ? true : false;
 		
 		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
-		
+
+
 		// Mutation chance
-		float mutationRoll = Random.Range(0f,1f);
-		if(mutationRoll >= gm.chanceForMutation)
+		Mutation newMutation = null;
+		List<Mutation> parentMutations = new List<Mutation>();
+		List<Mutation> elligibleMutations = new List<Mutation>();
+		parentMutations = dad.mutations.Union<Mutation>(mom.mutations).ToList<Mutation>();
+
+
+		//check for mutations based on prerequisites
+		foreach(Mutation parentMutation in parentMutations)
+			foreach(Mutation potentialMutation in gm.mum.mutations)
+				if(potentialMutation.preRequisite == parentMutation.name)
+					elligibleMutations.Add(potentialMutation);
+		
+
+		// only one mutation of a type is allowed in the new blob's mutation list
+		List<Mutation> temp = parentMutations.ToList();
+		foreach(Mutation parentMutation in parentMutations)
 		{
-			BlobQuality q = Blob.GetQualityFromValue(blob.quality);
-			if (q >= BlobQuality.Fair && blob.color == BlobColor.Blue)
-			{
-				blob.color = BlobColor.Red;
-				blob.quality = 1;
-			}	
-			if (q >= BlobQuality.Good && blob.color == BlobColor.Red)
-			{
-				blob.color = BlobColor.Yellow;
-				blob.quality = 1;
-			}
-			
-			if (q >= BlobQuality.Excellent && blob.color == BlobColor.Yellow)
-			{
-				blob.color = BlobColor.Green;
-				blob.quality = 1;
-			}
-			
-			if (q >= BlobQuality.Outstanding && blob.color == BlobColor.Green)
-			{
-				blob.color = Random.Range(0f,1f) > .5f ? BlobColor.Orange : BlobColor.Purple;
-				blob.quality = 1;
-			}
+			temp.Remove(parentMutation);
+			blob.mutations.Add(parentMutation);
+			foreach(Mutation otherParentMutation in temp)
+				if(parentMutation.type == otherParentMutation.type)
+				{
+					if(Random.Range(0,2) == 0)
+					{
+					   blob.mutations.Remove(parentMutation);
+					   blob.mutations.Add(otherParentMutation);
+					}
+					break;
+				}
 		}
+
+		//roll for a mutation
+		float mutationRoll = Random.Range(0f,1f);
+		foreach(Mutation elligibleMutation in elligibleMutations)
+			if (mutationRoll <= elligibleMutation.revealChance)
+			{
+			    newMutation = elligibleMutation; //success!
+				break;
+			}
+
+		if(newMutation != null)
+		{
+			//replace mutations of same type
+			temp = blob.mutations.ToList();
+			foreach(Mutation mutation in temp)
+				if(mutation.type == newMutation.type)
+			    {
+				   blob.mutations.Add(newMutation);
+				   blob.mutations.Remove(mutation);
+			    }
+		}
+
+
+		blob.color = blob.GetBodyColor();
 
 		return blob;
 	}
@@ -269,8 +297,23 @@ public class NurseryManager : MonoBehaviour
 
 	public void PressBreedButton()
 	{
-		if(gm.gold < gm.breedCost || MatingPairExists() == false || blobs.Count >= maxBlobs)
+		if(gm.gold < gm.breedCost)
+		{
+			gm.popup.Show("Cannot Breed", "Not enough gold.");
 			return;
+		}
+
+		if(MatingPairExists() == false)
+		{
+			gm.popup.Show("Cannot Breed", "No breeding pair available.");
+			return;
+		}
+
+		if(blobs.Count >= maxBlobs)
+		{
+			gm.popup.Show("Cannot Breed", "Room is full.");
+			return;
+		}
 		
 		breedButton.isEnabled = false;
 		breedTime = gm.breedBarFillTime + Time.time;

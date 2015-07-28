@@ -106,7 +106,7 @@ public class MissionManager : MonoBehaviour
 					mc.startButton.isEnabled = true;
 
 					UISprite[] sprites = cell.GetComponentsInChildren<UISprite>();
-					sprites[1].color = Blob.GetColorFromEnum(mission.blob.color);
+					sprites[1].color = mission.blob.color;
 					sprites[2].color = Color.white;
 					sprites[3].enabled = !mission.blob.male;
 

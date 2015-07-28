@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 	public NurseryManager nm;
 	public VillageManager vm;
 	public CastleManager cm;
+	public MutationManager mum;
 	public GameObject missionView;
 	public GameObject breedingView;
 	public List<Blob> blobs;
@@ -25,11 +26,11 @@ public class GameManager : MonoBehaviour
 	public GameObject gameOverObject;
 	public GameObject winnerObject;
 	public UICamera gameCam;
+	public Popup popup;
 	public float blobHatchDelay;
 	public float breedReadyDelay;
 	public float yearFillTime;
 	public float yearFillDelay;
-	public float chanceForMutation;
 	public float breedBarFillTime;
 	public float tributeGoldPerQuality;
 	public float tributeMaxMulitplier;
@@ -50,7 +51,6 @@ public class GameManager : MonoBehaviour
 
 	bool selectMode;
 
-
 	void Start ()
 	{
 		t = .5f;
@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
 		yearFillDelay = 90f * t;
 		yearFillTime = Time.time + yearFillDelay;
 
-		chanceForMutation = .8f;
 		maxBlobs = 20;
 		gold = 100;
 		breedCost = 10;
@@ -182,33 +181,33 @@ public class GameManager : MonoBehaviour
 
 
 
-	void CheckGameOver()
-	{
-		if (nm.MatingPairExists() == false)
-			gameOverObject.SetActive(true);
-
-		bool hasBlue = false;
-		bool hasRed = false;
-		bool hasYellow = false;
-		bool hasGreen = false;
-		bool hasPurple = false;
-		bool hasOrange = false;
-
-		foreach(Blob blob in blobs)
-		{
-			hasBlue = blob.color == BlobColor.Blue;
-			hasRed = blob.color == BlobColor.Red;
-			hasYellow = blob.color == BlobColor.Yellow;
-			hasGreen  = blob.color == BlobColor.Green;
-			hasPurple = blob.color == BlobColor.Purple;
-			hasOrange = blob.color == BlobColor.Orange;
-		}
-
-		if (hasBlue && hasRed && hasYellow && hasOrange && hasGreen && hasPurple)
-		{
-			winnerObject.SetActive(true);
-		}
-	}
+//	void CheckGameOver()
+//	{
+//		if (nm.MatingPairExists() == false)
+//			gameOverObject.SetActive(true);
+//
+//		bool hasBlue = false;
+//		bool hasRed = false;
+//		bool hasYellow = false;
+//		bool hasGreen = false;
+//		bool hasPurple = false;
+//		bool hasOrange = false;
+//
+//		foreach(Blob blob in blobs)
+//		{
+//			hasBlue = blob.color == BlobColor.Blue;
+//			hasRed = blob.color == BlobColor.Red;
+//			hasYellow = blob.color == BlobColor.Yellow;
+//			hasGreen  = blob.color == BlobColor.Green;
+//			hasPurple = blob.color == BlobColor.Purple;
+//			hasOrange = blob.color == BlobColor.Orange;
+//		}
+//
+//		if (hasBlue && hasRed && hasYellow && hasOrange && hasGreen && hasPurple)
+//		{
+//			winnerObject.SetActive(true);
+//		}
+//	}
 
 	
 	public void MissionsButtonPressed()
@@ -217,6 +216,7 @@ public class GameManager : MonoBehaviour
 		missionView.SetActive(true);
 		mm.UpdateMissionList();
 	}
+
 	
 	public void RightNavButtonPressed()
 	{
@@ -233,6 +233,7 @@ public class GameManager : MonoBehaviour
 
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
 	}
+
 
 	public void LeftNavButtonPressed()
 	{
@@ -259,6 +260,7 @@ public class GameManager : MonoBehaviour
 			AddGold(-villageCost);
 			nm.toVillageButton.gameObject.SetActive(true);
 			rightNavButton.gameObject.SetActive(true);
+			popup.Show("Village Now Available", "You can now move Blobs to the new village to work and give you tribute.");
 		}
 		else if (!cm.castleExists)
 		{
@@ -267,6 +269,7 @@ public class GameManager : MonoBehaviour
 			buildButton.gameObject.SetActive(false);
 			nm.toCastleButton.gameObject.SetActive(true);
 			leftNavButton.gameObject.SetActive(true);
+			popup.Show("Castle Now Available", "You can now move Blobs to the new castle to perform missions.");
 		}
 	}
 

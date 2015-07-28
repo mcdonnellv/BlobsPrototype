@@ -51,10 +51,10 @@ public class InfoPanel : MonoBehaviour
 		face.gameObject.SetActive(blob.hasHatched);
 		lashes.gameObject.SetActive(!blob.male && blob.hasHatched);
 		egg.gameObject.SetActive(!blob.hasHatched);
-		body.color = Blob.GetColorFromEnum(blob.color);
+		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
-		color.text = "Color: " + Blob.GetNameFromEnum(blob.color);
+		color.text = "Color: " + blob.GetBodyColorName();
 		eggs.text = "Eggs Left: " + (gm.maxBreedcount - blob.breedCount).ToString();
 		color.text = "Genotype: " + Blob.GetNameFromEnum(blob.allele1) + 
 			(blob.allele2 != 0 ? ("/" + Blob.GetNameFromEnum(blob.allele2)) : "");
@@ -90,6 +90,16 @@ public class InfoPanel : MonoBehaviour
 
 	public void pressed()
 	{
+		foreach(Mutation m in theBlob.mutations)
+		{
+			if(m.revealed == false)
+			{
+				m.revealed = true;
+				gm.popup.Show("New Mutation Revealed", "You have discovered the " + m.name + " mutation!" );
+			}
+		}
+
+
 		theBlob.hasHatched = true;
 		theBlob.age = 0;
 		UpdateWithBlob(theBlob);

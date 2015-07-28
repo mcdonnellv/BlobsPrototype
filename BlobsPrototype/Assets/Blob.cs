@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum BlobColor
 {
@@ -45,7 +46,7 @@ public enum BlobTrait
 public class Blob 
 {
 	public bool male;
-	public BlobColor color;
+	public Color color;
 	public int breedCount;
 	public BlobColor allele1;
 	public BlobColor allele2;
@@ -63,6 +64,7 @@ public class Blob
 	public float hatchTime;
 	public float breedReadyTime;
 	public float goldProductionTime;
+	public List<Mutation> mutations;
 
 	public Blob()
 	{
@@ -74,7 +76,25 @@ public class Blob
 		hasHatched = false;
 		hatchTime = Time.time;
 		breedReadyTime = Time.time;
+		mutations = new List<Mutation>();
 	}
+
+	public Color GetBodyColor()
+	{
+		foreach(Mutation mutation in mutations)
+			if(mutation.type == Mutation.Type.BodyColor)
+				return mutation.bodyColor;
+		return Color.white;
+	}
+
+	public string GetBodyColorName()
+	{
+		foreach(Mutation mutation in mutations)
+			if(mutation.type == Mutation.Type.BodyColor)
+				return mutation.name;
+		return "White";
+	}
+
 
 	static public Color GetColorFromEnum(BlobColor blobColor)
 	{

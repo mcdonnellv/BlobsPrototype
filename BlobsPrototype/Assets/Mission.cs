@@ -63,9 +63,6 @@ public class Mission
 			if (traitRequirement != BlobTrait.None && traitRequirement == blob.trait)
 				chance += piece;
 
-			if (colorRequirement != BlobColor.None && colorRequirement == blob.color)
-				chance += piece;
-
 			if (ageRequirement > 0)
 				chance -= agePenalty * (ageRequirement - blob.age);
 
