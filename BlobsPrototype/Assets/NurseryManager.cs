@@ -38,7 +38,7 @@ public class NurseryManager : MonoBehaviour
 		blob.male = true;
 		blob.age = 5;
 		blob.hasHatched = true;
-		blob.mutations.Add(gm.mum.GetMutationByName("Blue"));
+		blob.mutations.Add(gm.mum.GetMutationByName("Purple"));
 		blob.color = blob.GetBodyColor();
 		infoPanel.UpdateWithBlob(blob);
 		blobs.Add(blob);
@@ -48,7 +48,7 @@ public class NurseryManager : MonoBehaviour
 		blob.male = false;
 		blob.age = 5;
 		blob.hasHatched = true;
-		blob.mutations.Add(gm.mum.GetMutationByName("Blue"));
+		blob.mutations.Add(gm.mum.GetMutationByName("Red"));
 		blob.color = blob.GetBodyColor();
 		blobs.Add(blob);
 		blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);

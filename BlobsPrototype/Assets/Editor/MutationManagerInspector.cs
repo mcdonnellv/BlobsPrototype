@@ -46,8 +46,8 @@ public class MutationManagerInspector : Editor
 					mutation.bodyColor = EditorGUILayout.ColorField("Body Color", mutation.bodyColor, GUILayout.Width(250f));
 					break;
 				}
-
-				EditorGUILayout.Space();
+				NGUIEditorTools.DrawSeparator();
+				//EditorGUILayout.Space();
 			}
 
 			EditorGUILayout.BeginHorizontal();
@@ -65,10 +65,10 @@ public class MutationManagerInspector : Editor
 			EditorGUI.indentLevel = 0;
 		}
 
-		if(GUILayout.Button("Delete All Mutations"))
-		{
-			mutations.Clear();
-			mutations.TrimExcess();
-		}
+//		if(GUILayout.Button("Delete All Mutations"))
+//		{
+//			mutations.Clear();
+//			mutations.TrimExcess();
+//		}
 	}
 }
