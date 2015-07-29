@@ -317,7 +317,7 @@ public class NurseryManager : MonoBehaviour
 		}
 		
 		breedButton.isEnabled = false;
-		breedTime = System.DateTime.Now + gm.breedBarFillTime;
+		breedTime = System.DateTime.Now + gm.breedBarFillDelay;
 
 		Blob maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
 		Blob femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
@@ -419,7 +419,7 @@ public class NurseryManager : MonoBehaviour
 	void Update () 
 	{
 		System.TimeSpan ts = (breedTime - System.DateTime.Now);
-		breedProgressBar.value = 1f - (float)(ts.TotalSeconds / gm.breedBarFillTime.TotalSeconds);
+		breedProgressBar.value = 1f - (float)(ts.TotalSeconds / gm.breedBarFillDelay.TotalSeconds);
 		breedProgressBar.value = breedProgressBar.value > 1f ? 1f : breedProgressBar.value;
 
 		if (breedTime <= System.DateTime.Now && breedButton.isEnabled == false)

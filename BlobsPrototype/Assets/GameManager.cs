@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -40,16 +41,16 @@ public class GameManager : MonoBehaviour
 	public UICamera gameCam;
 	public Popup popup;
 	public GameVariables gameVars;
-	public System.TimeSpan blobHatchDelay;
-	public System.TimeSpan breedReadyDelay;
-	public System.TimeSpan yearFillDelay;
-	public System.TimeSpan breedBarFillTime;
-	public System.DateTime yearFillTime;
+	public TimeSpan blobHatchDelay;
+	public TimeSpan breedReadyDelay;
+	public TimeSpan breedBarFillDelay;
+	public TimeSpan yearFillDelay;
+	public DateTime yearFillTime;
 
 
 	public float tributeGoldPerQuality;
 	public float tributeMaxMulitplier;
-	public System.TimeSpan blobGoldProductionDelay;
+	public TimeSpan blobGoldProductionDelay;
 	public int maxBlobs;
 
 	public int breedCost;
@@ -65,6 +66,10 @@ public class GameManager : MonoBehaviour
 
 	float timeScaleOld;
 	bool selectMode;
+	TimeSpan blobHatchDelayOriginal;
+	TimeSpan breedReadyDelayOriginal;
+	TimeSpan breedBarFillDelayOriginal;
+	TimeSpan yearFillDelayOriginal;
 
 
 
@@ -72,11 +77,16 @@ public class GameManager : MonoBehaviour
 	{
 		timeScaleOld = 0f;
 		timeScale = 1f;
-		blobHatchDelay = new System.TimeSpan(0,0,30);
-		breedReadyDelay = new System.TimeSpan(0,0,10);
-		breedBarFillTime = new System.TimeSpan(0,0,1);
-		yearFillDelay = new System.TimeSpan(0,1,0);
-		yearFillTime = System.DateTime.Now + yearFillDelay;
+
+		blobHatchDelay = new TimeSpan(0,0,30);
+		breedReadyDelay = new TimeSpan(0,0,10);
+		breedBarFillDelay = new TimeSpan(0,0,1);
+		yearFillDelay = new TimeSpan(0,1,0);
+		yearFillTime = DateTime.Now + yearFillDelay;
+		blobHatchDelayOriginal = blobHatchDelay;
+		breedReadyDelayOriginal = breedReadyDelay;
+		yearFillDelayOriginal = yearFillDelay;
+		breedBarFillDelayOriginal = breedBarFillDelay;
 
 		maxBlobs = 20;
 		breedCost = 10;
@@ -315,9 +325,9 @@ public class GameManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (yearFillTime > System.DateTime.Now)
+		if (yearFillTime > DateTime.Now)
 		{
-			System.TimeSpan ts = (yearFillTime - System.DateTime.Now);
+			TimeSpan ts = (yearFillTime - DateTime.Now);
 			yearProgressBar.value = 1f - (float)(ts.TotalSeconds / yearFillDelay.TotalSeconds);
 		}	
 		else
@@ -325,16 +335,16 @@ public class GameManager : MonoBehaviour
 			gameVars.year++;
 			yearLabel.text = "Year: " + gameVars.year.ToString();
 			AgeAllBlobs();
-			yearFillTime = System.DateTime.Now + yearFillDelay;
+			yearFillTime = DateTime.Now + yearFillDelay;
 		}
 
 		if(timeScale != timeScaleOld)
 		{
 			timeScaleOld = timeScale;
-			blobHatchDelay = new System.TimeSpan(0,0,(int)(blobHatchDelay.TotalSeconds * timeScale));
-			breedReadyDelay = new System.TimeSpan(0,0,(int)(breedReadyDelay.TotalSeconds * timeScale));
-			breedBarFillTime = new System.TimeSpan(0,0,(int)(breedBarFillTime.TotalSeconds * timeScale));
-			yearFillDelay = new System.TimeSpan(0,0,(int)(yearFillDelay.TotalSeconds * timeScale));
+			blobHatchDelay = new TimeSpan(0,0,(int)(blobHatchDelayOriginal.TotalSeconds * timeScale));
+			breedReadyDelay = new TimeSpan(0,0,(int)(breedReadyDelayOriginal.TotalSeconds * timeScale));
+			breedBarFillDelay = new TimeSpan(0,0,(int)(breedBarFillDelayOriginal.TotalSeconds * timeScale));
+			yearFillDelay = new TimeSpan(0,0,(int)(yearFillDelayOriginal.TotalSeconds * timeScale));
 		}
 	}
 }
