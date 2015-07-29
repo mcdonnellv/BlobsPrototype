@@ -21,7 +21,7 @@ public class Mutation : ScriptableObject
 		BodyColor,
 	};
 	
-	public string name;
+	public string mutationName;
 	public string preRequisite;
 	public Rarity rarity;
 	public bool revealed = false;
@@ -29,12 +29,6 @@ public class Mutation : ScriptableObject
 	public Color bodyColor;
 	public float revealChance { get {return RevealChanceForRarity(rarity);} }
 
-
-	public Mutation(string n, Type t) 
-	{
-		name = n;
-		type = t;
-	}
 
 	float RevealChanceForRarity(Rarity r)
 	{

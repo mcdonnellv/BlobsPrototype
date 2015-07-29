@@ -28,7 +28,7 @@ public class MutationManagerInspector : Editor
 			{
 				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginHorizontal();
-				mutation.name = EditorGUILayout.TextField("Name: ", mutation.name, GUILayout.Width(200f));
+				mutation.mutationName = EditorGUILayout.TextField("Name: ", mutation.mutationName, GUILayout.Width(200f));
 				GUI.backgroundColor = Color.red;
 				if(GUILayout.Button("Delete"))
 					mutations.Remove(mutation);
@@ -56,7 +56,12 @@ public class MutationManagerInspector : Editor
 			if(GUILayout.Button("Add New Mutation"))
 			{
 				if(mm.DoesNameExistInList(newName) == false)
-					mutations.Add(new Mutation(newName, 0));
+				{
+					Mutation m = new Mutation();
+					m.mutationName = newName;
+					m.type = 0;
+					mutations.Add(new Mutation());
+				}
 				newName = "";
 			}
 			GUI.backgroundColor = Color.white;

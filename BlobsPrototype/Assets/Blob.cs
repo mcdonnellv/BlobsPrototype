@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -43,39 +44,33 @@ public enum BlobTrait
 };
 
 
-public class Blob 
+[Serializable]
+public class Blob
 {
 	public bool male;
 	public Color color;
 	public int breedCount;
-	public BlobColor allele1;
-	public BlobColor allele2;
-	public bool alive;
 	public float quality;
 	public BlobTrait trait;
 	public BlobJob job;
 	public bool onMission;
 	public int age;
-	public bool breededThisYear;
-	public Blob mom;
-	public Blob dad;
 	public Blob egg;
 	public bool hasHatched;
-	public float hatchTime;
-	public float breedReadyTime;
-	public float goldProductionTime;
+	public DateTime hatchTime;
+	public DateTime breedReadyTime;
+	public DateTime goldProductionTime;
 	public List<Mutation> mutations;
 
 	public Blob()
 	{
-		alive = true;
 		quality = 1f;
 		onMission = false;
       	age = 0;
-		breededThisYear = false;
 		hasHatched = false;
-		hatchTime = Time.time;
-		breedReadyTime = Time.time;
+		hatchTime = new DateTime(0);
+		breedReadyTime = new DateTime(0);
+		goldProductionTime = new DateTime(0);
 		mutations = new List<Mutation>();
 	}
 
@@ -165,7 +160,7 @@ public class Blob
 	static public float GetNewQuality (float q1, float q2)
 	{
 		float combined = (q1 + q2) / 2f;
-		float rand = Random.Range(.1f, .4f);
+		float rand = UnityEngine.Random.Range(.1f, .4f);
 		float f = (combined * .8f) + (combined * rand);
 		return Mathf.Round(f * 10f) / 10f;
 	}

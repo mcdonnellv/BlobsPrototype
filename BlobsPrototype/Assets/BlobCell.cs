@@ -37,29 +37,37 @@ public class BlobCell : MonoBehaviour
 		//blob belongs to nursery
 		if (blob != null && parent == gm.nm.gameObject)
 		{
-			if (blob.breedReadyTime > 0f)
+			if (blob.hasHatched)
 			{
-				progressBar.value = (blob.breedReadyTime - Time.time) / gm.breedReadyDelay;
-				progressBar.value = progressBar.value < 0f ? 0f : progressBar.value;
-
-				if (blob.breedReadyTime < Time.time)
+				if (blob.breedReadyTime > System.DateTime.Now)
 				{
-					blob.breedReadyTime = 0f;
+					System.TimeSpan ts = (blob.breedReadyTime - System.DateTime.Now);
+					progressBar.value = (float)(ts.TotalSeconds / gm.breedReadyDelay.TotalSeconds);
+					
+					
+				}
+				else
+				{
+					progressBar.value = 0f;
+					blob.breedReadyTime = new System.DateTime(0);
 					if(blob.egg != null)
 					{
 						gm.nm.SpawnEgg(blob.egg);
 						gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(blob), blob);
+						blob.egg = null;
 					}
 				}
 			}
-
-			if (blob.hatchTime > 0f)
+			else
 			{
-				progressBar.value = (blob.hatchTime - Time.time) / gm.blobHatchDelay;
-				progressBar.value = progressBar.value < 0f ? 0f : progressBar.value;
-				
-				if (blob.hatchTime < Time.time)
-					blob.hatchTime = 0f;
+				if (blob.hatchTime > System.DateTime.Now)
+				{
+					System.TimeSpan ts = (blob.hatchTime - System.DateTime.Now);
+					progressBar.value = (float)(ts.TotalSeconds / gm.blobHatchDelay.TotalSeconds);
+				}
+				else
+					progressBar.value = 0f;
+
 			}
 
 		}
@@ -70,16 +78,16 @@ public class BlobCell : MonoBehaviour
 		{
 			if(gm.vm.IsMaxTributeReached())
 			{
-				blob.goldProductionTime = 0f;
+				blob.goldProductionTime = new System.DateTime(0);
 				progressBar.value = 0f;
 			}
 
-			progressBar.value = 1f - (blob.goldProductionTime - Time.time) / gm.blobGoldProductionSpeed;
-			progressBar.value = progressBar.value < 0f ? 0f : progressBar.value;
+			System.TimeSpan ts = (blob.goldProductionTime - System.DateTime.Now);
+			progressBar.value = 1f - (float)(ts.TotalSeconds / gm.blobGoldProductionDelay.TotalSeconds);
 
-			if (blob.goldProductionTime < Time.time)
+			if (blob.goldProductionTime < System.DateTime.Now)
 			{
-				blob.goldProductionTime = Time.time + gm.blobGoldProductionSpeed;
+				blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
 				gm.vm.AddTribute(blob.quality);
 			}
 		}

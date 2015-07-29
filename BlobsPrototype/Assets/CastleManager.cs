@@ -8,7 +8,7 @@ public class CastleManager : MonoBehaviour
 	public GameManager gm;	
 	public BlobPanel blobPanel;
 	public InfoPanel infoPanel;
-	public List<Blob> blobs;
+	public List<Blob> blobs {get{return gm.gameVars.castleBlobs;}}
 	public UILabel sellButtonLabel;
 	public UILabel moveLabel;
 	public bool castleExists;
@@ -19,8 +19,7 @@ public class CastleManager : MonoBehaviour
 	void Start () 
 	{
 		blobPanel.Init();
-		infoPanel.UpdateWithBlob(null);
-		blobs = new List<Blob>();
+		infoPanel.UpdateWithBlob(null);;
 		maxBlobs = 20;
 		PressGridItem(0);
 		castleExists = false;

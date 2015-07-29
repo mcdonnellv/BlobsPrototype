@@ -9,12 +9,31 @@ public class Popup : MonoBehaviour
 	public UILabel button2Label;
 	public UIButton button1;
 	public UIButton button2;
+	public UISprite body;
+	public UISprite face;
+	public UISprite lashes;
+
 
 	Vector3 buttonPos = new Vector3(0, -85f);
+
+	public void ShowBlob(bool show)
+	{
+		body.gameObject.SetActive(show);
+		face.gameObject.SetActive(show);
+		lashes.gameObject.SetActive(show);
+	}
+
+	public void SetBlob(Blob blob)
+	{
+		ShowBlob(true);
+		body.color = blob.GetBodyColor();
+		lashes.gameObject.SetActive(!blob.male);
+	}
 
 	public void Hide()
 	{
 		gameObject.SetActive(false);
+		ShowBlob(false);
 	}
 
 	public void Show(string header, string body)

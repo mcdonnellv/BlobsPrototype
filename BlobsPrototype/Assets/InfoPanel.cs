@@ -56,8 +56,6 @@ public class InfoPanel : MonoBehaviour
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
 		color.text = "Color: " + blob.GetBodyColorName();
 		eggs.text = "Eggs Left: " + (gm.maxBreedcount - blob.breedCount).ToString();
-		color.text = "Genotype: " + Blob.GetNameFromEnum(blob.allele1) + 
-			(blob.allele2 != 0 ? ("/" + Blob.GetNameFromEnum(blob.allele2)) : "");
 		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
 		age.text = "Age: " + blob.age.ToString();
 		if (blob.male)
@@ -95,7 +93,8 @@ public class InfoPanel : MonoBehaviour
 			if(m.revealed == false)
 			{
 				m.revealed = true;
-				gm.popup.Show("New Mutation Revealed", "You have discovered the " + m.name + " mutation!" );
+				gm.popup.Show("New Mutation Revealed", "You have discovered the " + m.mutationName + " mutation!" );
+				gm.popup.SetBlob(theBlob);
 			}
 		}
 
@@ -116,7 +115,9 @@ public class InfoPanel : MonoBehaviour
 		{
 			if (theBlob != null && !theBlob.hasHatched)
 			{
-				progress.value = 1f - ((theBlob.hatchTime - Time.time) / gm.blobHatchDelay);
+
+				System.TimeSpan ts = (theBlob.hatchTime - System.DateTime.Now);
+				progress.value = 1f - (float)(ts.TotalSeconds / gm.blobHatchDelay.TotalSeconds);
 				progress.value = progress.value > 1f ? 1f : progress.value;
 			}
 

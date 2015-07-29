@@ -16,13 +16,13 @@ public class NurseryManager : MonoBehaviour
 	public UILabel sellButtonLabel;
 	public UISlider breedProgressBar;
 	
-	public List<Blob> blobs;
+	public List<Blob> blobs {get{return gm.gameVars.nurseryBlobs;}}
 	public List<Blob> maleBlobs;
 	public List<Blob> femaleBlobs;
 	
 	int maxBlobs;
 	public int curSelectedIndex;
-	float breedTime;
+	System.DateTime breedTime;
 
 	// Use this for initialization
 	void Start () 
@@ -30,43 +30,42 @@ public class NurseryManager : MonoBehaviour
 		blobPanel.Init();
 		curSelectedIndex = 0;
 		maxBlobs = 12;
-
-		blobs = new List<Blob>();
-
-		Blob blob = new Blob();
-
-		blob.male = true;
-		blob.age = 5;
-		blob.hasHatched = true;
-		blob.mutations.Add(gm.mum.GetMutationByName("Purple"));
-		blob.color = blob.GetBodyColor();
-		infoPanel.UpdateWithBlob(blob);
-		blobs.Add(blob);
-		blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
-		
-		blob = new Blob();
-		blob.male = false;
-		blob.age = 5;
-		blob.hasHatched = true;
-		blob.mutations.Add(gm.mum.GetMutationByName("Red"));
-		blob.color = blob.GetBodyColor();
-		blobs.Add(blob);
-		blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
-
-		PressGridItem(0);
 		breedProgressBar.value = 1f;
 		toVillageButton.gameObject.SetActive(false);
 		toCastleButton.gameObject.SetActive(false);
 	}
 
 
+	public void FirstTimeSetup()
+	{
+		Mutation blueMutation = gm.mum.GetMutationByName("Blue");
+		blueMutation.revealed = true;
+
+		Blob blob = new Blob();
+		blob.male = true;
+		blob.age = 5;
+		blob.hasHatched = true;
+		blob.mutations.Add(blueMutation);
+		blob.color = blob.GetBodyColor();
+		infoPanel.UpdateWithBlob(blob);
+		blobs.Add(blob);
+		
+		blob = new Blob();
+		blob.male = false;
+		blob.age = 5;
+		blob.hasHatched = true;
+		blob.mutations.Add(blueMutation);
+		blob.color = blob.GetBodyColor();
+		blobs.Add(blob);
+	}
+	
 	void AddBlob(Blob newBlob)
 	{
 		if (blobs.Count >= maxBlobs)
 			return;
 
 		blobs.Add(newBlob);
-		newBlob.hatchTime = Time.time + gm.blobHatchDelay;
+		newBlob.hatchTime = System.DateTime.Now + gm.blobHatchDelay;
 		if (CanEnableBreedButton())
 			breedButton.isEnabled = false;
 	}
@@ -114,7 +113,7 @@ public class NurseryManager : MonoBehaviour
 
 	bool CanEnableBreedButton()
 	{
-		if (breedProgressBar.value < 1f)
+		if (breedTime > System.DateTime.Now)
 			return false;
 		
 		if (blobs.Count >= maxBlobs)
@@ -138,7 +137,7 @@ public class NurseryManager : MonoBehaviour
 		foreach(Blob blob in blobs)
 		{
 			BlobCell bc = blobPanel.blobCells[blobs.IndexOf(blob)];
-			if (bc.progressBar.value > 0 || blob.age < gm.breedingAge)
+			if (bc.progressBar.value > 0 || blob.age < gm.breedingAge || !blob.hasHatched)
 				continue;
 
 			if (blob.male)
@@ -166,12 +165,9 @@ public class NurseryManager : MonoBehaviour
 	{
 		maleBlob.breedCount++;
 		femaleBlob.breedCount++;
-		maleBlob.breededThisYear = true;
-		femaleBlob.breededThisYear = true;
 
-		maleBlob.breedReadyTime = Time.time + gm.breedReadyDelay;
-		femaleBlob.breedReadyTime = Time.time + gm.breedReadyDelay;
-		
+		maleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
+		femaleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
 
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
 		femaleBlob.egg = newBlob;
@@ -181,15 +177,13 @@ public class NurseryManager : MonoBehaviour
 	{
 		Blob blob = new Blob();
 		blob.hasHatched = false;
-		blob.mom = mom;
-		blob.dad = dad;
 		int totalEggs = GetTotalEggs();
 
 		//safety spawn female
 		if (GetTotalEggs() <= 0)
 			blob.male = false;
 		else
-			blob.male = (Random.Range(0, 2) == 0) ? true : false;
+			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
 		
 		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
 
@@ -204,30 +198,33 @@ public class NurseryManager : MonoBehaviour
 		//check for mutations based on prerequisites
 		foreach(Mutation parentMutation in parentMutations)
 			foreach(Mutation potentialMutation in gm.mum.mutations)
-				if(potentialMutation.preRequisite == parentMutation.name)
+				if(potentialMutation.preRequisite == parentMutation.mutationName)
 					elligibleMutations.Add(potentialMutation);
 		
 
 		// only one mutation of a type is allowed in the new blob's mutation list
-		List<Mutation> temp = parentMutations.ToList();
-		foreach(Mutation parentMutation in parentMutations)
+		blob.mutations = parentMutations.ToList();
+		for (int i = 0; i < blob.mutations.Count(); i++)
 		{
-			temp.Remove(parentMutation);
-			blob.mutations.Add(parentMutation);
-			foreach(Mutation otherParentMutation in temp)
-				if(parentMutation.type == otherParentMutation.type)
-				{
-					if(Random.Range(0,2) == 0)
-					{
-					   blob.mutations.Remove(parentMutation);
-					   blob.mutations.Add(otherParentMutation);
-					}
+			Mutation m1 = blob.mutations[i];
+
+			for (int j = i + 1; j < blob.mutations.Count(); j++)
+			{
+				Mutation m2 = blob.mutations[j];
+				if (m1.type == m2.type)
+				{ 
+					if(UnityEngine.Random.Range(0,2) == 0)
+						blob.mutations.Remove(m1);
+					else
+						blob.mutations.Remove(m2);
+					i = 0;
 					break;
 				}
+			}
 		}
 
 		//roll for a mutation
-		float mutationRoll = Random.Range(0f,1f);
+		float mutationRoll = UnityEngine.Random.Range(0f,1f);
 		foreach(Mutation elligibleMutation in elligibleMutations)
 			if (mutationRoll <= elligibleMutation.revealChance)
 			{
@@ -238,13 +235,17 @@ public class NurseryManager : MonoBehaviour
 		if(newMutation != null)
 		{
 			//replace mutations of same type
-			temp = blob.mutations.ToList();
-			foreach(Mutation mutation in temp)
-				if(mutation.type == newMutation.type)
-			    {
-				   blob.mutations.Add(newMutation);
-				   blob.mutations.Remove(mutation);
-			    }
+			for (int i = 0; i < blob.mutations.Count(); i++)
+			{
+				Mutation m1 = blob.mutations[i];
+				if(newMutation.type == m1.type)
+				{
+					blob.mutations.Remove(m1);
+					i = 0;
+				}
+			}
+
+			blob.mutations.Add(newMutation);
 		}
 
 
@@ -316,10 +317,10 @@ public class NurseryManager : MonoBehaviour
 		}
 		
 		breedButton.isEnabled = false;
-		breedTime = gm.breedBarFillTime + Time.time;
+		breedTime = System.DateTime.Now + gm.breedBarFillTime;
 
-		Blob maleBlob = maleBlobs[Random.Range(0, maleBlobs.Count)];
-		Blob femaleBlob = femaleBlobs[Random.Range(0, femaleBlobs.Count)];
+		Blob maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
+		Blob femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
 		gm.AddGold(-gm.breedCost);
 		BreedBlobs(maleBlob, femaleBlob);
 	}
@@ -417,10 +418,11 @@ public class NurseryManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		breedProgressBar.value = 1f - ((breedTime - Time.time) / gm.breedBarFillTime);
+		System.TimeSpan ts = (breedTime - System.DateTime.Now);
+		breedProgressBar.value = 1f - (float)(ts.TotalSeconds / gm.breedBarFillTime.TotalSeconds);
 		breedProgressBar.value = breedProgressBar.value > 1f ? 1f : breedProgressBar.value;
 
-		if (breedTime <= Time.time && breedButton.isEnabled == false)
+		if (breedTime <= System.DateTime.Now && breedButton.isEnabled == false)
 		{
 			if (CanEnableBreedButton())
 				breedButton.isEnabled = true;

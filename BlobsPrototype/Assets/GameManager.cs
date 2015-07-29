@@ -1,6 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
+
+[System.Serializable]
+public class GameVariables 
+{
+	public int gold;
+	public int year;
+	public List<Blob> nurseryBlobs;
+	public List<Blob> villageBlobs;
+	public List<Blob> castleBlobs;
+}
 
 public class GameManager : MonoBehaviour 
 {
@@ -11,7 +24,6 @@ public class GameManager : MonoBehaviour
 	public MutationManager mum;
 	public GameObject missionView;
 	public GameObject breedingView;
-	public List<Blob> blobs;
 	public GameObject grid;
 	public GameObject selectModeCover;
 	public UILabel averageQualityLabel;
@@ -27,45 +39,46 @@ public class GameManager : MonoBehaviour
 	public GameObject winnerObject;
 	public UICamera gameCam;
 	public Popup popup;
-	public float blobHatchDelay;
-	public float breedReadyDelay;
-	public float yearFillTime;
-	public float yearFillDelay;
-	public float breedBarFillTime;
+	public GameVariables gameVars;
+	public System.TimeSpan blobHatchDelay;
+	public System.TimeSpan breedReadyDelay;
+	public System.TimeSpan yearFillDelay;
+	public System.TimeSpan breedBarFillTime;
+	public System.DateTime yearFillTime;
+
+
 	public float tributeGoldPerQuality;
 	public float tributeMaxMulitplier;
-	public float blobGoldProductionSpeed;
-	public float t;
+	public System.TimeSpan blobGoldProductionDelay;
 	public int maxBlobs;
-	public int gold;
+
 	public int breedCost;
 	public int breedBaseCost;
 	public int breedCostMax;
 	public int sellValue;
 	public int breedingAge;
 	public int maxBreedcount;
-	public int year;
 	public int villageCost;
 	public int castleCost;
+	public float timeScale;
+	public int gold {get{return gameVars.gold;}}
 
-
+	float timeScaleOld;
 	bool selectMode;
+
+
 
 	void Start ()
 	{
-		t = .5f;
-
-		blobHatchDelay = 40f * t;
-		breedReadyDelay = 10f * t;
-		breedBarFillTime = 1f * t;
-		blobGoldProductionSpeed = 10f;
-
-		year = 0;
-		yearFillDelay = 90f * t;
-		yearFillTime = Time.time + yearFillDelay;
+		timeScaleOld = 0f;
+		timeScale = 1f;
+		blobHatchDelay = new System.TimeSpan(0,0,30);
+		breedReadyDelay = new System.TimeSpan(0,0,10);
+		breedBarFillTime = new System.TimeSpan(0,0,1);
+		yearFillDelay = new System.TimeSpan(0,1,0);
+		yearFillTime = System.DateTime.Now + yearFillDelay;
 
 		maxBlobs = 20;
-		gold = 100;
 		breedCost = 10;
 		breedBaseCost = 10;
 		breedCostMax = 100;
@@ -84,7 +97,7 @@ public class GameManager : MonoBehaviour
 		missionView.SetActive(false);
 		selectModeCover.SetActive(false);
 
-		AddGold(0);
+
 
 		yearProgressBar.value = 0f;
 
@@ -93,6 +106,60 @@ public class GameManager : MonoBehaviour
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
 		rightNavButton.gameObject.SetActive(false);
 		leftNavButton.gameObject.SetActive(false);
+
+		bool firstTime = (PlayerPrefs.GetInt("FirstTimeSetup") == 0);
+		if (firstTime)
+		{
+			PlayerPrefs.SetInt("FirstTimeSetup", 1);;
+			gameVars = new GameVariables();
+			gameVars.nurseryBlobs = new List<Blob>();
+			gameVars.villageBlobs = new List<Blob>();
+			gameVars.castleBlobs = new List<Blob>();
+			FirstTimeSetup();
+
+			gameVars.year = 0;
+		}
+		else
+		{
+			gameVars = GenericDeSerialize<GameVariables>("GameVariables.dat");
+		}
+
+		foreach(Blob b in nm.blobs) 
+			nm.blobPanel.UpdateBlobCellWithBlob(nm.blobs.IndexOf(b), b);
+
+		nm.PressGridItem(0);
+		AddGold(0);
+	}
+	
+
+	private void Serialize<T>(T thing, string filename)
+	{
+		XmlSerializer serializer = new XmlSerializer(typeof(T));
+		TextWriter tw = new StreamWriter(filename);
+		serializer.Serialize(tw, thing);
+		tw.Close();
+	}
+
+	private T GenericDeSerialize<T>(string filename)
+	{
+		XmlSerializer serializer = new XmlSerializer(typeof(T));
+		TextReader tr = new StreamReader(filename);
+		T b = (T)serializer.Deserialize(tr);
+		tr.Close();
+		return b;
+	}
+	
+	void FirstTimeSetup()
+	{
+		gameVars.year = 0;
+		gameVars.gold = 100;
+		nm.FirstTimeSetup();
+	}
+
+	void OnApplicationQuit()
+	{
+		Serialize<GameVariables>(gameVars, "GameVariables.dat");
+		PlayerPrefs.Save();
 	}
 
 
@@ -140,7 +207,7 @@ public class GameManager : MonoBehaviour
 
 	public void  AddGold(int val)
 	{
-		gold += val;
+		gameVars.gold += val;
 		goldLabel.text = "Gold: " + gold.ToString();
 
 		UILabel label = buildButton.GetComponentInChildren<UILabel>();
@@ -162,8 +229,9 @@ public class GameManager : MonoBehaviour
 		{
 			foreach(Blob blob in nm.blobs)
 			{
+				if(blob.hasHatched ==  false)
+					continue;
 				blob.age++;
-				blob.breededThisYear = false;
 			}
 		}
 
@@ -178,36 +246,6 @@ public class GameManager : MonoBehaviour
 		nm.UpdateAllBlobCells();
 		vm.UpdateAllBlobCells();
 	}
-
-
-
-//	void CheckGameOver()
-//	{
-//		if (nm.MatingPairExists() == false)
-//			gameOverObject.SetActive(true);
-//
-//		bool hasBlue = false;
-//		bool hasRed = false;
-//		bool hasYellow = false;
-//		bool hasGreen = false;
-//		bool hasPurple = false;
-//		bool hasOrange = false;
-//
-//		foreach(Blob blob in blobs)
-//		{
-//			hasBlue = blob.color == BlobColor.Blue;
-//			hasRed = blob.color == BlobColor.Red;
-//			hasYellow = blob.color == BlobColor.Yellow;
-//			hasGreen  = blob.color == BlobColor.Green;
-//			hasPurple = blob.color == BlobColor.Purple;
-//			hasOrange = blob.color == BlobColor.Orange;
-//		}
-//
-//		if (hasBlue && hasRed && hasYellow && hasOrange && hasGreen && hasPurple)
-//		{
-//			winnerObject.SetActive(true);
-//		}
-//	}
 
 	
 	public void MissionsButtonPressed()
@@ -277,18 +315,26 @@ public class GameManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (yearFillTime > 0f)
+		if (yearFillTime > System.DateTime.Now)
 		{
-			yearProgressBar.value = 1f - ((yearFillTime - Time.time) / yearFillDelay);
-			yearProgressBar.value = yearProgressBar.value > 1f ? 1f : yearProgressBar.value;
-			
-			if (yearFillTime < Time.time)
-			{
-				year++;
-				yearLabel.text = "Year: " + year.ToString();
-				AgeAllBlobs();
-				yearFillTime = yearFillDelay + Time.time;
-			}
+			System.TimeSpan ts = (yearFillTime - System.DateTime.Now);
+			yearProgressBar.value = 1f - (float)(ts.TotalSeconds / yearFillDelay.TotalSeconds);
+		}	
+		else
+		{
+			gameVars.year++;
+			yearLabel.text = "Year: " + gameVars.year.ToString();
+			AgeAllBlobs();
+			yearFillTime = System.DateTime.Now + yearFillDelay;
+		}
+
+		if(timeScale != timeScaleOld)
+		{
+			timeScaleOld = timeScale;
+			blobHatchDelay = new System.TimeSpan(0,0,(int)(blobHatchDelay.TotalSeconds * timeScale));
+			breedReadyDelay = new System.TimeSpan(0,0,(int)(breedReadyDelay.TotalSeconds * timeScale));
+			breedBarFillTime = new System.TimeSpan(0,0,(int)(breedBarFillTime.TotalSeconds * timeScale));
+			yearFillDelay = new System.TimeSpan(0,0,(int)(yearFillDelay.TotalSeconds * timeScale));
 		}
 	}
 }

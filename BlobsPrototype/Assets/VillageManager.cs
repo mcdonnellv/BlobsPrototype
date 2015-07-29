@@ -7,7 +7,7 @@ public class VillageManager : MonoBehaviour
 	public GameManager gm;	
 	public BlobPanel blobPanel;
 	public InfoPanel infoPanel;
-	public List<Blob> blobs;
+	public List<Blob> blobs {get{return gm.gameVars.villageBlobs;}}
 	public UILabel sellButtonLabel;
 	public UILabel tributeLabel;
 	public UILabel moveLabel;
@@ -22,7 +22,6 @@ public class VillageManager : MonoBehaviour
 	{
 		blobPanel.Init();
 		infoPanel.UpdateWithBlob(null);
-		blobs = new List<Blob>();
 		maxBlobs = 20;
 		tribute = 0;
 		maxTribute = 0;
@@ -38,7 +37,7 @@ public class VillageManager : MonoBehaviour
 		bc.progressBar.value = 0f;
 		PressGridItem(index);
 		UpdateMaxTribute();
-		blob.goldProductionTime = Time.time + gm.blobGoldProductionSpeed;
+		blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
 	}
 
 
@@ -115,8 +114,8 @@ public class VillageManager : MonoBehaviour
 
 		foreach(Blob blob in blobs)
 		{
-			if(blob.goldProductionTime < Time.time)
-				blob.goldProductionTime = Time.time + gm.blobGoldProductionSpeed;
+			if(blob.goldProductionTime < System.DateTime.Now)
+				blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
 		}
 
 	}
