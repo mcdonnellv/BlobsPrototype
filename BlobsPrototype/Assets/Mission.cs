@@ -11,7 +11,6 @@ public class Mission
 	public float requirementBonus;
 	public BlobJob jobRequirement;
 	public BlobTrait traitRequirement;
-	public BlobColor colorRequirement;
 	public Blob blob;
 	public bool active;
 	public bool successful;
@@ -27,7 +26,6 @@ public class Mission
 		reward = 30;
 		jobRequirement = BlobJob.None;
 		traitRequirement = BlobTrait.None;
-		colorRequirement = BlobColor.None;
 		blob = null;
 		active = false;
 		successful = true;
@@ -47,9 +45,6 @@ public class Mission
 		if (traitRequirement != BlobTrait.None)
 			reqCount++;
 
-		if (colorRequirement != BlobColor.None)
-			reqCount++;
-
 		if (ageRequirement > 0)
 			reqCount++;
 
@@ -63,8 +58,8 @@ public class Mission
 			if (traitRequirement != BlobTrait.None && traitRequirement == blob.trait)
 				chance += piece;
 
-			if (ageRequirement > 0)
-				chance -= agePenalty * (ageRequirement - blob.age);
+//			if (ageRequirement > 0)
+//				chance -= agePenalty * (ageRequirement - blob.age);
 
 			chance = (chance < 0f) ? 0f : ((chance > 1f) ? 1f : chance);
 		}

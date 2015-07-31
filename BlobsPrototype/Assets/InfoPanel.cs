@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class InfoPanel : MonoBehaviour 
@@ -7,7 +8,7 @@ public class InfoPanel : MonoBehaviour
 	public UILabel age;
 	public UILabel eggs;
 	public UILabel gender;
-	public UILabel color;
+	public UILabel genes;
 	public UILabel quality;
 	public UISprite body;
 	public UISprite face;
@@ -30,7 +31,7 @@ public class InfoPanel : MonoBehaviour
 
 		if (blob == null)
 		{
-			color.text = "";
+			genes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
@@ -54,8 +55,11 @@ public class InfoPanel : MonoBehaviour
 		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
-		color.text = "Color: " + blob.GetBodyColorName();
-		eggs.text = "Eggs Left: " + (gm.maxBreedcount - blob.breedCount).ToString();
+		string geneString = "Genes:";
+		foreach(Gene g in blob.genes)
+			geneString += "\n   " + g.geneName + (blob.IsGeneActive(g) ? "+" : "");
+		genes.text = geneString ;
+		eggs.text = "Eggs: " + (gm.maxBreedcount - blob.breedCount).ToString();
 		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
 		age.text = "Age: " + blob.age.ToString();
 		if (blob.male)
@@ -66,41 +70,35 @@ public class InfoPanel : MonoBehaviour
 		else
 			gender.text = "Gender: Female";
 
-		float a = (float)(blob.age > 3 ? 3 : blob.age);
-		float s = .3f + (.7f * (a / 3f));
-		s = (s > 1f) ? 1f : s;
-		int pixels = (int)(s * 50f);
+		int pixels = (int)(blob.BlobScale() * 50f);
 		body.SetDimensions(pixels, pixels);
 		face.SetDimensions(pixels, pixels);
 		lashes.SetDimensions(pixels, pixels);
 
 		if (!blob.hasHatched)
 		{
-			color.text = "";
+			genes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
 			quality.text = "";
 		}
-
-
 	}
 
 	public void pressed()
 	{
-		foreach(Mutation m in theBlob.mutations)
+		foreach(Gene m in theBlob.genes)
 		{
 			if(m.revealed == false)
 			{
 				m.revealed = true;
-				gm.popup.Show("New Mutation Revealed", "You have discovered the " + m.mutationName + " mutation!" );
+				gm.popup.Show("New Gene Revealed", "You have discovered the " + m.geneName + " gene!" );
 				gm.popup.SetBlob(theBlob);
 			}
 		}
 
 
-		theBlob.hasHatched = true;
-		theBlob.age = 0;
+		theBlob.Hatch();
 		UpdateWithBlob(theBlob);
 		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), theBlob);
 
@@ -111,21 +109,42 @@ public class InfoPanel : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (theBlob != null && !theBlob.hasHatched)
+		if (theBlob != null)
 		{
-			if (theBlob != null && !theBlob.hasHatched)
+			if (theBlob.hasHatched)
 			{
-
+				TimeSpan blobAge = theBlob.age;
+				if (blobAge.Days > 0)
+					age.text = "Age: " + string.Format("{0:0} day {1:0} hr", blobAge.Days, blobAge.Hours);
+				else if (blobAge.Hours > 0)
+					age.text = "Age: " + string.Format("{0:0} hr {1:0} min", blobAge.Hours, blobAge.Minutes);
+				else if (blobAge.Minutes > 0)
+					age.text = "Age: " + string.Format("{0:0 }min {1:0} sec", blobAge.Minutes, blobAge.Seconds);
+				else
+					age.text = "Age: " + string.Format("{0:0} sec", blobAge.Seconds);
+			
+			}
+			else
+			{
 				System.TimeSpan ts = (theBlob.hatchTime - System.DateTime.Now);
 				progress.value = 1f - (float)(ts.TotalSeconds / gm.blobHatchDelay.TotalSeconds);
 				progress.value = progress.value > 1f ? 1f : progress.value;
+				
+				
+				if (progress.value >= 1f && button.isEnabled == false)
+					button.isEnabled = true;
+				
+				if (progress.value < 1f && button.isEnabled == true)
+					button.isEnabled = false;
 			}
 
-			if (progress.value >= 1f && button.isEnabled == false)
-				button.isEnabled = true;
-
-			if (progress.value < 1f && button.isEnabled == true)
-				button.isEnabled = false;
+			if (theBlob.hasHatched && theBlob.age < gm.breedingAge)
+			{
+				int pixels = (int)(theBlob.BlobScale() * 50f);
+				body.SetDimensions(pixels, pixels);
+				face.SetDimensions(pixels, pixels);
+				lashes.SetDimensions(pixels, pixels);
+			}
 		}
 	}
 }

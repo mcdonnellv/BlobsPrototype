@@ -38,24 +38,23 @@ public class NurseryManager : MonoBehaviour
 
 	public void FirstTimeSetup()
 	{
-		Mutation blueMutation = gm.mum.GetMutationByName("Blue");
-		blueMutation.revealed = true;
+		Gene blueGene = gm.mum.GetGeneByName("Blue");
+		blueGene.revealed = true;
 
 		Blob blob = new Blob();
+		blob.genes.Add(blueGene);
+		blob.ActivateGene(blueGene);
 		blob.male = true;
-		blob.age = 5;
-		blob.hasHatched = true;
-		blob.mutations.Add(blueMutation);
-		blob.color = blob.GetBodyColor();
-		infoPanel.UpdateWithBlob(blob);
+		blob.Hatch();
+		blob.birthday = blob.birthday - gm.breedingAge;
 		blobs.Add(blob);
 		
 		blob = new Blob();
+		blob.genes.Add(blueGene);
+		blob.ActivateGene(blueGene);
 		blob.male = false;
-		blob.age = 5;
-		blob.hasHatched = true;
-		blob.mutations.Add(blueMutation);
-		blob.color = blob.GetBodyColor();
+		blob.Hatch();
+		blob.birthday = blob.birthday - gm.breedingAge;
 		blobs.Add(blob);
 	}
 	
@@ -95,15 +94,18 @@ public class NurseryManager : MonoBehaviour
 		return breedCost;
 	}
 
+
 	int GetSellValue()
 	{
 		return gm.sellValue;
 	}
 
+
 	public void UpdateBreedCost()
 	{
 		breedButtonLabel.text = "Breed (" + GetBreedCost().ToString() + "g)";
 	}
+
 
 	public void UpdateSellValue()
 	{
@@ -149,6 +151,7 @@ public class NurseryManager : MonoBehaviour
 		return (femaleBlobs.Count > 0 && maleBlobs.Count > 0);
 	}
 
+
 	int GetTotalEggs()
 	{
 		int total = 0;
@@ -161,6 +164,7 @@ public class NurseryManager : MonoBehaviour
 		return total;
 	}
 
+
 	void BreedBlobs(Blob maleBlob, Blob femaleBlob)
 	{
 		maleBlob.breedCount++;
@@ -172,6 +176,7 @@ public class NurseryManager : MonoBehaviour
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
 		femaleBlob.egg = newBlob;
 	}
+
 
 	public Blob GenerateNewBlobBasedOnBlobs(Blob dad, Blob mom)
 	{
@@ -187,71 +192,126 @@ public class NurseryManager : MonoBehaviour
 		
 		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
 
+		// Gene passing
+		blob.genes = CleanupGeneList(dad.genes.Union<Gene>(mom.genes).ToList<Gene>());
 
-		// Mutation chance
-		Mutation newMutation = null;
-		List<Mutation> parentMutations = new List<Mutation>();
-		List<Mutation> elligibleMutations = new List<Mutation>();
-		parentMutations = dad.mutations.Union<Mutation>(mom.mutations).ToList<Mutation>();
+		//check for possible new genes
+		RollForNewGene(blob);
 
-
-		//check for mutations based on prerequisites
-		foreach(Mutation parentMutation in parentMutations)
-			foreach(Mutation potentialMutation in gm.mum.mutations)
-				if(potentialMutation.preRequisite == parentMutation.mutationName)
-					elligibleMutations.Add(potentialMutation);
-		
-
-		// only one mutation of a type is allowed in the new blob's mutation list
-		blob.mutations = parentMutations.ToList();
-		for (int i = 0; i < blob.mutations.Count(); i++)
-		{
-			Mutation m1 = blob.mutations[i];
-
-			for (int j = i + 1; j < blob.mutations.Count(); j++)
-			{
-				Mutation m2 = blob.mutations[j];
-				if (m1.type == m2.type)
-				{ 
-					if(UnityEngine.Random.Range(0,2) == 0)
-						blob.mutations.Remove(m1);
-					else
-						blob.mutations.Remove(m2);
-					i = 0;
-					break;
-				}
-			}
-		}
-
-		//roll for a mutation
-		float mutationRoll = UnityEngine.Random.Range(0f,1f);
-		foreach(Mutation elligibleMutation in elligibleMutations)
-			if (mutationRoll <= elligibleMutation.revealChance)
-			{
-			    newMutation = elligibleMutation; //success!
-				break;
-			}
-
-		if(newMutation != null)
-		{
-			//replace mutations of same type
-			for (int i = 0; i < blob.mutations.Count(); i++)
-			{
-				Mutation m1 = blob.mutations[i];
-				if(newMutation.type == m1.type)
-				{
-					blob.mutations.Remove(m1);
-					i = 0;
-				}
-			}
-
-			blob.mutations.Add(newMutation);
-		}
-
-
-		blob.color = blob.GetBodyColor();
+		blob.ActivateGenes();
 
 		return blob;
+	}
+
+
+	public List<Gene> CleanupGeneList(List<Gene> genes)
+	{
+		//remove genes of the same name first
+		genes = genes.Distinct().ToList();
+
+		for (int i = 0; i < genes.Count; i++)
+		{
+			List<Gene> genesOfTheSameType = GeneManager.GetGenesOfType(genes, genes[i].type);
+
+			// a blob can only have 2 of a gene type
+			if (genesOfTheSameType.Count <= 2)
+				continue;
+
+			// if there are more, randomly select the surviving genes based on their gene strength
+			int genesKept = 0;
+			while (genesKept < 2)
+			{
+				int cummulativeStrength = 0;
+				foreach(Gene g in genesOfTheSameType)
+					cummulativeStrength += (int)g.geneStrength;
+				
+				int rand = UnityEngine.Random.Range(0, cummulativeStrength);
+				cummulativeStrength = 0;
+				for (int j = 0; j < genesOfTheSameType.Count; j++)
+				{
+					Gene g = genesOfTheSameType[j];
+					cummulativeStrength += (int)g.geneStrength;
+					if(rand <= cummulativeStrength)
+					{
+						genesKept++;
+						genesOfTheSameType.Remove(g);
+						break;
+					}
+				}
+			}
+			
+			// remove unlucky the genes from the main list
+			for (int j = 0; j < genes.Count; j++)
+			{
+				foreach(Gene removeMe in genesOfTheSameType)
+				{
+					if(genes[j].geneName == removeMe.geneName)
+					{
+						genes.Remove(genes[j]);
+						j--;
+					}
+				}
+			}
+		}
+
+		return genes;
+	}
+
+
+	public void RollForNewGene(Blob blob)
+	{
+		bool blueGenePresent = false;
+		List<Gene> allEligibleGenes = new List<Gene>();
+		foreach(Gene gene in blob.genes)
+		{
+			List<Gene> eligibleGenes = GeneManager.GetGenesWithPrerequisite(gm.mum.genes, gene.geneName);
+			allEligibleGenes = allEligibleGenes.Union<Gene>(eligibleGenes).ToList<Gene>();
+		}
+
+		//prune genes that exist in the player's blobs
+		foreach(Blob b in blobs)//for now only look at nursery blobs
+			foreach(Gene gene in b.genes)
+			{
+			if(gene.geneName == "Blue")
+					blueGenePresent = true;
+
+				foreach(Gene eg in allEligibleGenes)
+				    if(eg.geneName == gene.geneName)
+					{
+						allEligibleGenes.Remove(eg);
+						break;
+					}
+			}
+
+		if(!blueGenePresent)
+		{
+			allEligibleGenes.Clear();
+			allEligibleGenes.Add(gm.mum.GetGeneByName("Blue"));
+		}
+
+		List<Gene> rollSuccessGenes = new List<Gene>();
+		float geneRoll = UnityEngine.Random.Range(0f,1f);
+		foreach(Gene eligibleGene in allEligibleGenes)
+			if (geneRoll <= eligibleGene.revealChance)
+				rollSuccessGenes.Add(eligibleGene);
+			
+		Gene newGene = GeneManager.GetRandomGeneBasedOnRarity(rollSuccessGenes);
+		
+		if(newGene != null)
+		{
+			//remove all other genes of the same type
+			for (int i = 0; i < blob.genes.Count; i++)
+			{
+				if(newGene.type == blob.genes[i].type)
+				{
+					blob.genes.Remove(blob.genes[i]);
+					i--;
+				}
+			}
+
+			blob.genes.Add(newGene);
+			blob.ActivateGene(newGene);
+		}
 	}
 
 
@@ -331,8 +391,14 @@ public class NurseryManager : MonoBehaviour
 		Blob blob = blobs[curSelectedIndex];
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 
-		if (blob.onMission)
-			return;
+		if (blob.onMission) 
+		{gm.popup.Show("Cannot Sell", "Blob is on a mission."); gm.popup.SetBlob(blob); return;}
+
+		if (blob.hasHatched == false)
+		{gm.popup.Show("Cannot Sell", "Blob has not been hatched."); gm.popup.SetBlob(blob); return;}
+
+		if (blob.breedReadyTime > System.DateTime.Now)
+		{gm.popup.Show("Cannot Sell", "Blob is still breeding."); gm.popup.SetBlob(blob); return;} 
 
 		bc.Reset();
 		gm.AddGold(gm.sellValue);

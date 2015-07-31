@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 
 [Serializable]
-public class Mutation : ScriptableObject 
+public class Gene : ScriptableObject 
 {
 	public enum Rarity
 	{
@@ -16,21 +16,31 @@ public class Mutation : ScriptableObject
 		Legendary,
 	};
 
+	public enum GeneStrength
+	{
+		VeryWeak = 10,
+		Weak = 20,
+		Normal = 30,
+		Strong = 40,
+		VeryStrong = 50,
+	};
+
 	public enum Type
 	{
 		BodyColor,
 	};
 	
-	public string mutationName;
+	public string geneName;
 	public string preRequisite;
+	public GeneStrength geneStrength;
 	public Rarity rarity;
 	public bool revealed = false;
 	public Type type;
 	public Color bodyColor;
-	public float revealChance { get {return RevealChanceForRarity(rarity);} }
+	public float revealChance { get {return Gene.RevealChanceForRarity(rarity);} }
+	public string name {get{return geneName;}}
 
-
-	float RevealChanceForRarity(Rarity r)
+	static float RevealChanceForRarity(Rarity r)
 	{
 		switch (r)
 		{

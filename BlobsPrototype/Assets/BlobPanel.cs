@@ -53,14 +53,11 @@ public class BlobPanel : MonoBehaviour
 		button.defaultColor = button.hover = bg.color;
 
 		UILabel[] labels = bc.GetComponentsInChildren<UILabel>();
-		labels[0].text = (blob.male || blob.age < gm.breedingAge || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
+		labels[0].text = (blob.male || !blob.IsOfBreedingAge() || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
 
 		bc.body.color = blob.color;
 
-		float a = (float)(blob.age > 2 ? 2 : blob.age);
-		float s = .4f + (.6f * (a / 2f));
-		s = (s > 1f) ? 1f : s;
-		int pixels = (int)(s * 50f);
+		int pixels = (int)(blob.BlobScale() * 50f);
 		bc.body.SetDimensions(pixels, pixels);
 		bc.face.SetDimensions(pixels, pixels);
 		bc.lashes.SetDimensions(pixels, pixels);
@@ -72,6 +69,15 @@ public class BlobPanel : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		foreach(BlobCell bc in blobCells)
+		{
+			if (bc.blob != null && bc.blob.hasHatched && bc.blob.age < gm.breedingAge)
+			{
+				int pixels = (int)(bc.blob.BlobScale() * 50f);
+				bc.body.SetDimensions(pixels, pixels);
+				bc.face.SetDimensions(pixels, pixels);
+				bc.lashes.SetDimensions(pixels, pixels);
+			}
+		}
 	}
 }

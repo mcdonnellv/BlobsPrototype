@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 	public NurseryManager nm;
 	public VillageManager vm;
 	public CastleManager cm;
-	public MutationManager mum;
+	public GeneManager mum;
 	public GameObject missionView;
 	public GameObject breedingView;
 	public GameObject grid;
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
 	public int breedBaseCost;
 	public int breedCostMax;
 	public int sellValue;
-	public int breedingAge;
+	public TimeSpan breedingAge;
 	public int maxBreedcount;
 	public int villageCost;
 	public int castleCost;
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
 		blobHatchDelay = new TimeSpan(0,0,30);
 		breedReadyDelay = new TimeSpan(0,0,10);
 		breedBarFillDelay = new TimeSpan(0,0,1);
-		yearFillDelay = new TimeSpan(0,1,0);
+		yearFillDelay = new TimeSpan(1,0,0);
 		yearFillTime = DateTime.Now + yearFillDelay;
 		blobHatchDelayOriginal = blobHatchDelay;
 		breedReadyDelayOriginal = breedReadyDelay;
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
 		breedBaseCost = 10;
 		breedCostMax = 100;
 		sellValue = 15;
-		breedingAge = 1;
+		breedingAge = new TimeSpan(0,0,0,2);
 		maxBreedcount = 3;
 		tributeGoldPerQuality = 2f;
 		tributeMaxMulitplier = 5f;
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
 		leftNavButton.gameObject.SetActive(false);
 
 		bool firstTime = (PlayerPrefs.GetInt("FirstTimeSetup") == 0);
-		if (firstTime)
+		if (true)//firstTime)
 		{
 			PlayerPrefs.SetInt("FirstTimeSetup", 1);;
 			gameVars = new GameVariables();
@@ -233,30 +233,6 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	void AgeAllBlobs()
-	{
-		if (nm.blobs != null)
-		{
-			foreach(Blob blob in nm.blobs)
-			{
-				if(blob.hasHatched ==  false)
-					continue;
-				blob.age++;
-			}
-		}
-
-		if (vm.blobs != null)
-		{
-			foreach(Blob blob in vm.blobs)
-			{
-				blob.age++;
-			}
-		}
-
-		nm.UpdateAllBlobCells();
-		vm.UpdateAllBlobCells();
-	}
-
 	
 	public void MissionsButtonPressed()
 	{
@@ -334,10 +310,10 @@ public class GameManager : MonoBehaviour
 		{
 			gameVars.year++;
 			yearLabel.text = "Year: " + gameVars.year.ToString();
-			AgeAllBlobs();
 			yearFillTime = DateTime.Now + yearFillDelay;
 		}
 
+		//make time go faster
 		if(timeScale != timeScaleOld)
 		{
 			timeScaleOld = timeScale;

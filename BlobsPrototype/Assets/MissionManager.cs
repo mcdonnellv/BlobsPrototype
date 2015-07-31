@@ -140,11 +140,7 @@ public class MissionManager : MonoBehaviour
 					}
 
 					//scale
-					float a = (float)(mission.blob.age > 3 ? 3 : mission.blob.age);
-					float s = .3f + (.7f * (a / 3f));
-					if(s > 1f)
-						s = 1f;
-					int pixels = (int)(s * 50f);
+					int pixels = (int)(mission.blob.BlobScale() * 50f);
 					sprites[1].SetDimensions(pixels, pixels);
 					sprites[2].SetDimensions(pixels, pixels);
 					sprites[3].SetDimensions(pixels, pixels);
