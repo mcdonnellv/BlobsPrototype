@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
 	public VillageManager vm;
 	public CastleManager cm;
 	public GeneManager mum;
+	public BodyPartManager bpm;
 	public GameObject missionView;
 	public GameObject breedingView;
 	public GameObject grid;

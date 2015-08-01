@@ -47,6 +47,7 @@ public class NurseryManager : MonoBehaviour
 		blob.male = true;
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
+		blob.SetRandomTextures();
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -55,6 +56,7 @@ public class NurseryManager : MonoBehaviour
 		blob.male = false;
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
+		blob.SetRandomTextures();
 		blobs.Add(blob);
 	}
 	
@@ -191,6 +193,7 @@ public class NurseryManager : MonoBehaviour
 			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
 		
 		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
+		blob.SetRandomTextures();
 
 		// Gene passing
 		blob.genes = CleanupGeneList(dad.genes.Union<Gene>(mom.genes).ToList<Gene>());
@@ -398,7 +401,17 @@ public class NurseryManager : MonoBehaviour
 		{gm.popup.Show("Cannot Sell", "Blob has not been hatched."); gm.popup.SetBlob(blob); return;}
 
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{gm.popup.Show("Cannot Sell", "Blob is still breeding."); gm.popup.SetBlob(blob); return;} 
+		{gm.popup.Show("Cannot Sell", "Blob is still breeding."); gm.popup.SetBlob(blob); return;}
+
+
+		bool lastOfGender = true;
+		foreach(Blob b in blobs)
+			if (b != blob && blob.male == b.male && b.hasHatched)
+				lastOfGender = false;
+
+		if (lastOfGender)
+		{gm.popup.Show("Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); gm.popup.SetBlob(blob); return;}
+
 
 		bc.Reset();
 		gm.AddGold(gm.sellValue);

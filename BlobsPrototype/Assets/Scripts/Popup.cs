@@ -11,7 +11,7 @@ public class Popup : MonoBehaviour
 	public UIButton button2;
 	public UISprite body;
 	public UISprite face;
-	public UISprite lashes;
+	public UISprite cheeks;
 
 
 	Vector3 buttonPos = new Vector3(0, -85f);
@@ -20,14 +20,19 @@ public class Popup : MonoBehaviour
 	{
 		body.gameObject.SetActive(show);
 		face.gameObject.SetActive(show);
-		lashes.gameObject.SetActive(show);
+		cheeks.gameObject.SetActive(show);
 	}
 
 	public void SetBlob(Blob blob)
 	{
 		ShowBlob(true);
+		Texture tex = blob.bodyPartSprites["Body"];
+		body.spriteName = tex.name;
+		tex = blob.bodyPartSprites["Eyes"];
+		face.spriteName = tex.name;
+
 		body.color = blob.GetBodyColor();
-		lashes.gameObject.SetActive(!blob.male);
+		cheeks.gameObject.SetActive(!blob.male);
 	}
 
 	public void Hide()

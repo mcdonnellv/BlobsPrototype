@@ -43,24 +43,29 @@ public class BlobPanel : MonoBehaviour
 		bc.egg.gameObject.SetActive(!blob.hasHatched);
 		bc.body.gameObject.SetActive(blob.hasHatched);
 		bc.face.gameObject.SetActive(blob.hasHatched);
-		bc.lashes.gameObject.SetActive(blob.hasHatched && !blob.male);
+		bc.cheeks.gameObject.SetActive(blob.hasHatched && !blob.male);
 
 
 		UISprite bg = bc.GetComponent<UISprite>();
 		UIButton button = bc.GetComponentInChildren<UIButton>();
-		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
+		bg.color = (blob.male) ? new Color(0.62f*1.4f, 0.714f*1.4f, 0.941f*1.4f,1f) : new Color(0.933f*1.4f, 0.604f*1.4f, 0.604f*1.4f, 1f);
 		bg.color = (blob.hasHatched) ? bg.color : Color.grey;
 		button.defaultColor = button.hover = bg.color;
 
 		UILabel[] labels = bc.GetComponentsInChildren<UILabel>();
 		labels[0].text = (blob.male || !blob.IsOfBreedingAge() || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
 
+		Texture tex = blob.bodyPartSprites["Body"];
+		bc.body.spriteName = tex.name;
+		tex = blob.bodyPartSprites["Eyes"];
+		bc.face.spriteName = tex.name;
+
 		bc.body.color = blob.color;
 
 		int pixels = (int)(blob.BlobScale() * 50f);
 		bc.body.SetDimensions(pixels, pixels);
 		bc.face.SetDimensions(pixels, pixels);
-		bc.lashes.SetDimensions(pixels, pixels);
+		bc.cheeks.SetDimensions(pixels, pixels);
 
 		bc.onMissionLabel.SetActive(blob.onMission);
 	}
@@ -76,7 +81,7 @@ public class BlobPanel : MonoBehaviour
 				int pixels = (int)(bc.blob.BlobScale() * 50f);
 				bc.body.SetDimensions(pixels, pixels);
 				bc.face.SetDimensions(pixels, pixels);
-				bc.lashes.SetDimensions(pixels, pixels);
+				bc.cheeks.SetDimensions(pixels, pixels);
 			}
 		}
 	}

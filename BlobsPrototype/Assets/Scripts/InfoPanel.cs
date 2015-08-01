@@ -12,7 +12,7 @@ public class InfoPanel : MonoBehaviour
 	public UILabel quality;
 	public UISprite body;
 	public UISprite face;
-	public UISprite lashes;
+	public UISprite cheeks;
 	public UISprite egg;
 	public UISprite bg;
 	public UISlider progress;
@@ -38,7 +38,7 @@ public class InfoPanel : MonoBehaviour
 			quality.text = "";
 			body.gameObject.SetActive(false);
 			face.gameObject.SetActive(false);
-			lashes.gameObject.SetActive(false);
+			cheeks.gameObject.SetActive(false);
 			bg.color = Color.grey;
 			button.gameObject.SetActive(false);
 			progress.gameObject.SetActive(false);
@@ -50,8 +50,12 @@ public class InfoPanel : MonoBehaviour
 
 		body.gameObject.SetActive(blob.hasHatched);
 		face.gameObject.SetActive(blob.hasHatched);
-		lashes.gameObject.SetActive(!blob.male && blob.hasHatched);
+		cheeks.gameObject.SetActive(!blob.male && blob.hasHatched);
 		egg.gameObject.SetActive(!blob.hasHatched);
+		Texture tex = blob.bodyPartSprites["Body"];
+		body.spriteName = tex.name;
+		tex = blob.bodyPartSprites["Eyes"];
+		face.spriteName = tex.name;
 		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
@@ -73,7 +77,7 @@ public class InfoPanel : MonoBehaviour
 		int pixels = (int)(blob.BlobScale() * 50f);
 		body.SetDimensions(pixels, pixels);
 		face.SetDimensions(pixels, pixels);
-		lashes.SetDimensions(pixels, pixels);
+		cheeks.SetDimensions(pixels, pixels);
 
 		if (!blob.hasHatched)
 		{
@@ -143,7 +147,7 @@ public class InfoPanel : MonoBehaviour
 				int pixels = (int)(theBlob.BlobScale() * 50f);
 				body.SetDimensions(pixels, pixels);
 				face.SetDimensions(pixels, pixels);
-				lashes.SetDimensions(pixels, pixels);
+				cheeks.SetDimensions(pixels, pixels);
 			}
 		}
 	}

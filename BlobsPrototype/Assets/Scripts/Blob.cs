@@ -37,6 +37,7 @@ public enum BlobTrait
 public class Blob
 {
 	GameManager gm;
+	//public Species species;
 	public bool male;
 	public Color color { get{return GetBodyColor();} }
 	public int breedCount;
@@ -53,6 +54,7 @@ public class Blob
 	public List<Gene> genes;
 	List<int> activeGeneIndexes;
 	public TimeSpan age {get {return DateTime.Now - birthday;}}
+	public Dictionary<string, Texture> bodyPartSprites;
 
 
 	public Blob()
@@ -67,6 +69,7 @@ public class Blob
 		goldProductionTime = new DateTime(0);
 		genes = new List<Gene>();
 		activeGeneIndexes = new List<int>();
+		bodyPartSprites = new Dictionary<string, Texture>();
 	}
 
 
@@ -168,11 +171,27 @@ public class Blob
 		return Mathf.Clamp(s, 0f, 1f);
 	}
 
+	public void SetRandomTextures()
+	{
+		SetBodyTexture();
+		SetEyeTexture();
+	}
+
+	public void SetBodyTexture()
+	{
+		bodyPartSprites.Add("Body", gm.bpm.bodyTextures[UnityEngine.Random.Range(0, gm.bpm.bodyTextures.Count)]);
+	}
+
+	public void SetEyeTexture()
+	{
+		bodyPartSprites.Add("Eyes", gm.bpm.eyeTextures[UnityEngine.Random.Range(0, gm.bpm.eyeTextures.Count)]);
+	}
 
 	static public string GetQualityStringFromValue(float quality)
 	{
 		return GetQualityFromEnum(GetQualityFromValue(quality));
 	}
+	
 
 
 	static public BlobQuality GetQualityFromValue(float quality)

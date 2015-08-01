@@ -10,7 +10,7 @@ public class BlobCell : MonoBehaviour
 	public GameObject onMissionLabel;
 	public UISprite body;
 	public UISprite face;
-	public UISprite lashes;
+	public UISprite cheeks;
 	public UISprite egg;
 	public UILabel eggLabel;
 	public Blob blob;

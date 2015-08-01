@@ -28,6 +28,7 @@ public class Gene : ScriptableObject
 	public enum Type
 	{
 		BodyColor,
+		FacialFeature,
 	};
 	
 	public string geneName;

@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameVariables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <gold>115</gold>
-  <year>0</year>
+  <gold>90</gold>
+  <year>1</year>
   <nurseryBlobs>
     <Blob>
       <male>true</male>
-      <breedCount>4</breedCount>
-      <quality>0.9</quality>
+      <breedCount>1</breedCount>
+      <quality>1</quality>
       <trait>None</trait>
       <job>None</job>
       <onMission>false</onMission>
-      <birthday>2015-07-30T18:28:40.9565449-07:00</birthday>
+      <birthday>2015-07-31T16:52:46.8568114-07:00</birthday>
       <hasHatched>true</hasHatched>
-      <hatchTime>2015-07-30T18:28:40.5659257-07:00</hatchTime>
+      <hatchTime>0001-01-01T00:00:00</hatchTime>
       <breedReadyTime>0001-01-01T00:00:00</breedReadyTime>
       <goldProductionTime>0001-01-01T00:00:00</goldProductionTime>
       <genes>
         <Gene>
           <hideFlags>None</hideFlags>
-          <geneName>Red</geneName>
-          <preRequisite>Blue</preRequisite>
+          <geneName>Blue</geneName>
+          <preRequisite />
           <geneStrength>Strong</geneStrength>
           <rarity>Common</rarity>
           <revealed>true</revealed>
           <type>BodyColor</type>
           <bodyColor>
-            <r>1</r>
-            <g>0.459</g>
-            <b>0.459</b>
+            <r>0</r>
+            <g>1</g>
+            <b>1</b>
             <a>1</a>
           </bodyColor>
         </Gene>
@@ -36,27 +36,27 @@
     <Blob>
       <male>false</male>
       <breedCount>1</breedCount>
-      <quality>1.1</quality>
+      <quality>1</quality>
       <trait>None</trait>
       <job>None</job>
       <onMission>false</onMission>
-      <birthday>2015-07-30T18:31:00.7650195-07:00</birthday>
+      <birthday>2015-07-31T16:52:46.8568114-07:00</birthday>
       <hasHatched>true</hasHatched>
-      <hatchTime>2015-07-30T18:30:59.7665004-07:00</hatchTime>
+      <hatchTime>0001-01-01T00:00:00</hatchTime>
       <breedReadyTime>0001-01-01T00:00:00</breedReadyTime>
       <goldProductionTime>0001-01-01T00:00:00</goldProductionTime>
       <genes>
         <Gene>
           <hideFlags>None</hideFlags>
-          <geneName>Purple</geneName>
-          <preRequisite>Red</preRequisite>
-          <geneStrength>Normal</geneStrength>
+          <geneName>Blue</geneName>
+          <preRequisite />
+          <geneStrength>Strong</geneStrength>
           <rarity>Common</rarity>
           <revealed>true</revealed>
           <type>BodyColor</type>
           <bodyColor>
-            <r>1</r>
-            <g>0</g>
+            <r>0</r>
+            <g>1</g>
             <b>1</b>
             <a>1</a>
           </bodyColor>
@@ -66,13 +66,13 @@
     <Blob>
       <male>true</male>
       <breedCount>0</breedCount>
-      <quality>1.2</quality>
+      <quality>1.1</quality>
       <trait>None</trait>
       <job>None</job>
       <onMission>false</onMission>
-      <birthday>2015-07-30T18:31:09.5464415-07:00</birthday>
-      <hasHatched>true</hasHatched>
-      <hatchTime>2015-07-30T18:31:09.1215051-07:00</hatchTime>
+      <birthday>0001-01-01T00:00:00</birthday>
+      <hasHatched>false</hasHatched>
+      <hatchTime>2015-07-31T16:53:42.4195603-07:00</hatchTime>
       <breedReadyTime>0001-01-01T00:00:00</breedReadyTime>
       <goldProductionTime>0001-01-01T00:00:00</goldProductionTime>
       <genes>
