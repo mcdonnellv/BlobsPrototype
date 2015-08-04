@@ -70,10 +70,10 @@ public class GeneManagerInspector : Editor
 			EditorGUI.indentLevel = 0;
 		}
 
-		if(GUILayout.Button("Delete All Genes"))
-		{
-			genes.Clear();
-			genes.TrimExcess();
-		}
+//		if(GUILayout.Button("Delete All Genes"))
+//		{
+//			genes.Clear();
+//			genes.TrimExcess();
+//		}
 	}
 }

@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
 	void Start ()
 	{
 		timeScaleOld = 0f;
-		timeScale = 1f;
+		timeScale = .001f;
 
 		blobHatchDelay = new TimeSpan(0,0,30);
 		breedReadyDelay = new TimeSpan(0,0,10);

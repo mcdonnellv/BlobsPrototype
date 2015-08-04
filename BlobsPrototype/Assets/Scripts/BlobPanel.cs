@@ -48,7 +48,8 @@ public class BlobPanel : MonoBehaviour
 
 		UISprite bg = bc.GetComponent<UISprite>();
 		UIButton button = bc.GetComponentInChildren<UIButton>();
-		bg.color = (blob.male) ? new Color(0.62f*1.4f, 0.714f*1.4f, 0.941f*1.4f,1f) : new Color(0.933f*1.4f, 0.604f*1.4f, 0.604f*1.4f, 1f);
+		float c = 1.0f;
+		bg.color = (blob.male) ? new Color(0.62f*c, 0.714f*c, 0.941f*c,1f) : new Color(0.933f*c, 0.604f*c, 0.604f*c, 1f);
 		bg.color = (blob.hasHatched) ? bg.color : Color.grey;
 		button.defaultColor = button.hover = bg.color;
 

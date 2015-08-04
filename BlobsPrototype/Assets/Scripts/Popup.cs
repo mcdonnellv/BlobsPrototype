@@ -45,16 +45,23 @@ public class Popup : MonoBehaviour
 	{
 		button2.gameObject.SetActive(false);
 		button1.transform.localPosition = new Vector3(buttonPos.x, buttonPos.y);
+		button1.onClick.Clear();
+		button1.onClick.Add(new EventDelegate(this, "Button1Pressed"));
+
 		headerLabel.text = header;
 		bodyLabel.text = body;
 		gameObject.SetActive(true);
 	}
 
-	public void ShowChoice(string header, string body)
+	public void ShowChoice(string header, string body, MonoBehaviour target, string methodName)
 	{
 		button2.gameObject.SetActive(true);
 		button2.transform.localPosition = new Vector3(buttonPos.x + 100f, buttonPos.y);
 		button1.transform.localPosition = new Vector3(buttonPos.x - 100f, buttonPos.y);
+
+		button1.onClick.Clear();
+		button1.onClick.Add(new EventDelegate(target, methodName));
+		button1.onClick.Add(new EventDelegate(this, "Button1Pressed"));
 
 		headerLabel.text = header;
 		bodyLabel.text = body;
@@ -63,8 +70,7 @@ public class Popup : MonoBehaviour
 
 	public void Button1Pressed()
 	{
-		if (button2.gameObject.activeSelf ==  false)
-			Hide();
+		Hide();
 	}
 
 	public void Button2Pressed()

@@ -8,7 +8,8 @@ public class InfoPanel : MonoBehaviour
 	public UILabel age;
 	public UILabel eggs;
 	public UILabel gender;
-	public UILabel genes;
+	public UILabel activeGenes;
+	public UILabel inactiveGenes;
 	public UILabel quality;
 	public UISprite body;
 	public UISprite face;
@@ -17,13 +18,8 @@ public class InfoPanel : MonoBehaviour
 	public UISprite bg;
 	public UISlider progress;
 	public UIButton button;
+	public GameObject genePanel;
 	Blob theBlob;
-
-	// Use this for initialization
-	void Start () 
-	{
-	
-	}
 
 	public void UpdateWithBlob(Blob blob)
 	{
@@ -31,7 +27,7 @@ public class InfoPanel : MonoBehaviour
 
 		if (blob == null)
 		{
-			genes.text = "";
+			activeGenes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
@@ -45,6 +41,7 @@ public class InfoPanel : MonoBehaviour
 			return;
 		}
 
+		genePanel.gameObject.SetActive(blob.hasHatched);
 		button.gameObject.SetActive(!blob.hasHatched);
 		progress.gameObject.SetActive(!blob.hasHatched);
 
@@ -59,10 +56,18 @@ public class InfoPanel : MonoBehaviour
 		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
-		string geneString = "Genes:";
+		activeGenes.text = "";
+		inactiveGenes.text = "";
 		foreach(Gene g in blob.genes)
-			geneString += "\n   " + g.geneName + (blob.IsGeneActive(g) ? "+" : "");
-		genes.text = geneString ;
+		{
+			if (blob.IsGeneActive(g))
+				activeGenes.text += g.geneName + "\n";
+			else
+				inactiveGenes.text += g.geneName + "\n";
+		}
+
+		activeGenes.text = activeGenes.text == "" ? "" : activeGenes.text.Remove(activeGenes.text.Length - 1);
+		inactiveGenes.text = inactiveGenes.text == "" ? "" : inactiveGenes.text.Remove(inactiveGenes.text.Length - 1); ;
 		eggs.text = "Eggs: " + (gm.maxBreedcount - blob.breedCount).ToString();
 		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
 		age.text = "Age: " + blob.age.ToString();
@@ -81,7 +86,7 @@ public class InfoPanel : MonoBehaviour
 
 		if (!blob.hasHatched)
 		{
-			genes.text = "";
+			activeGenes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
@@ -96,7 +101,11 @@ public class InfoPanel : MonoBehaviour
 			if(m.revealed == false)
 			{
 				m.revealed = true;
-				gm.popup.Show("New Gene Revealed", "You have discovered the " + m.geneName + " gene!" );
+				Gene mp = gm.mum.GetGeneByName(m.preRequisite);
+				if (mp == null || (mp != null && m.type != mp.type))
+					gm.popup.Show("New Gene Discovery", "This blob has been born with the new [9BFF9B]" + m.geneName + " gene[-]!");
+				else  
+					gm.popup.Show("New Gene Discovery", "This blob's [9BFF9B]" + m.preRequisite + " gene[-] has mutated into the [9BFF9B]" + m.geneName + " gene[-]!");
 				gm.popup.SetBlob(theBlob);
 			}
 		}

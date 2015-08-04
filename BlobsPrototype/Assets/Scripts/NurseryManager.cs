@@ -38,12 +38,7 @@ public class NurseryManager : MonoBehaviour
 
 	public void FirstTimeSetup()
 	{
-		Gene blueGene = gm.mum.GetGeneByName("Blue");
-		blueGene.revealed = true;
-
 		Blob blob = new Blob();
-		blob.genes.Add(blueGene);
-		blob.ActivateGene(blueGene);
 		blob.male = true;
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
@@ -51,8 +46,6 @@ public class NurseryManager : MonoBehaviour
 		blobs.Add(blob);
 		
 		blob = new Blob();
-		blob.genes.Add(blueGene);
-		blob.ActivateGene(blueGene);
 		blob.male = false;
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
@@ -195,11 +188,21 @@ public class NurseryManager : MonoBehaviour
 		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
 		blob.SetRandomTextures();
 
-		// Gene passing
-		blob.genes = CleanupGeneList(dad.genes.Union<Gene>(mom.genes).ToList<Gene>());
-
 		//check for possible new genes
-		RollForNewGene(blob);
+		List<Gene> parentGenes = dad.genes.Union<Gene>(mom.genes).ToList<Gene>();
+		Gene newGene = RollForNewGene(blob, parentGenes);
+
+		if(newGene == null)
+		{
+			// Gene passing
+			blob.genes = CleanupGeneList(parentGenes);
+			LimitGenesTo(blob, blob.allowedGeneCount);
+		}
+		else
+		{
+			blob.genes.Add(newGene);
+			blob.quality = 1f;
+		}
 
 		blob.ActivateGenes();
 
@@ -209,7 +212,7 @@ public class NurseryManager : MonoBehaviour
 
 	public List<Gene> CleanupGeneList(List<Gene> genes)
 	{
-		//remove genes of the same name first
+		//remove dupe genes first
 		genes = genes.Distinct().ToList();
 
 		for (int i = 0; i < genes.Count; i++)
@@ -257,64 +260,60 @@ public class NurseryManager : MonoBehaviour
 			}
 		}
 
+		// a blob may only have 6 genes, 3 active genes and 3 inactive genes at most
+
 		return genes;
 	}
 
 
-	public void RollForNewGene(Blob blob)
+	public void LimitGenesTo(Blob blob, int count)
 	{
-		bool blueGenePresent = false;
+		if(blob.genes.Count > count)
+		{
+			List<Gene> genesNew = new List<Gene>();
+			List<Gene> genesOld = blob.genes.ToList();
+
+			for (int i=0; i<count; i++)
+			{
+				Gene g = GeneManager.GetRandomGeneBasedOnStrength(genesOld);
+				genesNew.Add(g);
+				genesOld.Remove(g);
+			}
+
+			blob.genes = genesNew;
+		}
+	}
+
+	
+	public Gene RollForNewGene(Blob blob, List<Gene> preReqList)
+	{
 		List<Gene> allEligibleGenes = new List<Gene>();
-		foreach(Gene gene in blob.genes)
+		foreach(Gene gene in preReqList)
 		{
 			List<Gene> eligibleGenes = GeneManager.GetGenesWithPrerequisite(gm.mum.genes, gene.geneName);
 			allEligibleGenes = allEligibleGenes.Union<Gene>(eligibleGenes).ToList<Gene>();
 		}
 
-		//prune genes that exist in the player's blobs
+		allEligibleGenes = allEligibleGenes.Union<Gene>(GeneManager.GetGenesWithPrerequisite(gm.mum.genes, "")).Distinct ().ToList<Gene>();
+
+		//prune genes that currently exist amongthe player's blob population
 		foreach(Blob b in blobs)//for now only look at nursery blobs
 			foreach(Gene gene in b.genes)
-			{
-			if(gene.geneName == "Blue")
-					blueGenePresent = true;
-
 				foreach(Gene eg in allEligibleGenes)
 				    if(eg.geneName == gene.geneName)
 					{
 						allEligibleGenes.Remove(eg);
 						break;
 					}
-			}
-
-		if(!blueGenePresent)
-		{
-			allEligibleGenes.Clear();
-			allEligibleGenes.Add(gm.mum.GetGeneByName("Blue"));
-		}
 
 		List<Gene> rollSuccessGenes = new List<Gene>();
-		float geneRoll = UnityEngine.Random.Range(0f,1f);
+		float geneRoll = 0f;//UnityEngine.Random.Range(0f,1f);
 		foreach(Gene eligibleGene in allEligibleGenes)
 			if (geneRoll <= eligibleGene.revealChance)
 				rollSuccessGenes.Add(eligibleGene);
 			
 		Gene newGene = GeneManager.GetRandomGeneBasedOnRarity(rollSuccessGenes);
-		
-		if(newGene != null)
-		{
-			//remove all other genes of the same type
-			for (int i = 0; i < blob.genes.Count; i++)
-			{
-				if(newGene.type == blob.genes[i].type)
-				{
-					blob.genes.Remove(blob.genes[i]);
-					i--;
-				}
-			}
-
-			blob.genes.Add(newGene);
-			blob.ActivateGene(newGene);
-		}
+		return newGene;
 	}
 
 
@@ -393,31 +392,74 @@ public class NurseryManager : MonoBehaviour
 	{
 		Blob blob = blobs[curSelectedIndex];
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
-
+		
 		if (blob.onMission) 
 		{gm.popup.Show("Cannot Sell", "Blob is on a mission."); gm.popup.SetBlob(blob); return;}
-
+		
 		if (blob.hasHatched == false)
-		{gm.popup.Show("Cannot Sell", "Blob has not been hatched."); gm.popup.SetBlob(blob); return;}
-
+		{gm.popup.Show("Cannot Sell", "Blob has not been hatched."); return;}
+		
 		if (blob.breedReadyTime > System.DateTime.Now)
 		{gm.popup.Show("Cannot Sell", "Blob is still breeding."); gm.popup.SetBlob(blob); return;}
-
-
+		
 		bool lastOfGender = true;
 		foreach(Blob b in blobs)
 			if (b != blob && blob.male == b.male && b.hasHatched)
 				lastOfGender = false;
-
+		
 		if (lastOfGender)
 		{gm.popup.Show("Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); gm.popup.SetBlob(blob); return;}
 
+		Gene lastGene = null;
+		foreach(Gene g1 in blob.genes)
+		{
+			bool geneDupeFound = false;
+			foreach(Blob b in blobs)
+			{
+				if(b == blob)
+					continue;
 
+				foreach(Gene g2 in b.genes)
+				{
+					if(g1 == g2)
+					{
+						geneDupeFound = true;
+						break;
+					}
+				}
+
+				if(geneDupeFound)
+					break;
+			}
+
+			if(!geneDupeFound)
+			{
+				lastGene = g1;
+				break;
+			}
+		}
+				
+		if (lastGene != null)
+		{
+			gm.popup.ShowChoice("Warning!", 
+			                     "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to sell this blob?", 
+			                    this, "SellBlobFinal"); gm.popup.SetBlob(blob); 
+			return;
+		}
+
+		gm.popup.ShowChoice("Sell Blob", "Are you sure you want to sell this blob?", this, "SellBlobFinal");
+		gm.popup.SetBlob(blob);
+	}
+
+
+	void SellBlobFinal() 
+	{
+		Blob blob = blobs[curSelectedIndex];
+		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		bc.Reset();
 		gm.AddGold(gm.sellValue);
 		DeleteBlob(blob);
 	}
-
 
 	public bool IsFull() {return(blobs.Count >= maxBlobs);}
 

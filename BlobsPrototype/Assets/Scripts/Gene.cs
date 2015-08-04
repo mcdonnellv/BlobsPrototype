@@ -29,6 +29,9 @@ public class Gene : ScriptableObject
 	{
 		BodyColor,
 		FacialFeature,
+		TestType1,
+		TestType2,
+		TestType3,
 	};
 	
 	public string geneName;

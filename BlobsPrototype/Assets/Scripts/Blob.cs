@@ -39,7 +39,6 @@ public class Blob
 	GameManager gm;
 	//public Species species;
 	public bool male;
-	public Color color { get{return GetBodyColor();} }
 	public int breedCount;
 	public float quality;
 	public BlobTrait trait;
@@ -53,6 +52,8 @@ public class Blob
 	public DateTime goldProductionTime;
 	public List<Gene> genes;
 	List<int> activeGeneIndexes;
+	public Color color { get{return GetBodyColor();} }
+	public int allowedGeneCount { get{return GetGeneCountFromQuality(GetQualityFromValue(quality));} }
 	public TimeSpan age {get {return DateTime.Now - birthday;}}
 	public Dictionary<string, Texture> bodyPartSprites;
 
@@ -70,6 +71,26 @@ public class Blob
 		genes = new List<Gene>();
 		activeGeneIndexes = new List<int>();
 		bodyPartSprites = new Dictionary<string, Texture>();
+	}
+	
+
+	public List<Gene> GetActiveGenes()
+	{
+		List<Gene> activeGeneList = new List<Gene>();
+		foreach(Gene g in genes)
+			if(IsGeneActive(g))
+				activeGeneList.Add(g);
+		return activeGeneList;
+	}
+
+
+	public List<Gene> GetInactiveGenes()
+	{
+		List<Gene> inactiveGeneList = new List<Gene>();
+		foreach(Gene g in genes)
+			if(IsGeneActive(g) == false)
+				inactiveGeneList.Add(g);
+		return inactiveGeneList;
 	}
 
 
@@ -124,10 +145,10 @@ public class Blob
 		{
 			if(IsGeneTypeActive(g.type))
 				continue;
-
 			List<Gene> genesOfTheSameType = GeneManager.GetGenesOfType(genes, g.type);
 			Gene geneToActivate = GeneManager.GetRandomGeneBasedOnStrength(genesOfTheSameType);
-			ActivateGene(geneToActivate);
+			if(GetActiveGenes().Count < 3)
+				ActivateGene(geneToActivate);
 		}
 	}
 
@@ -152,7 +173,7 @@ public class Blob
 		for(int i=0; i < activeGeneIndexes.Count; i++)
 			if(genes[activeGeneIndexes[i]].type == Gene.Type.BodyColor)
 				return genes[activeGeneIndexes[i]].bodyColor;
-		return Color.white;
+		return new Color(0.165f, 0.745f, 0.925f, 1f);
 	}
 
 
@@ -225,6 +246,20 @@ public class Blob
 
 		return "";
 	} 
+
+	static public int GetGeneCountFromQuality(BlobQuality quality)
+	{
+		switch (quality)
+		{
+		case BlobQuality.Poor: return 2;
+		case BlobQuality.Fair: return 4;
+		case BlobQuality.Good: return 6;
+		case BlobQuality.Excellent: return 8;
+		case BlobQuality.Outstanding: return 10;
+		}
+		
+		return 2;
+	}
 
 
 	static public float GetNewQuality (float q1, float q2)
