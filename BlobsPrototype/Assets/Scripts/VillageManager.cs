@@ -82,8 +82,10 @@ public class VillageManager : MonoBehaviour
 			blobPanel.UpdateBlobCellWithBlob(i, blobs[i]);
 		
 		blobPanel.UpdateBlobCellWithBlob(blobs.Count, null);
-		infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
-		
+		if(curSelectedIndex < blobs.Count)
+			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
+		else
+			infoPanel.UpdateWithBlob(null);
 		gm.UpdateAverageQuality();
 		gm.nm.UpdateBreedCost();
 		UpdateMaxTribute();
@@ -92,14 +94,14 @@ public class VillageManager : MonoBehaviour
 
 	public void PressSellButton()
 	{
+		gm.TrySellBlob(blobs[curSelectedIndex], this);
+	}
+
+
+	void SellBlobFinal() 
+	{
 		Blob blob = blobs[curSelectedIndex];
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
-		if(bc.progressBar.value > 0f)
-			return;
-
-		if (blob.onMission)
-			return;
-		
 		bc.Reset();
 		gm.AddGold(gm.sellValue);
 		DeleteBlob(blob);
@@ -147,14 +149,18 @@ public class VillageManager : MonoBehaviour
 
 	public void PressToNurseryButton()
 	{
-		if (blobs.Count <= 0 || curSelectedIndex >= blobs.Count || gm.nm.IsFull())
+		if (blobs.Count <= 0 || curSelectedIndex >= blobs.Count)
 			return;
-
+		
 		Blob blob = blobs[curSelectedIndex];
 
+		if (gm.nm.IsFull()) 
+		{gm.popup.Show("Cannot Move", "There is no more space in the Nursery."); gm.popup.SetBlob(blob); return;}
+		
 		int cost = (int)(blob.quality * 30f);
-		if (gm.gold < cost)
-			return;
+		if (gm.gold < cost) 
+		{gm.popup.Show("Cannot Move", "You do not have enough Gold."); gm.popup.SetBlob(blob); return;}
+
 
 		gm.AddGold(-cost);
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];

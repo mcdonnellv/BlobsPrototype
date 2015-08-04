@@ -60,8 +60,9 @@ public class Popup : MonoBehaviour
 		button1.transform.localPosition = new Vector3(buttonPos.x - 100f, buttonPos.y);
 
 		button1.onClick.Clear();
-		button1.onClick.Add(new EventDelegate(target, methodName));
+
 		button1.onClick.Add(new EventDelegate(this, "Button1Pressed"));
+		button1.onClick.Add(new EventDelegate(target, methodName));
 
 		headerLabel.text = header;
 		bodyLabel.text = body;

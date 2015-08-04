@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using System.Linq;
 
 [System.Serializable]
 public class GameVariables 
@@ -14,6 +15,7 @@ public class GameVariables
 	public List<Blob> nurseryBlobs;
 	public List<Blob> villageBlobs;
 	public List<Blob> castleBlobs;
+	public List<Blob> allBlobs {get {return (nurseryBlobs.Union(villageBlobs.Union(castleBlobs))).ToList();} }
 }
 
 public class GameManager : MonoBehaviour 
@@ -45,13 +47,14 @@ public class GameManager : MonoBehaviour
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
 	public TimeSpan breedBarFillDelay;
+	public TimeSpan blobGoldProductionDelay;
 	public TimeSpan yearFillDelay;
 	public DateTime yearFillTime;
 
 
 	public float tributeGoldPerQuality;
 	public float tributeMaxMulitplier;
-	public TimeSpan blobGoldProductionDelay;
+
 	public int maxBlobs;
 
 	public int breedCost;
@@ -70,6 +73,7 @@ public class GameManager : MonoBehaviour
 	TimeSpan blobHatchDelayOriginal;
 	TimeSpan breedReadyDelayOriginal;
 	TimeSpan breedBarFillDelayOriginal;
+	TimeSpan blobGoldProductionDelayOriginal;
 	TimeSpan yearFillDelayOriginal;
 
 
@@ -77,16 +81,18 @@ public class GameManager : MonoBehaviour
 	void Start ()
 	{
 		timeScaleOld = 0f;
-		timeScale = .001f;
+		timeScale = 1f;
 
 		blobHatchDelay = new TimeSpan(0,0,30);
 		breedReadyDelay = new TimeSpan(0,0,10);
 		breedBarFillDelay = new TimeSpan(0,0,1);
+		blobGoldProductionDelay = new TimeSpan(0,0,10);
 		yearFillDelay = new TimeSpan(1,0,0);
 		yearFillTime = DateTime.Now + yearFillDelay;
 		blobHatchDelayOriginal = blobHatchDelay;
 		breedReadyDelayOriginal = breedReadyDelay;
 		yearFillDelayOriginal = yearFillDelay;
+		blobGoldProductionDelayOriginal = blobGoldProductionDelay;
 		breedBarFillDelayOriginal = breedBarFillDelay;
 
 		maxBlobs = 20;
@@ -235,6 +241,69 @@ public class GameManager : MonoBehaviour
 	}
 
 	
+	public void TrySellBlob(Blob blob, MonoBehaviour target)
+	{
+		if (blob.onMission) 
+		{popup.Show("Cannot Sell", "Blob is on a mission."); popup.SetBlob(blob); return;}
+		
+		if (blob.hasHatched == false)
+		{popup.Show("Cannot Sell", "Blob has not been hatched."); return;}
+		
+		if (blob.breedReadyTime > System.DateTime.Now)
+		{popup.Show("Cannot Sell", "Blob is still breeding."); popup.SetBlob(blob); return;}
+		
+		bool lastOfGender = true;
+		List<Blob> allBlobs = gameVars.allBlobs;
+		foreach(Blob b in allBlobs)
+			if (b != blob && blob.male == b.male && b.hasHatched)
+				lastOfGender = false;
+		
+		if (lastOfGender)
+		{popup.Show("Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); popup.SetBlob(blob); return;}
+		
+		Gene lastGene = null;
+		foreach(Gene g1 in blob.genes)
+		{
+			bool geneDupeFound = false;
+			foreach(Blob b in allBlobs)
+			{
+				if(b == blob)
+					continue;
+				
+				foreach(Gene g2 in b.genes)
+				{
+					if(g1 == g2)
+					{
+						geneDupeFound = true;
+						break;
+					}
+				}
+				
+				if(geneDupeFound)
+					break;
+			}
+			
+			if(!geneDupeFound)
+			{
+				lastGene = g1;
+				break;
+			}
+		}
+		
+		if (lastGene != null)
+		{
+			popup.ShowChoice("Warning!", 
+			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to sell this blob?", 
+			                 target, "SellBlobFinal"); 
+			popup.SetBlob(blob); 
+			return;
+		}
+		
+		popup.ShowChoice("Sell Blob", "Are you sure you want to sell this blob?", target, "SellBlobFinal");
+		popup.SetBlob(blob);
+	}
+	
+
 	public void MissionsButtonPressed()
 	{
 		breedingView.SetActive(false);
@@ -321,6 +390,7 @@ public class GameManager : MonoBehaviour
 			blobHatchDelay = new TimeSpan(0,0,(int)(blobHatchDelayOriginal.TotalSeconds * timeScale));
 			breedReadyDelay = new TimeSpan(0,0,(int)(breedReadyDelayOriginal.TotalSeconds * timeScale));
 			breedBarFillDelay = new TimeSpan(0,0,(int)(breedBarFillDelayOriginal.TotalSeconds * timeScale));
+			blobGoldProductionDelay = new TimeSpan(0,0,(int)(blobGoldProductionDelayOriginal.TotalSeconds * timeScale));
 			yearFillDelay = new TimeSpan(0,0,(int)(yearFillDelayOriginal.TotalSeconds * timeScale));
 		}
 	}

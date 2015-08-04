@@ -41,6 +41,7 @@ public class Gene : ScriptableObject
 	public bool revealed = false;
 	public Type type;
 	public Color bodyColor;
+	public bool negativeEffect;
 	public float revealChance { get {return Gene.RevealChanceForRarity(rarity);} }
 	public string name {get{return geneName;}}
 

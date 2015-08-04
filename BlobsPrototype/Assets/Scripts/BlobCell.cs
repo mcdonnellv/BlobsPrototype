@@ -76,16 +76,16 @@ public class BlobCell : MonoBehaviour
 		//blob belongs to village
 		if (blob != null && parent == gm.vm.gameObject)
 		{
-			if(gm.vm.IsMaxTributeReached())
+			if (blob.goldProductionTime > System.DateTime.Now)
 			{
-				blob.goldProductionTime = new System.DateTime(0);
-				progressBar.value = 0f;
+				System.TimeSpan ts = (blob.goldProductionTime - System.DateTime.Now);
+				progressBar.value = 1f - (float)(ts.TotalSeconds / gm.blobGoldProductionDelay.TotalSeconds);
 			}
-
-			System.TimeSpan ts = (blob.goldProductionTime - System.DateTime.Now);
-			progressBar.value = 1f - (float)(ts.TotalSeconds / gm.blobGoldProductionDelay.TotalSeconds);
-
-			if (blob.goldProductionTime < System.DateTime.Now)
+			else if(gm.vm.IsMaxTributeReached())
+			{
+				progressBar.value = 1f;
+			}
+			else
 			{
 				blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
 				gm.vm.AddTribute(blob.quality);

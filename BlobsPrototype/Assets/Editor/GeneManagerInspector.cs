@@ -39,6 +39,7 @@ public class GeneManagerInspector : Editor
 				    gene.preRequisite = "";
 				gene.rarity = (Gene.Rarity)EditorGUILayout.EnumPopup("Rarity: ", gene.rarity);
 				gene.geneStrength = (Gene.GeneStrength)EditorGUILayout.EnumPopup("Strength: ", gene.geneStrength);
+				gene.negativeEffect = EditorGUILayout.Toggle("Negative Effect", !gene.negativeEffect);
 				gene.type = (Gene.Type)EditorGUILayout.EnumPopup(gene.type);
 				switch(gene.type)
 				{
@@ -60,6 +61,7 @@ public class GeneManagerInspector : Editor
 					m.geneName = newName;
 					m.type = Gene.Type.BodyColor;
 					m.geneStrength = Gene.GeneStrength.Normal;
+					m.negativeEffect = true;
 					genes.Add(m);
 				}
 				newName = "";

@@ -18,7 +18,9 @@ public class InfoPanel : MonoBehaviour
 	public UISprite bg;
 	public UISlider progress;
 	public UIButton button;
-	public GameObject genePanel;
+	public UISprite genePanel;
+	public UISprite genePanelActive;
+	public UISprite genePanelInactive;
 	Blob theBlob;
 
 	public void UpdateWithBlob(Blob blob)
@@ -41,7 +43,7 @@ public class InfoPanel : MonoBehaviour
 			return;
 		}
 
-		genePanel.gameObject.SetActive(blob.hasHatched);
+		genePanel.gameObject.SetActive(blob.hasHatched && blob.genes.Count > 0);
 		button.gameObject.SetActive(!blob.hasHatched);
 		progress.gameObject.SetActive(!blob.hasHatched);
 
@@ -61,9 +63,23 @@ public class InfoPanel : MonoBehaviour
 		foreach(Gene g in blob.genes)
 		{
 			if (blob.IsGeneActive(g))
-				activeGenes.text += g.geneName + "\n";
+			{
+				string colorString = (g.negativeEffect) ? "[FF9B9B]" : "[9BFF9BFF]";
+				activeGenes.text += colorString + g.geneName + "[-]\n";
+			}
 			else
 				inactiveGenes.text += g.geneName + "\n";
+		}
+
+		if(inactiveGenes.text == "")
+		{
+			genePanelActive.width = 180;
+			genePanelInactive.gameObject.SetActive(false);
+		}
+		else
+		{
+			genePanelActive.width = 92;
+			genePanelInactive.gameObject.SetActive(true);
 		}
 
 		activeGenes.text = activeGenes.text == "" ? "" : activeGenes.text.Remove(activeGenes.text.Length - 1);
@@ -102,10 +118,12 @@ public class InfoPanel : MonoBehaviour
 			{
 				m.revealed = true;
 				Gene mp = gm.mum.GetGeneByName(m.preRequisite);
+				string colorString = (m.negativeEffect) ? "[FF9B9B]" : "[9BFF9BFF]";
+
 				if (mp == null || (mp != null && m.type != mp.type))
-					gm.popup.Show("New Gene Discovery", "This blob has been born with the new [9BFF9B]" + m.geneName + " gene[-]!");
+					gm.popup.Show("New Gene Discovery", "This blob has been born with the new " + colorString + m.geneName + " gene[-]!");
 				else  
-					gm.popup.Show("New Gene Discovery", "This blob's [9BFF9B]" + m.preRequisite + " gene[-] has mutated into the [9BFF9B]" + m.geneName + " gene[-]!");
+					gm.popup.Show("New Gene Discovery", "This blob's [9BFF9B]" + m.preRequisite + " gene[-] has mutated into the " + colorString + m.geneName + " gene[-]!");
 				gm.popup.SetBlob(theBlob);
 			}
 		}
