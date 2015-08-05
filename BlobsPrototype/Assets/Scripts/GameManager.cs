@@ -10,6 +10,7 @@ using System.Linq;
 [System.Serializable]
 public class GameVariables 
 {
+	public int blobsSpawned = 0;
 	public int gold;
 	public int year;
 	public List<Blob> nurseryBlobs;
@@ -81,7 +82,7 @@ public class GameManager : MonoBehaviour
 	void Start ()
 	{
 		timeScaleOld = 0f;
-		timeScale = 1f;
+		timeScale = .1f;
 
 		blobHatchDelay = new TimeSpan(0,0,30);
 		breedReadyDelay = new TimeSpan(0,0,10);
@@ -119,7 +120,7 @@ public class GameManager : MonoBehaviour
 		yearProgressBar.value = 0f;
 
 		Vector3 pos = gameCam.transform.localPosition;
-		pos.x = 740f * 2;
+		pos.x = 1334f * 1;
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
 		rightNavButton.gameObject.SetActive(false);
 		leftNavButton.gameObject.SetActive(false);
@@ -315,14 +316,14 @@ public class GameManager : MonoBehaviour
 	public void RightNavButtonPressed()
 	{
 		leftNavButton.gameObject.SetActive(true);
-		float sw = 740f;
+		float sw = 1334f;
 		Vector3 pos = gameCam.transform.localPosition;
-		pos.x += (pos.x >= sw*3) ? 0f : sw;
+		pos.x += (pos.x >= sw*2) ? 0f : sw;
 
-		if (pos.x >= sw*2 && vm.villageExists == false)
+		if (pos.x >= sw*1 && vm.villageExists == false)
 			rightNavButton.gameObject.SetActive(false);
 
-		if (pos.x >= sw*3)
+		if (pos.x >= sw*2)
 			rightNavButton.gameObject.SetActive(false);
 
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
@@ -332,14 +333,14 @@ public class GameManager : MonoBehaviour
 	public void LeftNavButtonPressed()
 	{
 		rightNavButton.gameObject.SetActive(true);
-		float sw = 740f;
+		float sw = 1334f;
 		Vector3 pos = gameCam.transform.localPosition;
-		pos.x -= (pos.x <= sw*1) ? 0f : sw;
+		pos.x -= (pos.x <= 0) ? 0f : sw;
 
-		if (pos.x <= sw*2 && cm.castleExists == false)
+		if (pos.x <= sw*1 && cm.castleExists == false)
 			leftNavButton.gameObject.SetActive(false);
 
-		if (pos.x <= sw*1)
+		if (pos.x <= sw*0)
 			leftNavButton.gameObject.SetActive(false);
 
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);

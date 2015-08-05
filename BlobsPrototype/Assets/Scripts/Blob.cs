@@ -37,7 +37,10 @@ public enum BlobTrait
 public class Blob
 {
 	GameManager gm;
-	//public Species species;
+	public int id;
+	public int momId;
+	public int dadId;
+	public int spouseId;
 	public bool male;
 	public int breedCount;
 	public float quality;
@@ -71,6 +74,9 @@ public class Blob
 		genes = new List<Gene>();
 		activeGeneIndexes = new List<int>();
 		bodyPartSprites = new Dictionary<string, Texture>();
+		momId = -1;
+		dadId = -1;
+		spouseId = -1;
 	}
 	
 
@@ -264,9 +270,9 @@ public class Blob
 
 	static public float GetNewQuality (float q1, float q2)
 	{
-		float combined = (q1 + q2) / 2f;
-		float rand = UnityEngine.Random.Range(.1f, .4f);
-		float f = (combined * .8f) + (combined * rand);
+		float average = (q1 + q2) / 2f;
+		float rand = UnityEngine.Random.Range(.0f, .15f);
+		float f = average + (average * rand);
 		return Mathf.Round(f * 10f) / 10f;
 	}
 }

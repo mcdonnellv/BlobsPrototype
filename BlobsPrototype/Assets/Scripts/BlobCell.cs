@@ -11,8 +11,10 @@ public class BlobCell : MonoBehaviour
 	public UISprite body;
 	public UISprite face;
 	public UISprite cheeks;
+	public UISprite heart;
 	public UISprite egg;
 	public UILabel eggLabel;
+	public UILabel infoLabel;
 	public Blob blob;
 
 	// Use this for initialization
@@ -30,6 +32,8 @@ public class BlobCell : MonoBehaviour
 	{
 		progressBar.value = 0f;
 		eggLabel.text = "";
+		infoLabel.text = "";
+		heart.gameObject.SetActive(false);
 	}
 
 	void Update () 

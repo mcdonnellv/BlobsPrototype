@@ -43,6 +43,7 @@ public class NurseryManager : MonoBehaviour
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
+		blob.id = gm.gameVars.blobsSpawned++;
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -50,6 +51,7 @@ public class NurseryManager : MonoBehaviour
 		blob.Hatch();
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
+		blob.id = gm.gameVars.blobsSpawned++;
 		blobs.Add(blob);
 	}
 	
@@ -165,6 +167,14 @@ public class NurseryManager : MonoBehaviour
 
 	void BreedBlobs(Blob maleBlob, Blob femaleBlob)
 	{
+		//break previous spouse bonds
+		foreach(Blob b in blobs)
+			if(b.id == maleBlob.spouseId || b.id == femaleBlob.spouseId)
+				b.spouseId = -1;
+		// make new bonds
+		maleBlob.spouseId = femaleBlob.id;
+		femaleBlob.spouseId = maleBlob.id;
+
 		maleBlob.breedCount++;
 		femaleBlob.breedCount++;
 
@@ -179,6 +189,9 @@ public class NurseryManager : MonoBehaviour
 	public Blob GenerateNewBlobBasedOnBlobs(Blob dad, Blob mom)
 	{
 		Blob blob = new Blob();
+		blob.id = gm.gameVars.blobsSpawned++;
+		blob.dadId = dad.id;
+		blob.momId = mom.id;
 		blob.hasHatched = false;
 		int totalEggs = GetTotalEggs();
 
@@ -355,10 +368,35 @@ public class NurseryManager : MonoBehaviour
 			return;
 
 		curSelectedIndex = index;
-		infoPanel.UpdateWithBlob(blobs[index]);
+		Blob blob = blobs[index];
+		BlobCell bc = blobPanel.blobCells[index];
+		infoPanel.UpdateWithBlob(blob);
 		UpdateSellValue();
 
-		BlobCell bc = blobPanel.blobCells[index];
+		foreach(Blob b in blobs)
+		{
+			BlobCell cell = blobPanel.blobCells[blobs.IndexOf(b)];
+			cell.heart.gameObject.SetActive(false);
+		}
+
+		foreach(Blob b in blobs)
+		{
+			BlobCell cell = blobPanel.blobCells[blobs.IndexOf(b)];
+			if(b.id == blob.dadId)
+				cell.infoLabel.text = "Dad";
+			else if(b.id == blob.momId)
+				cell.infoLabel.text = "Mom";
+			else
+				cell.infoLabel.text = "";
+
+			if(b.id == blob.spouseId && b.spouseId == blob.id)
+			{
+				cell.heart.gameObject.SetActive(true);
+				bc.heart.gameObject.SetActive(true);
+			}
+		}
+
+
 		bc.gameObject.SendMessage("OnClick");
 	}
 	
@@ -386,8 +424,61 @@ public class NurseryManager : MonoBehaviour
 		breedButton.isEnabled = false;
 		breedTime = System.DateTime.Now + gm.breedBarFillDelay;
 
-		Blob maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
-		Blob femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
+		Blob maleBlob = null;
+		Blob femaleBlob = null;
+		List<Blob> singleFemales = new List<Blob>();
+		foreach(Blob b in femaleBlobs)
+			if(b.spouseId == -1)
+				singleFemales.Add(b);
+
+		while(femaleBlob == null)
+		{
+			maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
+
+			if(maleBlobs.Count == 1) //last male
+				femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
+			else if (maleBlob.spouseId == -1) //no partner
+			{
+				if(singleFemales.Count > 0)
+					femaleBlob = singleFemales[UnityEngine.Random.Range(0, singleFemales.Count)];
+				else
+				{
+					// this male blob will just have to wait. try select another male blob
+					maleBlobs.Remove(maleBlob);
+					maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
+				}
+			}
+			else //had a previous partner
+			{
+				foreach(Blob b in femaleBlobs)
+					if (b.id == maleBlob.spouseId)
+						femaleBlob = b;
+
+				if(femaleBlob == null && singleFemales.Count > 0)
+					femaleBlob = singleFemales[UnityEngine.Random.Range(0, singleFemales.Count)];
+				else
+					maleBlobs.Remove(maleBlob);
+			}
+		}
+
+
+		if (maleBlob.spouseId != -1)
+		{
+			//had a previous partner
+			foreach(Blob b in femaleBlobs)
+			{
+				if (b.id == maleBlob.spouseId)
+				{
+					// found her!
+					femaleBlob = b;
+					break;
+				}
+			}
+		}
+
+		if(femaleBlob == null) // shes gone! get a new wife.
+			femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
+		
 		gm.AddGold(-gm.breedCost);
 		BreedBlobs(maleBlob, femaleBlob);
 	}
