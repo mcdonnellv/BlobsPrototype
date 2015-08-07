@@ -54,7 +54,7 @@ public class BlobPanel : MonoBehaviour
 		button.defaultColor = button.hover = bg.color;
 
 		UILabel[] labels = bc.GetComponentsInChildren<UILabel>();
-		labels[0].text = (blob.male || !blob.IsOfBreedingAge() || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
+		bc.eggLabel.text = (blob.male || !blob.hasHatched) ? "" : (gm.maxBreedcount - blob.breedCount).ToString();
 
 		Texture tex = blob.bodyPartSprites["Body"];
 		bc.body.spriteName = tex.name;

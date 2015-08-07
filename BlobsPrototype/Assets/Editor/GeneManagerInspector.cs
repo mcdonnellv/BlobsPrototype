@@ -10,36 +10,44 @@ public class GeneManagerInspector : Editor
 	GeneManager mm;
 	bool showGenes = false;
 	List <Gene>genes = null;
+	List <string>surnames = null;
 	string newName;
+	string giantstr;
 
 
 	public override void OnInspectorGUI()
 	{
 		mm = (GeneManager)target;
-		genes = mm.genes;//.ToList();
+		genes = mm.genes.OrderBy(x => x.type).ToList();
 		EditorGUILayout.LabelField("Total Genes: " + genes.Count);
-
 
 		showGenes = EditorGUILayout.Foldout(showGenes,"Genes (" + genes.Count + ")");
 		if (showGenes)
 		{
-			foreach(Gene gene in genes)
+			for (int i=0;i<genes.Count; i++)
 			{
+				Gene gene = genes[i];
+
 				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginHorizontal();
 				gene.geneName = EditorGUILayout.TextField("Name: ", gene.geneName, GUILayout.Width(200f));
 				GUI.backgroundColor = Color.red;
 				if(GUILayout.Button("Delete"))
+				{
+					mm.genes.Remove(gene);
 					genes.Remove(gene);
+					i--;
+				}
 				GUI.backgroundColor = Color.white;
 				EditorGUILayout.EndHorizontal();
 				EditorGUI.indentLevel += 1;
+				gene.description = EditorGUILayout.TextField("Description: ", gene.description);
 				gene.preRequisite = EditorGUILayout.TextField("Prereq: ", gene.preRequisite);
 				if (mm.DoesNameExistInList(gene.preRequisite) == false)
 				    gene.preRequisite = "";
 				gene.rarity = (Gene.Rarity)EditorGUILayout.EnumPopup("Rarity: ", gene.rarity);
 				gene.geneStrength = (Gene.GeneStrength)EditorGUILayout.EnumPopup("Strength: ", gene.geneStrength);
-				gene.negativeEffect = EditorGUILayout.Toggle("Negative Effect", !gene.negativeEffect);
+				gene.negativeEffect = EditorGUILayout.Toggle("Negative Effect", gene.negativeEffect);
 				gene.type = (Gene.Type)EditorGUILayout.EnumPopup(gene.type);
 				switch(gene.type)
 				{
@@ -62,7 +70,7 @@ public class GeneManagerInspector : Editor
 					m.type = Gene.Type.BodyColor;
 					m.geneStrength = Gene.GeneStrength.Normal;
 					m.negativeEffect = true;
-					genes.Add(m);
+					mm.genes.Add(m);
 				}
 				newName = "";
 			}
@@ -79,3 +87,4 @@ public class GeneManagerInspector : Editor
 //		}
 	}
 }
+	

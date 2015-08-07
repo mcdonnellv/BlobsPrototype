@@ -33,18 +33,20 @@ public class GameManager : MonoBehaviour
 	public GameObject selectModeCover;
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
-	public UILabel yearLabel;
 	public UILabel missionButtonLabel;
-	public UISlider yearProgressBar;
 	public UIButton missionButton;
 	public UIButton rightNavButton;
 	public UIButton leftNavButton;
 	public UIButton buildButton;
+	public List<UIButton> visitorButtons;
 	public GameObject gameOverObject;
 	public GameObject winnerObject;
 	public UICamera gameCam;
 	public Popup popup;
+	public BlobPopup blobPopup;
+	public BlobPopupChoice blobPopupChoice;
 	public GameVariables gameVars;
+
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
 	public TimeSpan breedBarFillDelay;
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour
 
 	float timeScaleOld;
 	bool selectMode;
+
 	TimeSpan blobHatchDelayOriginal;
 	TimeSpan breedReadyDelayOriginal;
 	TimeSpan breedBarFillDelayOriginal;
@@ -90,6 +93,7 @@ public class GameManager : MonoBehaviour
 		blobGoldProductionDelay = new TimeSpan(0,0,10);
 		yearFillDelay = new TimeSpan(1,0,0);
 		yearFillTime = DateTime.Now + yearFillDelay;
+
 		blobHatchDelayOriginal = blobHatchDelay;
 		breedReadyDelayOriginal = breedReadyDelay;
 		yearFillDelayOriginal = yearFillDelay;
@@ -114,10 +118,6 @@ public class GameManager : MonoBehaviour
 		breedingView.SetActive(true);
 		missionView.SetActive(false);
 		selectModeCover.SetActive(false);
-
-
-
-		yearProgressBar.value = 0f;
 
 		Vector3 pos = gameCam.transform.localPosition;
 		pos.x = 1334f * 1;
@@ -144,6 +144,9 @@ public class GameManager : MonoBehaviour
 
 		foreach(Blob b in nm.blobs) 
 			nm.blobPanel.UpdateBlobCellWithBlob(nm.blobs.IndexOf(b), b);
+
+		foreach(UIButton visitorbutton in visitorButtons)
+			visitorbutton.gameObject.SetActive(false);
 
 		nm.PressGridItem(0);
 		AddGold(0);
@@ -226,17 +229,17 @@ public class GameManager : MonoBehaviour
 	public void  AddGold(int val)
 	{
 		gameVars.gold += val;
-		goldLabel.text = "Gold: " + gold.ToString();
+		goldLabel.text = "Gold: [FFD700]" + gold.ToString() + "g[-]";
 
 		UILabel label = buildButton.GetComponentInChildren<UILabel>();
 		if (!vm.villageExists)
 		{
-			label.text = "Build Village     " + villageCost.ToString() + "g";
+			label.text = "Build Village     [FFD700]" + villageCost.ToString() + "g[-]";
 			buildButton.isEnabled = (gold >= villageCost);
 		}
 		else if (!cm.castleExists)
 		{
-			label.text = "Build Castle     " + castleCost.ToString() + "g";
+			label.text = "Build Castle     [FFD700]" + castleCost.ToString() + "g[-]";
 			buildButton.isEnabled = (gold >= castleCost);
 		}
 	}
@@ -245,13 +248,13 @@ public class GameManager : MonoBehaviour
 	public void TrySellBlob(Blob blob, MonoBehaviour target)
 	{
 		if (blob.onMission) 
-		{popup.Show("Cannot Sell", "Blob is on a mission."); popup.SetBlob(blob); return;}
+		{blobPopup.Show(blob, "Cannot Sell", "Blob is on a mission.");return;}
 		
 		if (blob.hasHatched == false)
-		{popup.Show("Cannot Sell", "Blob has not been hatched."); return;}
+		{blobPopup.Show(blob, "Cannot Sell", "Blob has not been hatched."); return;}
 		
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{popup.Show("Cannot Sell", "Blob is still breeding."); popup.SetBlob(blob); return;}
+		{blobPopup.Show(blob, "Cannot Sell", "Blob is still breeding.");return;}
 		
 		bool lastOfGender = true;
 		List<Blob> allBlobs = gameVars.allBlobs;
@@ -260,7 +263,7 @@ public class GameManager : MonoBehaviour
 				lastOfGender = false;
 		
 		if (lastOfGender)
-		{popup.Show("Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); popup.SetBlob(blob); return;}
+		{blobPopup.Show(blob, "Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); return;}
 		
 		Gene lastGene = null;
 		foreach(Gene g1 in blob.genes)
@@ -293,15 +296,13 @@ public class GameManager : MonoBehaviour
 		
 		if (lastGene != null)
 		{
-			popup.ShowChoice("Warning!", 
+			blobPopupChoice.ShowChoice(blob, "Warning!", 
 			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to sell this blob?", 
-			                 target, "SellBlobFinal"); 
-			popup.SetBlob(blob); 
+			                 target, "SellBlobFinal", null, null); 
 			return;
 		}
 		
-		popup.ShowChoice("Sell Blob", "Are you sure you want to sell this blob?", target, "SellBlobFinal");
-		popup.SetBlob(blob);
+		blobPopupChoice.ShowChoice(blob, "Sell Blob", "Are you sure you want to sell this blob?", target, "SellBlobFinal", null, null);
 	}
 	
 
@@ -368,26 +369,23 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-
 	// Update is called once per frame
 	void Update () 
 	{
-		if (yearFillTime > DateTime.Now)
-		{
-			TimeSpan ts = (yearFillTime - DateTime.Now);
-			yearProgressBar.value = 1f - (float)(ts.TotalSeconds / yearFillDelay.TotalSeconds);
-		}	
-		else
+		if (yearFillTime <= DateTime.Now)
 		{
 			gameVars.year++;
-			yearLabel.text = "Year: " + gameVars.year.ToString();
 			yearFillTime = DateTime.Now + yearFillDelay;
 		}
+
+
 
 		//make time go faster
 		if(timeScale != timeScaleOld)
 		{
 			timeScaleOld = timeScale;
+
+			//visitorDelay = new TimeSpan(0,0,(int)(visitorDelayOriginal.TotalSeconds * timeScale));
 			blobHatchDelay = new TimeSpan(0,0,(int)(blobHatchDelayOriginal.TotalSeconds * timeScale));
 			breedReadyDelay = new TimeSpan(0,0,(int)(breedReadyDelayOriginal.TotalSeconds * timeScale));
 			breedBarFillDelay = new TimeSpan(0,0,(int)(breedBarFillDelayOriginal.TotalSeconds * timeScale));

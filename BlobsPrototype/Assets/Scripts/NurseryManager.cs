@@ -20,7 +20,7 @@ public class NurseryManager : MonoBehaviour
 	public List<Blob> maleBlobs;
 	public List<Blob> femaleBlobs;
 	
-	int maxBlobs;
+	public int maxBlobs;
 	public int curSelectedIndex;
 	System.DateTime breedTime;
 
@@ -44,6 +44,10 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
+//		blob.genes.Add (gm.mum.GetGeneByName("Blue"));
+//		blob.genes.Add (gm.mum.GetGeneByName("Strong"));
+//		blob.genes.Add (gm.mum.GetGeneByName("Genius"));
+//		blob.ActivateGenes();
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -52,16 +56,21 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
+		blob.genes.Add (gm.mum.GetGeneByName("Weak"));
+		blob.genes.Add (gm.mum.GetGeneByName("Intelligent"));
+		blob.genes.Add (gm.mum.GetGeneByName("Red"));
+		blob.ActivateGenes();
 		blobs.Add(blob);
 	}
 	
-	void AddBlob(Blob newBlob)
+	public void AddBlob(Blob newBlob)
 	{
 		if (blobs.Count >= maxBlobs)
 			return;
 
 		blobs.Add(newBlob);
-		newBlob.hatchTime = System.DateTime.Now + gm.blobHatchDelay;
+		if(newBlob.hasHatched == false)
+			newBlob.hatchTime = System.DateTime.Now + gm.blobHatchDelay;
 		if (CanEnableBreedButton())
 			breedButton.isEnabled = false;
 	}
@@ -103,13 +112,13 @@ public class NurseryManager : MonoBehaviour
 
 	public void UpdateBreedCost()
 	{
-		breedButtonLabel.text = "Breed (" + GetBreedCost().ToString() + "g)";
+		breedButtonLabel.text = "Breed [FFD700]" + GetBreedCost().ToString() + "g[-]";
 	}
 
 
 	public void UpdateSellValue()
 	{
-		sellButtonLabel.text = "Sell (+" + GetSellValue().ToString() + "g)";
+		sellButtonLabel.text = "Sell +[FFD700]" + GetSellValue().ToString() + "g[-]";
 	}
 
 
@@ -205,21 +214,30 @@ public class NurseryManager : MonoBehaviour
 		blob.SetRandomTextures();
 
 		//check for possible new genes
-		List<Gene> parentGenes = dad.genes.Union<Gene>(mom.genes).ToList<Gene>();
-		Gene newGene = RollForNewGene(blob, parentGenes);
+		List<Gene> parentGenesRaw = dad.genes.Union<Gene>(mom.genes).ToList<Gene>();
+		List<Gene> GenesToPassOn = new List<Gene>();
 
-
-		if(newGene == null)
+		foreach(Gene g in parentGenesRaw)
 		{
-			// Gene passing
-			blob.genes = CleanupGeneList(parentGenes);
+			float rand = UnityEngine.Random.Range(0f, 1f);
+			if(rand < g.passOnChance)
+				GenesToPassOn.Add(g);
+		}
+
+		//Gene newGene = RollForNewGene(blob, GenesToPassOn);
+
+
+		//if(newGene == null)
+		//{
+		//	// Gene passing
+			blob.genes = CleanupGeneList(GenesToPassOn);
 			LimitGenesTo(blob, blob.allowedGeneCount);
-		}
-		else
-		{
-			blob.genes.Add(newGene);
-			blob.quality = 1f;
-		}
+		//}
+		//else
+		//{
+		//	blob.genes.Add(newGene);
+		//	blob.quality = (float)BlobQuality.Poor;
+		//}
 
 		blob.ActivateGenes();
 
@@ -511,15 +529,15 @@ public class NurseryManager : MonoBehaviour
 		Blob blob = blobs[curSelectedIndex];
 
 		if (gm.vm.IsFull()) 
-		{gm.popup.Show("Cannot Move", "There is no more space in the Village."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Village."); return;}
 
 
 		if (!blob.hasHatched)
-		{gm.popup.Show("Cannot Move", "Blob has not been hatched."); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "Blob has not been hatched."); return;}
 
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{gm.popup.Show("Cannot Move", "Blob is still breeding."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "Blob is still breeding."); return;}
 		bc.Reset();
 
 		gm.vm.blobs.Add(blob);
@@ -551,15 +569,15 @@ public class NurseryManager : MonoBehaviour
 		
 		Blob blob = blobs[curSelectedIndex];
 		if (gm.cm.IsFull()) 
-		{gm.popup.Show("Cannot Move", "There is no more space in the Village."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Village."); return;}
 		
 		
 		if (!blob.hasHatched)
-		{gm.popup.Show("Cannot Move", "Blob has not been hatched.");  return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "Blob has not been hatched.");  return;}
 		
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{gm.popup.Show("Cannot Move", "Blob is still breeding."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "Blob is still breeding."); return;}
 		bc.Reset();
 		
 		gm.cm.blobs.Add(blob);

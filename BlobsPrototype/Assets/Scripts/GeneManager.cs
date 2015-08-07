@@ -34,6 +34,16 @@ public class GeneManager: MonoBehaviour
 	}
 
 
+	public static List<Gene> GetGenesWithNegativeEffect(List<Gene> geneList)
+	{
+		List<Gene> badGenes = new List<Gene>();
+		foreach(Gene g in geneList)
+			if(g.negativeEffect)
+				badGenes.Add(g);
+		return badGenes;
+	}
+
+
 	public static List<Gene> GetGenesWithPrerequisite(List<Gene> geneList, string name)
 	{
 		List<Gene> elligibleGenes = new List<Gene>();

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class InfoPanel : MonoBehaviour 
 {
@@ -8,8 +9,6 @@ public class InfoPanel : MonoBehaviour
 	public UILabel age;
 	public UILabel eggs;
 	public UILabel gender;
-	public UILabel activeGenes;
-	public UILabel inactiveGenes;
 	public UILabel quality;
 	public UISprite body;
 	public UISprite face;
@@ -19,17 +18,17 @@ public class InfoPanel : MonoBehaviour
 	public UISlider progress;
 	public UIButton button;
 	public UISprite genePanel;
-	public UISprite genePanelActive;
-	public UISprite genePanelInactive;
-	Blob theBlob;
+	public GenePopup geneInfoPopup;
+	public List<GeneCell> geneCells;
 
+	Blob theBlob;
+	
 	public void UpdateWithBlob(Blob blob)
 	{
 		theBlob = blob;
 
 		if (blob == null)
 		{
-			activeGenes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
@@ -43,7 +42,8 @@ public class InfoPanel : MonoBehaviour
 			return;
 		}
 
-		genePanel.gameObject.SetActive(blob.hasHatched && blob.genes.Count > 0);
+		blob.OrderGenes();
+		genePanel.gameObject.SetActive(blob.hasHatched);
 		button.gameObject.SetActive(!blob.hasHatched);
 		progress.gameObject.SetActive(!blob.hasHatched);
 
@@ -58,32 +58,7 @@ public class InfoPanel : MonoBehaviour
 		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
-		activeGenes.text = "";
-		inactiveGenes.text = "";
-		foreach(Gene g in blob.genes)
-		{
-			if (blob.IsGeneActive(g))
-			{
-				string colorString = (g.negativeEffect) ? "[FF9B9B]" : "[9BFF9BFF]";
-				activeGenes.text += colorString + g.geneName + "[-]\n";
-			}
-			else
-				inactiveGenes.text += g.geneName + "\n";
-		}
 
-		if(inactiveGenes.text == "")
-		{
-			genePanelActive.width = 180;
-			genePanelInactive.gameObject.SetActive(false);
-		}
-		else
-		{
-			genePanelActive.width = 92;
-			genePanelInactive.gameObject.SetActive(true);
-		}
-
-		activeGenes.text = activeGenes.text == "" ? "" : activeGenes.text.Remove(activeGenes.text.Length - 1);
-		inactiveGenes.text = inactiveGenes.text == "" ? "" : inactiveGenes.text.Remove(inactiveGenes.text.Length - 1); ;
 		eggs.text = "Eggs: " + (gm.maxBreedcount - blob.breedCount).ToString();
 		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
 		age.text = "Age: " + blob.age.ToString();
@@ -102,13 +77,39 @@ public class InfoPanel : MonoBehaviour
 
 		if (!blob.hasHatched)
 		{
-			activeGenes.text = "";
 			eggs.text = "";
 			age.text = "";
 			gender.text = "";
 			quality.text = "";
 		}
+
+		int i = 0;
+		foreach(Gene g in theBlob.genes)
+		{
+			GeneCell gc = geneCells[i++];
+			gc.gene = g;
+			gc.nameLabel.text = g.geneName;
+			gc.rarityIdicator.gameObject.SetActive(true);
+			gc.rarityIdicator.color = Gene.ColorForRarity(g.rarity);
+			gc.button.gameObject.SetActive(true);
+		}
+
+		for(;i<geneCells.Count;i++)
+		{
+			GeneCell gc = geneCells[i];
+			gc.nameLabel.text = "";
+			gc.rarityIdicator.gameObject.SetActive(false);
+			gc.button.gameObject.SetActive(false);
+		}
 	}
+
+
+	public void GeneInfoPressed(int index)
+	{
+		GeneCell gc = geneCells[index];
+		geneInfoPopup.Show(gc.gene);
+	}
+
 
 	public void pressed()
 	{
@@ -121,10 +122,9 @@ public class InfoPanel : MonoBehaviour
 				string colorString = (m.negativeEffect) ? "[FF9B9B]" : "[9BFF9BFF]";
 
 				if (mp == null || (mp != null && m.type != mp.type))
-					gm.popup.Show("New Gene Discovery", "This blob has been born with the new " + colorString + m.geneName + " gene[-]!");
+					gm.blobPopup.Show(theBlob, "New Gene Discovery", "This blob has been born with the new " + colorString + m.geneName + " gene[-]!");
 				else  
-					gm.popup.Show("New Gene Discovery", "This blob's [9BFF9B]" + m.preRequisite + " gene[-] has mutated into the " + colorString + m.geneName + " gene[-]!");
-				gm.popup.SetBlob(theBlob);
+					gm.blobPopup.Show(theBlob, "New Gene Discovery", "This blob's [9BFF9B]" + m.preRequisite + " gene[-] has mutated into the " + colorString + m.geneName + " gene[-]!");
 			}
 		}
 

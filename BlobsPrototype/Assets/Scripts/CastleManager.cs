@@ -121,11 +121,11 @@ public class CastleManager : MonoBehaviour
 		Blob blob = blobs[curSelectedIndex];
 
 		if (gm.nm.IsFull()) 
-		{gm.popup.Show("Cannot Move", "There is no more space in the Nursery."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Nursery.");return;}
 		
 		int cost = (int)(blob.quality * 30f);
 		if (gm.gold < cost) 
-		{gm.popup.Show("Cannot Move", "You do not have enough Gold."); gm.popup.SetBlob(blob); return;}
+		{gm.blobPopup.Show(blob, "Cannot Move", "You do not have enough Gold."); return;}
 		
 		gm.AddGold(-cost);
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];

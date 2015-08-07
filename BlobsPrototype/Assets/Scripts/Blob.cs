@@ -2,14 +2,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public enum BlobQuality
 {
-	Poor = 1,
-	Fair = 2, 
-	Good = 3, 
-	Excellent = 4, 
-	Outstanding = 5, 
+	Abysmal = 1,
+	Horrid = 2,
+	Poor = 3,
+	Fair = 5, 
+	Good = 8, 
+	Excellent = 13, 
+	Outstanding = 21, 
 };
 
 public enum BlobJob
@@ -64,7 +67,7 @@ public class Blob
 	public Blob()
 	{
 		gm = (GameManager)(GameObject.Find("GameManager")).GetComponent<GameManager>();
-		quality = 1f;
+		quality = (float)BlobQuality.Poor;
 		onMission = false;
 		birthday = new DateTime(0);
 		hasHatched = false;
@@ -179,7 +182,7 @@ public class Blob
 		for(int i=0; i < activeGeneIndexes.Count; i++)
 			if(genes[activeGeneIndexes[i]].type == Gene.Type.BodyColor)
 				return genes[activeGeneIndexes[i]].bodyColor;
-		return new Color(0.165f, 0.745f, 0.925f, 1f);
+		return new Color(0.863f, 0.863f, 0.863f, 1f);//new Color(0.165f, 0.745f, 0.925f, 1f);
 	}
 
 
@@ -197,6 +200,14 @@ public class Blob
 		float s = .4f + (.6f * (float)(age.TotalSeconds / gm.breedingAge.TotalSeconds));
 		return Mathf.Clamp(s, 0f, 1f);
 	}
+
+
+	public void OrderGenes()
+	{
+		//genes = (genes.OrderBy(x => x.geneName).ThenByDescending( x => x.rarity)).ToList();
+		genes = genes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
+	}
+
 
 	public void SetRandomTextures()
 	{
@@ -223,6 +234,12 @@ public class Blob
 
 	static public BlobQuality GetQualityFromValue(float quality)
 	{
+		if (quality < (float)BlobQuality.Horrid)
+			return BlobQuality.Abysmal;
+
+		if (quality < (float)BlobQuality.Poor)
+			return BlobQuality.Horrid;
+
 		if (quality < (float)BlobQuality.Fair)
 			return BlobQuality.Poor;
 		
@@ -243,6 +260,8 @@ public class Blob
 	{
 		switch (quality)
 		{
+		case BlobQuality.Abysmal: return "Abysmal";
+		case BlobQuality.Horrid: return "Horrid";
 		case BlobQuality.Poor: return "Poor";
 		case BlobQuality.Fair: return "Fair";
 		case BlobQuality.Good: return "Good";
@@ -257,6 +276,8 @@ public class Blob
 	{
 		switch (quality)
 		{
+		case BlobQuality.Abysmal: return 0;
+		case BlobQuality.Horrid: return 0;
 		case BlobQuality.Poor: return 2;
 		case BlobQuality.Fair: return 4;
 		case BlobQuality.Good: return 6;
@@ -264,7 +285,7 @@ public class Blob
 		case BlobQuality.Outstanding: return 10;
 		}
 		
-		return 2;
+		return 0;
 	}
 
 
