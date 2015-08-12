@@ -45,7 +45,7 @@ public class Blob
 	public int dadId;
 	public int spouseId;
 	public bool male;
-	public int breedCount;
+	public int unfertilizedEggs;
 	public float quality;
 	public BlobTrait trait;
 	public BlobJob job;
@@ -56,9 +56,11 @@ public class Blob
 	public DateTime hatchTime;
 	public DateTime breedReadyTime;
 	public DateTime goldProductionTime;
-	public List<Gene> genes;
-	List<int> activeGeneIndexes;
-	public Color color { get{return GetBodyColor();} }
+	public List<Gene> genes { get {return activeGenes.Union(inactiveGenes.Union(unprocessedGenes)).ToList();} }
+	public List<Gene> unprocessedGenes;
+	public List<Gene> activeGenes;
+	public List<Gene> inactiveGenes;
+	public Color color;
 	public int allowedGeneCount { get{return GetGeneCountFromQuality(GetQualityFromValue(quality));} }
 	public TimeSpan age {get {return DateTime.Now - birthday;}}
 	public Dictionary<string, Texture> bodyPartSprites;
@@ -74,98 +76,138 @@ public class Blob
 		hatchTime = new DateTime(0);
 		breedReadyTime = new DateTime(0);
 		goldProductionTime = new DateTime(0);
-		genes = new List<Gene>();
-		activeGeneIndexes = new List<int>();
+		unprocessedGenes = new List<Gene>();
+		activeGenes = new List<Gene>();
+		inactiveGenes = new List<Gene>();
 		bodyPartSprites = new Dictionary<string, Texture>();
 		momId = -1;
 		dadId = -1;
 		spouseId = -1;
-	}
-	
-
-	public List<Gene> GetActiveGenes()
-	{
-		List<Gene> activeGeneList = new List<Gene>();
-		foreach(Gene g in genes)
-			if(IsGeneActive(g))
-				activeGeneList.Add(g);
-		return activeGeneList;
+		unfertilizedEggs = 2;
+		color = new Color(0.863f, 0.863f, 0.863f, 1f);
 	}
 
 
-	public List<Gene> GetInactiveGenes()
+	public bool IsGeneActive(Gene g) { return activeGenes.Contains(g); }
+
+
+	public void SetGeneActivationForAll()
 	{
-		List<Gene> inactiveGeneList = new List<Gene>();
-		foreach(Gene g in genes)
-			if(IsGeneActive(g) == false)
-				inactiveGeneList.Add(g);
-		return inactiveGeneList;
+		while(unprocessedGenes.Count > 0)
+		{
+			Gene g = unprocessedGenes[0];
+			SetGeneActivationForGene(g);
+		}
 	}
 
 
-	public bool IsGeneActive(Gene g)
+	public void SetGeneActivationForGene(Gene g)
 	{
-		for(int i=0; i < activeGeneIndexes.Count; i++)
-			if(genes[activeGeneIndexes[i]] == g)
+		unprocessedGenes.Remove(g);
+		if(ShouldGeneBeActive(g))
+			ActivateGene(g);
+		else
+			DeactivateGene(g);
+	}
+
+
+	public bool ShouldGeneBeActive(Gene g)
+	{
+		foreach(Gene.GeneActivationRequirements req in g.activationRequirements)
+		{
+			switch(req)
+			{
+			case Gene.GeneActivationRequirements.GenderMustBeFemale:
+				return (!male);
+			case Gene.GeneActivationRequirements.GenderMustBeMale:
+				return (male);
+			case Gene.GeneActivationRequirements.QualityMustAtLeastBePoor:
+				return (GetQualityFromValue(quality) >= BlobQuality.Poor);
+			case Gene.GeneActivationRequirements.QualityMustAtLeastBeFair:
+				return (GetQualityFromValue(quality) >= BlobQuality.Fair);
+			case Gene.GeneActivationRequirements.QualityMustAtLeastBeGood:
+				return (GetQualityFromValue(quality) >= BlobQuality.Good);
+			case Gene.GeneActivationRequirements.QualityMustAtLeastBeExcellent:
+				return (GetQualityFromValue(quality) >= BlobQuality.Excellent);
+			case Gene.GeneActivationRequirements.QualityMustAtLeastBeOutstanding: 
+				return (GetQualityFromValue(quality) >= BlobQuality.Outstanding);
+			case Gene.GeneActivationRequirements.MustHaveNoActiveGenesOfSameType:
+				List<Gene> unprocessedGenesOfSameType = GeneManager.GetGenesOfType(unprocessedGenes, g.type);
+				List<Gene> activeGenesOfSameType = GeneManager.GetGenesOfType(activeGenes, g.type);
+				if(activeGenesOfSameType.Count > 0)
+					return false;
+				else if(unprocessedGenesOfSameType.Count > 1)
+				{
+					Gene chosen = GeneManager.GetRandomGeneBasedOnStrength(unprocessedGenesOfSameType);
+					if(chosen != g)
+					{
+						SetGeneActivationForGene(chosen);
+						return false;
+					}
+				}
 				return true;
-		return false;
+			}
+		}
+		return true;
 	}
 
 
 	public bool IsGeneTypeActive(Gene.Type t)
 	{
-		for(int i=0; i < activeGeneIndexes.Count; i++)
-		{
-			Gene activeGene = genes[activeGeneIndexes[i]];
-			if(activeGene.type == t)
+		foreach(Gene g in genes)
+			if(g.type == t && IsGeneActive(g))
 				return true;
-		}
 		return false;
 	}
 
 
 	public void ActivateGene(Gene g)
 	{
-		int index = genes.IndexOf(g);
-		if(index == -1)
-			return;
+		if(unprocessedGenes.Contains(g))
+			SetGeneActivationForGene(g);
+		else
+		{
+			if(!activeGenes.Contains(g))
+				activeGenes.Add(g);
+			if (inactiveGenes.Contains(g))
+				inactiveGenes.Remove(g);
+		}
+	}
 
-		DeactivateGenesOfType(g.type);
-		activeGeneIndexes.Add(index);
+
+	public void DeactivateGene(Gene g)
+	{
+		if(unprocessedGenes.Contains(g))
+			SetGeneActivationForGene(g);
+		else
+		{
+			if(!inactiveGenes.Contains(g))
+				inactiveGenes.Add(g);
+			if (activeGenes.Contains(g))
+				activeGenes.Remove(g);
+		}
 	}
 
 
 	public void DeactivateGenesOfType(Gene.Type t)
 	{
-		for(int i=0; i < activeGeneIndexes.Count; i++)
-		{
-			if(genes[activeGeneIndexes[i]].type == t)
-			{
-				activeGeneIndexes.RemoveAt(i);
-				i--;
-			}
-		}
-	}
-
-	
-	public void ActivateGenes()
-	{
 		foreach(Gene g in genes)
-		{
-			if(IsGeneTypeActive(g.type))
-				continue;
-			List<Gene> genesOfTheSameType = GeneManager.GetGenesOfType(genes, g.type);
-			Gene geneToActivate = GeneManager.GetRandomGeneBasedOnStrength(genesOfTheSameType);
-			if(GetActiveGenes().Count < 3)
-				ActivateGene(geneToActivate);
-		}
+			if(g.type == t)
+				DeactivateGene(g);
 	}
 
 
 	public void Hatch()
 	{
+		BlobQuality oldAveQuality = Blob.GetQualityFromValue(gm.GetAverageQuality());
 		hasHatched = true;
 		birthday = DateTime.Now;
+		BlobQuality newAveQuality = Blob.GetQualityFromValue(gm.GetAverageQuality());
+
+		if (oldAveQuality < newAveQuality)
+			gm.popup.Show("Quality up!","Congratulations! Your average Blob quality is now " + Blob.GetQualityFromEnum(newAveQuality) + "!");
+		else if(oldAveQuality > newAveQuality)
+			gm.popup.Show("Quality Down!", "Oh no! Your average Blob quality is now " + Blob.GetQualityFromEnum(newAveQuality) + "!");
 	}
 
 
@@ -177,20 +219,20 @@ public class Blob
 	}
 
 
-	public Color GetBodyColor()
-	{
-		for(int i=0; i < activeGeneIndexes.Count; i++)
-			if(genes[activeGeneIndexes[i]].type == Gene.Type.BodyColor)
-				return genes[activeGeneIndexes[i]].bodyColor;
-		return new Color(0.863f, 0.863f, 0.863f, 1f);//new Color(0.165f, 0.745f, 0.925f, 1f);
-	}
+//	public Color GetBodyColor()
+//	{
+//		foreach(Gene g in genes)
+//			if(g.type == Gene.Type.BodyColor && IsGeneActive(g))
+//				return g.bodyColor;
+//		return new Color(0.863f, 0.863f, 0.863f, 1f);
+//	}
 
 
 	public string GetBodyColorName()
 	{
-		for(int i=0; i < activeGeneIndexes.Count; i++)
-			if(genes[activeGeneIndexes[i]].type == Gene.Type.BodyColor)
-				return genes[activeGeneIndexes[i]].geneName;
+		foreach(Gene g in genes)
+			if(g.type == Gene.Type.BodyColor && IsGeneActive(g))
+				return g.geneName;
 		return "White";
 	}
 	
@@ -204,8 +246,8 @@ public class Blob
 
 	public void OrderGenes()
 	{
-		//genes = (genes.OrderBy(x => x.geneName).ThenByDescending( x => x.rarity)).ToList();
-		genes = genes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
+		activeGenes = activeGenes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
+		inactiveGenes = inactiveGenes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
 	}
 
 
@@ -295,5 +337,50 @@ public class Blob
 		float rand = UnityEngine.Random.Range(.0f, .15f);
 		float f = average + (average * rand);
 		return Mathf.Round(f * 10f) / 10f;
+	}
+
+	
+	public void ApplyGeneEffects()
+	{
+		ApplyBreedingGeneEffects(GeneManager.GetGenesOfType(activeGenes, Gene.Type.Breeding));
+		ApplyBodyColorGeneEffects(GeneManager.GetGenesOfType(activeGenes, Gene.Type.BodyColor));
+	}
+
+
+	void ApplyBodyColorGeneEffects(List<Gene> geneList)
+	{
+		if (geneList == null || geneList.Count == 0)
+			return;
+
+		if (geneList.Count > 1)
+			Debug.LogError("This blob has more than 1 active Body color Gene");
+
+		color = geneList[0].bodyColor;
+	}
+
+
+	void ApplyBreedingGeneEffects(List<Gene> geneList)
+	{
+		if (geneList == null || geneList.Count == 0)
+			return;
+
+		foreach(Gene g in geneList)
+		{
+			switch(g.geneName)
+			{
+			case "Fertility":
+				unfertilizedEggs++;
+				break;
+			case "Virility":
+				unfertilizedEggs++;
+				break;
+			case "Infertility":
+				unfertilizedEggs = 1;
+				break;
+			case "Sterile":
+				unfertilizedEggs = 0;
+				break;
+			}
+		}
 	}
 }

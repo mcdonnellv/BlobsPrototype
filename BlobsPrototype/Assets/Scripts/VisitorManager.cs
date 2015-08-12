@@ -33,21 +33,29 @@ public class VisitorManager : MonoBehaviour
 		visitor.SetRandomTextures();
 		visitor.id = gm.gameVars.blobsSpawned++;
 
-		List<Gene> colorGenes = GeneManager.GetGenesOfType(gm.mum.genes, Gene.Type.BodyColor);
+		List<Gene> goodGenes = GeneManager.GetGenesWithPositiveEffect(gm.mum.genes);
 		List<Gene> badGenes = GeneManager.GetGenesWithNegativeEffect(gm.mum.genes);
 
+		int allowedGenes = visitor.allowedGeneCount;
 
-		Gene goodGene = colorGenes[UnityEngine.Random.Range(0, colorGenes.Count)];
-		Gene badGene1 = badGenes[UnityEngine.Random.Range(0, badGenes.Count)];
-		badGenes.Remove(badGene1);
-		Gene badGene2 = badGenes[UnityEngine.Random.Range(0, badGenes.Count)];
+		for(int i=0; i<allowedGenes; i++)
+		{
+			Gene geneToadd = null;
+			if((i%3) == 0)
+			{
+				geneToadd = GeneManager.GetRandomGeneBasedOnRarity(goodGenes);
+				goodGenes.Remove(geneToadd);
+			}
+			else if(i==1)
+			{
+				geneToadd = badGenes[UnityEngine.Random.Range(0, badGenes.Count)];
+				badGenes.Remove(geneToadd);
+			}
 
-		visitor.genes.Add(goodGene);
-		visitor.genes.Add(badGene1);
-		visitor.genes.Add(badGene2);
+			visitor.genes.Add(geneToadd);
+		}
 
-		visitor.ActivateGenes();
-
+		visitor.SetGeneActivationForAll();
 		visitors.Add(visitor);
 		visitorCost.Add(100);
 		visitorTimers.Add(DateTime.Now + new TimeSpan(0,0,0,10));

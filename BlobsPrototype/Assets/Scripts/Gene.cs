@@ -28,26 +28,43 @@ public class Gene : ScriptableObject
 
 	public enum Type
 	{
+		None = -1,
 		BodyColor,
 		FacialFeature,
 		Metabolism,
-		type2,
+		Breeding,
 		Intellect,
 	};
+
+	public enum GeneActivationRequirements
+	{
+		None = -1,
+		GenderMustBeMale,
+		GenderMustBeFemale,
+		QualityMustAtLeastBePoor,
+		QualityMustAtLeastBeFair,
+		QualityMustAtLeastBeGood,
+		QualityMustAtLeastBeExcellent,
+		QualityMustAtLeastBeOutstanding,
+		MustHaveNoActiveGenesOfSameType,
+	};
+
 	
-	public string geneName;
-	public string preRequisite;
-	public string description;
-	public GeneStrength geneStrength;
-	public Rarity rarity;
+	public string geneName = "";
+	public List<string> preRequisites = new List<string>();
+	public List<GeneActivationRequirements> activationRequirements = new List<GeneActivationRequirements>();
+
+	public string preRequisite = "";
+	public string description = "";
+	public GeneStrength geneStrength = GeneStrength.Normal;
+	public Rarity rarity = Rarity.Common;
 	public bool revealed = false;
-	public Type type;
-	public Color bodyColor;
-	public bool negativeEffect;
+	public Type type = Type.None;
+	public Color bodyColor = Color.white;
+	public bool negativeEffect = false;
 	public float revealChance { get {return Gene.RevealChanceForRarity(rarity);} }
 	public float passOnChance { get {return Gene.PassOnChanceForRarity(rarity);} }
 	public string name {get{return geneName;}}
-
 
 	static float PassOnChanceForRarity(Rarity r)
 	{

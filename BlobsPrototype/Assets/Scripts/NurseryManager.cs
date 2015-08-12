@@ -44,10 +44,11 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-//		blob.genes.Add (gm.mum.GetGeneByName("Blue"));
-//		blob.genes.Add (gm.mum.GetGeneByName("Strong"));
-//		blob.genes.Add (gm.mum.GetGeneByName("Genius"));
-//		blob.ActivateGenes();
+		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Yellow"));
+		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Orange"));
+		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Green"));
+		blob.SetGeneActivationForAll();
+		blob.ApplyGeneEffects();
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -56,10 +57,12 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-		blob.genes.Add (gm.mum.GetGeneByName("Weak"));
-		blob.genes.Add (gm.mum.GetGeneByName("Intelligent"));
-		blob.genes.Add (gm.mum.GetGeneByName("Red"));
-		blob.ActivateGenes();
+		blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Fertility"));
+		blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Virility"));
+		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Red"));
+		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Blue"));
+		blob.SetGeneActivationForAll();
+		blob.ApplyGeneEffects();
 		blobs.Add(blob);
 	}
 	
@@ -153,7 +156,7 @@ public class NurseryManager : MonoBehaviour
 
 			if (blob.male)
 				maleBlobs.Add(blob);
-			else if (blob.breedCount < gm.maxBreedcount)
+			else if (blob.unfertilizedEggs > 0)
 				femaleBlobs.Add(blob);
 		}
 		
@@ -168,7 +171,7 @@ public class NurseryManager : MonoBehaviour
 		{
 			if(blob.male)
 				continue;
-			total += (gm.maxBreedcount - blob.breedCount);
+			total += blob.unfertilizedEggs;
 		}
 		return total;
 	}
@@ -184,16 +187,16 @@ public class NurseryManager : MonoBehaviour
 		maleBlob.spouseId = femaleBlob.id;
 		femaleBlob.spouseId = maleBlob.id;
 
-		maleBlob.breedCount++;
-		femaleBlob.breedCount++;
+		femaleBlob.unfertilizedEggs--;
 
 		maleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
 		femaleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
 
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
+		newBlob.SetGeneActivationForAll();
+		newBlob.ApplyGeneEffects();
 		femaleBlob.egg = newBlob;
 	}
-
 
 	public Blob GenerateNewBlobBasedOnBlobs(Blob dad, Blob mom)
 	{
@@ -230,7 +233,7 @@ public class NurseryManager : MonoBehaviour
 		//if(newGene == null)
 		//{
 		//	// Gene passing
-			blob.genes = CleanupGeneList(GenesToPassOn);
+			blob.unprocessedGenes = CleanupGeneList(GenesToPassOn);
 			LimitGenesTo(blob, blob.allowedGeneCount);
 		//}
 		//else
@@ -239,7 +242,8 @@ public class NurseryManager : MonoBehaviour
 		//	blob.quality = (float)BlobQuality.Poor;
 		//}
 
-		blob.ActivateGenes();
+		blob.SetGeneActivationForAll();
+		blob.ApplyGeneEffects();
 
 		return blob;
 	}
@@ -312,7 +316,7 @@ public class NurseryManager : MonoBehaviour
 				genesOld.Remove(g);
 			}
 
-			blob.genes = genesNew;
+			blob.unprocessedGenes = genesNew;
 		}
 	}
 

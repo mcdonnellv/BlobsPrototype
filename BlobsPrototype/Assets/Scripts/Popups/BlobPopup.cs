@@ -30,7 +30,7 @@ public class BlobPopup : Popup
 		tex = blob.bodyPartSprites["Eyes"];
 		faceSprite.spriteName = tex.name;
 
-		bodySprite.color = blob.GetBodyColor();
+		bodySprite.color = blob.color;
 		cheeksSprite.gameObject.SetActive(!blob.male);
 
 		button1.transform.localPosition = new Vector3(buttonPos.x, buttonPos.y);

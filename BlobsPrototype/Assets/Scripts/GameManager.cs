@@ -197,34 +197,28 @@ public class GameManager : MonoBehaviour
 		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
 	}
 
+
 	public float GetAverageQuality()
 	{
 		float cummulativeQuality = 0f;
 		int totalBlobs = 0;
-		
-		// iterate thru nursery blobs
-		if(nm.blobs != null)
-		{
-			totalBlobs += nm.blobs.Count;
-			foreach (Blob blob in nm.blobs)
-				if(blob.hasHatched)
-					cummulativeQuality += blob.quality;
-		}
+		List <Blob> allBlobs = gameVars.allBlobs;
 
-		// iterate thru village blobs
-		if(vm.blobs != null)
+		foreach (Blob blob in allBlobs)
 		{
-			totalBlobs += vm.blobs.Count;
-			foreach (Blob blob in vm.blobs)
+			if(blob.hasHatched)
+			{
 				cummulativeQuality += blob.quality;
+				totalBlobs++;
+			}
 		}
 
 		float averageQuality = cummulativeQuality / totalBlobs;
 		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
 
 		return averageQuality;
-
 	}
+
 
 	public void  AddGold(int val)
 	{
@@ -368,6 +362,7 @@ public class GameManager : MonoBehaviour
 			popup.Show("Castle Now Available", "You can now move Blobs to the new castle to perform missions.");
 		}
 	}
+
 
 	// Update is called once per frame
 	void Update () 

@@ -59,7 +59,7 @@ public class InfoPanel : MonoBehaviour
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
 
-		eggs.text = "Eggs: " + (gm.maxBreedcount - blob.breedCount).ToString();
+		eggs.text = "Eggs: " + blob.unfertilizedEggs.ToString();
 		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
 		age.text = "Age: " + blob.age.ToString();
 		if (blob.male)
@@ -88,7 +88,8 @@ public class InfoPanel : MonoBehaviour
 		{
 			GeneCell gc = geneCells[i++];
 			gc.gene = g;
-			gc.nameLabel.text = g.geneName;
+			gc.nameLabel.text = g.geneName + (theBlob.IsGeneActive(g) ? "" : " (inactive)");
+			gc.nameLabel.color = theBlob.IsGeneActive(g) ? Color.white : Color.gray;
 			gc.rarityIdicator.gameObject.SetActive(true);
 			gc.rarityIdicator.color = Gene.ColorForRarity(g.rarity);
 			gc.button.gameObject.SetActive(true);
