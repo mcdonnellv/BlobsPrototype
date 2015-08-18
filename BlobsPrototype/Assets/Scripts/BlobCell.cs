@@ -13,8 +13,12 @@ public class BlobCell : MonoBehaviour
 	public UISprite cheeks;
 	public UISprite heart;
 	public UISprite egg;
+	public UISprite geneIcon;
+	public UISprite eggIcon;
 	public UILabel eggLabel;
+	public UILabel geneCountLabel;
 	public UILabel infoLabel;
+	public UILabel qualityLabel;
 	public Blob blob;
 
 	// Use this for initialization
@@ -28,13 +32,17 @@ public class BlobCell : MonoBehaviour
 			gm.vm.PressGridItem(index);
 	}
 
+
 	public void Reset()
 	{
 		progressBar.value = 0f;
+		eggIcon.gameObject.SetActive(false);
+		geneIcon.gameObject.SetActive(false);
 		eggLabel.text = "";
 		infoLabel.text = "";
 		heart.gameObject.SetActive(false);
 	}
+
 
 	void Update () 
 	{
@@ -75,7 +83,6 @@ public class BlobCell : MonoBehaviour
 			}
 
 		}
-
 
 		//blob belongs to village
 		if (blob != null && parent == gm.vm.gameObject)

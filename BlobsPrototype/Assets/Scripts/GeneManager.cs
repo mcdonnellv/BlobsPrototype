@@ -6,6 +6,15 @@ public class GeneManager: MonoBehaviour
 {
 	public List<Gene> genes = new List<Gene>();
 
+	public void FirstTimeSetup()
+	{
+		Gene g = GetGeneByName("Better Babies");
+		g.revealed = true;
+
+		g = GetGeneByName("Fertility");
+		g.revealed = true;
+	}
+
 	public Gene GetGeneByName(string nameParam)
 	{
 		foreach(Gene m in genes)

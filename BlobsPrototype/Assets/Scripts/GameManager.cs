@@ -11,7 +11,9 @@ using System.Linq;
 public class GameVariables 
 {
 	public int blobsSpawned = 0;
+	public int visitorsSpawned = 0;
 	public int gold;
+	public int chocolate;
 	public int year;
 	public List<Blob> nurseryBlobs;
 	public List<Blob> villageBlobs;
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
 	public GameObject selectModeCover;
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
+	public UILabel chocolateLabel;
 	public UILabel missionButtonLabel;
 	public UIButton missionButton;
 	public UIButton rightNavButton;
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
 	public Popup popup;
 	public BlobPopup blobPopup;
 	public BlobPopupChoice blobPopupChoice;
+	public GeneAddPopup geneAddPopup;
 	public GameVariables gameVars;
 
 	public TimeSpan blobHatchDelay;
@@ -70,6 +74,7 @@ public class GameManager : MonoBehaviour
 	public int castleCost;
 	public float timeScale;
 	public int gold {get{return gameVars.gold;}}
+	public int chocolate {get{return gameVars.chocolate;}}
 
 	float timeScaleOld;
 	bool selectMode;
@@ -150,6 +155,7 @@ public class GameManager : MonoBehaviour
 
 		nm.PressGridItem(0);
 		AddGold(0);
+		AddChocolate(0);
 	}
 	
 
@@ -174,7 +180,9 @@ public class GameManager : MonoBehaviour
 	{
 		gameVars.year = 0;
 		gameVars.gold = 100;
+		gameVars.chocolate = 5;
 		nm.FirstTimeSetup();
+		mum.FirstTimeSetup();
 	}
 
 	void OnApplicationQuit()
@@ -220,7 +228,7 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	public void  AddGold(int val)
+	public void AddGold(int val)
 	{
 		gameVars.gold += val;
 		goldLabel.text = "Gold: [FFD700]" + gold.ToString() + "g[-]";
@@ -236,6 +244,13 @@ public class GameManager : MonoBehaviour
 			label.text = "Build Castle     [FFD700]" + castleCost.ToString() + "g[-]";
 			buildButton.isEnabled = (gold >= castleCost);
 		}
+	}
+
+
+	public void AddChocolate(int val)
+	{
+		gameVars.chocolate += val;
+		chocolateLabel.text = "Chocolate: [C59F76]" + chocolate.ToString() + "c[-]";
 	}
 
 	

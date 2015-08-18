@@ -17,8 +17,16 @@ public class VisitorManager : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		visitorDelay = new TimeSpan(0, (int)(UnityEngine.Random.Range(20,30)  * gm.timeScale), 0);
+		visitorDelay = new TimeSpan(0, (int)(GetNewVisitorDelayMins()), 0);
 		visitorTime = DateTime.Now + visitorDelay;
+	}
+
+
+	int GetNewVisitorDelayMins()
+	{
+		int baseDelayMins = 2;
+		baseDelayMins += gm.gameVars.visitorsSpawned * 2;
+		return (int)(Mathf.Clamp(baseDelayMins, 2, 60 * 4) * gm.timeScale);
 	}
 
 
@@ -32,6 +40,7 @@ public class VisitorManager : MonoBehaviour
 		visitor.quality = gm.GetAverageQuality();
 		visitor.SetRandomTextures();
 		visitor.id = gm.gameVars.blobsSpawned++;
+		gm.gameVars.visitorsSpawned++;
 
 		List<Gene> goodGenes = GeneManager.GetGenesWithPositiveEffect(gm.mum.genes);
 		List<Gene> badGenes = GeneManager.GetGenesWithNegativeEffect(gm.mum.genes);
@@ -52,13 +61,33 @@ public class VisitorManager : MonoBehaviour
 				badGenes.Remove(geneToadd);
 			}
 
-			visitor.genes.Add(geneToadd);
+			visitor.unprocessedGenes.Add(geneToadd);
+		}
+
+		if(gm.gameVars.visitorsSpawned == 1)
+		{
+			visitor.unprocessedGenes.Clear();
+			visitor.unprocessedGenes.Add(gm.mum.GetGeneByName("Better Babies"));
+		}
+
+		if(gm.gameVars.visitorsSpawned == 2)
+		{
+			visitor.unprocessedGenes.Clear();
+			visitor.unprocessedGenes.Add(gm.mum.GetGeneByName("Blue"));
+		}
+
+		if(gm.gameVars.visitorsSpawned == 3)
+		{
+			visitor.unprocessedGenes.Clear();
+			visitor.unprocessedGenes.Add(gm.mum.GetGeneByName("Fertility"));
 		}
 
 		visitor.SetGeneActivationForAll();
+		visitor.ApplyGeneEffects(visitor.activeGenes);
+
 		visitors.Add(visitor);
-		visitorCost.Add(100);
-		visitorTimers.Add(DateTime.Now + new TimeSpan(0,0,0,10));
+		visitorCost.Add(gm.gameVars.visitorsSpawned * 50);
+		visitorTimers.Add(DateTime.Now + new TimeSpan(0,1,0,0));
 	}
 	
 
@@ -103,7 +132,8 @@ public class VisitorManager : MonoBehaviour
 
 	public void ShowPopupForVisitor(int index)
 	{
-		gm.blobPopupChoice.ShowChoice(visitors[index], "This blob wants to join you", "",
+		Blob visitor = visitors[index];
+		gm.blobPopupChoice.ShowChoice(visitor, "This blob wants to join you", "",        
 		                    this, "HireVisitor",
 		                    this, "DontHireVisitor");
 		selectedIndex = index;
@@ -112,7 +142,7 @@ public class VisitorManager : MonoBehaviour
 
 	bool IsVisitorPopupShowing()
 	{
-		return (gm.popup.gameObject.activeInHierarchy && gm.popup.headerLabel.text == "This blob wants to join you");
+		return (gm.blobPopupChoice.gameObject.activeInHierarchy && gm.blobPopupChoice.headerLabel.text == "This blob wants to join you");
 	}
 
 
@@ -130,9 +160,11 @@ public class VisitorManager : MonoBehaviour
 
 		switch (aveQuality)
 		{
-		case BlobQuality.Poor: maxVisitors = 0;break;
-		case BlobQuality.Fair: maxVisitors = 1;break;
-		case BlobQuality.Good: maxVisitors = 2;break;
+		case BlobQuality.Abysmal:
+		case BlobQuality.Horrid:
+		case BlobQuality.Poor: maxVisitors = 1;break;
+		case BlobQuality.Fair: maxVisitors = 2;break;
+		case BlobQuality.Good: 
 		case BlobQuality.Excellent:
 		case BlobQuality.Outstanding: maxVisitors = 3;break;
 		}
@@ -143,7 +175,7 @@ public class VisitorManager : MonoBehaviour
 			{
 				GenerateVisitor();
 				gm.visitorButtons[visitors.Count - 1].gameObject.SetActive(true);
-				visitorDelay = new TimeSpan(0, (int)(UnityEngine.Random.Range(20,30) * gm.timeScale), 0);
+				visitorDelay = new TimeSpan(0, (int)(GetNewVisitorDelayMins()), 0);
 				visitorTime = DateTime.Now + visitorDelay;
 			}
 		}
@@ -164,16 +196,21 @@ public class VisitorManager : MonoBehaviour
 			}
 		}
 
-		if (IsVisitorPopupShowing())
+		if (IsVisitorPopupShowing() && selectedIndex < visitors.Count && selectedIndex >= 0)
 		{
 			Blob visitor = visitors[selectedIndex];
+			List<Gene> genes = visitor.genes;
 			string genestr = "Genes: ";
-			foreach(Gene g in visitor.genes)
-				genestr += (g.negativeEffect ? "[FF9B9B]" : "[9BFF9B]") + g.geneName + ((visitor.genes.IndexOf(g) == (visitor.genes.Count - 1)) ? "[-]\n" : "[-], ");
+			foreach(Gene g in genes)
+				genestr += (g.negativeEffect ? "[FF9B9B]" : "[9BFF9B]") + g.geneName + ((genes.IndexOf(g) == (genes.Count - 1)) ? "[-]\n" : "[-], ");
 			TimeSpan ts = visitorTimers[selectedIndex] - DateTime.Now;
-			string timestr =  string.Format("{0:00}:{1:00}:{2:00} ", ts.TotalHours, ts.Minutes, ts.Seconds);
-			gm.popup.bodyLabel.text = " Will you hire him for [FFD700]" + "100" + "g[-]?\n" + genestr +
-				"Time Left: " + timestr;
+			string timestr =  "Time Left: " + string.Format("{0:00}:{1:00}:{2:00} ", ts.TotalHours, ts.Minutes, ts.Seconds);
+			string bodyText =  "Gender: " + ((visitor.male) ? "Male\n" : "Female\n") +
+				"Quality: " + Blob.GetQualityStringFromValue(visitor.quality) + " (" + visitor.quality.ToString() + ")\n" + 
+					genestr + timestr;
+			gm.blobPopupChoice.bodyLabel.text =  bodyText;
+			gm.blobPopupChoice.bodyLabel.alignment = NGUIText.Alignment.Left;
+			gm.blobPopupChoice.button1Label.text = "Recruit [FFD700]" + visitorCost[selectedIndex].ToString() + "g[-]";
 		}
 
 	}

@@ -16,7 +16,8 @@ public class InfoPanel : MonoBehaviour
 	public UISprite egg;
 	public UISprite bg;
 	public UISlider progress;
-	public UIButton button;
+	public UIButton multiButton;
+	public UIButton addEggButton;
 	public UISprite genePanel;
 	public GenePopup geneInfoPopup;
 	public List<GeneCell> geneCells;
@@ -37,14 +38,15 @@ public class InfoPanel : MonoBehaviour
 			face.gameObject.SetActive(false);
 			cheeks.gameObject.SetActive(false);
 			bg.color = Color.grey;
-			button.gameObject.SetActive(false);
+			multiButton.gameObject.SetActive(false);
 			progress.gameObject.SetActive(false);
 			return;
 		}
 
 		blob.OrderGenes();
 		genePanel.gameObject.SetActive(blob.hasHatched);
-		button.gameObject.SetActive(!blob.hasHatched);
+		multiButton.gameObject.SetActive(!blob.hasHatched);
+		addEggButton.gameObject.SetActive(blob.hasHatched && theBlob.female);
 		progress.gameObject.SetActive(!blob.hasHatched);
 
 		body.gameObject.SetActive(blob.hasHatched);
@@ -60,7 +62,7 @@ public class InfoPanel : MonoBehaviour
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
 
 		eggs.text = "Eggs: " + blob.unfertilizedEggs.ToString();
-		quality.text = "Quality: " + blob.quality.ToString() + " (" + Blob.GetQualityStringFromValue(blob.quality) + ")";
+		quality.text = "Quality: " + Blob.GetQualityStringFromValue(blob.quality) + " (" + blob.quality.ToString() + ")";
 		age.text = "Age: " + blob.age.ToString();
 		if (blob.male)
 		{
@@ -83,25 +85,66 @@ public class InfoPanel : MonoBehaviour
 			quality.text = "";
 		}
 
+		//Gene Cells
+
 		int i = 0;
 		foreach(Gene g in theBlob.genes)
 		{
-			GeneCell gc = geneCells[i++];
+			GeneCell gc = geneCells[i];
+
+			if(i >= theBlob.allowedGeneCount)
+			{
+				HideGeneCell(gc);
+				continue;
+			}
+
+			gc.cellSprite.alpha = 1f;
 			gc.gene = g;
 			gc.nameLabel.text = g.geneName + (theBlob.IsGeneActive(g) ? "" : " (inactive)");
+			gc.infoLabel.text = "";
 			gc.nameLabel.color = theBlob.IsGeneActive(g) ? Color.white : Color.gray;
-			gc.rarityIdicator.gameObject.SetActive(true);
-			gc.rarityIdicator.color = Gene.ColorForRarity(g.rarity);
+			gc.rarityIndicator.gameObject.SetActive(true);
+			gc.rarityIndicator.color = Gene.ColorForRarity(g.rarity);
 			gc.button.gameObject.SetActive(true);
+			gc.addGeneButton.gameObject.SetActive(false);
+			i++;
 		}
 
 		for(;i<geneCells.Count;i++)
 		{
 			GeneCell gc = geneCells[i];
-			gc.nameLabel.text = "";
-			gc.rarityIdicator.gameObject.SetActive(false);
+			if(i == theBlob.allowedGeneCount)
+			{
+				HideGeneCell(gc);
+				gc.cellSprite.alpha = .3f;
+				BlobQuality bq = Blob.GetQualityFromGeneCount(i+1);
+				gc.infoLabel.text = "Requires " + Blob.GetQualityFromEnum(bq) + " Quality to Unlock";
+				continue;
+			}
+			else if(i > theBlob.allowedGeneCount)
+			{
+				HideGeneCell(gc);
+				continue;
+			}
+
+			gc.cellSprite.alpha = 1f;
+			gc.nameLabel.color = Color.gray;
+			gc.nameLabel.text = "No Gene";
+			gc.rarityIndicator.gameObject.SetActive(false);
 			gc.button.gameObject.SetActive(false);
+			gc.addGeneButton.gameObject.SetActive(true);
 		}
+
+	}
+
+	void HideGeneCell(GeneCell gc)
+	{
+		gc.cellSprite.alpha = 0f;
+		gc.nameLabel.text = "";
+		gc.infoLabel.text = "";
+		gc.rarityIndicator.gameObject.SetActive(false);
+		gc.button.gameObject.SetActive(false);
+		gc.addGeneButton.gameObject.SetActive(false);
 	}
 
 
@@ -112,7 +155,35 @@ public class InfoPanel : MonoBehaviour
 	}
 
 
-	public void pressed()
+	public void PressAddEggButton()
+	{
+		int cost = 1;
+		gm.blobPopupChoice.ShowChoice(theBlob, "Add an Egg?", "Add an egg to this Blob for [C59F76]" + cost.ToString() + "c[-]?",
+		                              this, "AddEgg", null, null);
+	}
+
+
+	public void AddEgg()
+	{
+		int cost = 1;
+		if (gm.chocolate < cost) 
+		{gm.blobPopup.Show(theBlob, "Cannot Add an Egg", "You do not have enough Chocolate."); return;}
+
+		gm.AddChocolate(-1);
+		theBlob.unfertilizedEggs++;
+		UpdateWithBlob(theBlob);
+		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.vm.blobs.IndexOf(theBlob), null);
+	}
+
+
+	public void AddGenePressed(int index)
+	{
+		GeneCell gc = geneCells[index];
+		gm.geneAddPopup.Show("Add Gene", theBlob);
+	}
+
+
+	public void PressMultiButton()
 	{
 		foreach(Gene m in theBlob.genes)
 		{
@@ -129,7 +200,6 @@ public class InfoPanel : MonoBehaviour
 			}
 		}
 
-
 		theBlob.Hatch();
 		UpdateWithBlob(theBlob);
 		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), theBlob);
@@ -137,6 +207,7 @@ public class InfoPanel : MonoBehaviour
 		gm.UpdateAverageQuality();
 		gm.nm.UpdateBreedCost();
 	}
+
 
 	// Update is called once per frame
 	void Update () 
@@ -163,11 +234,11 @@ public class InfoPanel : MonoBehaviour
 				progress.value = progress.value > 1f ? 1f : progress.value;
 				
 				
-				if (progress.value >= 1f && button.isEnabled == false)
-					button.isEnabled = true;
+				if (progress.value >= 1f && multiButton.isEnabled == false)
+					multiButton.isEnabled = true;
 				
-				if (progress.value < 1f && button.isEnabled == true)
-					button.isEnabled = false;
+				if (progress.value < 1f && multiButton.isEnabled == true)
+					multiButton.isEnabled = false;
 			}
 
 			if (theBlob.hasHatched && theBlob.age < gm.breedingAge)

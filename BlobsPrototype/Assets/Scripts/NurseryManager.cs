@@ -44,11 +44,9 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Yellow"));
-		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Orange"));
-		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Green"));
+		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Better Babies"));
 		blob.SetGeneActivationForAll();
-		blob.ApplyGeneEffects();
+		blob.ApplyGeneEffects(blob.activeGenes);
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -57,12 +55,10 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-		blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Fertility"));
-		blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Virility"));
-		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Red"));
-		blob.unprocessedGenes.Add (gm.mum.GetGeneByName("Blue"));
+		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Better Babies"));
+		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Fertility"));
 		blob.SetGeneActivationForAll();
-		blob.ApplyGeneEffects();
+		blob.ApplyGeneEffects(blob.activeGenes);
 		blobs.Add(blob);
 	}
 	
@@ -194,7 +190,7 @@ public class NurseryManager : MonoBehaviour
 
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
 		newBlob.SetGeneActivationForAll();
-		newBlob.ApplyGeneEffects();
+		newBlob.ApplyGeneEffects(newBlob.activeGenes);
 		femaleBlob.egg = newBlob;
 	}
 
@@ -213,17 +209,26 @@ public class NurseryManager : MonoBehaviour
 		else
 			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
 		
-		blob.quality = Blob.GetNewQuality(dad.quality, mom.quality);
+		blob.quality = Blob.GetNewQuality(dad, mom);
 		blob.SetRandomTextures();
 
 		//check for possible new genes
 		List<Gene> parentGenesRaw = dad.genes.Union<Gene>(mom.genes).ToList<Gene>();
+		//List<Gene> parentGenesRaw = dad.genes.Concat(mom.genes).ToList<Gene>();
 		List<Gene> GenesToPassOn = new List<Gene>();
 
 		foreach(Gene g in parentGenesRaw)
 		{
+			int str = 0;
+			if(dad.genes.Contains(g))
+				str++;
+			if(mom.genes.Contains(g))
+				str++;
+
+			float mod = (str > 1) ? 1f : .75f;
+
 			float rand = UnityEngine.Random.Range(0f, 1f);
-			if(rand < g.passOnChance)
+			if(rand < g.passOnChance * mod)
 				GenesToPassOn.Add(g);
 		}
 
@@ -243,7 +248,7 @@ public class NurseryManager : MonoBehaviour
 		//}
 
 		blob.SetGeneActivationForAll();
-		blob.ApplyGeneEffects();
+		blob.ApplyGeneEffects(blob.activeGenes);
 
 		return blob;
 	}

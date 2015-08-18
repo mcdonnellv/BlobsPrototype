@@ -45,8 +45,10 @@ public class Blob
 	public int dadId;
 	public int spouseId;
 	public bool male;
+	public bool female {get{return !male;}}
 	public int unfertilizedEggs;
 	public float quality;
+	public float qualityBoostForOffspring;
 	public BlobTrait trait;
 	public BlobJob job;
 	public bool onMission;
@@ -70,6 +72,7 @@ public class Blob
 	{
 		gm = (GameManager)(GameObject.Find("GameManager")).GetComponent<GameManager>();
 		quality = (float)BlobQuality.Poor;
+		qualityBoostForOffspring = 0f;
 		onMission = false;
 		birthday = new DateTime(0);
 		hasHatched = false;
@@ -118,7 +121,7 @@ public class Blob
 			switch(req)
 			{
 			case Gene.GeneActivationRequirements.GenderMustBeFemale:
-				return (!male);
+				return (female);
 			case Gene.GeneActivationRequirements.GenderMustBeMale:
 				return (male);
 			case Gene.GeneActivationRequirements.QualityMustAtLeastBePoor:
@@ -217,15 +220,6 @@ public class Blob
 			return true;
 		return false;
 	}
-
-
-//	public Color GetBodyColor()
-//	{
-//		foreach(Gene g in genes)
-//			if(g.type == Gene.Type.BodyColor && IsGeneActive(g))
-//				return g.bodyColor;
-//		return new Color(0.863f, 0.863f, 0.863f, 1f);
-//	}
 
 
 	public string GetBodyColorName()
@@ -331,19 +325,43 @@ public class Blob
 	}
 
 
-	static public float GetNewQuality (float q1, float q2)
+	static public BlobQuality GetQualityFromGeneCount(int genecount)
 	{
-		float average = (q1 + q2) / 2f;
-		float rand = UnityEngine.Random.Range(.0f, .15f);
-		float f = average + (average * rand);
-		return Mathf.Round(f * 10f) / 10f;
+		if(genecount <= 0)
+			return BlobQuality.Horrid;
+		if(genecount <= 2)
+			return BlobQuality.Poor;
+		if(genecount <= 4)
+			return BlobQuality.Fair;
+		if(genecount <= 6)
+			return BlobQuality.Good;
+		if(genecount <= 8)
+			return BlobQuality.Excellent;
+		if(genecount <= 10)
+			return BlobQuality.Outstanding;
+
+		return BlobQuality.Outstanding;
+	}
+
+
+	static public float GetNewQuality (Blob dad, Blob mom)
+	{	
+		float qualityBoost = (dad.qualityBoostForOffspring > mom.qualityBoostForOffspring) ? dad.qualityBoostForOffspring : mom.qualityBoostForOffspring;
+		float rand = 0;
+
+		if(UnityEngine.Random.Range(0,4) == 0)
+			rand = UnityEngine.Random.Range(-1, 2) * 0.1f;
+
+		float average = (dad.quality + mom.quality) / 2f + qualityBoost + rand;
+		average = Mathf.Ceil(average * 10f) / 10f;
+		return average;
 	}
 
 	
-	public void ApplyGeneEffects()
+	public void ApplyGeneEffects(List<Gene> geneList)
 	{
-		ApplyBreedingGeneEffects(GeneManager.GetGenesOfType(activeGenes, Gene.Type.Breeding));
-		ApplyBodyColorGeneEffects(GeneManager.GetGenesOfType(activeGenes, Gene.Type.BodyColor));
+		ApplyBreedingGeneEffects(GeneManager.GetGenesOfType(geneList, Gene.Type.Breeding));
+		ApplyBodyColorGeneEffects(GeneManager.GetGenesOfType(geneList, Gene.Type.BodyColor));
 	}
 
 
@@ -379,6 +397,9 @@ public class Blob
 				break;
 			case "Sterile":
 				unfertilizedEggs = 0;
+				break;
+			case "Better Babies":
+				qualityBoostForOffspring = 0.1f;
 				break;
 			}
 		}

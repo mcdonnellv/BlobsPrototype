@@ -20,12 +20,13 @@ public class BlobPopupChoice : BlobPopup
 		button1.onClick.Clear();
 		button1.onClick.Add(new EventDelegate(this, "Hide"));
 		button1.onClick.Add(new EventDelegate(okTarget, okMethodName));
-		
+		button1Label.text = "Ok";
+
+		button2Label.text = "Cancel";
+		button2.onClick.Clear();
+		button2.onClick.Add(new EventDelegate(this, "Hide"));
+
 		if(cancelTarget != null && cancelMethodName != null)
-		{
-			button2.onClick.Clear();
-			button2.onClick.Add(new EventDelegate(this, "Hide"));
 			button2.onClick.Add(new EventDelegate(cancelTarget, cancelMethodName));
-		}
 	}
 }
