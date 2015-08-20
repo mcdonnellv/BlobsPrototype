@@ -13,6 +13,10 @@ public class GeneManager: MonoBehaviour
 
 		g = GetGeneByName("Fertility");
 		g.revealed = true;
+
+		foreach(Gene gene in genes)
+			if(gene.negativeEffect == false && gene.rarity <= Gene.Rarity.Common)
+				gene.revealed = true;
 	}
 
 	public Gene GetGeneByName(string nameParam)

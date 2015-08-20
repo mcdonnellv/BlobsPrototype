@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
 	void Start ()
 	{
 		timeScaleOld = 0f;
-		timeScale = .1f;
+		timeScale = .3f;
 
 		blobHatchDelay = new TimeSpan(0,0,30);
 		breedReadyDelay = new TimeSpan(0,0,10);
@@ -115,8 +115,8 @@ public class GameManager : MonoBehaviour
 		tributeGoldPerQuality = 2f;
 		tributeMaxMulitplier = 5f;
 
-		villageCost = 150;
-		castleCost = 800;
+		villageCost = 300;
+		castleCost = 1000;
 
 		selectMode = false;
 
@@ -129,6 +129,8 @@ public class GameManager : MonoBehaviour
 		gameCam.transform.localPosition = new Vector3(pos.x, pos.y);
 		rightNavButton.gameObject.SetActive(false);
 		leftNavButton.gameObject.SetActive(false);
+
+		Update();
 
 		bool firstTime = (PlayerPrefs.GetInt("FirstTimeSetup") == 0);
 		if (true)//firstTime)

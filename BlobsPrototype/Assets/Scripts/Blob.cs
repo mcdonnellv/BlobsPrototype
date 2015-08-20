@@ -56,6 +56,8 @@ public class Blob
 	public Blob egg;
 	public bool hasHatched;
 	public DateTime hatchTime;
+	public TimeSpan blobHatchDelay;
+	public TimeSpan breedReadyDelay;
 	public DateTime breedReadyTime;
 	public DateTime goldProductionTime;
 	public List<Gene> genes { get {return activeGenes.Union(inactiveGenes.Union(unprocessedGenes)).ToList();} }
@@ -88,6 +90,8 @@ public class Blob
 		spouseId = -1;
 		unfertilizedEggs = 2;
 		color = new Color(0.863f, 0.863f, 0.863f, 1f);
+		blobHatchDelay = gm.blobHatchDelay;
+		breedReadyDelay = gm.breedReadyDelay;
 	}
 
 
@@ -400,6 +404,12 @@ public class Blob
 				break;
 			case "Better Babies":
 				qualityBoostForOffspring = 0.1f;
+				break;
+			case "Quick Hatch":
+				blobHatchDelay = new TimeSpan(0,0,(int)gm.blobHatchDelay.TotalSeconds/2);
+				break;
+			case "Quick Breed":
+				breedReadyDelay = new TimeSpan(0,0,(int)gm.breedReadyDelay.TotalSeconds/2); 
 				break;
 			}
 		}

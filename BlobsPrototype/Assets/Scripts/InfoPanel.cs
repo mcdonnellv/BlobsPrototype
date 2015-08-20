@@ -172,7 +172,7 @@ public class InfoPanel : MonoBehaviour
 		gm.AddChocolate(-1);
 		theBlob.unfertilizedEggs++;
 		UpdateWithBlob(theBlob);
-		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.vm.blobs.IndexOf(theBlob), null);
+		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), null);
 	}
 
 

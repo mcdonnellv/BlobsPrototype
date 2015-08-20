@@ -24,7 +24,7 @@ public class VisitorManager : MonoBehaviour
 
 	int GetNewVisitorDelayMins()
 	{
-		int baseDelayMins = 2;
+		int baseDelayMins = 1;//2;
 		baseDelayMins += gm.gameVars.visitorsSpawned * 2;
 		return (int)(Mathf.Clamp(baseDelayMins, 2, 60 * 4) * gm.timeScale);
 	}
@@ -34,7 +34,7 @@ public class VisitorManager : MonoBehaviour
 	{
 		Blob visitor = new Blob();
 
-		visitor.male = (UnityEngine.Random.Range(0,2) == 0);
+		visitor.male = true;
 		visitor.Hatch();
 		visitor.birthday = visitor.birthday - gm.breedingAge;
 		visitor.quality = gm.GetAverageQuality();
@@ -88,6 +88,8 @@ public class VisitorManager : MonoBehaviour
 		visitors.Add(visitor);
 		visitorCost.Add(gm.gameVars.visitorsSpawned * 50);
 		visitorTimers.Add(DateTime.Now + new TimeSpan(0,1,0,0));
+
+		gm.popup.Show("New Visitor", "A new Blob visitor has arrived to check out your kingdom!");
 	}
 	
 

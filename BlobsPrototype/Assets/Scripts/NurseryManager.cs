@@ -69,7 +69,7 @@ public class NurseryManager : MonoBehaviour
 
 		blobs.Add(newBlob);
 		if(newBlob.hasHatched == false)
-			newBlob.hatchTime = System.DateTime.Now + gm.blobHatchDelay;
+			newBlob.hatchTime = System.DateTime.Now + newBlob.blobHatchDelay;
 		if (CanEnableBreedButton())
 			breedButton.isEnabled = false;
 	}
@@ -96,8 +96,11 @@ public class NurseryManager : MonoBehaviour
 	int GetBreedCost()
 	{
 		float averageQuality = gm.GetAverageQuality();
-		float mod = (float)Blob.GetQualityFromValue(averageQuality) - 1f;
-		int breedCost = gm.breedBaseCost + (int)((mod / 4f) * (gm.breedCostMax - gm.breedBaseCost));
+		BlobQuality q = Blob.GetQualityFromValue(averageQuality);
+		if(q < BlobQuality.Fair)
+			q = BlobQuality.Fair;
+		float mod = ((float)q - (float)BlobQuality.Fair) / ((float)BlobQuality.Outstanding - (float)BlobQuality.Fair);
+		int breedCost = gm.breedBaseCost + (int)(mod * (gm.breedCostMax - gm.breedBaseCost));
 
 		return breedCost;
 	}
@@ -185,14 +188,15 @@ public class NurseryManager : MonoBehaviour
 
 		femaleBlob.unfertilizedEggs--;
 
-		maleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
-		femaleBlob.breedReadyTime = System.DateTime.Now + gm.breedReadyDelay;
+		maleBlob.breedReadyTime = System.DateTime.Now + maleBlob.breedReadyDelay;
+		femaleBlob.breedReadyTime = System.DateTime.Now + femaleBlob.breedReadyDelay;
 
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
 		newBlob.SetGeneActivationForAll();
 		newBlob.ApplyGeneEffects(newBlob.activeGenes);
 		femaleBlob.egg = newBlob;
 	}
+
 
 	public Blob GenerateNewBlobBasedOnBlobs(Blob dad, Blob mom)
 	{
@@ -225,7 +229,7 @@ public class NurseryManager : MonoBehaviour
 			if(mom.genes.Contains(g))
 				str++;
 
-			float mod = (str > 1) ? 1f : .75f;
+			float mod = (str > 1) ? .8f : .5f;
 
 			float rand = UnityEngine.Random.Range(0f, 1f);
 			if(rand < g.passOnChance * mod)
@@ -399,6 +403,7 @@ public class NurseryManager : MonoBehaviour
 		BlobCell bc = blobPanel.blobCells[index];
 		infoPanel.UpdateWithBlob(blob);
 		UpdateSellValue();
+		UpdateBreedCost();
 
 		foreach(Blob b in blobs)
 		{
@@ -506,7 +511,7 @@ public class NurseryManager : MonoBehaviour
 		if(femaleBlob == null) // shes gone! get a new wife.
 			femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
 		
-		gm.AddGold(-gm.breedCost);
+		gm.AddGold(-GetBreedCost());
 		BreedBlobs(maleBlob, femaleBlob);
 	}
 	

@@ -54,7 +54,7 @@ public class BlobCell : MonoBehaviour
 				if (blob.breedReadyTime > System.DateTime.Now)
 				{
 					System.TimeSpan ts = (blob.breedReadyTime - System.DateTime.Now);
-					progressBar.value = (float)(ts.TotalSeconds / gm.breedReadyDelay.TotalSeconds);
+					progressBar.value = (float)(ts.TotalSeconds / blob.breedReadyDelay.TotalSeconds);
 					
 					
 				}
@@ -75,7 +75,7 @@ public class BlobCell : MonoBehaviour
 				if (blob.hatchTime > System.DateTime.Now)
 				{
 					System.TimeSpan ts = (blob.hatchTime - System.DateTime.Now);
-					progressBar.value = (float)(ts.TotalSeconds / gm.blobHatchDelay.TotalSeconds);
+					progressBar.value = (float)(ts.TotalSeconds / blob.blobHatchDelay.TotalSeconds);
 				}
 				else
 					progressBar.value = 0f;

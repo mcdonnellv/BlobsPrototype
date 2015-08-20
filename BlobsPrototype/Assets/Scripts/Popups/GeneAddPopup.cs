@@ -118,5 +118,6 @@ public class GeneAddPopup : Popup
 		blob.SetGeneActivationForGene(g);
 		blob.ApplyGeneEffects(temp);
 		gm.nm.UpdateAllBlobCells();
+		gm.nm.infoPanel.UpdateWithBlob(blob);
 	}
 }
