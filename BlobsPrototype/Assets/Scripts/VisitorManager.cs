@@ -37,7 +37,8 @@ public class VisitorManager : MonoBehaviour
 		visitor.male = true;
 		visitor.Hatch();
 		visitor.birthday = visitor.birthday - gm.breedingAge;
-		visitor.quality = gm.GetAverageQuality();
+		visitor.level = gm.GetAverageLevel();
+		visitor.quality = Blob.GetRandomQuality();
 		visitor.SetRandomTextures();
 		visitor.id = gm.gameVars.blobsSpawned++;
 		gm.gameVars.visitorsSpawned++;
@@ -158,20 +159,20 @@ public class VisitorManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		BlobQuality aveQuality = Blob.GetQualityFromValue(gm.GetAverageQuality());
+//		int aveLevel = gm.GetAverageLevel();
+//
+//		switch (aveLevel)
+//		{
+//		case BlobQuality.Abysmal:
+//		case BlobQuality.Horrid:
+//		case BlobQuality.Poor: maxVisitors = 1;break;
+//		case BlobQuality.Fair: maxVisitors = 2;break;
+//		case BlobQuality.Good: 
+//		case BlobQuality.Excellent:
+//		case BlobQuality.Outstanding: maxVisitors = 3;break;
+//		}
 
-		switch (aveQuality)
-		{
-		case BlobQuality.Abysmal:
-		case BlobQuality.Horrid:
-		case BlobQuality.Poor: maxVisitors = 1;break;
-		case BlobQuality.Fair: maxVisitors = 2;break;
-		case BlobQuality.Good: 
-		case BlobQuality.Excellent:
-		case BlobQuality.Outstanding: maxVisitors = 3;break;
-		}
-
-		if (visitorTime <= DateTime.Now)
+		if (false)//visitorTime <= DateTime.Now)
 		{
 			if (visitors.Count < maxVisitors)
 			{
@@ -208,7 +209,7 @@ public class VisitorManager : MonoBehaviour
 			TimeSpan ts = visitorTimers[selectedIndex] - DateTime.Now;
 			string timestr =  "Time Left: " + string.Format("{0:00}:{1:00}:{2:00} ", ts.TotalHours, ts.Minutes, ts.Seconds);
 			string bodyText =  "Gender: " + ((visitor.male) ? "Male\n" : "Female\n") +
-				"Quality: " + Blob.GetQualityStringFromValue(visitor.quality) + " (" + visitor.quality.ToString() + ")\n" + 
+				"Quality: " + visitor.quality.ToString() + " (" + visitor.quality.ToString() + ")\n" + 
 					genestr + timestr;
 			gm.blobPopupChoice.bodyLabel.text =  bodyText;
 			gm.blobPopupChoice.bodyLabel.alignment = NGUIText.Alignment.Left;

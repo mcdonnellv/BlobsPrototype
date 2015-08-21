@@ -89,20 +89,14 @@ public class NurseryManager : MonoBehaviour
 		else
 			infoPanel.UpdateWithBlob(null);
 
-		gm.UpdateAverageQuality();
+		gm.UpdateAverageLevel();
 		UpdateBreedCost();
 	}
 
 	int GetBreedCost()
 	{
-		float averageQuality = gm.GetAverageQuality();
-		BlobQuality q = Blob.GetQualityFromValue(averageQuality);
-		if(q < BlobQuality.Fair)
-			q = BlobQuality.Fair;
-		float mod = ((float)q - (float)BlobQuality.Fair) / ((float)BlobQuality.Outstanding - (float)BlobQuality.Fair);
-		int breedCost = gm.breedBaseCost + (int)(mod * (gm.breedCostMax - gm.breedBaseCost));
-
-		return breedCost;
+		int averageLevel = gm.GetAverageLevel();
+		return averageLevel * 10;
 	}
 
 
@@ -213,7 +207,10 @@ public class NurseryManager : MonoBehaviour
 		else
 			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
 		
-		blob.quality = Blob.GetNewQuality(dad, mom);
+		blob.quality = Blob.GetRandomQuality();
+		blob.level = (int)(dad.level + mom.level / 2f) + UnityEngine.Random.Range (-1,2);
+		blob.level = Mathf.Clamp(blob.level, 1, 100);
+		blob.sellValue = 10 + Mathf.FloorToInt(blob.level * 1.5f);
 		blob.SetRandomTextures();
 
 		//check for possible new genes
@@ -330,40 +327,40 @@ public class NurseryManager : MonoBehaviour
 	}
 
 	
-	public Gene RollForNewGene(Blob blob, List<Gene> preReqList)
-	{
-		// poor quality blobs cannot mutate genes
-		if (Blob.GetQualityFromValue(blob.quality) == BlobQuality.Poor)
-			return null;
-		
-		List<Gene> allEligibleGenes = new List<Gene>();
-		foreach(Gene gene in preReqList)
-		{
-			List<Gene> eligibleGenes = GeneManager.GetGenesWithPrerequisite(gm.mum.genes, gene.geneName);
-			allEligibleGenes = allEligibleGenes.Union<Gene>(eligibleGenes).ToList<Gene>();
-		}
-
-		allEligibleGenes = allEligibleGenes.Union<Gene>(GeneManager.GetGenesWithPrerequisite(gm.mum.genes, "")).Distinct ().ToList<Gene>();
-
-		//prune genes that currently exist amongthe player's blob population
-		foreach(Blob b in blobs)//for now only look at nursery blobs
-			foreach(Gene gene in b.genes)
-				foreach(Gene eg in allEligibleGenes)
-				    if(eg.geneName == gene.geneName)
-					{
-						allEligibleGenes.Remove(eg);
-						break;
-					}
-
-		List<Gene> rollSuccessGenes = new List<Gene>();
-		float geneRoll = UnityEngine.Random.Range(0f,1f);
-		foreach(Gene eligibleGene in allEligibleGenes)
-			if (geneRoll <= eligibleGene.revealChance)
-				rollSuccessGenes.Add(eligibleGene);
-			
-		Gene newGene = GeneManager.GetRandomGeneBasedOnRarity(rollSuccessGenes);
-		return newGene;
-	}
+//	public Gene RollForNewGene(Blob blob, List<Gene> preReqList)
+//	{
+//		// poor quality blobs cannot mutate genes
+//		if (Blob.GetQualityFromValue(blob.quality) == BlobQuality.Poor)
+//			return null;
+//		
+//		List<Gene> allEligibleGenes = new List<Gene>();
+//		foreach(Gene gene in preReqList)
+//		{
+//			List<Gene> eligibleGenes = GeneManager.GetGenesWithPrerequisite(gm.mum.genes, gene.geneName);
+//			allEligibleGenes = allEligibleGenes.Union<Gene>(eligibleGenes).ToList<Gene>();
+//		}
+//
+//		allEligibleGenes = allEligibleGenes.Union<Gene>(GeneManager.GetGenesWithPrerequisite(gm.mum.genes, "")).Distinct ().ToList<Gene>();
+//
+//		//prune genes that currently exist amongthe player's blob population
+//		foreach(Blob b in blobs)//for now only look at nursery blobs
+//			foreach(Gene gene in b.genes)
+//				foreach(Gene eg in allEligibleGenes)
+//				    if(eg.geneName == gene.geneName)
+//					{
+//						allEligibleGenes.Remove(eg);
+//						break;
+//					}
+//
+//		List<Gene> rollSuccessGenes = new List<Gene>();
+//		float geneRoll = UnityEngine.Random.Range(0f,1f);
+//		foreach(Gene eligibleGene in allEligibleGenes)
+//			if (geneRoll <= eligibleGene.revealChance)
+//				rollSuccessGenes.Add(eligibleGene);
+//			
+//		Gene newGene = GeneManager.GetRandomGeneBasedOnRarity(rollSuccessGenes);
+//		return newGene;
+//	}
 
 
 	public void SpawnEgg(Blob egg)
@@ -522,12 +519,18 @@ public class NurseryManager : MonoBehaviour
 	}
 
 
-	void SellBlobFinal() 
+	public void SellBlobFinal() 
+	{
+		Blob blob = blobs[curSelectedIndex];
+		gm.AddGold(blob.sellValue);
+		DeleteBlobFinal();
+	}
+
+	public void DeleteBlobFinal() 
 	{
 		Blob blob = blobs[curSelectedIndex];
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		bc.Reset();
-		gm.AddGold(gm.sellValue);
 		DeleteBlob(blob);
 	}
 

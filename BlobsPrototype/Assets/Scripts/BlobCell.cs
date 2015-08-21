@@ -15,10 +15,11 @@ public class BlobCell : MonoBehaviour
 	public UISprite egg;
 	public UISprite geneIcon;
 	public UISprite eggIcon;
+	public UISprite qualityIndicator;
 	public UILabel eggLabel;
 	public UILabel geneCountLabel;
 	public UILabel infoLabel;
-	public UILabel qualityLabel;
+	public UILabel levelLabel;
 	public Blob blob;
 
 	// Use this for initialization
@@ -41,6 +42,7 @@ public class BlobCell : MonoBehaviour
 		eggLabel.text = "";
 		infoLabel.text = "";
 		heart.gameObject.SetActive(false);
+		qualityIndicator.color = Color.white;
 	}
 
 
@@ -55,8 +57,6 @@ public class BlobCell : MonoBehaviour
 				{
 					System.TimeSpan ts = (blob.breedReadyTime - System.DateTime.Now);
 					progressBar.value = (float)(ts.TotalSeconds / blob.breedReadyDelay.TotalSeconds);
-					
-					
 				}
 				else
 				{
@@ -99,7 +99,7 @@ public class BlobCell : MonoBehaviour
 			else
 			{
 				blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
-				gm.vm.AddTribute(blob.quality);
+				gm.vm.AddTribute(blob.goldProduction);
 			}
 		}
 

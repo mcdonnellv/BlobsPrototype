@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 	public GameObject breedingView;
 	public GameObject grid;
 	public GameObject selectModeCover;
-	public UILabel averageQualityLabel;
+	public UILabel averageLevelLabel;
 	public UILabel goldLabel;
 	public UILabel chocolateLabel;
 	public UILabel missionButtonLabel;
@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
 	public Popup popup;
 	public BlobPopup blobPopup;
 	public BlobPopupChoice blobPopupChoice;
+	public BlobDetailsPopup blobDetailsPopup;
 	public GeneAddPopup geneAddPopup;
 	public GameVariables gameVars;
 
@@ -201,16 +202,16 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	public void UpdateAverageQuality()
+	public void UpdateAverageLevel()
 	{
-		float averageQuality = GetAverageQuality();
-		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
+		float averageLevel = GetAverageLevel();
+		averageLevelLabel.text = "Average Level: " + averageLevel;
 	}
 
 
-	public float GetAverageQuality()
+	public int GetAverageLevel()
 	{
-		float cummulativeQuality = 0f;
+		float cummulativeLevel = 0f;
 		int totalBlobs = 0;
 		List <Blob> allBlobs = gameVars.allBlobs;
 
@@ -218,15 +219,13 @@ public class GameManager : MonoBehaviour
 		{
 			if(blob.hasHatched)
 			{
-				cummulativeQuality += blob.quality;
+				cummulativeLevel += blob.level;
 				totalBlobs++;
 			}
 		}
 
-		float averageQuality = cummulativeQuality / totalBlobs;
-		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
-
-		return averageQuality;
+		float averageLevel = cummulativeLevel / totalBlobs;
+		return Mathf.RoundToInt(averageLevel);;
 	}
 
 
@@ -255,17 +254,25 @@ public class GameManager : MonoBehaviour
 		chocolateLabel.text = "Chocolate: [C59F76]" + chocolate.ToString() + "c[-]";
 	}
 
-	
+
 	public void TrySellBlob(Blob blob, MonoBehaviour target)
 	{
+		TryDeleteBlob(blob, target, true);
+	}
+
+	public void TryDeleteBlob(Blob blob, MonoBehaviour target, bool selling)
+	{
+		string actionWord = "Delete";
+		if(selling)
+			actionWord = "Sell";
 		if (blob.onMission) 
-		{blobPopup.Show(blob, "Cannot Sell", "Blob is on a mission.");return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob is on a mission.");return;}
 		
 		if (blob.hasHatched == false)
-		{blobPopup.Show(blob, "Cannot Sell", "Blob has not been hatched."); return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob has not been hatched."); return;}
 		
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{blobPopup.Show(blob, "Cannot Sell", "Blob is still breeding.");return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob is still breeding.");return;}
 		
 		bool lastOfGender = true;
 		List<Blob> allBlobs = gameVars.allBlobs;
@@ -274,7 +281,7 @@ public class GameManager : MonoBehaviour
 				lastOfGender = false;
 		
 		if (lastOfGender)
-		{blobPopup.Show(blob, "Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Cannot " + actionWord + " your last " + ((blob.male == true) ? "male" : "female") +" blob."); return;}
 		
 		Gene lastGene = null;
 		foreach(Gene g1 in blob.genes)
@@ -308,14 +315,14 @@ public class GameManager : MonoBehaviour
 		if (lastGene != null)
 		{
 			blobPopupChoice.ShowChoice(blob, "Warning!", 
-			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to sell this blob?", 
-			                 target, "SellBlobFinal", null, null); 
+			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to " + actionWord + " this blob?", 
+			                           target, selling ? "SellBlobFinal" : "DeleteBlobFinal", null, null); 
 			return;
 		}
 		
-		blobPopupChoice.ShowChoice(blob, "Sell Blob", "Are you sure you want to sell this blob?", target, "SellBlobFinal", null, null);
+		blobPopupChoice.ShowChoice(blob, actionWord + " Blob", "Are you sure you want to " + actionWord + " this blob?", target,  selling ? "SellBlobFinal" : "DeleteBlobFinal", null, null);
 	}
-	
+
 
 	public void MissionsButtonPressed()
 	{
