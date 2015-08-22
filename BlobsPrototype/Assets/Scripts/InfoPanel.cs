@@ -12,7 +12,9 @@ public class InfoPanel : MonoBehaviour
 	public UILabel qualityLabel;
 	public UILabel levelLabel;
 	public UILabel bodyLabel;
-	public UILabel bondbuttonLabel;
+	public UILabel bondButtonLabel;
+	public UILabel breedButtonLabel;
+	public UILabel deleteButtonLabel;
 	public UISprite body;
 	public UISprite face;
 	public UISprite cheeks;
@@ -32,7 +34,14 @@ public class InfoPanel : MonoBehaviour
 	public List<GeneCell> geneCells;
 
 	Blob theBlob;
-	
+
+	public void UpdateWithBlobIfSelected(Blob blob)
+	{
+		if(gm.nm.blobs[gm.nm.curSelectedIndex] == blob)
+			UpdateWithBlob(blob);
+	}
+
+
 	public void UpdateWithBlob(Blob blob)
 	{
 		theBlob = blob;
@@ -68,17 +77,16 @@ public class InfoPanel : MonoBehaviour
 		face.spriteName = tex.name;
 		body.color = blob.color;
 		bg.color = (blob.male) ? new Color(0.62f, 0.714f, 0.941f,1f) : new Color(0.933f, 0.604f, 0.604f, 1f);
-		eggsLabel.text = "Eggs: " + blob.unfertilizedEggs.ToString();
-		qualityLabel.text = "Quality: " + blob.quality.ToString();
-		levelLabel.text = "Level: " + blob.level.ToString();
-		ageLabel.text = "Age: " + blob.age.ToString();
+		eggsLabel.text = blob.unfertilizedEggs.ToString() + " eggs left";
+		qualityLabel.text = blob.quality.ToString() + " quality";
+		levelLabel.text = "Level   " + blob.level.ToString();
 		if (blob.male)
 		{
-			genderLabel.text = "Gender: Male";
+			genderLabel.text = "Male";
 			eggsLabel.text = "";
 		}
 		else
-			genderLabel.text = "Gender: Female";
+			genderLabel.text = "Female";
 
 		int pixels = (int)(blob.BlobScale() * 50f);
 		body.SetDimensions(pixels, pixels);
@@ -87,20 +95,31 @@ public class InfoPanel : MonoBehaviour
 
 		//UpdateGenePanel()
 
-		moveButton.SetState(UIButtonColor.State.Disabled, true);
+		moveButton.isEnabled = false;
 
 		if(blob.spouseId == -1)
 		{
-			breedButton.SetState(UIButtonColor.State.Disabled, true);
-			bondbuttonLabel.text = "Form Relationship";
+			breedButton.isEnabled = false;
+			bondButton.isEnabled = blob.male;
+			bondButtonLabel.text = "Find a Mate";
 			bondButton.defaultColor = new Color(0.384f, 0.584f, 0.349f, 1f);
 		}
 		else
 		{
-			breedButton.SetState(UIButtonColor.State.Normal, true);
-			bondbuttonLabel.text = "Break Relationship";
-			bondButton.defaultColor = new Color(0.933f, 0.604f, 0.604f, 1f);
+			bondButton.isEnabled = true;
+			breedButton.isEnabled = (theBlob.female ? (theBlob.unfertilizedEggs > 0) : (theBlob.GetSpouse().unfertilizedEggs > 0));
+			bondButtonLabel.text = "Break Up";
+			bondButton.defaultColor = new Color(1f, 0.459f, 0.459f, 1f);
+			UpdateBreedCost();
 		}
+
+		bool isIdle = blob.GetBlobStateString() == "";
+		breedButton.isEnabled = !isIdle ? false : breedButton.isEnabled;
+		bondButton.isEnabled = !isIdle ? false : bondButton.isEnabled;
+		moveButton.isEnabled = false;
+		deleteButton.isEnabled = isIdle;
+		addEggButton.isEnabled = !isIdle ? false : addEggButton.isEnabled;
+		UpdateSellValue();
 	}
 
 
@@ -110,6 +129,7 @@ public class InfoPanel : MonoBehaviour
 		egg.gameObject.SetActive(true);
 		progress.gameObject.SetActive(true);
 		hatchButton.gameObject.SetActive(true);
+		hatchButton.isEnabled = (theBlob.hatchTime <= System.DateTime.Now);
 	}
 
 
@@ -253,9 +273,9 @@ public class InfoPanel : MonoBehaviour
 		}
 
 
-		gm.blobDetailsPopup.ShowChoice(theBlob, "New Baby Blob","(blob cannot be sold later)", 
+		gm.blobDetailsPopup.ShowChoice(theBlob, "New Baby Blob","", 
 		                               this, "KeepBlob", this, "SellBlob");
-		gm.blobDetailsPopup.button2Label.text = "Sell +[FFD700]" + theBlob.sellValue.ToString() + "g[-]";
+		gm.blobDetailsPopup.button2Label.text = "Sell     +[FFD700]" + theBlob.sellValue.ToString() + "g[-]";
 		gm.blobDetailsPopup.button1Label.text = "Keep";
 	}
 
@@ -274,30 +294,58 @@ public class InfoPanel : MonoBehaviour
 		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), theBlob);
 		
 		gm.UpdateAverageLevel();
-		gm.nm.UpdateBreedCost();
 	}
+
 
 	public void PressBreedButton()
 	{
-		gm.nm.PressBreedButton();
+		gm.nm.BreedBlobWithSpouse(theBlob);
 	}
+
 
 	public void PressBondButton()
 	{
-		gm.nm.PressBreedButton();
+		if(theBlob.spouseId == -1)
+		{
+			gm.nm.FindSpouse(theBlob);
+			UpdateWithBlob(theBlob);
+		}
+		else
+		{
+			gm.blobPopupChoice.ShowChoice(theBlob, 
+			                              "Break Up With Mate", 
+			                              "Are you sure?\nBlobs will become depressed.",
+			                              this, "ConfirmRemoveSpouse",
+			                              null, null);
+		}
 	}
+
 
 	public void PressDeleteButton()
 	{
 		gm.TryDeleteBlob(theBlob, gm.nm, false);
 	}
 
+	
 	public void PressMoveButton()
 	{
+		//TODO
 	}
 
 
-	// Update is called once per frame
+	public void UpdateBreedCost() { breedButtonLabel.text = "Breed     [FFD700]" + gm.nm.GetBreedCost().ToString() + "g[-]"; }
+
+
+	public void UpdateSellValue() { deleteButtonLabel.text = "Sell    +[FFD700]" + theBlob.sellValue.ToString() + "g[-]"; }
+
+
+	void ConfirmRemoveSpouse()
+	{
+		gm.nm.RemoveSpouse(theBlob);
+		UpdateWithBlob(theBlob);
+	}
+
+
 	void Update () 
 	{
 		if (theBlob != null)
@@ -306,27 +354,27 @@ public class InfoPanel : MonoBehaviour
 			{
 				TimeSpan blobAge = theBlob.age;
 				if (blobAge.Days > 0)
-					ageLabel.text = "Age: " + string.Format("{0:0} day {1:0} hr", blobAge.Days, blobAge.Hours);
+					ageLabel.text =  string.Format("{0:0} days", blobAge.Days) + " old";
 				else if (blobAge.Hours > 0)
-					ageLabel.text = "Age: " + string.Format("{0:0} hr {1:0} min", blobAge.Hours, blobAge.Minutes);
-				else if (blobAge.Minutes > 0)
-					ageLabel.text = "Age: " + string.Format("{0:0 }min {1:0} sec", blobAge.Minutes, blobAge.Seconds);
+					ageLabel.text = string.Format("{0:0} hrs", blobAge.Hours) + " old";
 				else
-					ageLabel.text = "Age: " + string.Format("{0:0} sec", blobAge.Seconds);
+					ageLabel.text = string.Format("{0:0} mins", blobAge.Minutes) + " old";
+
 			
 			}
 			else
 			{
-				System.TimeSpan ts = (theBlob.hatchTime - System.DateTime.Now);
-				progress.value = 1f - (float)(ts.TotalSeconds / gm.blobHatchDelay.TotalSeconds);
-				progress.value = progress.value > 1f ? 1f : progress.value;
-				
-				
-				if (progress.value >= 1f && hatchButton.isEnabled == false)
-					hatchButton.isEnabled = true;
-				
-				if (progress.value < 1f && hatchButton.isEnabled == true)
-					hatchButton.isEnabled = false;
+				if (theBlob.hatchTime > System.DateTime.Now)
+				{
+					System.TimeSpan ts = (theBlob.hatchTime - System.DateTime.Now);
+					progress.value = 1f - (float)(ts.TotalSeconds / theBlob.blobHatchDelay.TotalSeconds);
+				}
+				else if(theBlob.hatchTime != new System.DateTime(0))
+				{
+					theBlob.hatchTime = new System.DateTime(0);
+					progress.value = 0f;
+					gm.nm.infoPanel.UpdateWithBlobIfSelected(theBlob);
+				}
 			}
 
 			if (theBlob.hasHatched && theBlob.age < gm.breedingAge)

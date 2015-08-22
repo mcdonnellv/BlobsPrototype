@@ -58,16 +58,42 @@ public class BlobCell : MonoBehaviour
 					System.TimeSpan ts = (blob.breedReadyTime - System.DateTime.Now);
 					progressBar.value = (float)(ts.TotalSeconds / blob.breedReadyDelay.TotalSeconds);
 				}
-				else
+				else if(blob.breedReadyTime != new System.DateTime(0))
 				{
 					progressBar.value = 0f;
 					blob.breedReadyTime = new System.DateTime(0);
+					gm.nm.infoPanel.UpdateWithBlobIfSelected(blob);
 					if(blob.egg != null)
 					{
 						gm.nm.SpawnEgg(blob.egg);
 						gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(blob), blob);
 						blob.egg = null;
 					}
+				}
+
+				if (blob.heartbrokenRecoverTime > System.DateTime.Now)
+				{
+					System.TimeSpan ts = (blob.heartbrokenRecoverTime - System.DateTime.Now);
+					progressBar.value = (float)(ts.TotalSeconds / blob.heartbrokenRecoverDelay.TotalSeconds);
+				}
+				else if(blob.heartbrokenRecoverTime != new System.DateTime(0))
+				{
+					blob.heartbrokenRecoverTime = new System.DateTime(0);
+					progressBar.value = 0f;
+					gm.nm.infoPanel.UpdateWithBlobIfSelected(blob);
+				}
+
+				if (blob.mateFindTime > System.DateTime.Now)
+				{
+					System.TimeSpan ts = (blob.mateFindTime - System.DateTime.Now);
+					progressBar.value = (float)(ts.TotalSeconds / blob.mateFindDelay.TotalSeconds);
+				}
+				else if(blob.mateFindTime != new System.DateTime(0))
+				{
+					blob.mateFindTime = new System.DateTime(0);
+					progressBar.value = 0f;
+					gm.nm.GetMateFindResult(blob);
+					gm.nm.infoPanel.UpdateWithBlobIfSelected(blob);
 				}
 			}
 			else
@@ -82,6 +108,7 @@ public class BlobCell : MonoBehaviour
 
 			}
 
+			infoLabel.text = blob.GetBlobStateString();
 		}
 
 		//blob belongs to village

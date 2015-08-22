@@ -34,6 +34,7 @@ public class BlobPanel : MonoBehaviour
 
 		if(blob == null)
 		{
+			bc.Reset();
 			bc.gameObject.SetActive(false);
 			return;
 		}
@@ -44,6 +45,8 @@ public class BlobPanel : MonoBehaviour
 		bc.body.gameObject.SetActive(blob.hasHatched);
 		bc.face.gameObject.SetActive(blob.hasHatched);
 		bc.cheeks.gameObject.SetActive(blob.hasHatched && !blob.male);
+		if(!blob.hasHatched)
+			bc.heart.gameObject.SetActive(false);
 
 		UISprite bg = bc.GetComponent<UISprite>();
 		UIButton button = bc.GetComponentInChildren<UIButton>();

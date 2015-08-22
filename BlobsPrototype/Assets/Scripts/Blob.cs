@@ -62,8 +62,12 @@ public class Blob
 	public DateTime hatchTime;
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
+	public TimeSpan heartbrokenRecoverDelay;
+	public TimeSpan mateFindDelay;
 	public DateTime breedReadyTime;
 	public DateTime goldProductionTime;
+	public DateTime heartbrokenRecoverTime;
+	public DateTime mateFindTime;
 	public List<Gene> genes { get {return activeGenes.Union(inactiveGenes.Union(unprocessedGenes)).ToList();} }
 	public List<Gene> unprocessedGenes;
 	public List<Gene> activeGenes;
@@ -96,9 +100,35 @@ public class Blob
 		color = new Color(0.863f, 0.863f, 0.863f, 1f);
 		blobHatchDelay = gm.blobHatchDelay;
 		breedReadyDelay = gm.breedReadyDelay;
+		heartbrokenRecoverDelay = gm.heartbrokenRecoverDelay;
+		mateFindDelay = gm.mateFindDelay;
 		goldProduction = 0;
 		sellValue = 1;
 		level = 1;
+	}
+
+	public string GetBlobStateString()
+	{
+		if (breedReadyTime > System.DateTime.Now)
+			return "Breeding";
+		if (heartbrokenRecoverTime > System.DateTime.Now)
+			return "Depressed";
+		if (!hasHatched && hatchTime > System.DateTime.Now)
+			return "Incubating";
+		if (mateFindTime > System.DateTime.Now)
+			return male ? "Courting" : "Judging";
+
+		return "";
+	}
+
+
+	public Blob GetSpouse()
+	{
+		foreach(Blob b in gm.nm.blobs)
+			if(spouseId == b.id)
+				return b;
+		
+		return null;
 	}
 
 

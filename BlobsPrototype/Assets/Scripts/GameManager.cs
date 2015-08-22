@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
 	public TimeSpan breedBarFillDelay;
+	public TimeSpan heartbrokenRecoverDelay;
+	public TimeSpan mateFindDelay;
 	public TimeSpan blobGoldProductionDelay;
 	public TimeSpan yearFillDelay;
 	public DateTime yearFillTime;
@@ -85,6 +87,8 @@ public class GameManager : MonoBehaviour
 	TimeSpan breedBarFillDelayOriginal;
 	TimeSpan blobGoldProductionDelayOriginal;
 	TimeSpan yearFillDelayOriginal;
+	TimeSpan heartbrokenRecoverDelayOriginal;
+	TimeSpan mateFindDelayOriginal;
 
 
 
@@ -97,6 +101,8 @@ public class GameManager : MonoBehaviour
 		breedReadyDelay = new TimeSpan(0,0,10);
 		breedBarFillDelay = new TimeSpan(0,0,1);
 		blobGoldProductionDelay = new TimeSpan(0,0,10);
+		heartbrokenRecoverDelay = new TimeSpan(0,0,30);
+		mateFindDelay = new TimeSpan(0,0,10);
 		yearFillDelay = new TimeSpan(1,0,0);
 		yearFillTime = DateTime.Now + yearFillDelay;
 
@@ -105,6 +111,8 @@ public class GameManager : MonoBehaviour
 		yearFillDelayOriginal = yearFillDelay;
 		blobGoldProductionDelayOriginal = blobGoldProductionDelay;
 		breedBarFillDelayOriginal = breedBarFillDelay;
+		heartbrokenRecoverDelayOriginal = heartbrokenRecoverDelay;
+		mateFindDelayOriginal = mateFindDelay;
 
 		maxBlobs = 20;
 		breedCost = 10;
@@ -260,6 +268,7 @@ public class GameManager : MonoBehaviour
 		TryDeleteBlob(blob, target, true);
 	}
 
+
 	public void TryDeleteBlob(Blob blob, MonoBehaviour target, bool selling)
 	{
 		string actionWord = "Delete";
@@ -372,7 +381,7 @@ public class GameManager : MonoBehaviour
 		{
 			vm.villageExists = true;
 			AddGold(-villageCost);
-			nm.toVillageButton.gameObject.SetActive(true);
+			//nm.toVillageButton.gameObject.SetActive(true);
 			rightNavButton.gameObject.SetActive(true);
 			popup.Show("Village Now Available", "You can now move Blobs to the new village to work and give you tribute.");
 		}
@@ -381,7 +390,7 @@ public class GameManager : MonoBehaviour
 			cm.castleExists = true;
 			AddGold(-castleCost);
 			buildButton.gameObject.SetActive(false);
-			nm.toCastleButton.gameObject.SetActive(true);
+			//nm.toCastleButton.gameObject.SetActive(true);
 			leftNavButton.gameObject.SetActive(true);
 			popup.Show("Castle Now Available", "You can now move Blobs to the new castle to perform missions.");
 		}
@@ -408,6 +417,8 @@ public class GameManager : MonoBehaviour
 			blobHatchDelay = new TimeSpan(0,0,(int)(blobHatchDelayOriginal.TotalSeconds * timeScale));
 			breedReadyDelay = new TimeSpan(0,0,(int)(breedReadyDelayOriginal.TotalSeconds * timeScale));
 			breedBarFillDelay = new TimeSpan(0,0,(int)(breedBarFillDelayOriginal.TotalSeconds * timeScale));
+			mateFindDelay = new TimeSpan(0,0,(int)(mateFindDelayOriginal.TotalSeconds * timeScale));
+			heartbrokenRecoverDelay = new TimeSpan(0,0,(int)(heartbrokenRecoverDelayOriginal.TotalSeconds * timeScale)); 
 			blobGoldProductionDelay = new TimeSpan(0,0,(int)(blobGoldProductionDelayOriginal.TotalSeconds * timeScale));
 			yearFillDelay = new TimeSpan(0,0,(int)(yearFillDelayOriginal.TotalSeconds * timeScale));
 		}

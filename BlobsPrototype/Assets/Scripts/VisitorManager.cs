@@ -213,7 +213,7 @@ public class VisitorManager : MonoBehaviour
 					genestr + timestr;
 			gm.blobPopupChoice.bodyLabel.text =  bodyText;
 			gm.blobPopupChoice.bodyLabel.alignment = NGUIText.Alignment.Left;
-			gm.blobPopupChoice.button1Label.text = "Recruit [FFD700]" + visitorCost[selectedIndex].ToString() + "g[-]";
+			gm.blobPopupChoice.button1Label.text = "Recruit     [FFD700]" + visitorCost[selectedIndex].ToString() + "g[-]";
 		}
 
 	}

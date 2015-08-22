@@ -83,7 +83,6 @@ public class CastleManager : MonoBehaviour
 			infoPanel.UpdateWithBlob(null);
 		
 		gm.UpdateAverageLevel();
-		gm.nm.UpdateBreedCost();
 	}
 	
 	

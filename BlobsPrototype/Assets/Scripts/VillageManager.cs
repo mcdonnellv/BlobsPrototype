@@ -88,7 +88,6 @@ public class VillageManager : MonoBehaviour
 		else
 			infoPanel.UpdateWithBlob(null);
 		gm.UpdateAverageLevel();
-		gm.nm.UpdateBreedCost();
 		UpdateMaxTribute();
 	}
 
