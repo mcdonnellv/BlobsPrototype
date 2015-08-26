@@ -12,7 +12,6 @@ public class InfoPanel : MonoBehaviour
 	public UILabel qualityLabel;
 	public UILabel levelLabel;
 	public UILabel bodyLabel;
-	public UILabel bondButtonLabel;
 	public UILabel breedButtonLabel;
 	public UILabel deleteButtonLabel;
 	public UISprite body;
@@ -24,7 +23,6 @@ public class InfoPanel : MonoBehaviour
 
 	public UIButton hatchButton;
 	public UIButton addEggButton;
-	public UIButton bondButton;
 	public UIButton breedButton;
 	public UIButton moveButton;
 	public UIButton deleteButton;
@@ -39,6 +37,26 @@ public class InfoPanel : MonoBehaviour
 	{
 		if(gm.nm.blobs[gm.nm.curSelectedIndex] == blob)
 			UpdateWithBlob(blob);
+	}
+
+	public void UpdateBreedButton(Blob blob)
+	{
+		breedButton.isEnabled = true;
+
+		if(blob.spouseId == -1)
+		{
+			breedButton.isEnabled = true;
+			breedButtonLabel.text = "Find a Partner";
+		}
+		else
+		{
+			breedButton.isEnabled = (theBlob.female ? (theBlob.unfertilizedEggs > 0) : (theBlob.GetSpouse().unfertilizedEggs > 0));
+			breedButtonLabel.text = "Breed";
+			UpdateBreedCost();
+		}
+		
+		bool isIdle = blob.GetBlobStateString() == "";
+		breedButton.isEnabled = !isIdle ? false : breedButton.isEnabled;
 	}
 
 
@@ -62,7 +80,6 @@ public class InfoPanel : MonoBehaviour
 		genePanel.gameObject.SetActive(false);//blob.hasHatched);
 		hatchButton.gameObject.SetActive(false);
 		addEggButton.gameObject.SetActive(theBlob.female);
-		bondButton.gameObject.SetActive(true);
 		breedButton.gameObject.SetActive(true);
 		moveButton.gameObject.SetActive(true);
 		deleteButton.gameObject.SetActive(true);
@@ -94,28 +111,12 @@ public class InfoPanel : MonoBehaviour
 		cheeks.SetDimensions(pixels, pixels);
 
 		//UpdateGenePanel()
+		UpdateBreedButton(blob);
 
 		moveButton.isEnabled = false;
 
-		if(blob.spouseId == -1)
-		{
-			breedButton.isEnabled = false;
-			bondButton.isEnabled = blob.male;
-			bondButtonLabel.text = "Find a Mate";
-			bondButton.defaultColor = new Color(0.384f, 0.584f, 0.349f, 1f);
-		}
-		else
-		{
-			bondButton.isEnabled = true;
-			breedButton.isEnabled = (theBlob.female ? (theBlob.unfertilizedEggs > 0) : (theBlob.GetSpouse().unfertilizedEggs > 0));
-			bondButtonLabel.text = "Break Up";
-			bondButton.defaultColor = new Color(1f, 0.459f, 0.459f, 1f);
-			UpdateBreedCost();
-		}
 
 		bool isIdle = blob.GetBlobStateString() == "";
-		breedButton.isEnabled = !isIdle ? false : breedButton.isEnabled;
-		bondButton.isEnabled = !isIdle ? false : bondButton.isEnabled;
 		moveButton.isEnabled = false;
 		deleteButton.isEnabled = isIdle;
 		addEggButton.isEnabled = !isIdle ? false : addEggButton.isEnabled;
@@ -143,7 +144,6 @@ public class InfoPanel : MonoBehaviour
 		genePanel.gameObject.SetActive(false);
 		hatchButton.gameObject.SetActive(false);
 		addEggButton.gameObject.SetActive(false);
-		bondButton.gameObject.SetActive(false);
 		breedButton.gameObject.SetActive(false);
 		moveButton.gameObject.SetActive(false);
 		deleteButton.gameObject.SetActive(false);
@@ -299,12 +299,6 @@ public class InfoPanel : MonoBehaviour
 
 	public void PressBreedButton()
 	{
-		gm.nm.BreedBlobWithSpouse(theBlob);
-	}
-
-
-	public void PressBondButton()
-	{
 		if(theBlob.spouseId == -1)
 		{
 			gm.nm.FindSpouse(theBlob);
@@ -312,12 +306,9 @@ public class InfoPanel : MonoBehaviour
 		}
 		else
 		{
-			gm.blobPopupChoice.ShowChoice(theBlob, 
-			                              "Break Up With Mate", 
-			                              "Are you sure?\nBlobs will become depressed.",
-			                              this, "ConfirmRemoveSpouse",
-			                              null, null);
+			gm.nm.BreedBlobWithSpouse(theBlob);
 		}
+	
 	}
 
 

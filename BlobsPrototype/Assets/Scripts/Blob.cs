@@ -96,7 +96,7 @@ public class Blob
 		momId = -1;
 		dadId = -1;
 		spouseId = -1;
-		unfertilizedEggs = 2;
+		unfertilizedEggs = 99;
 		color = new Color(0.863f, 0.863f, 0.863f, 1f);
 		blobHatchDelay = gm.blobHatchDelay;
 		breedReadyDelay = gm.breedReadyDelay;
@@ -116,7 +116,7 @@ public class Blob
 		if (!hasHatched && hatchTime > System.DateTime.Now)
 			return "Incubating";
 		if (mateFindTime > System.DateTime.Now)
-			return male ? "Courting" : "Judging";
+			return "Dating";
 
 		return "";
 	}

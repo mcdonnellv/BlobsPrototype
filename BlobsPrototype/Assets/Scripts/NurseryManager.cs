@@ -440,7 +440,7 @@ public class NurseryManager : MonoBehaviour
 
 		if(success)
 		{
-			gm.blobPopup.Show(spouse, "Find a Mate", "Successfully courted a female!\nThis blob can now breed.");
+			//gm.blobPopup.Show(spouse, "Find a Partner", "Blobs have successfuly patnered!\nThey can now breed.");
 			BlobCell bc = gm.nm.blobPanel.blobCells[gm.nm.blobs.IndexOf(blob)];
 			bc.heart.gameObject.SetActive(true);
 			bc = gm.nm.blobPanel.blobCells[gm.nm.blobs.IndexOf(spouse)];
@@ -448,7 +448,7 @@ public class NurseryManager : MonoBehaviour
 		}
 		else
 		{
-			gm.blobPopup.Show(blob, "Find a Mate", "Busted!\nThis blob was rejected by a female.");
+			gm.blobPopup.Show(blob, "Find a Partner", "Partnering failed. These blobs had trouble getting along.");
 			blob.heartbrokenRecoverTime = System.DateTime.Now + blob.heartbrokenRecoverDelay;
 			blob.spouseId = -1;
 			spouse.spouseId = -1;
