@@ -20,6 +20,7 @@ public class VillageManager : MonoBehaviour
 
 	void Start () 
 	{
+		return;
 		blobPanel.Init();
 		infoPanel.UpdateWithBlob(null);
 		maxBlobs = 20;
@@ -68,7 +69,7 @@ public class VillageManager : MonoBehaviour
 		BlobCell bc = blobPanel.blobCells[index];
 		bc.gameObject.SendMessage("OnClick");
 
-		moveLabel.text = "Move To\nNursery (-" + ((int)(bc.blob.quality * 30f)).ToString() + "g)";
+		moveLabel.text = "Move To\nNursery (-" + ((int)(bc.blob.level * 30f)).ToString() + "g)";
 	}
 
 
@@ -86,8 +87,7 @@ public class VillageManager : MonoBehaviour
 			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
 		else
 			infoPanel.UpdateWithBlob(null);
-		gm.UpdateAverageQuality();
-		gm.nm.UpdateBreedCost();
+		gm.UpdateAverageLevel();
 		UpdateMaxTribute();
 	}
 
@@ -124,7 +124,7 @@ public class VillageManager : MonoBehaviour
 
 	public void UpdateMaxTribute()
 	{
-		maxTribute = (int)(blobs.Count * gm.GetAverageQuality() * gm.tributeMaxMulitplier);
+		maxTribute = (int)(blobs.Count * gm.GetAverageLevel() * gm.tributeMaxMulitplier);
 		UpdateTributeLabel();
 	}
 
@@ -157,7 +157,7 @@ public class VillageManager : MonoBehaviour
 		if (gm.nm.IsFull()) 
 		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Nursery."); return;}
 		
-		int cost = (int)(blob.quality * 30f);
+		int cost = (int)(blob.level * 30f);
 		if (gm.gold < cost) 
 		{gm.blobPopup.Show(blob, "Cannot Move", "You do not have enough Gold."); return;}
 

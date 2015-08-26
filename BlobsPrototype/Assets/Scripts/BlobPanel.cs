@@ -34,6 +34,7 @@ public class BlobPanel : MonoBehaviour
 
 		if(blob == null)
 		{
+			bc.Reset();
 			bc.gameObject.SetActive(false);
 			return;
 		}
@@ -44,6 +45,8 @@ public class BlobPanel : MonoBehaviour
 		bc.body.gameObject.SetActive(blob.hasHatched);
 		bc.face.gameObject.SetActive(blob.hasHatched);
 		bc.cheeks.gameObject.SetActive(blob.hasHatched && !blob.male);
+		if(!blob.hasHatched)
+			bc.heart.gameObject.SetActive(false);
 
 		UISprite bg = bc.GetComponent<UISprite>();
 		UIButton button = bc.GetComponentInChildren<UIButton>();
@@ -52,13 +55,16 @@ public class BlobPanel : MonoBehaviour
 		bg.color = (blob.hasHatched) ? bg.color : Color.grey;
 		button.defaultColor = button.hover = bg.color;
 
+		bc.qualityIndicator.color = (blob.hasHatched) ? Blob.ColorForQuality(blob.quality) : Color.clear;
+
+
 		bc.eggLabel.text = (blob.male || !blob.hasHatched) ? "" : blob.unfertilizedEggs.ToString();
 		bc.eggIcon.gameObject.SetActive(blob.female && blob.hasHatched);
 
-		bc.geneIcon.gameObject.SetActive(blob.hasHatched);
-		bc.geneCountLabel.text = blob.genes.Count.ToString();
+//		bc.geneIcon.gameObject.SetActive(blob.hasHatched);
+//		bc.geneCountLabel.text = blob.genes.Count.ToString();
 
-		bc.qualityLabel.text = (blob.hasHatched) ? blob.quality.ToString() : "";
+		bc.levelLabel.text = (blob.hasHatched) ? ("lv. " + blob.level.ToString()) : "";
 
 		Texture tex = blob.bodyPartSprites["Body"];
 		bc.body.spriteName = tex.name;

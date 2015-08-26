@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 	public GameObject breedingView;
 	public GameObject grid;
 	public GameObject selectModeCover;
-	public UILabel averageQualityLabel;
+	public UILabel averageLevelLabel;
 	public UILabel goldLabel;
 	public UILabel chocolateLabel;
 	public UILabel missionButtonLabel;
@@ -48,12 +48,15 @@ public class GameManager : MonoBehaviour
 	public Popup popup;
 	public BlobPopup blobPopup;
 	public BlobPopupChoice blobPopupChoice;
+	public BlobDetailsPopup blobDetailsPopup;
 	public GeneAddPopup geneAddPopup;
 	public GameVariables gameVars;
 
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
 	public TimeSpan breedBarFillDelay;
+	public TimeSpan heartbrokenRecoverDelay;
+	public TimeSpan mateFindDelay;
 	public TimeSpan blobGoldProductionDelay;
 	public TimeSpan yearFillDelay;
 	public DateTime yearFillTime;
@@ -84,6 +87,8 @@ public class GameManager : MonoBehaviour
 	TimeSpan breedBarFillDelayOriginal;
 	TimeSpan blobGoldProductionDelayOriginal;
 	TimeSpan yearFillDelayOriginal;
+	TimeSpan heartbrokenRecoverDelayOriginal;
+	TimeSpan mateFindDelayOriginal;
 
 
 
@@ -96,6 +101,8 @@ public class GameManager : MonoBehaviour
 		breedReadyDelay = new TimeSpan(0,0,10);
 		breedBarFillDelay = new TimeSpan(0,0,1);
 		blobGoldProductionDelay = new TimeSpan(0,0,10);
+		heartbrokenRecoverDelay = new TimeSpan(0,0,30);
+		mateFindDelay = new TimeSpan(0,0,10);
 		yearFillDelay = new TimeSpan(1,0,0);
 		yearFillTime = DateTime.Now + yearFillDelay;
 
@@ -104,6 +111,8 @@ public class GameManager : MonoBehaviour
 		yearFillDelayOriginal = yearFillDelay;
 		blobGoldProductionDelayOriginal = blobGoldProductionDelay;
 		breedBarFillDelayOriginal = breedBarFillDelay;
+		heartbrokenRecoverDelayOriginal = heartbrokenRecoverDelay;
+		mateFindDelayOriginal = mateFindDelay;
 
 		maxBlobs = 20;
 		breedCost = 10;
@@ -201,16 +210,16 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	public void UpdateAverageQuality()
+	public void UpdateAverageLevel()
 	{
-		float averageQuality = GetAverageQuality();
-		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
+		float averageLevel = GetAverageLevel();
+		averageLevelLabel.text = "Average Level: " + averageLevel;
 	}
 
 
-	public float GetAverageQuality()
+	public int GetAverageLevel()
 	{
-		float cummulativeQuality = 0f;
+		float cummulativeLevel = 0f;
 		int totalBlobs = 0;
 		List <Blob> allBlobs = gameVars.allBlobs;
 
@@ -218,15 +227,13 @@ public class GameManager : MonoBehaviour
 		{
 			if(blob.hasHatched)
 			{
-				cummulativeQuality += blob.quality;
+				cummulativeLevel += blob.level;
 				totalBlobs++;
 			}
 		}
 
-		float averageQuality = cummulativeQuality / totalBlobs;
-		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
-
-		return averageQuality;
+		float averageLevel = cummulativeLevel / totalBlobs;
+		return Mathf.RoundToInt(averageLevel);;
 	}
 
 
@@ -255,17 +262,26 @@ public class GameManager : MonoBehaviour
 		chocolateLabel.text = "Chocolate: [C59F76]" + chocolate.ToString() + "c[-]";
 	}
 
-	
+
 	public void TrySellBlob(Blob blob, MonoBehaviour target)
 	{
+		TryDeleteBlob(blob, target, true);
+	}
+
+
+	public void TryDeleteBlob(Blob blob, MonoBehaviour target, bool selling)
+	{
+		string actionWord = "Delete";
+		if(selling)
+			actionWord = "Sell";
 		if (blob.onMission) 
-		{blobPopup.Show(blob, "Cannot Sell", "Blob is on a mission.");return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob is on a mission.");return;}
 		
 		if (blob.hasHatched == false)
-		{blobPopup.Show(blob, "Cannot Sell", "Blob has not been hatched."); return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob has not been hatched."); return;}
 		
 		if (blob.breedReadyTime > System.DateTime.Now)
-		{blobPopup.Show(blob, "Cannot Sell", "Blob is still breeding.");return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Blob is still breeding.");return;}
 		
 		bool lastOfGender = true;
 		List<Blob> allBlobs = gameVars.allBlobs;
@@ -274,7 +290,7 @@ public class GameManager : MonoBehaviour
 				lastOfGender = false;
 		
 		if (lastOfGender)
-		{blobPopup.Show(blob, "Cannot Sell", "Cannot sell your last " + ((blob.male == true) ? "male" : "female") +" blob."); return;}
+		{blobPopup.Show(blob, "Cannot " + actionWord, "Cannot " + actionWord + " your last " + ((blob.male == true) ? "male" : "female") +" blob."); return;}
 		
 		Gene lastGene = null;
 		foreach(Gene g1 in blob.genes)
@@ -308,14 +324,14 @@ public class GameManager : MonoBehaviour
 		if (lastGene != null)
 		{
 			blobPopupChoice.ShowChoice(blob, "Warning!", 
-			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to sell this blob?", 
-			                 target, "SellBlobFinal", null, null); 
+			                    "This is your last blob with the [9BFF9B]" + lastGene.geneName + " gene[-]. Are you sure you want to " + actionWord + " this blob?", 
+			                           target, selling ? "SellBlobFinal" : "DeleteBlobFinal", null, null); 
 			return;
 		}
 		
-		blobPopupChoice.ShowChoice(blob, "Sell Blob", "Are you sure you want to sell this blob?", target, "SellBlobFinal", null, null);
+		blobPopupChoice.ShowChoice(blob, actionWord + " Blob", "Are you sure you want to " + actionWord + " this blob?", target,  selling ? "SellBlobFinal" : "DeleteBlobFinal", null, null);
 	}
-	
+
 
 	public void MissionsButtonPressed()
 	{
@@ -365,7 +381,7 @@ public class GameManager : MonoBehaviour
 		{
 			vm.villageExists = true;
 			AddGold(-villageCost);
-			nm.toVillageButton.gameObject.SetActive(true);
+			//nm.toVillageButton.gameObject.SetActive(true);
 			rightNavButton.gameObject.SetActive(true);
 			popup.Show("Village Now Available", "You can now move Blobs to the new village to work and give you tribute.");
 		}
@@ -374,7 +390,7 @@ public class GameManager : MonoBehaviour
 			cm.castleExists = true;
 			AddGold(-castleCost);
 			buildButton.gameObject.SetActive(false);
-			nm.toCastleButton.gameObject.SetActive(true);
+			//nm.toCastleButton.gameObject.SetActive(true);
 			leftNavButton.gameObject.SetActive(true);
 			popup.Show("Castle Now Available", "You can now move Blobs to the new castle to perform missions.");
 		}
@@ -401,6 +417,8 @@ public class GameManager : MonoBehaviour
 			blobHatchDelay = new TimeSpan(0,0,(int)(blobHatchDelayOriginal.TotalSeconds * timeScale));
 			breedReadyDelay = new TimeSpan(0,0,(int)(breedReadyDelayOriginal.TotalSeconds * timeScale));
 			breedBarFillDelay = new TimeSpan(0,0,(int)(breedBarFillDelayOriginal.TotalSeconds * timeScale));
+			mateFindDelay = new TimeSpan(0,0,(int)(mateFindDelayOriginal.TotalSeconds * timeScale));
+			heartbrokenRecoverDelay = new TimeSpan(0,0,(int)(heartbrokenRecoverDelayOriginal.TotalSeconds * timeScale)); 
 			blobGoldProductionDelay = new TimeSpan(0,0,(int)(blobGoldProductionDelayOriginal.TotalSeconds * timeScale));
 			yearFillDelay = new TimeSpan(0,0,(int)(yearFillDelayOriginal.TotalSeconds * timeScale));
 		}
