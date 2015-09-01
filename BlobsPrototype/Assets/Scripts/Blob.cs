@@ -39,6 +39,7 @@ public enum BlobTrait
 [Serializable]
 public class Blob
 {
+	BodyPartManager bpm;
 	GameManager gm;
 	public int id;
 	public int momId;
@@ -68,11 +69,14 @@ public class Blob
 	public int allowedGeneCount { get{return GetGeneCountFromQuality(GetQualityFromValue(quality));} }
 	public TimeSpan age {get {return DateTime.Now - birthday;}}
 	public Dictionary<string, Texture> bodyPartSprites;
+	public GameObject blobGameObject;
+	public int tilePosX;
+	public int tilePosY;
 
 
 	public Blob()
 	{
-		gm = (GameManager)(GameObject.Find("GameManager")).GetComponent<GameManager>();
+		bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
 		quality = (float)BlobQuality.Poor;
 		qualityBoostForOffspring = 0f;
 		onMission = false;
@@ -90,8 +94,24 @@ public class Blob
 		spouseId = -1;
 		unfertilizedEggs = 2;
 		color = new Color(0.863f, 0.863f, 0.863f, 1f);
-		blobHatchDelay = gm.blobHatchDelay;
-		breedReadyDelay = gm.breedReadyDelay;
+		//blobHatchDelay = gm.blobHatchDelay;
+		//breedReadyDelay = gm.breedReadyDelay;
+		tilePosX = 0;
+		tilePosY = 0;
+	}
+
+	public void Setup()
+	{
+		blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
+		BlobDragDropItem bddi = blobGameObject.GetComponent<BlobDragDropItem>();
+		bddi.blob = this;
+		SetBodyTexture();
+		SetEyeTexture();
+		List<UISprite> blobsprites = blobGameObject.GetComponentsInChildren<UISprite>().ToList();
+		Texture tex = bodyPartSprites["Body"];
+		blobsprites[0].spriteName = tex.name;
+		tex = bodyPartSprites["Eyes"];
+		blobsprites[1].spriteName = tex.name;
 	}
 
 
@@ -257,12 +277,12 @@ public class Blob
 
 	public void SetBodyTexture()
 	{
-		bodyPartSprites.Add("Body", gm.bpm.bodyTextures[UnityEngine.Random.Range(0, gm.bpm.bodyTextures.Count)]);
+		bodyPartSprites.Add("Body", bpm.bodyTextures[UnityEngine.Random.Range(0, bpm.bodyTextures.Count)]);
 	}
 
 	public void SetEyeTexture()
 	{
-		bodyPartSprites.Add("Eyes", gm.bpm.eyeTextures[UnityEngine.Random.Range(0, gm.bpm.eyeTextures.Count)]);
+		bodyPartSprites.Add("Eyes", bpm.eyeTextures[UnityEngine.Random.Range(0, bpm.eyeTextures.Count)]);
 	}
 
 	static public string GetQualityStringFromValue(float quality)

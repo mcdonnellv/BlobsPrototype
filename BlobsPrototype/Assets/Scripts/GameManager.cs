@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,19 +7,6 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 
-[System.Serializable]
-public class GameVariables 
-{
-	public int blobsSpawned = 0;
-	public int visitorsSpawned = 0;
-	public int gold;
-	public int chocolate;
-	public int year;
-	public List<Blob> nurseryBlobs;
-	public List<Blob> villageBlobs;
-	public List<Blob> castleBlobs;
-	public List<Blob> allBlobs {get {return (nurseryBlobs.Union(villageBlobs.Union(castleBlobs))).ToList();} }
-}
 
 public class GameManager : MonoBehaviour 
 {
@@ -33,9 +20,7 @@ public class GameManager : MonoBehaviour
 	public GameObject breedingView;
 	public GameObject grid;
 	public GameObject selectModeCover;
-	public UILabel averageQualityLabel;
-	public UILabel goldLabel;
-	public UILabel chocolateLabel;
+
 	public UILabel missionButtonLabel;
 	public UIButton missionButton;
 	public UIButton rightNavButton;
@@ -50,6 +35,7 @@ public class GameManager : MonoBehaviour
 	public BlobPopupChoice blobPopupChoice;
 	public GeneAddPopup geneAddPopup;
 	public GameVariables gameVars;
+	public HudManager hudMan;
 
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
@@ -73,8 +59,9 @@ public class GameManager : MonoBehaviour
 	public int villageCost;
 	public int castleCost;
 	public float timeScale;
-	public int gold {get{return gameVars.gold;}}
-	public int chocolate {get{return gameVars.chocolate;}}
+
+	public int gold { get{ return gameVars.gold; } }
+	public int chocolate { get{ return gameVars.chocolate; } }
 
 	float timeScaleOld;
 	bool selectMode;
@@ -169,6 +156,7 @@ public class GameManager : MonoBehaviour
 		tw.Close();
 	}
 
+
 	private T GenericDeSerialize<T>(string filename)
 	{
 		XmlSerializer serializer = new XmlSerializer(typeof(T));
@@ -177,7 +165,8 @@ public class GameManager : MonoBehaviour
 		tr.Close();
 		return b;
 	}
-	
+
+
 	void FirstTimeSetup()
 	{
 		gameVars.year = 0;
@@ -194,6 +183,20 @@ public class GameManager : MonoBehaviour
 	}
 
 
+	public void AddGold(int val)
+	{
+		gameVars.AddGold(val);
+		hudMan.UpdateGold(gameVars.gold);
+	}
+	
+	
+	public void AddChocolate(int val)
+	{
+		gameVars.AddChocolate(val);
+		hudMan.UpdateChocolate(gameVars.chocolate);
+	}
+
+
 	public void EnableSelectMode(bool enable)
 	{
 		selectMode = enable;
@@ -203,8 +206,7 @@ public class GameManager : MonoBehaviour
 
 	public void UpdateAverageQuality()
 	{
-		float averageQuality = GetAverageQuality();
-		averageQualityLabel.text = "Average Quality: " + Blob.GetQualityStringFromValue(averageQuality);
+		hudMan.UpdateAverageQuality(Blob.GetQualityStringFromValue(GetAverageQuality()));
 	}
 
 
@@ -230,30 +232,7 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	public void AddGold(int val)
-	{
-		gameVars.gold += val;
-		goldLabel.text = "Gold: [FFD700]" + gold.ToString() + "g[-]";
 
-		UILabel label = buildButton.GetComponentInChildren<UILabel>();
-		if (!vm.villageExists)
-		{
-			label.text = "Build Village     [FFD700]" + villageCost.ToString() + "g[-]";
-			buildButton.isEnabled = (gold >= villageCost);
-		}
-		else if (!cm.castleExists)
-		{
-			label.text = "Build Castle     [FFD700]" + castleCost.ToString() + "g[-]";
-			buildButton.isEnabled = (gold >= castleCost);
-		}
-	}
-
-
-	public void AddChocolate(int val)
-	{
-		gameVars.chocolate += val;
-		chocolateLabel.text = "Chocolate: [C59F76]" + chocolate.ToString() + "c[-]";
-	}
 
 	
 	public void TrySellBlob(Blob blob, MonoBehaviour target)
