@@ -195,46 +195,14 @@ public class GameManager : MonoBehaviour
 		gameVars.AddChocolate(val);
 		hudMan.UpdateChocolate(gameVars.chocolate);
 	}
-
-
+	
 	public void EnableSelectMode(bool enable)
 	{
 		selectMode = enable;
 		selectModeCover.SetActive(enable);
 	}
-
-
-	public void UpdateAverageQuality()
-	{
-		hudMan.UpdateAverageQuality(Blob.GetQualityStringFromValue(GetAverageQuality()));
-	}
-
-
-	public float GetAverageQuality()
-	{
-		float cummulativeQuality = 0f;
-		int totalBlobs = 0;
-		List <Blob> allBlobs = gameVars.allBlobs;
-
-		foreach (Blob blob in allBlobs)
-		{
-			if(blob.hasHatched)
-			{
-				cummulativeQuality += blob.quality;
-				totalBlobs++;
-			}
-		}
-
-		float averageQuality = cummulativeQuality / totalBlobs;
-		averageQuality = Mathf.Round(averageQuality * 10f) / 10f;
-
-		return averageQuality;
-	}
-
-
-
-
 	
+
 	public void TrySellBlob(Blob blob, MonoBehaviour target)
 	{
 		if (blob.onMission) 
@@ -344,7 +312,7 @@ public class GameManager : MonoBehaviour
 		{
 			vm.villageExists = true;
 			AddGold(-villageCost);
-			nm.toVillageButton.gameObject.SetActive(true);
+			//nm.toVillageButton.gameObject.SetActive(true);
 			rightNavButton.gameObject.SetActive(true);
 			popup.Show("Village Now Available", "You can now move Blobs to the new village to work and give you tribute.");
 		}
@@ -353,12 +321,38 @@ public class GameManager : MonoBehaviour
 			cm.castleExists = true;
 			AddGold(-castleCost);
 			buildButton.gameObject.SetActive(false);
-			nm.toCastleButton.gameObject.SetActive(true);
+			//nm.toCastleButton.gameObject.SetActive(true);
 			leftNavButton.gameObject.SetActive(true);
 			popup.Show("Castle Now Available", "You can now move Blobs to the new castle to perform missions.");
 		}
 	}
 
+
+	public void UpdateAverageLevel()
+	{
+		float averageLevel = GetAverageLevel();
+		//averageLevelLabel.text = "Average Level: " + averageLevel;
+	}
+	
+	
+	public int GetAverageLevel()
+	{
+		float cummulativeLevel = 0f;
+		int totalBlobs = 0;
+		List <Blob> allBlobs = gameVars.allBlobs;
+		
+		foreach (Blob blob in allBlobs)
+		{
+			if(blob.hasHatched)
+			{
+				cummulativeLevel += blob.level;
+				totalBlobs++;
+			}
+		}
+		
+		float averageLevel = cummulativeLevel / totalBlobs;
+		return Mathf.RoundToInt(averageLevel);;
+	}
 
 	// Update is called once per frame
 	void Update () 

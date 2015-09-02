@@ -62,7 +62,7 @@ public class InfoPanel : MonoBehaviour
 		bg.color = blob.hasHatched ? bg.color : Color.gray;
 
 		eggs.text = "Eggs: " + blob.unfertilizedEggs.ToString();
-		quality.text = "Quality: " + Blob.GetQualityStringFromValue(blob.quality) + " (" + blob.quality.ToString() + ")";
+		quality.text = "Quality: " + blob.quality.ToString();
 		age.text = "Age: " + blob.age.ToString();
 		if (blob.male)
 		{
@@ -87,53 +87,53 @@ public class InfoPanel : MonoBehaviour
 
 		//Gene Cells
 
-		int i = 0;
-		foreach(Gene g in theBlob.genes)
-		{
-			GeneCell gc = geneCells[i];
-
-			if(i >= theBlob.allowedGeneCount)
-			{
-				HideGeneCell(gc);
-				continue;
-			}
-
-			gc.cellSprite.alpha = 1f;
-			gc.gene = g;
-			gc.nameLabel.text = g.geneName + (theBlob.IsGeneActive(g) ? "" : " (inactive)");
-			gc.infoLabel.text = "";
-			gc.nameLabel.color = theBlob.IsGeneActive(g) ? Color.white : Color.gray;
-			gc.rarityIndicator.gameObject.SetActive(true);
-			gc.rarityIndicator.color = Gene.ColorForRarity(g.rarity);
-			gc.button.gameObject.SetActive(true);
-			gc.addGeneButton.gameObject.SetActive(false);
-			i++;
-		}
-
-		for(;i<geneCells.Count;i++)
-		{
-			GeneCell gc = geneCells[i];
-			if(i == theBlob.allowedGeneCount)
-			{
-				HideGeneCell(gc);
-				gc.cellSprite.alpha = .3f;
-				BlobQuality bq = Blob.GetQualityFromGeneCount(i+1);
-				gc.infoLabel.text = "Requires " + Blob.GetQualityFromEnum(bq) + " Quality to Unlock";
-				continue;
-			}
-			else if(i > theBlob.allowedGeneCount)
-			{
-				HideGeneCell(gc);
-				continue;
-			}
-
-			gc.cellSprite.alpha = 1f;
-			gc.nameLabel.color = Color.gray;
-			gc.nameLabel.text = "No Gene";
-			gc.rarityIndicator.gameObject.SetActive(false);
-			gc.button.gameObject.SetActive(false);
-			gc.addGeneButton.gameObject.SetActive(true);
-		}
+//		int i = 0;
+//		foreach(Gene g in theBlob.genes)
+//		{
+//			GeneCell gc = geneCells[i];
+//
+//			if(i >= theBlob.allowedGeneCount)
+//			{
+//				HideGeneCell(gc);
+//				continue;
+//			}
+//
+//			gc.cellSprite.alpha = 1f;
+//			gc.gene = g;
+//			gc.nameLabel.text = g.geneName + (theBlob.IsGeneActive(g) ? "" : " (inactive)");
+//			gc.infoLabel.text = "";
+//			gc.nameLabel.color = theBlob.IsGeneActive(g) ? Color.white : Color.gray;
+//			gc.rarityIndicator.gameObject.SetActive(true);
+//			gc.rarityIndicator.color = Gene.ColorForRarity(g.rarity);
+//			gc.button.gameObject.SetActive(true);
+//			gc.addGeneButton.gameObject.SetActive(false);
+//			i++;
+//		}
+//
+//		for(;i<geneCells.Count;i++)
+//		{
+//			GeneCell gc = geneCells[i];
+//			if(i == theBlob.allowedGeneCount)
+//			{
+//				HideGeneCell(gc);
+//				gc.cellSprite.alpha = .3f;
+//				BlobQuality bq = Blob.GetQualityFromGeneCount(i+1);
+//				gc.infoLabel.text = "Requires " + Blob.GetQualityFromEnum(bq) + " Quality to Unlock";
+//				continue;
+//			}
+//			else if(i > theBlob.allowedGeneCount)
+//			{
+//				HideGeneCell(gc);
+//				continue;
+//			}
+//
+//			gc.cellSprite.alpha = 1f;
+//			gc.nameLabel.color = Color.gray;
+//			gc.nameLabel.text = "No Gene";
+//			gc.rarityIndicator.gameObject.SetActive(false);
+//			gc.button.gameObject.SetActive(false);
+//			gc.addGeneButton.gameObject.SetActive(true);
+//		}
 
 	}
 
@@ -204,8 +204,8 @@ public class InfoPanel : MonoBehaviour
 		UpdateWithBlob(theBlob);
 		gm.nm.blobPanel.UpdateBlobCellWithBlob(gm.nm.blobs.IndexOf(theBlob), theBlob);
 
-		gm.UpdateAverageQuality();
-		gm.nm.UpdateBreedCost();
+		//gm.UpdateAverageQuality();
+		//gm.nm.UpdateBreedCost();
 	}
 
 

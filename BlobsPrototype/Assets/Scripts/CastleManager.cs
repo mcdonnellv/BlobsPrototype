@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CastleManager : MonoBehaviour 
 {
-
+	
 	public GameManager gm;	
 	public BlobPanel blobPanel;
 	public InfoPanel infoPanel;
@@ -14,10 +14,11 @@ public class CastleManager : MonoBehaviour
 	public bool castleExists;
 	int maxBlobs;
 	int curSelectedIndex;
-
-
+	
+	
 	void Start () 
 	{
+		return;
 		blobPanel.Init();
 		infoPanel.UpdateWithBlob(null);;
 		maxBlobs = 20;
@@ -62,7 +63,7 @@ public class CastleManager : MonoBehaviour
 		BlobCell bc = blobPanel.blobCells[index];
 		bc.gameObject.SendMessage("OnClick");
 		
-		//moveLabel.text = "Move To\nNursery (-" + ((int)(bc.blob.quality * 30f)).ToString() + "g)";
+		moveLabel.text = "Move To\nNursery (-" + ((int)(bc.blob.level * 30f)).ToString() + "g)";
 	}
 	
 	
@@ -81,8 +82,7 @@ public class CastleManager : MonoBehaviour
 		else
 			infoPanel.UpdateWithBlob(null);
 		
-		gm.UpdateAverageQuality();
-		gm.nm.UpdateBreedCost();
+		gm.UpdateAverageLevel();
 	}
 	
 	
@@ -105,7 +105,7 @@ public class CastleManager : MonoBehaviour
 	{
 		if(blobs == null)
 			return;
-
+		
 		foreach(Blob blob in blobs)
 			blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
 		if(curSelectedIndex > blobs.Count)
@@ -119,11 +119,11 @@ public class CastleManager : MonoBehaviour
 			return;
 		
 		Blob blob = blobs[curSelectedIndex];
-
+		
 		if (gm.nm.IsFull()) 
 		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Nursery.");return;}
 		
-		int cost = 0;//(int)(blob.quality * 30f);
+		int cost = (int)(blob.level * 30f);
 		if (gm.gold < cost) 
 		{gm.blobPopup.Show(blob, "Cannot Move", "You do not have enough Gold."); return;}
 		
@@ -152,8 +152,8 @@ public class CastleManager : MonoBehaviour
 	
 	
 	public bool IsFull() {return(blobs.Count >= maxBlobs);}
-
-
+	
+	
 	// Update is called once per frame
 	void Update () 
 	{

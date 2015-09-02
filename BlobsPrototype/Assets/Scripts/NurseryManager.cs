@@ -6,15 +6,9 @@ using System.Linq;
 public class NurseryManager : MonoBehaviour
 {
 	public GameManager gm;
-
+	
 	public BlobPanel blobPanel;
 	public InfoPanel infoPanel;
-	public UIButton breedButton;
-	public UIButton toVillageButton;
-	public UIButton toCastleButton;
-	public UILabel breedButtonLabel;
-	public UILabel sellButtonLabel;
-	public UISlider breedProgressBar;
 	
 	public List<Blob> blobs {get{return gm.gameVars.nurseryBlobs;}}
 	public List<Blob> maleBlobs;
@@ -23,19 +17,16 @@ public class NurseryManager : MonoBehaviour
 	public int maxBlobs;
 	public int curSelectedIndex;
 	System.DateTime breedTime;
-
-	// Use this for initialization
+	
+	
 	void Start () 
 	{
 		blobPanel.Init();
 		curSelectedIndex = 0;
 		maxBlobs = 12;
-		breedProgressBar.value = 1f;
-		toVillageButton.gameObject.SetActive(false);
-		toCastleButton.gameObject.SetActive(false);
 	}
-
-
+	
+	
 	public void FirstTimeSetup()
 	{
 		Blob blob = new Blob();
@@ -44,9 +35,9 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Better Babies"));
 		blob.SetGeneActivationForAll();
 		blob.ApplyGeneEffects(blob.activeGenes);
+		blob.sellValue = 10 + Mathf.FloorToInt(blob.level * 1.5f);
 		blobs.Add(blob);
 		
 		blob = new Blob();
@@ -55,114 +46,85 @@ public class NurseryManager : MonoBehaviour
 		blob.birthday = blob.birthday - gm.breedingAge;
 		blob.SetRandomTextures();
 		blob.id = gm.gameVars.blobsSpawned++;
-		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Better Babies"));
-		//blob.unprocessedGenes.Add(gm.mum.GetGeneByName("Fertility"));
 		blob.SetGeneActivationForAll();
 		blob.ApplyGeneEffects(blob.activeGenes);
+		blob.sellValue = 10 + Mathf.FloorToInt(blob.level * 1.5f);
 		blobs.Add(blob);
 	}
+	
 	
 	public void AddBlob(Blob newBlob)
 	{
 		if (blobs.Count >= maxBlobs)
 			return;
-
+		
 		blobs.Add(newBlob);
 		if(newBlob.hasHatched == false)
 			newBlob.hatchTime = System.DateTime.Now + newBlob.blobHatchDelay;
-		if (CanEnableBreedButton())
-			breedButton.isEnabled = false;
 	}
-
+	
+	
 	void DeleteBlob(Blob blob)
 	{
+		
+		if(blob.spouseId != -1)
+			RemoveSpouse(blob);
+		
 		blobs.Remove(blob);
 		if (curSelectedIndex >= blobs.Count)
 			PressGridItem(curSelectedIndex - 1);
-
+		
 		for (int i = curSelectedIndex; i < blobs.Count; i++)
 			blobPanel.UpdateBlobCellWithBlob(i, blobs[i]);
-
+		
 		blobPanel.UpdateBlobCellWithBlob(blobs.Count, null);
 		if(curSelectedIndex < blobs.Count)
 			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
 		else
 			infoPanel.UpdateWithBlob(null);
-
-		gm.UpdateAverageQuality();
-		UpdateBreedCost();
+		
+		gm.UpdateAverageLevel();
 	}
-
-	int GetBreedCost()
+	
+	
+	public int GetBreedCost()
 	{
-		float averageQuality = gm.GetAverageQuality();
-		BlobQuality q = Blob.GetQualityFromValue(averageQuality);
-		if(q < BlobQuality.Fair)
-			q = BlobQuality.Fair;
-		float mod = ((float)q - (float)BlobQuality.Fair) / ((float)BlobQuality.Outstanding - (float)BlobQuality.Fair);
-		int breedCost = gm.breedBaseCost + (int)(mod * (gm.breedCostMax - gm.breedBaseCost));
-
-		return breedCost;
+		int averageLevel = gm.GetAverageLevel();
+		return averageLevel * 10;
 	}
-
-
-	int GetSellValue()
-	{
-		return gm.sellValue;
-	}
-
-
-	public void UpdateBreedCost()
-	{
-		breedButtonLabel.text = "Breed [FFD700]" + GetBreedCost().ToString() + "g[-]";
-	}
-
-
-	public void UpdateSellValue()
-	{
-		sellButtonLabel.text = "Sell +[FFD700]" + GetSellValue().ToString() + "g[-]";
-	}
-
-
+	
+	
+	int GetSellValue() { return gm.sellValue; }
+	
+	
 	bool CanEnableBreedButton()
 	{
 		if (breedTime > System.DateTime.Now)
 			return false;
-		
-		if (blobs.Count >= maxBlobs)
-			return false;
-		
-		if (gm.gold < gm.breedCost)
-			return false;
-
-		if (MatingPairExists() == false)
-			return false;
-		
 		return true;
 	}
-
-
+	
+	
 	public bool MatingPairExists()
 	{
 		maleBlobs = new List<Blob>();
 		femaleBlobs = new List<Blob>();
-
+		
 		foreach(Blob blob in blobs)
 		{
 			BlobCell bc = blobPanel.blobCells[blobs.IndexOf(blob)];
 			if (bc.progressBar.value > 0 || blob.age < gm.breedingAge || !blob.hasHatched)
 				continue;
-
+			
 			if (blob.male)
 				maleBlobs.Add(blob);
 			else if (blob.unfertilizedEggs > 0)
 				femaleBlobs.Add(blob);
 		}
-		
 		return (femaleBlobs.Count > 0 && maleBlobs.Count > 0);
 	}
-
-
+	
+	
 	int GetTotalEggs()
 	{
 		int total = 0;
@@ -174,8 +136,8 @@ public class NurseryManager : MonoBehaviour
 		}
 		return total;
 	}
-
-
+	
+	
 	void BreedBlobs(Blob maleBlob, Blob femaleBlob)
 	{
 		//break previous spouse bonds
@@ -185,19 +147,19 @@ public class NurseryManager : MonoBehaviour
 		// make new bonds
 		maleBlob.spouseId = femaleBlob.id;
 		femaleBlob.spouseId = maleBlob.id;
-
+		
 		femaleBlob.unfertilizedEggs--;
-
+		
 		maleBlob.breedReadyTime = System.DateTime.Now + maleBlob.breedReadyDelay;
 		femaleBlob.breedReadyTime = System.DateTime.Now + femaleBlob.breedReadyDelay;
-
+		
 		Blob newBlob = GenerateNewBlobBasedOnBlobs(maleBlob, femaleBlob);
 		newBlob.SetGeneActivationForAll();
 		newBlob.ApplyGeneEffects(newBlob.activeGenes);
 		femaleBlob.egg = newBlob;
 	}
-
-
+	
+	
 	public Blob GenerateNewBlobBasedOnBlobs(Blob dad, Blob mom)
 	{
 		Blob blob = new Blob();
@@ -206,21 +168,22 @@ public class NurseryManager : MonoBehaviour
 		blob.momId = mom.id;
 		blob.hasHatched = false;
 		int totalEggs = GetTotalEggs();
-
+		
 		//safety spawn female
 		if (GetTotalEggs() <= 0)
 			blob.male = false;
 		else
 			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
 		
-		blob.quality = Blob.GetNewQuality(dad, mom);
+		blob.quality = Blob.GetRandomQuality();
+		blob.level = (int)(dad.level + mom.level / 2f) + UnityEngine.Random.Range (-1,2);
+		blob.level = Mathf.Clamp(blob.level, 1, 100);
+		blob.sellValue = 10 + Mathf.FloorToInt(blob.level * 1.5f);
 		blob.SetRandomTextures();
-
-		//check for possible new genes
+		
 		List<Gene> parentGenesRaw = dad.genes.Union<Gene>(mom.genes).ToList<Gene>();
-		//List<Gene> parentGenesRaw = dad.genes.Concat(mom.genes).ToList<Gene>();
 		List<Gene> GenesToPassOn = new List<Gene>();
-
+		
 		foreach(Gene g in parentGenesRaw)
 		{
 			int str = 0;
@@ -228,49 +191,37 @@ public class NurseryManager : MonoBehaviour
 				str++;
 			if(mom.genes.Contains(g))
 				str++;
-
+			
 			float mod = (str > 1) ? .8f : .5f;
-
+			
 			float rand = UnityEngine.Random.Range(0f, 1f);
 			if(rand < g.passOnChance * mod)
 				GenesToPassOn.Add(g);
 		}
-
-		//Gene newGene = RollForNewGene(blob, GenesToPassOn);
-
-
-		//if(newGene == null)
-		//{
-		//	// Gene passing
-			blob.unprocessedGenes = CleanupGeneList(GenesToPassOn);
-			LimitGenesTo(blob, blob.allowedGeneCount);
-		//}
-		//else
-		//{
-		//	blob.genes.Add(newGene);
-		//	blob.quality = (float)BlobQuality.Poor;
-		//}
-
+		
+		blob.unprocessedGenes = CleanupGeneList(GenesToPassOn);
+		LimitGenesTo(blob, blob.allowedGeneCount);
+		
 		blob.SetGeneActivationForAll();
 		blob.ApplyGeneEffects(blob.activeGenes);
-
+		
 		return blob;
 	}
-
-
+	
+	
 	public List<Gene> CleanupGeneList(List<Gene> genes)
 	{
 		//remove dupe genes first
 		genes = genes.Distinct().ToList();
-
+		
 		for (int i = 0; i < genes.Count; i++)
 		{
 			List<Gene> genesOfTheSameType = GeneManager.GetGenesOfType(genes, genes[i].type);
-
+			
 			// a blob can only have 2 of a gene type
 			if (genesOfTheSameType.Count <= 2)
 				continue;
-
+			
 			// if there are more, randomly select the surviving genes based on their gene strength
 			int genesKept = 0;
 			while (genesKept < 2)
@@ -309,108 +260,70 @@ public class NurseryManager : MonoBehaviour
 		}
 		return genes;
 	}
-
-
+	
+	
 	public void LimitGenesTo(Blob blob, int count)
 	{
 		if(blob.genes.Count > count)
 		{
 			List<Gene> genesNew = new List<Gene>();
 			List<Gene> genesOld = blob.genes.ToList();
-
+			
 			for (int i=0; i<count; i++)
 			{
 				Gene g = GeneManager.GetRandomGeneBasedOnStrength(genesOld);
 				genesNew.Add(g);
 				genesOld.Remove(g);
 			}
-
+			
 			blob.unprocessedGenes = genesNew;
 		}
 	}
-
 	
-	public Gene RollForNewGene(Blob blob, List<Gene> preReqList)
-	{
-		// poor quality blobs cannot mutate genes
-		if (Blob.GetQualityFromValue(blob.quality) == BlobQuality.Poor)
-			return null;
-		
-		List<Gene> allEligibleGenes = new List<Gene>();
-		foreach(Gene gene in preReqList)
-		{
-			List<Gene> eligibleGenes = GeneManager.GetGenesWithPrerequisite(gm.mum.genes, gene.geneName);
-			allEligibleGenes = allEligibleGenes.Union<Gene>(eligibleGenes).ToList<Gene>();
-		}
-
-		allEligibleGenes = allEligibleGenes.Union<Gene>(GeneManager.GetGenesWithPrerequisite(gm.mum.genes, "")).Distinct ().ToList<Gene>();
-
-		//prune genes that currently exist amongthe player's blob population
-		foreach(Blob b in blobs)//for now only look at nursery blobs
-			foreach(Gene gene in b.genes)
-				foreach(Gene eg in allEligibleGenes)
-				    if(eg.geneName == gene.geneName)
-					{
-						allEligibleGenes.Remove(eg);
-						break;
-					}
-
-		List<Gene> rollSuccessGenes = new List<Gene>();
-		float geneRoll = UnityEngine.Random.Range(0f,1f);
-		foreach(Gene eligibleGene in allEligibleGenes)
-			if (geneRoll <= eligibleGene.revealChance)
-				rollSuccessGenes.Add(eligibleGene);
-			
-		Gene newGene = GeneManager.GetRandomGeneBasedOnRarity(rollSuccessGenes);
-		return newGene;
-	}
-
-
+	
 	public void SpawnEgg(Blob egg)
 	{
 		if (blobs.Count >= maxBlobs)
 			return;
-
+		
 		AddBlob(egg);
 		int index = blobs.IndexOf(egg);
 		blobPanel.UpdateBlobCellWithBlob(index, egg);
 	}
-
-
+	
+	
 	public void UpdateAllBlobCells()
 	{
 		if(blobs == null)
 			return;
-
+		
 		foreach(Blob blob in blobs)
 			blobPanel.UpdateBlobCellWithBlob(blobs.IndexOf(blob), blob);
-
+		
 		if(curSelectedIndex > blobs.Count)
 			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
 	}
-
-
+	
+	
 	public void PressGridItem(int index)
 	{
 		if(index < 0)
 			return;
-
+		
 		if(blobs.Count <= 0)
 			return;
-
+		
 		curSelectedIndex = index;
 		Blob blob = blobs[index];
 		BlobCell bc = blobPanel.blobCells[index];
 		infoPanel.UpdateWithBlob(blob);
-		UpdateSellValue();
-		UpdateBreedCost();
-
+		
 		foreach(Blob b in blobs)
 		{
 			BlobCell cell = blobPanel.blobCells[blobs.IndexOf(b)];
 			cell.heart.gameObject.SetActive(false);
 		}
-
+		
 		foreach(Blob b in blobs)
 		{
 			BlobCell cell = blobPanel.blobCells[blobs.IndexOf(b)];
@@ -419,144 +332,172 @@ public class NurseryManager : MonoBehaviour
 			else if(b.id == blob.momId)
 				cell.infoLabel.text = "Mom";
 			else
-				cell.infoLabel.text = "";
-
+				cell.infoLabel.text = b.GetBlobStateString();
+			
 			if(b.id == blob.spouseId && b.spouseId == blob.id)
 			{
 				cell.heart.gameObject.SetActive(true);
 				bc.heart.gameObject.SetActive(true);
 			}
 		}
-
-
 		bc.gameObject.SendMessage("OnClick");
 	}
 	
-
-	public void PressBreedButton()
+	
+	public void FindSpouse(Blob blob)
 	{
-		if(gm.gold < gm.breedCost)
+		List<Blob> otherGenderSingleBlobs = new List<Blob>();
+		Blob newSpouse = null;
+		
+		foreach(Blob b in blobs)
 		{
-			gm.popup.Show("Cannot Breed", "Not enough gold.");
-			return;
-		}
-
-		if(MatingPairExists() == false)
-		{
-			gm.popup.Show("Cannot Breed", "No breeding pair available.");
-			return;
-		}
-
-		if(blobs.Count >= maxBlobs)
-		{
-			gm.popup.Show("Cannot Breed", "Room is full.");
-			return;
+			if(b == blob || 
+			   b.spouseId != -1 || 
+			   !b.hasHatched || 
+			   blob.male == b.male || 
+			   (b.female && b.unfertilizedEggs == 0))
+				continue;
+			otherGenderSingleBlobs.Add(b);
 		}
 		
-		breedButton.isEnabled = false;
-		breedTime = System.DateTime.Now + gm.breedBarFillDelay;
-
-		Blob maleBlob = null;
-		Blob femaleBlob = null;
-		List<Blob> singleFemales = new List<Blob>();
-		foreach(Blob b in femaleBlobs)
-			if(b.spouseId == -1)
-				singleFemales.Add(b);
-
-		while(femaleBlob == null)
-		{
-			maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
-
-			if(maleBlobs.Count == 1) //last male
-				femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
-			else if (maleBlob.spouseId == -1) //no partner
-			{
-				if(singleFemales.Count > 0)
-					femaleBlob = singleFemales[UnityEngine.Random.Range(0, singleFemales.Count)];
-				else
-				{
-					// this male blob will just have to wait. try select another male blob
-					maleBlobs.Remove(maleBlob);
-					maleBlob = maleBlobs[UnityEngine.Random.Range(0, maleBlobs.Count)];
-				}
-			}
-			else //had a previous partner
-			{
-				foreach(Blob b in femaleBlobs)
-					if (b.id == maleBlob.spouseId)
-						femaleBlob = b;
-
-				if(femaleBlob == null && singleFemales.Count > 0)
-					femaleBlob = singleFemales[UnityEngine.Random.Range(0, singleFemales.Count)];
-				else
-					maleBlobs.Remove(maleBlob);
-			}
-		}
-
-
-		if (maleBlob.spouseId != -1)
-		{
-			//had a previous partner
-			foreach(Blob b in femaleBlobs)
-			{
-				if (b.id == maleBlob.spouseId)
-				{
-					// found her!
-					femaleBlob = b;
-					break;
-				}
-			}
-		}
-
-		if(femaleBlob == null) // shes gone! get a new wife.
-			femaleBlob = femaleBlobs[UnityEngine.Random.Range(0, femaleBlobs.Count)];
 		
-		gm.AddGold(-GetBreedCost());
-		BreedBlobs(maleBlob, femaleBlob);
+		if(otherGenderSingleBlobs.Count > 0)
+			newSpouse = otherGenderSingleBlobs[UnityEngine.Random.Range(0, otherGenderSingleBlobs.Count)];
+		else
+		{gm.popup.Show("Cannot Find a Mate", "There are no available " + (blob.male ? "fertile female" : "male") + " blobs."); return;}
+		
+		blob.spouseId = newSpouse.id;
+		newSpouse.spouseId = blob.id;
+		infoPanel.UpdateWithBlob(blob);
+		
+		blob.mateFindTime = System.DateTime.Now + blob.mateFindDelay;
+		newSpouse.mateFindTime = System.DateTime.Now + newSpouse.mateFindDelay;
 	}
 	
-
-	public void PressSellButton()
+	
+	public void RemoveSpouse(Blob blob)
 	{
-		gm.TrySellBlob(blobs[curSelectedIndex], this);
+		Blob spouse = blob.GetSpouse();
+		
+		if(spouse == null)
+			blob.spouseId = -1;
+		else
+		{
+			blob.spouseId = -1;
+			spouse.spouseId = -1;
+			blob.heartbrokenRecoverTime = System.DateTime.Now + blob.heartbrokenRecoverDelay;
+			spouse.heartbrokenRecoverTime = System.DateTime.Now + spouse.heartbrokenRecoverDelay;
+			BlobCell bc = blobPanel.blobCells[blobs.IndexOf(blob)];
+			bc.heart.gameObject.SetActive(false);
+			bc = blobPanel.blobCells[blobs.IndexOf(spouse)];
+			bc.heart.gameObject.SetActive(false);
+			infoPanel.UpdateWithBlob(blob);
+		}
 	}
-
-
-	void SellBlobFinal() 
+	
+	
+	public void BreedBlobWithSpouse(Blob blob)
+	{
+		if(blob.spouseId == -1)
+		{gm.popup.Show("Cannot Breed", "Blob has no mate."); return;}
+		
+		if(gm.gold < GetBreedCost())
+		{gm.popup.Show("Cannot Breed", "Not enough gold.");return;}
+		
+		if(blobs.Count >= maxBlobs)
+		{gm.popup.Show("Cannot Breed", "Room is full.");return;}
+		
+		if(blob.breedReadyTime > System.DateTime.Now)
+		{gm.popup.Show("Cannot Breed", "Blob is still breeding");return;}
+		
+		if(blob.heartbrokenRecoverTime > System.DateTime.Now)
+		{gm.popup.Show("Cannot Breed", "Blob is depressed");return;}
+		
+		Blob spouse = blob.GetSpouse();
+		
+		if((blob.female && blob.unfertilizedEggs == 0) || (spouse.female && spouse.unfertilizedEggs == 0))
+		{gm.popup.Show("Cannot Breed", "Female Blob cannot produce anymore eggs.\nThis Blob must find a new mate to be able to breed.");return;}
+		
+		gm.AddGold(-GetBreedCost());
+		if(blob.male)
+			BreedBlobs(blob, spouse);
+		else
+			BreedBlobs(spouse, blob);
+		infoPanel.UpdateWithBlob(blob);
+	}
+	
+	
+	public void GetMateFindResult(Blob blob)
+	{
+		if(blob.female)
+			return;
+		
+		Blob spouse = blob.GetSpouse();
+		int levelDifference = Mathf.Clamp(spouse.level - blob.level, 0, 100);
+		float penalty = Mathf.Clamp(levelDifference * .1f, 0f, 1f);
+		float roll = UnityEngine.Random.Range(0f,1f);
+		bool success = (roll < (1f - penalty));
+		
+		if(success)
+		{
+			//gm.blobPopup.Show(spouse, "Find a Partner", "Blobs have successfuly patnered!\nThey can now breed.");
+			BlobCell bc = gm.nm.blobPanel.blobCells[gm.nm.blobs.IndexOf(blob)];
+			bc.heart.gameObject.SetActive(true);
+			bc = gm.nm.blobPanel.blobCells[gm.nm.blobs.IndexOf(spouse)];
+			bc.heart.gameObject.SetActive(true);
+		}
+		else
+		{
+			gm.blobPopup.Show(blob, "Find a Partner", "Partnering failed. These blobs had trouble getting along.");
+			blob.heartbrokenRecoverTime = System.DateTime.Now + blob.heartbrokenRecoverDelay;
+			blob.spouseId = -1;
+			spouse.spouseId = -1;
+		}
+	}
+	
+	
+	public void SellBlobFinal() 
+	{
+		Blob blob = blobs[curSelectedIndex];
+		gm.AddGold(blob.sellValue);
+		DeleteBlobFinal();
+	}
+	
+	
+	public void DeleteBlobFinal() 
 	{
 		Blob blob = blobs[curSelectedIndex];
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		bc.Reset();
-		gm.AddGold(gm.sellValue);
 		DeleteBlob(blob);
 	}
-
-
+	
+	
 	public bool IsFull() {return(blobs.Count >= maxBlobs);}
-
-
+	
+	
 	public void PressToVillageButton()
 	{
 		if (blobs.Count <= 0 || curSelectedIndex >= blobs.Count)
 			return;
-
+		
 		Blob blob = blobs[curSelectedIndex];
-
+		
 		if (gm.vm.IsFull()) 
 		{gm.blobPopup.Show(blob, "Cannot Move", "There is no more space in the Village."); return;}
-
-
+		
+		
 		if (!blob.hasHatched)
 		{gm.blobPopup.Show(blob, "Cannot Move", "Blob has not been hatched."); return;}
-
+		
 		BlobCell bc = blobPanel.blobCells[curSelectedIndex];
 		if (blob.breedReadyTime > System.DateTime.Now)
 		{gm.blobPopup.Show(blob, "Cannot Move", "Blob is still breeding."); return;}
 		bc.Reset();
-
+		
 		gm.vm.blobs.Add(blob);
 		gm.vm.blobPanel.UpdateBlobCellWithBlob(gm.vm.blobs.IndexOf(blob), blob);
-
+		
 		blobs.Remove(blob);
 		if (curSelectedIndex >= blobs.Count)
 			PressGridItem(curSelectedIndex - 1);
@@ -571,11 +512,11 @@ public class NurseryManager : MonoBehaviour
 			infoPanel.UpdateWithBlob(blobs[curSelectedIndex]);
 		else
 			infoPanel.UpdateWithBlob(null);
-
+		
 		gm.vm.newBlobAdded(blob);
 	}
-
-
+	
+	
 	public void PressToCastleButton()
 	{
 		if (blobs.Count <= 0 || curSelectedIndex >= blobs.Count || gm.cm.IsFull())
@@ -614,19 +555,10 @@ public class NurseryManager : MonoBehaviour
 		
 		gm.cm.newBlobAdded(blob);
 	}
-
-
+	
+	
 	// Update is called once per frame
 	void Update () 
 	{
-		System.TimeSpan ts = (breedTime - System.DateTime.Now);
-		breedProgressBar.value = 1f - (float)(ts.TotalSeconds / gm.breedBarFillDelay.TotalSeconds);
-		breedProgressBar.value = breedProgressBar.value > 1f ? 1f : breedProgressBar.value;
-
-		if (breedTime <= System.DateTime.Now && breedButton.isEnabled == false)
-		{
-			if (CanEnableBreedButton())
-				breedButton.isEnabled = true;
-		}
 	}
 }

@@ -79,6 +79,7 @@ public class Blob
 
 	public int tilePosX;
 	public int tilePosY;
+	public GameObject blobGameObject;
 	
 	
 	public Blob()
@@ -108,6 +109,20 @@ public class Blob
 		goldProduction = 0;
 		sellValue = 1;
 		level = 1;
+	}
+
+	public void Setup()
+	{
+		blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
+		BlobDragDropItem bddi = blobGameObject.GetComponent<BlobDragDropItem>();
+		bddi.blob = this;
+		SetBodyTexture();
+		SetEyeTexture();
+		List<UISprite> blobsprites = blobGameObject.GetComponentsInChildren<UISprite>().ToList();
+		Texture tex = bodyPartSprites["Body"];
+		blobsprites[0].spriteName = tex.name;
+		tex = bodyPartSprites["Eyes"];
+		blobsprites[1].spriteName = tex.name;
 	}
 	
 	public string GetBlobStateString()
