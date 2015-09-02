@@ -37,18 +37,20 @@ public class Room : MonoBehaviour {
 		}
 	}
 
+
 	public void AddBlob(Blob blob){
 		if (IsRoomFull())
 			return;
 
-		Transform blobTransform = blob.blobGameObject.transform;
+		Transform blobTransform = blob.transform;
 		blobTransform.SetParent(transform);
-		float scale = .4f;
+		float scale = 1f;
 		blobTransform.localScale = new Vector3(scale,scale,1f);
 		Vector2 v = GetNextFreeTile();
 		MoveBlob(blob, (int)v.x, (int)v.y);
 		blobs.Add(blob);
 	}
+
 
 	bool MoveBlob(Blob blob, int xPos, int yPos){
 		if(IsTileOccupied(xPos, yPos))
@@ -58,10 +60,11 @@ public class Room : MonoBehaviour {
 		blob.tilePosX = xPos;
 		blob.tilePosY = yPos;
 		Tile tile = GetTile(xPos, yPos);
-		blob.blobGameObject.transform.parent = tile.transform;
+		blob.transform.parent = tile.transform;
 		tile.GetComponent<UIGrid>().Reposition();
 		return true;
 	}
+
 
 	public bool IsTileOccupied(int xPos, int yPos){
 		foreach(Blob b in blobs)
@@ -70,11 +73,13 @@ public class Room : MonoBehaviour {
 		return false;
 	}
 
+
 	public bool IsRoomFull(){
 		if(blobs.Count >= columns * rows)
 			return true;
 		return false;
 	}
+
 
 	Vector2 GetNextFreeTile(){
 		for(int y = 0; y < columns; y++)

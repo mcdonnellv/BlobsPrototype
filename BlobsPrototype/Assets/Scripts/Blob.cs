@@ -27,7 +27,7 @@ public enum BlobTrait
 
 
 [Serializable]
-public class Blob
+public class Blob : MonoBehaviour
 {
 	public enum Quality
 	{
@@ -79,14 +79,12 @@ public class Blob
 
 	public int tilePosX;
 	public int tilePosY;
-	public GameObject blobGameObject;
 	
 	
 	public Blob()
 	{
-		gm = (GameManager)(GameObject.Find("GameManager")).GetComponent<GameManager>();
 		quality = Quality.Standard;
-		levelBoostForOffspring = 0f;
+		//qualityBoostForOffspring = 0f;
 		onMission = false;
 		birthday = new DateTime(0);
 		hasHatched = false;
@@ -100,33 +98,32 @@ public class Blob
 		momId = -1;
 		dadId = -1;
 		spouseId = -1;
-		unfertilizedEggs = 99;
+		unfertilizedEggs = 2;
 		color = new Color(0.863f, 0.863f, 0.863f, 1f);
-		blobHatchDelay = gm.blobHatchDelay;
-		breedReadyDelay = gm.breedReadyDelay;
-		//heartbrokenRecoverDelay = gm.heartbrokenRecoverDelay;
-		//mateFindDelay = gm.mateFindDelay;
-		goldProduction = 0;
-		sellValue = 1;
-		level = 1;
+		//blobHatchDelay = gm.blobHatchDelay;
+		//breedReadyDelay = gm.breedReadyDelay;
+		tilePosX = 0;
+		tilePosY = 0;
 	}
 
-	public void Setup()
-	{
-		blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
-		BlobDragDropItem bddi = blobGameObject.GetComponent<BlobDragDropItem>();
-		bddi.blob = this;
+	public void Setup() {
 		SetBodyTexture();
 		SetEyeTexture();
-		List<UISprite> blobsprites = blobGameObject.GetComponentsInChildren<UISprite>().ToList();
+		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>().ToList();
 		Texture tex = bodyPartSprites["Body"];
 		blobsprites[0].spriteName = tex.name;
 		tex = bodyPartSprites["Eyes"];
 		blobsprites[1].spriteName = tex.name;
 	}
-	
-	public string GetBlobStateString()
-	{
+
+
+	public void DisplayBlobInfo() {
+		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		hudManager.blobInfoContextMenu.DisplayWithBlob(this);
+	}
+
+
+	public string GetBlobStateString() {
 		if (breedReadyTime > System.DateTime.Now)
 			return "Breeding";
 		if (heartbrokenRecoverTime > System.DateTime.Now)
@@ -136,12 +133,11 @@ public class Blob
 		if (mateFindTime > System.DateTime.Now)
 			return "Dating";
 		
-		return "";
+		return "Idle";
 	}
 	
 	
-	public Blob GetSpouse()
-	{
+	public Blob GetSpouse() {
 		foreach(Blob b in gm.nm.blobs)
 			if(spouseId == b.id)
 				return b;
@@ -298,13 +294,14 @@ public class Blob
 	
 	public void SetBodyTexture()
 	{
-		bodyPartSprites.Add("Body", gm.bpm.bodyTextures[UnityEngine.Random.Range(0, gm.bpm.bodyTextures.Count)]);
+		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
+		bodyPartSprites.Add("Body", bpm.bodyTextures[UnityEngine.Random.Range(0, bpm.bodyTextures.Count)]);
 	}
-	
 	
 	public void SetEyeTexture()
 	{
-		bodyPartSprites.Add("Eyes", gm.bpm.eyeTextures[UnityEngine.Random.Range(0, gm.bpm.eyeTextures.Count)]);
+		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
+		bodyPartSprites.Add("Eyes", bpm.eyeTextures[UnityEngine.Random.Range(0, bpm.eyeTextures.Count)]);
 	}
 	
 	
@@ -350,7 +347,7 @@ public class Blob
 		case Blob.Quality.Legendary: return new Color(1f, 0.773f, 0.082f, .5f);
 		}
 		
-		return Color.clear;
+		return Color.white;
 	}
 	
 	

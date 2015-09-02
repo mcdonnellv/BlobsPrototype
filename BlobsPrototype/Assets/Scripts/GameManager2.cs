@@ -41,7 +41,13 @@ public class GameManager2 : MonoBehaviour {
 		for(int i=0; i<2; i++) {
 			if(room.IsRoomFull())
 				break;
-			blob = new Blob();
+
+			GameObject blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
+			blob = blobGameObject.AddComponent<Blob>();
+			UIButton button = blobGameObject.GetComponent<UIButton>();
+			EventDelegate ed = new EventDelegate(blob, "DisplayBlobInfo");
+			button.onClick.Add(ed);
+			blob.male = (i % 2 == 0);
 			blob.Setup();
 			room.AddBlob(blob);
 		}

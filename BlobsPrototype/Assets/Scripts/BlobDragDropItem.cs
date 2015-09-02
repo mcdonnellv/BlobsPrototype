@@ -3,10 +3,8 @@ using System.Collections;
 
 public class BlobDragDropItem : UIDragDropItem
 {
-	public Blob blob;
-
-	protected override void OnDragDropRelease (GameObject surface)
-	{
+	protected override void OnDragDropRelease (GameObject surface) {
+		Blob blob = gameObject.GetComponent<Blob>();
 		if (surface != null && blob != null)
 		{
 			Tile tile = (Tile)surface.GetComponent<Tile>();
