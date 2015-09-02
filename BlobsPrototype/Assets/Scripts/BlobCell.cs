@@ -99,7 +99,7 @@ public class BlobCell : MonoBehaviour
 			else
 			{
 				blob.goldProductionTime = System.DateTime.Now + gm.blobGoldProductionDelay;
-				gm.vm.AddTribute(blob.quality);
+				//gm.vm.AddTribute(blob.quality);
 			}
 		}
 
