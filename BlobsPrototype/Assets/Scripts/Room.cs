@@ -1,62 +1,92 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class Room : MonoBehaviour {
+	public enum RoomType {
+		Field = 0,
+		Workshop,
+	}
 
-	public int columns = 6;
-	public int rows = 6;
+	public int size;
 	public RoomManager rm;
 	public int tilewidth;
 	public int tileHeight;
 	public List<Blob> blobs;
 	public List<Tile> tiles;
+	public RoomType type;
 
-	public void Setup(){
+	
+	public void Setup() {
 		if(blobs == null)
 			blobs = new List<Blob>();
 
 		if(tiles == null)
 			tiles = new List<Tile>();
 
-		for(int x = 0; x < columns; x++){
-			for(int y = 0; y < rows; y++){
-				GameObject toInstantiate = rm.floorTiles[Random.Range (0, rm.floorTiles.Length)];
+		if(rm == null)
+			rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+
+		for(int x = 0; x < size; x++) {
+			for(int y = 0; y < size; y++) {
+				GameObject toInstantiate = rm.floorTiles[(int)type];
 				GameObject instance = Instantiate (toInstantiate) as GameObject;
 				Tile tile = instance.GetComponent<Tile>();
 				tile.xPos = x;
 				tile.yPos = y;
 				tiles.Add(tile);
 				instance.transform.SetParent (transform);
-				tilewidth = instance.GetComponent<UISprite>().width-4;
-				tileHeight = instance.GetComponent<UISprite>().height-4;
-				instance.transform.localPosition = new Vector3(x * tilewidth, y * -tileHeight, 0f);
+				tilewidth = instance.GetComponent<UISprite>().width-20;
+				tileHeight = instance.GetComponent<UISprite>().height-20;
+				instance.transform.localPosition = new Vector3((x - ((size - 1) * .5f)) * tilewidth, 
+				                                               (y - ((size - 1) * .5f)) * -tileHeight, 0f);
 				instance.transform.localScale = new Vector3(1f,1f,1f);
+
+				UISprite sprite = instance.GetComponent<UISprite>();
+				sprite.color = ((x+y) % 2 == 0) ? new Color(.8f,.8f,.8f,1f) : new Color(.65f,.65f,.65f,1f);
 			}
 		}
 	}
 
 
-	public void AddBlob(Blob blob){
-		if (IsRoomFull())
-			return;
-
-		Transform blobTransform = blob.transform;
-		blobTransform.SetParent(transform);
-		float scale = 1f;
-		blobTransform.localScale = new Vector3(scale,scale,1f);
+	public void AddBlob(Blob blob) {
 		Vector2 v = GetNextFreeTile();
-		MoveBlob(blob, (int)v.x, (int)v.y);
-		blobs.Add(blob);
+		AddBlobToTile(blob, (int)v.x, (int)v.y);
 	}
 
 
-	bool MoveBlob(Blob blob, int xPos, int yPos){
-		if(IsTileOccupied(xPos, yPos))
+	public void AddBlobToTile(Blob blob, int xPos, int yPos) {
+		if (IsRoomFull())
+			return;
+		
+		Transform blobTransform = blob.transform;
+		blobTransform.SetParent(transform);
+		blobTransform.localScale = new Vector3(1f, 1f, 1f);
+		blob.room = this;
+		MoveBlob(blob, xPos, yPos);
+		if(blobs.Contains(blob) == false)
+			blobs.Add(blob);
+
+		rm.UpdateRoomOptionsContextMenuValues(rm.currentRoom);
+	}
+
+
+	public void DeleteBlob(Blob blob) {
+		blob.PrepareForDelete();
+		blobs.Remove(blob);
+		UnityEngine.Object.DestroyImmediate(blob.gameObject);
+	}
+
+
+	bool MoveBlob(Blob blob, int xPos, int yPos) {
+		Blob otherBlob = GetBlobOnTile(xPos, yPos);
+		if(otherBlob != null && blob != otherBlob)
 			return false;
-		xPos = Mathf.Clamp (xPos, 0, rows);
-		yPos = Mathf.Clamp (yPos, 0, columns);
+
+		xPos = Mathf.Clamp (xPos, 0, size);
+		yPos = Mathf.Clamp (yPos, 0, size);
 		blob.tilePosX = xPos;
 		blob.tilePosY = yPos;
 		Tile tile = GetTile(xPos, yPos);
@@ -64,26 +94,29 @@ public class Room : MonoBehaviour {
 		tile.GetComponent<UIGrid>().Reposition();
 		return true;
 	}
+	
+
+	public bool IsTileOccupied(int xPos, int yPos) { return (GetBlobOnTile(xPos, yPos) != null); }
 
 
-	public bool IsTileOccupied(int xPos, int yPos){
+	public Blob GetBlobOnTile(int xPos, int yPos) {
 		foreach(Blob b in blobs)
 			if(b.tilePosX == xPos && b.tilePosY == yPos)
-				return true;
-		return false;
+				return b;
+		return null;
 	}
 
 
 	public bool IsRoomFull(){
-		if(blobs.Count >= columns * rows)
+		if(blobs.Count >= size * size)
 			return true;
 		return false;
 	}
 
 
 	Vector2 GetNextFreeTile(){
-		for(int y = 0; y < columns; y++)
-			for(int x = 0; x < rows; x++)
+		for(int y = 0; y < size; y++)
+			for(int x = 0; x < size; x++)
 				if(IsTileOccupied(x,y) == false)
 					return new Vector2(x,y);
 		return new Vector2(0,-1);
@@ -97,12 +130,17 @@ public class Room : MonoBehaviour {
 		return null;
 	}
 
-	// Use this for initialization
-	void Start () {
-
+	public void ShowFloatingSprites(Blob blobDragged) {
+		foreach(Blob b in blobs)
+			b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().ShowBlobInfo(blobDragged);
 	}
-	
-	// Update is called once per frame
+
+	public void HideFloatingSprites() {
+		foreach(Blob b in blobs)
+			b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().HideBlobInfo();
+	}
+
+
 	void Update () {
 	}
 }

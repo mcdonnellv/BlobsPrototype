@@ -1,0 +1,14 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class GenePointer : MonoBehaviour {
+	public Gene gene;
+
+	public void GenePressed() {
+		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		string colorStr =  ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality));
+		hudManager.popup.Show(colorStr + gene.quality.ToString() + " Gene[-]", gene.description);
+	
+	}
+}

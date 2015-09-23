@@ -16,14 +16,12 @@ public class GameVariables
 	public List<Blob> castleBlobs;
 	public List<Blob> allBlobs {get {return (nurseryBlobs.Union(villageBlobs.Union(castleBlobs))).ToList();} }
 
-	public void AddGold(int val)
-	{
-		gold += val;
+	public int AddGold(int val) {
+		return gold += val;
 	}
 	
 	
-	public void AddChocolate(int val)
-	{
-		chocolate += val;
+	public int AddChocolate(int val) {
+		return chocolate += val;
 	}
 }

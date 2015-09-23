@@ -15,7 +15,7 @@ public class GeneManager: MonoBehaviour
 		g.revealed = true;
 
 		foreach(Gene gene in genes)
-			if(gene.negativeEffect == false && gene.rarity <= Gene.Rarity.Common)
+			if(gene.negativeEffect == false && gene.quality <= Quality.Common)
 				gene.revealed = true;
 	}
 

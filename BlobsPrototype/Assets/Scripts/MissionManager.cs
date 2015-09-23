@@ -33,7 +33,7 @@ public class MissionManager : MonoBehaviour
 
 		missionSpawnTimer = missionSpawnTimeMins * 60f;
 		UpdateMissionList();
-		gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
+		//gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
 	}
 
 
@@ -43,7 +43,7 @@ public class MissionManager : MonoBehaviour
 		mission.SetRandomMissionValues();
 		missions.Add(mission);
 		UpdateMissionList();
-		gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
+		//gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
 	}
 
 
@@ -65,8 +65,8 @@ public class MissionManager : MonoBehaviour
 		return;
 
 
-		if (gm.missionView.activeSelf == false)
-			return;
+		//if (gm.missionView.activeSelf == false)
+		//	return;
 
 		foreach(Transform missionCell in missionPanel.transform)
 		{
@@ -140,10 +140,10 @@ public class MissionManager : MonoBehaviour
 					}
 
 					//scale
-					int pixels = (int)(mission.blob.BlobScale() * 50f);
-					sprites[1].SetDimensions(pixels, pixels);
-					sprites[2].SetDimensions(pixels, pixels);
-					sprites[3].SetDimensions(pixels, pixels);
+					//int pixels = (int)(mission.blob.BlobScale() * 50f);
+					//sprites[1].SetDimensions(pixels, pixels);
+					//sprites[2].SetDimensions(pixels, pixels);
+					//sprites[3].SetDimensions(pixels, pixels);
 				}
 			}
 			else
@@ -159,9 +159,9 @@ public class MissionManager : MonoBehaviour
 		Mission mission = missions[curMissionIndex];
 		//mission.blob = gm.blobs[gm.curSelectedIndex];
 		mission.blob.onMission = true;
-		gm.EnableSelectMode(false);
-		gm.breedingView.SetActive(false);
-		gm.missionView.SetActive(true);
+		//gm.EnableSelectMode(false);
+		//gm.breedingView.SetActive(false);
+		//gm.missionView.SetActive(true);
 		UpdateMissionList();
 	}
 
@@ -173,9 +173,9 @@ public class MissionManager : MonoBehaviour
 
 		if (mission.blob == null)
 		{
-			gm.EnableSelectMode(true);
-			gm.breedingView.SetActive(true);
-			gm.missionView.SetActive(false);
+			//gm.EnableSelectMode(true);
+			//gm.breedingView.SetActive(true);
+			//gm.missionView.SetActive(false);
 			//gm.UpdateGrid();
 		}
 		else
@@ -195,11 +195,11 @@ public class MissionManager : MonoBehaviour
 		{
 			mission.active = false;
 			mission.blob.onMission = false;
-			if(mission.successful)
-				gm.AddGold(mission.reward);
+			//if(mission.successful)
+			//	gm.AddGold(mission.reward);
 			missions.Remove(mission);
 			UpdateMissionList();
-			gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
+			//gm.missionButtonLabel.text = "Missions (" + missions.Count.ToString() + ")";
 		}
 		else
 		{
@@ -225,8 +225,8 @@ public class MissionManager : MonoBehaviour
 
 	public void BreedingButtonPressed()
 	{
-		gm.breedingView.SetActive(true);
-		gm.missionView.SetActive(false);
+		//gm.breedingView.SetActive(true);
+		//gm.missionView.SetActive(false);
 		//gm.UpdateGrid();
 	}
 

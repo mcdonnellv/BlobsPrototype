@@ -82,7 +82,7 @@ public class GeneManagerInspector : Editor
 			GUI.backgroundColor = Color.white;
 			if(GUILayout.Button ("Sort"))
 			{
-				mm.genes = mm.genes.OrderBy(x => x.type).ThenByDescending(x => x.rarity).ThenBy(x => x.geneName).ToList();
+				mm.genes = mm.genes.OrderBy(x => x.type).ThenByDescending(x => x.quality).ThenBy(x => x.geneName).ToList();
 			}
 
 			if (item != null)
@@ -192,7 +192,7 @@ public class GeneManagerInspector : Editor
 
 
 			//Gene info
-			item.rarity = (Gene.Rarity)EditorGUILayout.EnumPopup("Rarity: ", item.rarity);
+			item.quality = (Quality)EditorGUILayout.EnumPopup("Rarity: ", item.quality);
 			item.geneStrength = (Gene.GeneStrength)EditorGUILayout.EnumPopup("Strength: ", item.geneStrength);
 			item.negativeEffect = EditorGUILayout.Toggle("Sickness", item.negativeEffect);
 

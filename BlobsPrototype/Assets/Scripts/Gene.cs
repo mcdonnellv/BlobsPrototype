@@ -6,19 +6,9 @@ using System.Collections.Generic;
 
 
 [Serializable]
-public class Gene : ScriptableObject 
-{
-	public enum Rarity
-	{
-		Standard,
-		Common,
-		Rare,
-		Epic,
-		Legendary,
-	};
+public class Gene : ScriptableObject {
 
-	public enum GeneStrength
-	{
+	public enum GeneStrength {
 		VeryWeak = 10,
 		Weak = 20,
 		Normal = 30,
@@ -26,8 +16,7 @@ public class Gene : ScriptableObject
 		VeryStrong = 50,
 	};
 
-	public enum Type
-	{
+	public enum Type {
 		None = -1,
 		BodyColor,
 		FacialFeature,
@@ -36,8 +25,7 @@ public class Gene : ScriptableObject
 		Intellect,
 	};
 
-	public enum GeneActivationRequirements
-	{
+	public enum GeneActivationRequirements {
 		None = -1,
 		GenderMustBeMale,
 		GenderMustBeFemale,
@@ -51,83 +39,76 @@ public class Gene : ScriptableObject
 
 	
 	public string geneName = "";
+	public string name {get{return geneName;}}
 	public List<string> preRequisites = new List<string>();
 	public List<GeneActivationRequirements> activationRequirements = new List<GeneActivationRequirements>();
-
 	public string preRequisite = "";
 	public string description = "";
 	public GeneStrength geneStrength = GeneStrength.Normal;
-	public Rarity rarity = Rarity.Common;
+	public Quality quality = Quality.Common;
 	public bool revealed = false;
 	public Type type = Type.None;
 	public Color bodyColor = Color.white;
 	public bool negativeEffect = false;
-	public float revealChance { get {return Gene.RevealChanceForRarity(rarity);} }
-	public float passOnChance { get {return Gene.PassOnChanceForRarity(rarity);} }
-	public string name {get{return geneName;}}
-
-	static float PassOnChanceForRarity(Rarity r)
-	{
-		if(r == Rarity.Standard)
-			return 1f;
-		return RevealChanceForRarity(r) * 14.28f;
-	}
+	public float revealChance { get {return Gene.RevealChanceForQuality(quality);} }
+	public float passOnChance { get {return Gene.PassOnChanceForQuality(quality);} }
+	public List<Stat> stats = new List<Stat>();
 
 
-	static float RevealChanceForRarity(Rarity r)
-	{
-		switch (r)
-		{
-		case Rarity.Standard:  return 0f;
-		case Rarity.Common:    return 0.07000f;
-		case Rarity.Rare:      return 0.02140f;
-		case Rarity.Epic:      return 0.00428f;
-		case Rarity.Legendary: return 0.00108f;
+	public static float PassOnChanceForQuality(Quality r) {
+		switch (r) {
+		case Quality.Standard:  return 0.25f;
+		case Quality.Common:    return 0.20f;
+		case Quality.Rare:      return 0.10f;
+		case Quality.Epic:      return 0.05f;
+		case Quality.Legendary: return 0.02f;
 		}
 		return 0f;
 	}
 
 
-	public static Color ColorForRarity(Rarity r)
-	{
-		switch (r)
-		{
-		case Rarity.Standard:  return new Color(.7f, .7f, .7f, 1f);
-		case Rarity.Common:    return Color.white;
-		case Rarity.Rare:      return new Color(0.255f, 0.616f, 1f, 1f);
-		case Rarity.Epic:      return new Color(0.957f, 0.294f, 1f, 1f);
-		case Rarity.Legendary: return new Color(1f, 0.773f, 0.082f, 1f);
+	public static float RevealChanceForQuality(Quality r) {
+		switch (r) {
+		case Quality.Standard:  return 0f;
+		case Quality.Common:    return 0.07000f;
+		case Quality.Rare:      return 0.02140f;
+		case Quality.Epic:      return 0.00428f;
+		case Quality.Legendary: return 0.00108f;
 		}
-
-		return Color.white;
+		return 0f;
 	}
 
 
-	public static string HexColorStringFromRarity(Rarity r)
-	{
-		return HexStringFromColor(Gene.ColorForRarity(r));
+	public static string HexColorStringFromRarity(Quality r) {
+		return HexStringFromColor(ColorDefines.ColorForQuality(r));
 	}
 
 
-	public static string HexStringFromColor(Color c)
-	{
+	public static string HexStringFromColor(Color c) {
 		return string.Format("[{0}{1}{2}]",
 		                     ((int)(c.r * 255)).ToString("X2"),
 		                     ((int)(c.g * 255)).ToString("X2"),
 		                     ((int)(c.b * 255)).ToString("X2"));
 	}
 
-	public static string RarityStringFromrarity(Rarity r)
-	{
-		switch (r)
+	
+	public GameObject CreateGeneGameObject() {
+		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
+		GenePointer gp = geneGameObject.GetComponent<GenePointer>();
+		UISprite s = geneGameObject.GetComponent<UISprite>();
+		switch (quality)
 		{
-		case Rarity.Standard:  return "Standard";
-		case Rarity.Common:    return "Common";
-		case Rarity.Rare:      return "Rare";
-		case Rarity.Epic:      return "Epic";
-		case Rarity.Legendary: return "Legendary";
+		case Quality.Standard:  
+		case Quality.Common:    s.spriteName = "cardCommon"; break;
+		case Quality.Rare:      s.spriteName = "cardRare"; break;
+		case Quality.Epic:      s.spriteName = "cardEpic"; break;
+		case Quality.Legendary: s.spriteName = "cardLegendary"; break;
 		}
-
-		return "?";
+		gp.gene = this;
+		return geneGameObject;
 	}
 }
+
+
+
+

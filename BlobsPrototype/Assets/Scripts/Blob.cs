@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public enum BlobJob
-{
+public enum BlobJob {
 	None,
 	Farmer,
 	Merchant,
@@ -14,8 +13,7 @@ public enum BlobJob
 	Fighter,
 };
 
-public enum BlobTrait
-{
+public enum BlobTrait {
 	None,
 	Hardy,
 	Wise,
@@ -25,33 +23,59 @@ public enum BlobTrait
 	Nimble,
 };
 
+public enum Quality {
+	None = -1,
+	Standard,
+	Common,
+	Rare,
+	Epic,
+	Legendary,
+};
 
 [Serializable]
-public class Blob : MonoBehaviour
-{
-	public enum Quality
-	{
-		Standard,
-		Rare,
-		Epic,
-		Legendary,
+public class Blob : MonoBehaviour {
+
+	public class Stats {
+		public List<int> values;
+
+		public void Reset(int val) { 
+			if(values == null) {
+				values = new List<int>((int)Stat.Identifier.StatIdCount);
+			}
+
+			values.Clear();
+			for(int i = 0; i < (int)Stat.Identifier.StatIdCount; i++)
+				values.Add(val);
+		}
+	}
+
+
+
+	public enum State {
+		Idle,
+		Dating,
+		Breeding,
+		Hatching,
+		HatchReady,
+		GrowingUp,
+		Depressed,
+		Nugget,
+		Working,
+		WorkingReady,
 	};
-	
-	GameManager gm;
+
+	public State state = State.Idle;
 	public int id;
 	public int momId;
 	public int dadId;
 	public int spouseId;
 	public bool male;
-	public bool female {get{return !male;}}
+	public bool female { get {return !male;} }
 	public int unfertilizedEggs;
 	public Quality quality;
 	public int level;
-	
-	//stats
 	public int goldProduction;
-	public int sellValue;
-	
+	public int sellValue { get {return  10 + Mathf.FloorToInt(level * 1.5f);} }
 	public float levelBoostForOffspring;
 	public BlobTrait trait;
 	public BlobJob job;
@@ -59,348 +83,457 @@ public class Blob : MonoBehaviour
 	public DateTime birthday;
 	public Blob egg;
 	public bool hasHatched;
-	public DateTime hatchTime;
+	public bool isAdult { get {return age > adultAge;} }
+	public bool isInfant { get {return (!isAdult && hasHatched);} }
 	public TimeSpan blobHatchDelay;
 	public TimeSpan breedReadyDelay;
-	public TimeSpan heartbrokenRecoverDelay;
+	public TimeSpan depressedDelay;
 	public TimeSpan mateFindDelay;
-	public DateTime breedReadyTime;
-	public DateTime goldProductionTime;
+	public TimeSpan workingDelay;
+	public TimeSpan adultAge;
 	public DateTime heartbrokenRecoverTime;
 	public DateTime mateFindTime;
-	public List<Gene> genes { get {return activeGenes.Union(inactiveGenes.Union(unprocessedGenes)).ToList();} }
-	public List<Gene> unprocessedGenes;
-	public List<Gene> activeGenes;
-	public List<Gene> inactiveGenes;
+	public List<Gene> genes;
 	public Color color;
-	public int allowedGeneCount { get{return GetGeneCountFromQuality(quality);} }
+	public string colorName;
+	public int allowedGeneCount { get {return GetGeneCountFromQuality(quality);} }
 	public TimeSpan age {get {return DateTime.Now - birthday;}}
 	public Dictionary<string, Texture> bodyPartSprites;
-
 	public int tilePosX;
 	public int tilePosY;
-	
-	
-	public Blob()
-	{
-		quality = Quality.Standard;
-		//qualityBoostForOffspring = 0f;
+	public Room room;
+	public DateTime actionReadyTime;
+	public TimeSpan actionDuration;
+	public bool isNugget;
+	public Stats stats;
+
+	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,5);
+	TimeSpan breedReadyStandard = new TimeSpan(0,0,1);
+	TimeSpan mateFindDelayStandard = new TimeSpan(0,0,1);
+	TimeSpan depressedDelayStandard = new TimeSpan(0,0,1);
+	TimeSpan adultAgeDelayStandard = new TimeSpan(0,0,10);
+	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
+	GameManager2 gameManager;
+	BreedManager breedManager;
+	BlobFloatingDisplay floatingDisplay;
+	HudManager hudManager;
+
+	public Blob () {
+		stats = new Stats();
+		quality = Quality.Common;
+		level = 1;
 		onMission = false;
-		birthday = new DateTime(0);
+		birthday = DateTime.Now;
 		hasHatched = false;
-		hatchTime = new DateTime(0);
-		breedReadyTime = new DateTime(0);
-		goldProductionTime = new DateTime(0);
-		unprocessedGenes = new List<Gene>();
-		activeGenes = new List<Gene>();
-		inactiveGenes = new List<Gene>();
+		actionReadyTime  = new DateTime(0); 
+		actionDuration = new TimeSpan(0);
+		genes = new List<Gene>();
 		bodyPartSprites = new Dictionary<string, Texture>();
 		momId = -1;
 		dadId = -1;
 		spouseId = -1;
 		unfertilizedEggs = 2;
-		color = new Color(0.863f, 0.863f, 0.863f, 1f);
-		//blobHatchDelay = gm.blobHatchDelay;
-		//breedReadyDelay = gm.breedReadyDelay;
+		color = ColorDefines.defaultBlobColor;
+		breedReadyDelay = breedReadyStandard;
+		mateFindDelay = mateFindDelayStandard;
+		workingDelay = workingDelayStandard;
+		isNugget = false;
 		tilePosX = 0;
 		tilePosY = 0;
+		goldProduction = 1;
+		stats.Reset(5);
 	}
 
+
 	public void Setup() {
+		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
+		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
+		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+
+		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
 		SetEyeTexture();
-		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>().ToList();
+		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
 		Texture tex = bodyPartSprites["Body"];
-		blobsprites[0].spriteName = tex.name;
-		tex = bodyPartSprites["Eyes"];
 		blobsprites[1].spriteName = tex.name;
+		tex = bodyPartSprites["Eyes"];
+		blobsprites[2].spriteName = tex.name;
+
+		blobsprites[0].gameObject.SetActive(true);
+		blobsprites[1].gameObject.SetActive(false);
+		blobsprites[2].gameObject.SetActive(false);
+		blobsprites[3].gameObject.SetActive(false);
+
+		UIButton button = gameObject.GetComponent<UIButton>();
+		EventDelegate ed = new EventDelegate(this, "BlobPressed");
+		button.onClick.Add(ed);
+
+		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
+		floatingDisplay.blob = this;
+
+		blobHatchDelay = TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * level);
+		depressedDelay = TimeSpan.FromTicks(depressedDelayStandard.Ticks * level);
+		adultAge = TimeSpan.FromTicks(adultAgeDelayStandard.Ticks * level);
+	}
+
+
+	public void SetupNugget() {
+		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
+		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
+		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+
+		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+		blobsprites[0].gameObject.SetActive(true);
+		blobsprites[1].gameObject.SetActive(false);
+		blobsprites[2].gameObject.SetActive(false);
+		blobsprites[3].gameObject.SetActive(false);
+
+		UIButton button = gameObject.GetComponent<UIButton>();
+		EventDelegate ed = new EventDelegate(this, "BlobPressed");
+		button.onClick.Add(ed);
+
+		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
+		floatingDisplay.blob = this;
+
+		blobHatchDelay = TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * level);
 	}
 
 
 	public void DisplayBlobInfo() {
-		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		hudManager.blobInfoContextMenu.DisplayWithBlob(this);
 	}
 
 
+	public void UpdateBlobInfoIfDisplayed() {
+		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
+			hudManager.blobInfoContextMenu.DisplayWithBlob(this);
+	}
+
+
 	public string GetBlobStateString() {
-		if (breedReadyTime > System.DateTime.Now)
-			return "Breeding";
-		if (heartbrokenRecoverTime > System.DateTime.Now)
-			return "Depressed";
-		if (!hasHatched && hatchTime > System.DateTime.Now)
-			return "Incubating";
-		if (mateFindTime > System.DateTime.Now)
-			return "Dating";
-		
-		return "Idle";
+		return state.ToString();
 	}
 	
 	
 	public Blob GetSpouse() {
-		foreach(Blob b in gm.nm.blobs)
+		List<Blob> blobs = room.blobs;
+		foreach(Blob b in blobs)
 			if(spouseId == b.id)
 				return b;
 		
 		return null;
 	}
-	
-	
-	public bool IsGeneActive(Gene g) { return activeGenes.Contains(g); }
-	
-	
-	public void SetGeneActivationForAll()
-	{
-		while(unprocessedGenes.Count > 0)
-		{
-			Gene g = unprocessedGenes[0];
-			SetGeneActivationForGene(g);
+
+
+	void BlobPressed() {
+		if(!hasHatched && state == State.HatchReady) {
+			Hatch(!isNugget);
+			if(hudManager.blobInfoContextMenu.IsDisplayed())
+				hudManager.blobInfoContextMenu.Dismiss();
+			return;
 		}
-	}
-	
-	
-	public void SetGeneActivationForGene(Gene g)
-	{
-		unprocessedGenes.Remove(g);
-		if(ShouldGeneBeActive(g))
-			ActivateGene(g);
-		else
-			DeactivateGene(g);
-	}
-	
-	
-	public bool ShouldGeneBeActive(Gene g)
-	{
-		foreach(Gene.GeneActivationRequirements req in g.activationRequirements)
-		{
-			switch(req)
-			{
-			case Gene.GeneActivationRequirements.GenderMustBeFemale:
-				return (female);
-			case Gene.GeneActivationRequirements.GenderMustBeMale:
-				return (male);
-			case Gene.GeneActivationRequirements.MustHaveNoActiveGenesOfSameType:
-				List<Gene> unprocessedGenesOfSameType = GeneManager.GetGenesOfType(unprocessedGenes, g.type);
-				List<Gene> activeGenesOfSameType = GeneManager.GetGenesOfType(activeGenes, g.type);
-				if(activeGenesOfSameType.Count > 0)
-					return false;
-				else if(unprocessedGenesOfSameType.Count > 1)
-				{
-					Gene chosen = GeneManager.GetRandomGeneBasedOnStrength(unprocessedGenesOfSameType);
-					if(chosen != g)
-					{
-						SetGeneActivationForGene(chosen);
-						return false;
-					}
-				}
-				return true;
-			}
+
+		if(state == State.WorkingReady) {
+			CollectWork();
+			return;
 		}
-		return true;
-	}
-	
-	
-	public bool IsGeneTypeActive(Gene.Type t)
-	{
-		foreach(Gene g in genes)
-			if(g.type == t && IsGeneActive(g))
-				return true;
-		return false;
-	}
-	
-	
-	public void ActivateGene(Gene g)
-	{
-		if(unprocessedGenes.Contains(g))
-			SetGeneActivationForGene(g);
-		else
-		{
-			if(!activeGenes.Contains(g))
-				activeGenes.Add(g);
-			if (inactiveGenes.Contains(g))
-				inactiveGenes.Remove(g);
+
+		if(state == State.Nugget) {
+			gameManager.AddGold(sellValue);
+			room.DeleteBlob(this);
+			return;
 		}
+
+		DisplayBlobInfo();
 	}
-	
-	
-	public void DeactivateGene(Gene g)
-	{
-		if(unprocessedGenes.Contains(g))
-			SetGeneActivationForGene(g);
-		else
-		{
-			if(!inactiveGenes.Contains(g))
-				inactiveGenes.Add(g);
-			if (activeGenes.Contains(g))
-				activeGenes.Remove(g);
-		}
-	}
-	
-	
-	public void DeactivateGenesOfType(Gene.Type t)
-	{
-		foreach(Gene g in genes)
-			if(g.type == t)
-				DeactivateGene(g);
-	}
-	
-	
-	public void Hatch()
-	{
+
+
+	public void Hatch(bool displayInfo) {
 		if(hasHatched)
 			return;
+		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+		blobsprites[0].gameObject.SetActive(false);
+
+		if(!isNugget) {
+			blobsprites[1].gameObject.SetActive(true);
+			blobsprites[2].gameObject.SetActive(true);
+			blobsprites[3].gameObject.SetActive(false);
+			state = State.GrowingUp;
+			transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+			StartActionWithDuration(adultAge);
+		}
+		else {
+			blobsprites[1].gameObject.SetActive(false);
+			blobsprites[2].gameObject.SetActive(false);
+			blobsprites[3].gameObject.SetActive(true);
+			state = State.Nugget;
+		}
 		hasHatched = true;
 		birthday = DateTime.Now;
+
+		floatingDisplay.HideHarvestSprite();
+		if(displayInfo)
+			DisplayBlobInfo();
+	}
+
+	
+	public void OrderGenes() {
+		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.geneName).ToList();
 	}
 	
 	
-	public bool IsOfBreedingAge()
-	{
-		if(age >= gm.breedingAge)
-			return true;
-		return false;
-	}
-	
-	
-	public string GetBodyColorName()
-	{
-		foreach(Gene g in genes)
-			if(g.type == Gene.Type.BodyColor && IsGeneActive(g))
-				return g.geneName;
-		return "White";
-	}
-	
-	
-	public float BlobScale()
-	{
-		float s = .4f + (.6f * (float)(age.TotalSeconds / gm.breedingAge.TotalSeconds));
-		return Mathf.Clamp(s, 0f, 1f);
-	}
-	
-	
-	public void OrderGenes()
-	{
-		activeGenes = activeGenes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
-		inactiveGenes = inactiveGenes.OrderByDescending( x => x.rarity).ThenBy(x => x.geneName).ToList();
-	}
-	
-	
-	public void SetRandomTextures()
-	{
+	public void SetRandomTextures() {
 		SetBodyTexture();
 		SetEyeTexture();
 	}
 	
 	
-	public void SetBodyTexture()
-	{
+	public void SetBodyTexture() {
 		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
 		bodyPartSprites.Add("Body", bpm.bodyTextures[UnityEngine.Random.Range(0, bpm.bodyTextures.Count)]);
 	}
+
 	
-	public void SetEyeTexture()
-	{
+	public void SetEyeTexture() {
 		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
 		bodyPartSprites.Add("Eyes", bpm.eyeTextures[UnityEngine.Random.Range(0, bpm.eyeTextures.Count)]);
 	}
-	
-	
-	static public int GetGeneCountFromQuality(Blob.Quality q)
-	{
-		switch (q)
-		{
-		case Blob.Quality.Standard: return 0;
-		case Blob.Quality.Rare: return 1;
-		case Blob.Quality.Epic: return 2;
-		case Blob.Quality.Legendary: return 3;
-		}
-		
-		return 0;
+
+
+	public void ChangeColor(string colorStr, Color c) {
+
+		UISprite body = GetBodySprite();
+		TweenColor tc = body.gameObject.GetComponent<TweenColor>();
+		if (tc == null)
+			tc = body.gameObject.AddComponent<TweenColor>();
+		tc.duration = 1f;
+		tc.from = color;
+		tc.to = c;
+		tc.PlayForward();
+		color = c;
+		colorName = colorStr;
+	}
+
+	public UISprite GetBodySprite() {
+		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+		return blobsprites[1];
 	}
 	
 	
-	static public Blob.Quality GetRandomQuality()
-	{	
-		Blob.Quality q = Blob.Quality.Standard;
-		
+	static public int GetGeneCountFromQuality(Quality q) {
+		switch (q) {
+		case Quality.Common: return 3;
+		case Quality.Rare: return 4;
+		case Quality.Epic: return 5;
+		case Quality.Legendary: return 6;
+		}
+		return 3;
+	}
+	
+	
+	static public Quality GetRandomQuality()	{	
+		Quality q = Quality.Common;
 		float r = UnityEngine.Random.Range(0f,1f);
-		
 		if(r <= 0.02140f)
-			q = Blob.Quality.Rare;
+			q = Quality.Rare;
 		
 		if(r <= 0.00428f)
-			q = Blob.Quality.Epic;
+			q = Quality.Epic;
 		
 		if(r <= 0.00108f)
-			q = Blob.Quality.Legendary;
+			q = Quality.Legendary;
 		
 		return q;
 	}
-	
-	
-	public static Color ColorForQuality(Blob.Quality q)
-	{
-		switch (q)
-		{
-		case Blob.Quality.Rare:      return new Color(0.255f, 0.616f, 1f, .5f);
-		case Blob.Quality.Epic:      return new Color(0.957f, 0.294f, 1f, .5f);
-		case Blob.Quality.Legendary: return new Color(1f, 0.773f, 0.082f, .5f);
+
+
+	static public bool ShouldDisplayBarForState(State blobState) {
+		switch(blobState) {
+		case State.Dating:
+		case State.Breeding:
+		case State.Depressed:
+		case State.Hatching: 
+		case State.Working: 	return true;
+		}
+		return false;
+	}
+
+
+	static public bool ShouldDisplayHarvestSpriteForState(State blobState) {
+		switch(blobState) {
+		case State.WorkingReady:
+		case State.HatchReady: return true;
+		}
+		return false;
+	}
+
+
+	public void AddRandomGene(Quality q) {
+		Gene g = new Gene();
+		genes.Add(g);
+		g.quality = (q == Quality.None) ? (Quality)UnityEngine.Random.Range(0,5) : q;
+		g.geneName = "Gene";
+		Stat s = new Stat();
+		s.id = (Stat.Identifier) UnityEngine.Random.Range(0,4);
+		s.modifier = (Stat.Modifier) UnityEngine.Random.Range(0,2);
+		if(s.modifier == Stat.Modifier.Added)
+			s.amount = ((int)g.quality) * 2 + UnityEngine.Random.Range(1,3);
+		else
+			s.amount = ((int)g.quality) * 2 + UnityEngine.Random.Range(1,3) * 5;
+		g.stats.Add(s);
+		if(s.modifier == Stat.Modifier.Added)
+			g.description = "+" + s.amount.ToString() + " to " + s.id.ToString();
+		else
+			g.description = s.id.ToString() + " increased by " + s.amount + "%";
+	}
+
+
+	public string GetActionString() {
+		switch(state) {
+		case State.Dating: return "Pairing";
+		case State.Breeding: return "Breeding";
+		case State.Depressed: return "Sad";
+		case State.Hatching: return "Hatching";
+		case State.HatchReady: return "Hatch";
+		case State.GrowingUp: return "Growing Up";
+		case State.Working: return "Working";
 		}
 		
-		return Color.white;
+		return "Breed";
 	}
-	
-	
-	public void ApplyGeneEffects(List<Gene> geneList)
-	{
-		ApplyBreedingGeneEffects(GeneManager.GetGenesOfType(geneList, Gene.Type.Breeding));
-		ApplyBodyColorGeneEffects(GeneManager.GetGenesOfType(geneList, Gene.Type.BodyColor));
+
+
+	void CollectWork() {
+		int index = (int)Stat.Identifier.Work;
+		int amount = Mathf.CeilToInt(stats.values[index] / 5f);
+		gameManager.AddGold(goldProduction * level * amount);
+		floatingDisplay.HideHarvestSprite();
+		state = State.Idle;
 	}
-	
-	
-	void ApplyBodyColorGeneEffects(List<Gene> geneList)
-	{
-		if (geneList == null || geneList.Count == 0)
-			return;
-		
-		if (geneList.Count > 1)
-			Debug.LogError("This blob has more than 1 active Body color Gene");
-		
-		color = geneList[0].bodyColor;
+
+
+	public void StartActionWithDuration(TimeSpan ts) {
+		actionDuration = ts;
+		actionReadyTime = System.DateTime.Now + actionDuration;
+		UpdateBlobInfoIfDisplayed();
 	}
+
+
+	public void ActionDone() {
+		actionDuration = new TimeSpan(0);
+		switch (state) {
+		case State.Dating: DatingDone(); break;
+		case State.Breeding: BreedingDone(); break;
+		case State.Depressed: DepressedDone(); break;
+		case State.Hatching: HatchingDone(); break;
+		case State.GrowingUp: GrowingUpDone(); break;
+		case State.Working: WorkingDone(); break;
+		}
+		UpdateBlobInfoIfDisplayed();
+	}
+
+
+	public void DatingDone() {
+		if (female) {
+			List<string> keys = ColorDefines.blobColorSet01.Keys.ToList();
+			string colorStr = keys[UnityEngine.Random.Range(0,keys.Count)];
+			Color color = ColorDefines.HexStringToColor(ColorDefines.blobColorSet01[colorStr]);
+
+			ChangeColor(colorStr, color);
+			Blob spouse = GetSpouse();
+			spouse.ChangeColor(colorStr, color);
+			long ticks1 = breedReadyStandard.Ticks * level;
+			long ticks2 = breedReadyStandard.Ticks * spouse.level;
+			breedReadyDelay = TimeSpan.FromTicks((ticks1 + ticks2) / 2L);
+			spouse.breedReadyDelay = breedReadyDelay;
+		}
+		state = State.Idle;
+	}
+
+
+	public void DepressedDone() {
+		state = State.Idle;
+	}
+
+	public void WorkingDone() {
+		state = State.WorkingReady;
+	}
+
 	
-	
-	void ApplyBreedingGeneEffects(List<Gene> geneList)
-	{
-		if (geneList == null || geneList.Count == 0)
-			return;
-		
-		foreach(Gene g in geneList)
-		{
-			switch(g.geneName)
-			{
-			case "Fertility":
-				unfertilizedEggs++;
-				break;
-			case "Virility":
-				unfertilizedEggs++;
-				break;
-			case "Infertility":
-				unfertilizedEggs = 1;
-				break;
-			case "Sterile":
-				unfertilizedEggs = 0;
-				break;
-			case "Better Babies":
-				levelBoostForOffspring = 0.1f;
-				break;
-			case "Quick Hatch":
-				blobHatchDelay = new TimeSpan(0,0,(int)gm.blobHatchDelay.TotalSeconds/2);
-				break;
-			case "Quick Breed":
-				breedReadyDelay = new TimeSpan(0,0,(int)gm.breedReadyDelay.TotalSeconds/2); 
-				break;
+	public void BreedingDone() {
+		if(female)
+			breedManager.BreedBlobs(this, GetSpouse());
+		state = State.Idle;
+	}
+
+
+	public void HatchingDone() {
+		state = State.HatchReady;
+	}
+
+
+	public void GrowingUpDone() {
+		state = State.Idle;
+		transform.localScale = new Vector3(1f, 1f, 1f);
+	}
+
+
+	public void PrepareForDelete() {
+		Blob spouse = GetSpouse();
+		if(spouse) {
+			spouse.spouseId = -1;
+			spouse.ChangeColor("Default", ColorDefines.defaultBlobColor);
+		}
+	}
+
+
+	public void CalculateStats() {
+		stats.Reset(5);
+		CalculateAddedStats();
+		CalculatePercentStats();
+	}
+
+
+	void CalculateAddedStats() {
+		foreach(Gene g in genes) {
+			foreach(Stat s in g.stats) {
+				if(s.modifier != Stat.Modifier.Added)
+					continue;
+				int i = (int)s.id;
+				stats.values[(int)s.id] += s.amount; break;
 			}
 		}
 	}
+
+	void CalculatePercentStats() {
+		Stats st = new Stats();
+		st.Reset(0);
+		foreach(Gene g in genes) {
+			foreach(Stat s in g.stats) {
+				if(s.modifier != Stat.Modifier.Percent)
+					continue;
+				int i = (int)s.id;
+				st.values[i] += s.amount;
+			}
+		}
+
+		for(int i=0; i< stats.values.Count; i++)
+			stats.values[i] = (int) (stats.values[i] * (.01f * st.values[i] + 1f));
+	}
+
+	void Update() {
+		if(actionDuration.TotalSeconds > 0 && actionReadyTime <= System.DateTime.Now)
+			ActionDone();
+
+		if(room != null && room.type == Room.RoomType.Workshop && state == State.Idle) {
+			state = Blob.State.Working;
+			StartActionWithDuration(new TimeSpan(workingDelay.Ticks * level));
+		}
+
+	}
+
+
 }
+
+
