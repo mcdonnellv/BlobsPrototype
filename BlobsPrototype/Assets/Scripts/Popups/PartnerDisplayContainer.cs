@@ -11,7 +11,7 @@ public class PartnerDisplayContainer : MonoBehaviour {
 
 	public void DisplayWithBlob(Blob blobParam) {
 		blob = blobParam;
-		bool partnering = (blob != null && blob.GetSpouse().state == Blob.State.Dating);
+		bool partnering = (blob != null && blob.GetSpouse() != null && blob.GetSpouse().state == Blob.State.Dating);
 		statusLabel.text = (blob == null) ? "No Partner" : (partnering ? "Pairing" : "Partner");
 		actionButton1.isEnabled = (blob != null && !partnering);
 		actionButton2.isEnabled = (blob != null && !partnering);

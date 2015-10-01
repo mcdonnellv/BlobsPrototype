@@ -4,17 +4,19 @@ using System.Collections.Generic;
 [System.Serializable]
  public class Stat {
 	public enum Identifier {
-		Attack = 0,
-		Work,
-		Fertility,
-		Speed,
-		StatIdCount,
-	}
+		Strength = 0,
+		Dexterity,
+		Intellect,
+		Wisdom,
+		Vitality,
+		Charisma,
+		StatIdCount
+	};
 	
 	public enum Modifier {
 		Added,
 		Percent,
-	}
+	};
 	
 	public Identifier id;
 	public Modifier modifier;
@@ -27,10 +29,10 @@ using System.Collections.Generic;
 	
 	static public string GetDescription (Identifier i) {
 		switch (i) {
-		case Identifier.Attack:		return "Attack damages the enemy";
-		case Identifier.Work: 	return "Health allows blobs to take more damage";
-		case Identifier.Fertility:		return "Speed makes attacks happen faster";
-		case Identifier.Speed:	return "Endurance allows blobs to fight longer";
+		case Identifier.Strength:		return "Attack damages the enemy";
+		case Identifier.Dexterity: 	return "Health allows blobs to take more damage";
+		case Identifier.Intellect:		return "Speed makes attacks happen faster";
+		case Identifier.Wisdom:	return "Endurance allows blobs to fight longer";
 		}
 		return null;
 	}
@@ -38,10 +40,12 @@ using System.Collections.Generic;
 	static public Identifier GetStatIdByIndex(int index) {
 		if(statIds == null) {
 			statIds = new List<Identifier>();
-			statIds.Add(Identifier.Attack);
-			statIds.Add(Identifier.Work);
-			statIds.Add(Identifier.Fertility);
-			statIds.Add(Identifier.Speed);
+			statIds.Add(Identifier.Strength);
+			statIds.Add(Identifier.Dexterity);
+			statIds.Add(Identifier.Intellect);
+			statIds.Add(Identifier.Wisdom);
+			statIds.Add(Identifier.Vitality);
+			statIds.Add(Identifier.Charisma);
 		}
 		return statIds[index];
 	}

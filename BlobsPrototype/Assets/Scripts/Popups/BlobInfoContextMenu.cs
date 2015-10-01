@@ -70,7 +70,8 @@ public class BlobInfoContextMenu : MonoBehaviour {
 			actionButton1Label.text = blob.GetActionString();
 			actionButton2.isEnabled = !isIdle ? false : true;
 			actionButton2Label.text = "Sell +" + blob.sellValue.ToString() + "[gold]";
-			partnerDisplayContainer.DisplayWithBlob(blob.GetSpouse());
+			Blob spouse = blob.GetSpouse();
+			partnerDisplayContainer.DisplayWithBlob(spouse);
 
 			foreach (UILabel l in statNameLabels) 
 				l.text = Stat.GetStatIdByIndex(statNameLabels.IndexOf(l)).ToString();
@@ -93,6 +94,11 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				go.transform.parent = parentSocket;
 				go.transform.localScale = new Vector3(1f,1f,1f);
 				go.transform.localPosition = new Vector3(0f,0f,0f);
+			}
+
+			foreach(Stat s in blob.stats) {
+				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
+				//TODO: statGameObject.
 			}
 		}
 

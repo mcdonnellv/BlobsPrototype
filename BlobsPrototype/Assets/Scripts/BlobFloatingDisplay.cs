@@ -69,14 +69,8 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		ShowSprites();
 		bool greyOut = false;
 
-		if(blobDragged.spouseId == -1) {
-			if(blob.spouseId != -1) 
-				greyOut = true;
-		}
-		else {
-			if(blob.id != blobDragged.id && blob.id != blobDragged.spouseId)
-				greyOut = true;
-		}
+		if(blobDragged.male == blob.male)
+			greyOut = true;
 
 		levelLabel.gameObject.SetActive(true);
 		levelLabel.text = blob.level.ToString();
@@ -96,7 +90,6 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 	public void ShowSprites() {
 		ShowGenderSprite();
-		ShowHeartSprite();
 		ShowLevelSprite();
 		spritePanel.gameObject.GetComponent<UIGrid>().Reposition();
 	}

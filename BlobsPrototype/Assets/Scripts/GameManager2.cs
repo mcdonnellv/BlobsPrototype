@@ -26,6 +26,8 @@ public class GameManager2 : MonoBehaviour {
 			gameVars.year = 0;
 			gameVars.gold = 80;
 			gameVars.chocolate = 5;
+			GeneManager geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
+			geneManager.FirstTimeSetup();
 		}
 		else {
 			gameVars = GenericDeSerialize<GameVariables>("GameVariables.dat");

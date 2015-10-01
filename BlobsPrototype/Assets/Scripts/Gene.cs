@@ -2,57 +2,26 @@
 using System;
 using System.Collections.Generic;
 
-
-
-
 [Serializable]
-public class Gene : ScriptableObject {
+public class Gene {
 
-	public enum GeneStrength {
-		VeryWeak = 10,
-		Weak = 20,
-		Normal = 30,
-		Strong = 40,
-		VeryStrong = 50,
-	};
-
-	public enum Type {
+	public enum GeneType {
 		None = -1,
-		BodyColor,
-		FacialFeature,
-		Metabolism,
-		Breeding,
-		Intellect,
+		StatGene,
+		MonsterGene,
 	};
 
-	public enum GeneActivationRequirements {
-		None = -1,
-		GenderMustBeMale,
-		GenderMustBeFemale,
-		QualityMustAtLeastBePoor,
-		QualityMustAtLeastBeFair,
-		QualityMustAtLeastBeGood,
-		QualityMustAtLeastBeExcellent,
-		QualityMustAtLeastBeOutstanding,
-		MustHaveNoActiveGenesOfSameType,
-	};
-
-	
-	public string geneName = "";
-	public string name {get{return geneName;}}
-	public List<string> preRequisites = new List<string>();
-	public List<GeneActivationRequirements> activationRequirements = new List<GeneActivationRequirements>();
-	public string preRequisite = "";
+	public string itemName = "";
 	public string description = "";
-	public GeneStrength geneStrength = GeneStrength.Normal;
+	public string name {get{return itemName;}}
 	public Quality quality = Quality.Common;
 	public bool revealed = false;
-	public Type type = Type.None;
-	public Color bodyColor = Color.white;
-	public bool negativeEffect = false;
+	public GeneType type = GeneType.None;
 	public float revealChance { get {return Gene.RevealChanceForQuality(quality);} }
 	public float passOnChance { get {return Gene.PassOnChanceForQuality(quality);} }
 	public List<Stat> stats = new List<Stat>();
+	public List<GeneReq> activationReq = new List<GeneReq>();
+	public bool active = true;
 
 
 	public static float PassOnChanceForQuality(Quality r) {
@@ -63,7 +32,7 @@ public class Gene : ScriptableObject {
 		case Quality.Epic:      return 0.05f;
 		case Quality.Legendary: return 0.02f;
 		}
-		return 0f;
+		return 1f;
 	}
 
 
@@ -78,32 +47,22 @@ public class Gene : ScriptableObject {
 		return 0f;
 	}
 
-
-	public static string HexColorStringFromRarity(Quality r) {
-		return HexStringFromColor(ColorDefines.ColorForQuality(r));
-	}
-
-
-	public static string HexStringFromColor(Color c) {
-		return string.Format("[{0}{1}{2}]",
-		                     ((int)(c.r * 255)).ToString("X2"),
-		                     ((int)(c.g * 255)).ToString("X2"),
-		                     ((int)(c.b * 255)).ToString("X2"));
-	}
-
 	
 	public GameObject CreateGeneGameObject() {
 		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
 		GenePointer gp = geneGameObject.GetComponent<GenePointer>();
 		UISprite s = geneGameObject.GetComponent<UISprite>();
-		switch (quality)
-		{
+		switch (quality) {
 		case Quality.Standard:  
 		case Quality.Common:    s.spriteName = "cardCommon"; break;
 		case Quality.Rare:      s.spriteName = "cardRare"; break;
 		case Quality.Epic:      s.spriteName = "cardEpic"; break;
 		case Quality.Legendary: s.spriteName = "cardLegendary"; break;
 		}
+
+		if(type == GeneType.MonsterGene)
+			s.spriteName = "Icon_Magical_Defense";
+
 		gp.gene = this;
 		return geneGameObject;
 	}

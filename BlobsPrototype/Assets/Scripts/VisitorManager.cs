@@ -205,7 +205,7 @@ public class VisitorManager : MonoBehaviour {
 //			List<Gene> genes = visitor.genes;
 //			string genestr = "Genes: ";
 //			foreach(Gene g in genes)
-//				genestr += (g.negativeEffect ? "[FF9B9B]" : "[9BFF9B]") + g.geneName + ((genes.IndexOf(g) == (genes.Count - 1)) ? "[-]\n" : "[-], ");
+//				genestr += (g.negativeEffect ? "[FF9B9B]" : "[9BFF9B]") + g.itemName + ((genes.IndexOf(g) == (genes.Count - 1)) ? "[-]\n" : "[-], ");
 //			TimeSpan ts = visitorTimers[selectedIndex] - DateTime.Now;
 //			string timestr =  "Time Left: " + string.Format("{0:00}:{1:00}:{2:00} ", ts.TotalHours, ts.Minutes, ts.Seconds);
 //			string bodyText =  "Gender: " + ((visitor.male) ? "Male\n" : "Female\n") +

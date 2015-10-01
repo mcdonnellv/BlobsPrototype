@@ -5,55 +5,43 @@ using System.Collections.Generic;
 using System.Linq;
 
 [CustomEditor(typeof(GeneManager))]
-public class GeneManagerInspector : Editor 
-{
+public class GeneManagerInspector : Editor {
 	GeneManager mm;
-	bool showGenes = false;
-	List <string>surnames = null;
+	ItemManager im;
 	string newName = "";
-	string giantstr;
-
 	static int mIndex = 0;
-	int preReqToAddIndex = 0;
-	int preReqToDeleteIndex = 0;
-	int exclusiveToAddIndex = 0;
-	int exclusiveToDeleteIndex = 0;
-	Gene.GeneActivationRequirements activationReqToAdd = 0;
-	int activationReqToDeleteIndex = 0;
 	bool mConfirmDelete = false;
+	static GeneReq.Identifier geneReqIdTemp;
+	static Stat.Identifier statIdTemp;
 
 
-
-	public override void OnInspectorGUI()
-	{
+	public override void OnInspectorGUI(){
 		NGUIEditorTools.SetLabelWidth(80f);
 		mm = (GeneManager)target;
+
+		if(im == null)
+			im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+
 		Gene item = null;
 
 		if (mm.genes == null || mm.genes.Count == 0)
-		{
 			mIndex = 0;
-		}
-		else
-		{
+		else{
 			mIndex = Mathf.Clamp(mIndex, 0, mm.genes.Count - 1);
 			item = mm.genes[mIndex];
 		}
 
-		if (mConfirmDelete)
-		{
+		if (mConfirmDelete){
 			// Show the confirmation dialog
-			GUILayout.Label("Are you sure you want to delete '" + item.geneName + "'?");
+			GUILayout.Label("Are you sure you want to delete '" + item.itemName + "'?");
 			NGUIEditorTools.DrawSeparator();
 			
-			GUILayout.BeginHorizontal();
-			{
+			GUILayout.BeginHorizontal();{
 				GUI.backgroundColor = Color.green;
 				if (GUILayout.Button("Cancel")) mConfirmDelete = false;
 				GUI.backgroundColor = Color.red;
 				
-				if (GUILayout.Button("Delete"))
-				{
+				if (GUILayout.Button("Delete")){
 					mm.genes.RemoveAt(mIndex);
 					mConfirmDelete = false;
 				}
@@ -61,37 +49,39 @@ public class GeneManagerInspector : Editor
 			}
 			GUILayout.EndHorizontal();
 		}
-		else
-		{
+		else {
 			// "New" button
-			
-			EditorGUILayout.BeginHorizontal();
-			newName = EditorGUILayout.TextField(newName, GUILayout.Width(100f));
-			GUI.backgroundColor = Color.green;
-			if (GUILayout.Button("New Gene") && mm.DoesNameExistInList(newName) == false && newName != "")
-			{
-
-				Gene g = new Gene();
-				g.geneName = newName;
-				mm.genes.Add(g);
-				mIndex = mm.genes.Count - 1;
-				newName = "";
-				item = g;
+			EditorGUILayout.BeginHorizontal();{
+				newName = EditorGUILayout.TextField(newName, GUILayout.Width(100f));
+				GUI.backgroundColor = Color.green;
+				if (GUILayout.Button("New Gene") && mm.DoesNameExistInList(newName) == false){
+					Gene g = new Gene();
+					g.itemName = newName;
+					if(item != null) {
+						if(newName == "")
+							g.itemName = item.itemName + " copy";
+						g.description = item.description;
+						g.type = item.type;
+						g.quality = item.quality;
+						g.stats = item.stats.ToList();
+					}
+					mm.genes.Add(g);
+					mIndex = mm.genes.Count - 1;
+					newName = "";
+					item = g;
+				}
 			}
 			EditorGUILayout.EndHorizontal();
 			GUI.backgroundColor = Color.white;
-			if(GUILayout.Button ("Sort"))
-			{
-				mm.genes = mm.genes.OrderBy(x => x.type).ThenByDescending(x => x.quality).ThenBy(x => x.geneName).ToList();
-			}
 
-			if (item != null)
-			{
+			if(GUILayout.Button ("Sort"))
+				mm.genes = mm.genes.OrderBy(x => x.type).ThenByDescending(x => x.quality).ThenBy(x => x.itemName).ToList();
+
+			if (item != null) {
 				NGUIEditorTools.DrawSeparator();
 				
 				// Navigation section
-				GUILayout.BeginHorizontal();
-				{
+				GUILayout.BeginHorizontal();{
 					if (mIndex == 0) GUI.color = Color.grey;
 					if (GUILayout.Button("<<")) { mConfirmDelete = false; --mIndex; }
 					GUI.color = Color.white;
@@ -102,108 +92,170 @@ public class GeneManagerInspector : Editor
 					GUI.color = Color.white;
 				}
 				GUILayout.EndHorizontal();
-				
 				NGUIEditorTools.DrawSeparator();
 			}
 
 
 			// Item name and delete item button
-			GUILayout.BeginHorizontal();
-			{
-				string itemName = EditorGUILayout.TextField("Gene Name", item.geneName);
-				
+			GUILayout.BeginHorizontal();{
+				string itemName = EditorGUILayout.TextField("Gene Name", item.itemName);
 				GUI.backgroundColor = Color.red;
-				
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))
-				{
 					mConfirmDelete = true;
-				}
 				GUI.backgroundColor = Color.white;
-				
-				if (!itemName.Equals(item.geneName) && mm.DoesNameExistInList(newName) == false)
-				{
-					item.geneName = itemName;
-				}
+				if (!itemName.Equals(item.itemName) && mm.DoesNameExistInList(itemName) == false)
+					item.itemName = itemName;
 			}
-
 			GUILayout.EndHorizontal();
 			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(100f));
-			item.type = (Gene.Type)EditorGUILayout.EnumPopup("Gene Type: ", item.type);
+			item.type = (Gene.GeneType)EditorGUILayout.EnumPopup("Gene Type: ", item.type);
+			item.active = (item.type != Gene.GeneType.MonsterGene);
+			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality: ", item.quality);
+
 			EditorGUILayout.Space();
-
-
-
-			// Prerequisites
-			List<string> geneNames = new List<string>();
-			foreach(Gene g in mm.genes)
-			{
-				bool found = false;
-				
-				if(g.geneName == item.geneName)
-					found = true;
-				
-				if(item.preRequisites.Count > 0)
-					foreach(string s in item.preRequisites)
-						if(g.geneName == s)
-							found = true;
-				
-				if(!found)
-					geneNames.Add(g.geneName);
-			}
-
-			EditorGUILayout.LabelField("Prerequisite Genes");
+			EditorGUILayout.LabelField("Stats");
 			EditorGUI.indentLevel++;
-			NGUIEditorTools.SetLabelWidth(70f);
-			GUILayout.BeginHorizontal();
-			preReqToDeleteIndex = EditorGUILayout.Popup("Current:", preReqToDeleteIndex, 
-			                                            item.preRequisites.ToArray(), GUILayout.Width(150f));
-			GUI.backgroundColor = Color.red;
-			if (GUILayout.Button("-", GUILayout.Width(20f)))
-				item.preRequisites.RemoveAt(preReqToDeleteIndex);
-			GUI.backgroundColor = Color.white;
-			preReqToAddIndex = EditorGUILayout.Popup(preReqToAddIndex, geneNames.ToArray());
-			if (GUILayout.Button("+", GUILayout.Width(20f)))
-				item.preRequisites.Add(geneNames[preReqToAddIndex]);
-			GUILayout.EndHorizontal();
+			if(item.stats == null)
+				item.stats = new List<Stat>();
+
+			for(int i=0; i < (int)Stat.Identifier.StatIdCount; i++) {
+				Stat.Identifier statID = (Stat.Identifier)i;
+				Stat stat = null;
+				foreach (Stat s in item.stats) {
+					if(s.id == statID)
+						stat = s;
+				}
+
+				GUILayout.BeginHorizontal();{
+					if(stat != null) {
+						stat.amount = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString(), stat.amount, GUILayout.Width(140f));
+						stat.modifier = (Stat.Modifier)EditorGUILayout.EnumPopup(stat.modifier);
+						if(stat.amount == 0)
+							item.stats.Remove(stat);
+					}
+					else {
+						int val = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString(), 0, GUILayout.Width(140f));
+						if (val != 0) {
+							Stat newStat = new Stat();
+							newStat.id = statID;
+							newStat.amount = val;
+							item.stats.Add(newStat);
+						}
+					}
+				}
+				GUILayout.EndHorizontal();
+			}
 			EditorGUI.indentLevel--;
+
+
+
 			EditorGUILayout.Space();
-
-
-			// Activation Requirements
-			List<string> activationRequirements = new List<string>();
-			foreach(Gene.GeneActivationRequirements ar in item.activationRequirements)
-				activationRequirements.Add(ar.ToString());
 			EditorGUILayout.LabelField("Activation Requirements");
 			EditorGUI.indentLevel++;
-			GUILayout.BeginHorizontal();
-			activationReqToDeleteIndex = EditorGUILayout.Popup("Current:", activationReqToDeleteIndex, 
-			                                                   activationRequirements.ToArray(), GUILayout.Width(150f));
-			GUI.backgroundColor = Color.red;
-			if (GUILayout.Button("-", GUILayout.Width(20f)))
-				item.activationRequirements.RemoveAt(activationReqToDeleteIndex);
-			GUI.backgroundColor = Color.white;
-			activationReqToAdd = (Gene.GeneActivationRequirements)EditorGUILayout.EnumPopup(activationReqToAdd);
-			if (GUILayout.Button("+", GUILayout.Width(20f)))
-				item.activationRequirements.Add(activationReqToAdd);
-			NGUIEditorTools.SetLabelWidth(80f);
+			
+			//item.activationReq.Clear();
+			GUILayout.BeginHorizontal(); {
+				geneReqIdTemp = (GeneReq.Identifier)EditorGUILayout.EnumPopup(geneReqIdTemp);
+				GUI.backgroundColor = Color.green;
+				if (GUILayout.Button("Add")) {
+					bool addIt = true;
+					foreach(GeneReq gr in item.activationReq)
+						if (gr.id == GeneReq.Identifier.LvlReq && geneReqIdTemp == GeneReq.Identifier.LvlReq)
+							addIt = false;
+					
+					
+					if (geneReqIdTemp == GeneReq.Identifier.LvlReq) {
+						foreach(GeneReq gr in item.activationReq)
+							if (gr.id == geneReqIdTemp)
+								addIt = false;
+					}
+					if (addIt) {
+						GeneReq newGeneReq = new GeneReq();
+						newGeneReq.id = geneReqIdTemp;
+						item.activationReq.Add(newGeneReq);
+					}
+					
+				}
+				GUI.backgroundColor = Color.white;
+			}
 			GUILayout.EndHorizontal();
-			EditorGUI.indentLevel--;
-			EditorGUILayout.Space();
+
+			List <GeneReq> toDelete = new List<GeneReq>();
+			foreach(GeneReq gr in item.activationReq) {
+				switch(gr.id) {
+				case GeneReq.Identifier.LvlReq:
+					GUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField("Blob Level      >=", GUILayout.Width(125f));
+						gr.amount = EditorGUILayout.IntField(gr.amount, GUILayout.Width(50f));
+					break;
+
+				case GeneReq.Identifier.StatReq: 
+					GUILayout.BeginHorizontal();
+						gr.statId = (Stat.Identifier)EditorGUILayout.EnumPopup(gr.statId, GUILayout.Width(80f));
+						EditorGUILayout.LabelField(">=", GUILayout.Width(40f));
+						gr.amount = EditorGUILayout.IntField(gr.amount, GUILayout.Width(50f));
+					break;
 
 
-			//Gene info
-			item.quality = (Quality)EditorGUILayout.EnumPopup("Rarity: ", item.quality);
-			item.geneStrength = (Gene.GeneStrength)EditorGUILayout.EnumPopup("Strength: ", item.geneStrength);
-			item.negativeEffect = EditorGUILayout.Toggle("Sickness", item.negativeEffect);
+				case GeneReq.Identifier.ConsumeReq:
+					GUILayout.BeginHorizontal(); 
+					string[] allItems =  new string[im.items.Count];
+					foreach(Item i in im.items)
+						allItems[im.items.IndexOf(i)] = i.itemName;
+					int index = EditorGUILayout.Popup("Item", 0, allItems, GUILayout.Width(180f));
+					break;
+				}
 
+
+				GUI.backgroundColor = Color.red;
+				if (GUILayout.Button("Del", GUILayout.Width(35f)))
+					toDelete.Add(gr);
+				GUI.backgroundColor = Color.white;
+				GUILayout.EndHorizontal();
+			}
+			
+			foreach(GeneReq gr in toDelete)
+				item.activationReq.Remove(gr);
+
+
+			switch(item.type) {
+			case Gene.GeneType.MonsterGene: {
+
+
+
+//				for(int i=0; i < (int)Stat.Identifier.StatIdCount; i++) {
+//					Stat.Identifier statID = (Stat.Identifier)i;
+//					Stat stat = null;
+//					foreach (GeneReq s in item.activationReq) {
+//						if(s.id == statID)
+//							stat = s;
+//					}
+//					
+//					GUILayout.BeginHorizontal(); {
+//						if(stat != null) {
+//							stat.amount = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString() + " >=", stat.amount, GUILayout.Width(160f));
+//							if(stat.amount == 0)
+//								item.activationReq.Remove(stat);
+//						}
+//						else {
+//							int val = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString() + " >=", 0, GUILayout.Width(160f));
+//							if (val != 0) {
+//								Stat newStat = new Stat();
+//								newStat.id = statID;
+//								newStat.amount = val;
+//								item.activationReq.Add(newStat);
+//							}
+//						}
+//					}
+//					GUILayout.EndHorizontal();
+//				}
+				EditorGUI.indentLevel--;
+			}
+				break;
+
+			}
 
 			NGUIEditorTools.DrawSeparator();
-			switch(item.type)
-			{
-			case Gene.Type.BodyColor:
-				item.bodyColor = EditorGUILayout.ColorField("Body Color", item.bodyColor, GUILayout.Width(250f));
-				break;
-			}
 		}
 	}
 }

@@ -84,21 +84,9 @@ public class BreedManager : MonoBehaviour {
 		if(blob1.actionDuration.TotalSeconds > 0 || blob2.actionDuration.TotalSeconds > 0)
 			return;
 
-		if(blob1.spouseId == -1)
-			AttemptPair(blob1, blob2);
-		else
-			AttemptBreed(blob1, blob2);
+		AttemptBreed(blob1, blob2);
 	}
 
-
-	public void AttemptPair(Blob blob1, Blob blob2) {
-		if(CheckPairBlobErrors(blob1, blob2))
-			return;
-		
-		hudManager.popup.Show("Pair Blobs", "Would you like to create a new breeding pair?", this, "PairBlobsConfirmed");
-		potentialPairBlob1 = blob1;
-		potentialPairBlob2 = blob2;
-	}
 
 
 	public void AttemptBreed(Blob blob1, Blob blob2) {
@@ -106,16 +94,11 @@ public class BreedManager : MonoBehaviour {
 
 		if(CheckBreedBlobErrors(blob1, blob2))
 			return;
-		
-		Blob spouse = blob1.GetSpouse();
-		Blob male = blob1.male ? blob1 : spouse;
-		Blob female = blob1.female ? blob1 : spouse;
-		
-		if(female.unfertilizedEggs == 0) {
-			hudManager.popup.Show("Cannot Breed", "Female Blob has no more eggs.");
-			return;
-		}
-		
+
+		Blob male = blob1.male ? blob1 : blob2;
+		Blob female = blob1.female ? blob1 : blob2;
+		male.spouseId = female.id;
+		female.spouseId = male.id;
 		gameManager.AddGold(-cost);
 		male.state = Blob.State.Breeding;
 		female.state = Blob.State.Breeding;
@@ -127,7 +110,6 @@ public class BreedManager : MonoBehaviour {
 
 
 	public void BreedBlobs(Blob male, Blob female) {
-		female.unfertilizedEggs--;
 		Blob newBlob = CreateBlobFromParents(male, female);
 		female.room.AddBlob(newBlob);
 		newBlob.state = Blob.State.Hatching;
@@ -170,7 +152,9 @@ public class BreedManager : MonoBehaviour {
 		// figure out passed on genes
 		List<Gene> parentGenes = dad.genes.Union(mom.genes).ToList();
 		foreach(Gene g in parentGenes) {
-			if(UnityEngine.Random.Range(0f,1f) <= Gene.PassOnChanceForQuality(g.quality))
+			if(g.type == Gene.GeneType.MonsterGene)
+				blob.genes.Add(g);
+			else if(UnityEngine.Random.Range(0f,1f) <= Gene.PassOnChanceForQuality(g.quality))
 				blob.genes.Add(g);
 		}
 
@@ -209,18 +193,13 @@ public class BreedManager : MonoBehaviour {
 	bool CheckBreedBlobErrors(Blob blob1, Blob blob2) {
 		int cost = GetBreedCost();
 
+		if(blob1.male == blob2.male) {
+			hudManager.popup.Show("Cannot Breed", "Must be different gender.");
+			return true;
+		}
+
 		if(blob1.room.IsRoomFull()) {
 			hudManager.popup.Show("Cannot Breed", "Room is full. Sell or move a blob to free space");
-			return true;
-		}
-
-		if(blob1.spouseId == -1) {
-			hudManager.popup.Show("Cannot Breed", "This blob needs a partner before it can breed. Drag it on to another blob.");
-			return true;
-		}
-
-		if(blob1.spouseId != blob2.id) {
-			hudManager.popup.Show("Cannot Breed", "This blob can only breed with its pair");
 			return true;
 		}
 
@@ -232,27 +211,6 @@ public class BreedManager : MonoBehaviour {
 		return false;
 	}
 
-	bool CheckPairBlobErrors(Blob blob1, Blob blob2) {
-		if(blob2.hasHatched == false)
-			return true;
-
-		if(blob1.isInfant || blob2.isInfant ) {
-			hudManager.popup.Show("Pair Blobs", "You can onlt breed adult blobs/");
-			return true;
-		}
-
-		if(blob2.spouseId != -1 || blob1.spouseId != -1) {
-			hudManager.popup.Show("Pair Blobs", "The blob already has a pair.");
-			return true;
-		}
-
-		if((blob1.male && blob2.male) || (blob1.female && blob2.female)) {
-			hudManager.popup.Show("Pair Blobs", "You cannot pair blobs of the same gender.");
-			return true;
-		}
-
-		return false;
-	}
 
 
 	void PairBlobsConfirmed() {

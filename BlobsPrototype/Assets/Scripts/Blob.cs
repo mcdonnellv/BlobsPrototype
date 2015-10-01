@@ -5,12 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 
 
+//STR
+//DEX
+//INT
+//WIS
+//CON
+//CHA
+
 public enum BlobJob {
 	None,
-	Farmer,
-	Merchant,
-	Builder,
-	Fighter,
+	Farmer, //produces gold (DEX, CON)
+	Merchant, //holds onto the gold (INT, CHA)
+	Fighter, //goes on quests (STR, CON)
+	Breeder, // makes new blobs and blubber (CHA, WIS)
+	Scout, //finds new quests (INT, DEX)
+	Boss, //(STR, WIS) // or elder
 };
 
 public enum BlobTrait {
@@ -141,7 +150,7 @@ public class Blob : MonoBehaviour {
 		tilePosX = 0;
 		tilePosY = 0;
 		goldProduction = 1;
-		stats.Reset(5);
+		stats.Reset(0);
 	}
 
 
@@ -279,7 +288,7 @@ public class Blob : MonoBehaviour {
 
 	
 	public void OrderGenes() {
-		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.geneName).ToList();
+		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();
 	}
 	
 	
@@ -373,7 +382,7 @@ public class Blob : MonoBehaviour {
 		Gene g = new Gene();
 		genes.Add(g);
 		g.quality = (q == Quality.None) ? (Quality)UnityEngine.Random.Range(0,5) : q;
-		g.geneName = "Gene";
+		g.itemName = "Gene";
 		Stat s = new Stat();
 		s.id = (Stat.Identifier) UnityEngine.Random.Range(0,4);
 		s.modifier = (Stat.Modifier) UnityEngine.Random.Range(0,2);
@@ -405,7 +414,7 @@ public class Blob : MonoBehaviour {
 
 
 	void CollectWork() {
-		int index = (int)Stat.Identifier.Work;
+		int index = (int)Stat.Identifier.Dexterity;
 		int amount = Mathf.CeilToInt(stats.values[index] / 5f);
 		gameManager.AddGold(goldProduction * level * amount);
 		floatingDisplay.HideHarvestSprite();
@@ -489,7 +498,7 @@ public class Blob : MonoBehaviour {
 
 
 	public void CalculateStats() {
-		stats.Reset(5);
+		stats.Reset(0);
 		CalculateAddedStats();
 		CalculatePercentStats();
 	}

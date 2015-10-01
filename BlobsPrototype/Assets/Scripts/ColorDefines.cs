@@ -32,16 +32,14 @@ public class ColorDefines {
 	}
 
 
-	public static string ColorToHexString(Color c)
-	{
+	public static string ColorToHexString(Color c){
 		return string.Format("[{0}{1}{2}]",
 		                     ((int)(c.r * 255)).ToString("X2"),
 		                     ((int)(c.g * 255)).ToString("X2"),
 		                     ((int)(c.b * 255)).ToString("X2"));
 	}
 
-	public static Color HexStringToColor(string s)
-	{
+	public static Color HexStringToColor(string s){
 		int hexVal = Convert.ToInt32(s, 16);
 		Color c = new Color( ((hexVal >> 16) & 0xFF) / 255f, ((hexVal >> 8) & 0xFF) / 255f, ((hexVal) & 0xFF) / 255f, 1f);
 		return c;

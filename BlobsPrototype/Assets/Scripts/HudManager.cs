@@ -14,7 +14,7 @@ public class HudManager : MonoBehaviour {
 	public Popup popup;
 	
 	public void UpdateGold(int gold) {goldLabel.text = gold.ToString() + "[gold]";}
-	public void UpdateChocolate(int chocolate) {chocolateLabel.text = chocolate.ToString() + "[chocolate]";}
+	public void UpdateChocolate(int chocolate) {chocolateLabel.text = chocolate.ToString() + "[token]";}
 	public void UpdateAverageQuality(string qualityStr) {averageQualityLabel.text = "Average Quality: " + qualityStr;}
 
 	// Use this for initialization
