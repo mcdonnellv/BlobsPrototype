@@ -96,10 +96,10 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				go.transform.localPosition = new Vector3(0f,0f,0f);
 			}
 
-			foreach(Stat s in blob.stats) {
-				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
+			//foreach(Stat s in blob.stats) {
+				//GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
 				//TODO: statGameObject.
-			}
+			//}
 		}
 
 		DisplayBlobImage();
@@ -171,6 +171,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 
 	public void Dismiss() {
+		hudManager.itemInfoPopup.Hide();
 		TweenPosition tp = gameObject.GetComponent<TweenPosition>();
 		tp.PlayReverse();
 		//roomManager.scrollView.GetComponent<UICenterOnChild>().CenterOn(blob.room.transform);

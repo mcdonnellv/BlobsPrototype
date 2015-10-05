@@ -13,6 +13,8 @@ public class GameManager2 : MonoBehaviour {
 	public GameVariables gameVars;
 	public HudManager hudMan;
 	public RoomManager roomMan;
+	public GeneManager geneManager;
+	public ItemManager itemManager;
 
 	// Use this for initialization
 	void Start () {
@@ -26,8 +28,10 @@ public class GameManager2 : MonoBehaviour {
 			gameVars.year = 0;
 			gameVars.gold = 80;
 			gameVars.chocolate = 5;
-			GeneManager geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
+			gameVars.inventoryItemSlots = 20;
+			gameVars.inventoryGeneSlots = 20;
 			geneManager.FirstTimeSetup();
+			itemManager.FirstTimeSetup();
 		}
 		else {
 			gameVars = GenericDeSerialize<GameVariables>("GameVariables.dat");

@@ -11,6 +11,8 @@ public class GameVariables
 	public int gold;
 	public int chocolate;
 	public int year;
+	public int inventoryItemSlots;
+	public int inventoryGeneSlots;
 	public List<Blob> nurseryBlobs;
 	public List<Blob> villageBlobs;
 	public List<Blob> castleBlobs;

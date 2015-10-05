@@ -3,6 +3,12 @@ using System.Collections;
 
 public class GeneDragDropItem : UIDragDropItem {
 
+	protected override void OnDrag (Vector2 delta) {
+		gameObject.GetComponent<GenePointer>().GenePressed();
+		base.OnDrag(delta);
+	}
+
+
 	protected override void OnDragDropRelease (GameObject surface) {
 		GenePointer gp = gameObject.GetComponent<GenePointer>();
 		GeneDragDropContainer gddcFrom = gp.transform.parent.GetComponent<GeneDragDropContainer>();
