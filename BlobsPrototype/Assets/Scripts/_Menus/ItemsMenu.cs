@@ -4,11 +4,7 @@ using System.Collections;
 public class ItemsMenu : MonoBehaviour {
 
 	public GameObject grid;
-	public UILabel nameLabel;
-	public UILabel rarityLabel;
-	public UILabel infoLabel1;
-	public UILabel infoLabel2;
-	public ItemInfoPopup itemInfoPopup;
+	public ItemInfoPopup popup;
 	GameObject itemSlotHighlight;
 	int selectedIndex = -1;
 	
@@ -33,11 +29,11 @@ public class ItemsMenu : MonoBehaviour {
 		else if(itemManager.storedItems.Count == 0) {
 			itemSlotHighlight.gameObject.SetActive(false);
 			selectedIndex = -1;
-			nameLabel.text = "";
-			rarityLabel.text = "";
-			infoLabel1.text = "";
-			infoLabel2.text = "";
-			itemInfoPopup.Hide();
+			popup.nameLabel.text = "";
+			popup.rarityLabel.text = "";
+			popup.infoLabel1.text = "";
+			popup.infoLabel2.text = "";
+			popup.Hide();
 		}
 	}
 
@@ -56,7 +52,7 @@ public class ItemsMenu : MonoBehaviour {
 	
 	
 	public void ShowInfoForItemGameObject(ItemPointer itemPointer) {
-		itemInfoPopup.Show();
+		popup.Show();
 		Item item = itemPointer.item;
 		Transform parentSocket = itemPointer.transform.parent;
 		selectedIndex = parentSocket.GetSiblingIndex();
@@ -69,10 +65,13 @@ public class ItemsMenu : MonoBehaviour {
 		itemSlotHighlight.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth;
 		itemSlotHighlight.transform.localPosition = new Vector3(0f,0f,0f);
 		
-		nameLabel.text = item.itemName;
-		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + "[-]";
-		infoLabel1.text = item.description;
-		infoLabel2.text = "";
+		popup.nameLabel.text = item.itemName;
+		popup.rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + "[-]";
+		popup.infoLabel1.text = item.description;
+		popup.infoLabel2.text = "";
+		UISprite originalIcon = itemPointer.gameObject.GetComponent<UISprite>();
+		popup.icon.atlas = originalIcon.atlas;
+		popup.icon.spriteName = originalIcon.spriteName;
 	}
 
 	void Update() {

@@ -5,11 +5,7 @@ using System.Collections.Generic;
 public class GenesMenu : MonoBehaviour {
 	
 	public GameObject grid;
-	public UILabel nameLabel;
-	public UILabel rarityLabel;
-	public UILabel infoLabel1;
-	public UILabel infoLabel2;
-	public ItemInfoPopup itemInfoPopup;
+	public ItemInfoPopup popup;
 	GameObject geneSlotHighlight;
 	int selectedIndex = -1;
 
@@ -33,11 +29,11 @@ public class GenesMenu : MonoBehaviour {
 			ShowInfoForGene(geneManager.storedGenes[selectedIndex]);
 		else if(geneManager.storedGenes.Count == 0) {
 			selectedIndex = -1;
-			nameLabel.text = "";
-			rarityLabel.text = "";
-			infoLabel1.text = "";
-			infoLabel2.text = "";
-			itemInfoPopup.Hide();
+			popup.nameLabel.text = "";
+			popup.rarityLabel.text = "";
+			popup.infoLabel1.text = "";
+			popup.infoLabel2.text = "";
+			popup.Hide();
 		}
 	}
 
@@ -56,7 +52,7 @@ public class GenesMenu : MonoBehaviour {
 
 
 	public void ShowInfoForGeneGameObject(GenePointer genePointer) {
-		itemInfoPopup.Show();
+		popup.Show();
 		Gene gene = genePointer.gene;
 		Transform parentSocket = genePointer.transform.parent;
 		selectedIndex = parentSocket.GetSiblingIndex();
@@ -70,25 +66,28 @@ public class GenesMenu : MonoBehaviour {
 		geneSlotHighlight.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth;
 
 		
-		nameLabel.text = gene.itemName;
-		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + "[-]";
-		infoLabel1.text = gene.description;
-		infoLabel2.text = "";
-		infoLabel2.transform.DestroyChildren();
+		popup.nameLabel.text = gene.itemName;
+		popup.rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + "[-]";
+		popup.infoLabel1.text = gene.description;
+		popup.infoLabel2.text = "";
+		popup.infoLabel2.transform.DestroyChildren();
+		UISprite originalIcon = genePointer.gameObject.GetComponent<UISprite>();
+		popup.icon.atlas = originalIcon.atlas;
+		popup.icon.spriteName = originalIcon.spriteName;
 
 		foreach(Stat s in gene.stats) {
 			int index = gene.stats.IndexOf(s);
 			GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
-			statGameObject.transform.SetParent(infoLabel2.transform);
+			statGameObject.transform.SetParent(popup.infoLabel2.transform);
 			statGameObject.transform.localScale = new Vector3(1f,1f,1f);
 			statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
 			UISprite sprite = statGameObject.GetComponentInChildren<UISprite>();
 			sprite.alpha = 0f;
 			UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
 			labels[0].text = (s.modifier == Stat.Modifier.Added) ? ("+" + s.amount.ToString()) : ("+" + s.amount.ToString() + "%");
-			labels[0].depth = infoLabel2.depth + 2;
+			labels[0].depth = popup.infoLabel2.depth + 2;
 			labels[1].text = "[fist]" + s.id.ToString();
-			labels[1].depth = infoLabel2.depth + 2;
+			labels[1].depth = popup.infoLabel2.depth + 2;
 		}
 	}
 

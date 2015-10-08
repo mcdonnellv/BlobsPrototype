@@ -12,17 +12,13 @@ public class InventoryMenu : MonoBehaviour {
 
 	public UITweener animationWindow;
 	public UILabel windowTitleLabel;
-	public UILabel nameLabel;
-	public UILabel rarityLabel;
-	public UILabel infoLabel1;
-	public UILabel infoLabel2;
 	public UILabel storageCapacityLabel;
 	public UISprite genesTab;
 	public UISprite itemsTab;
 	public GameObject grid;
 	public GenesMenu genesMenu;
 	public ItemsMenu itemsMenu;
-	public ItemInfoPopup itemInfoPopup;
+	public ItemInfoPopup popup;
 	Tab activeTab;
 	GameManager2 gameManager;
 
@@ -39,7 +35,7 @@ public class InventoryMenu : MonoBehaviour {
 	}
 	
 	public void Hide() {
-		itemInfoPopup.Hide();
+		popup.Hide();
 		animationWindow.onFinished.Add(new EventDelegate(this, "DisableWindow"));
 		animationWindow.PlayReverse();
 	}
@@ -76,12 +72,12 @@ public class InventoryMenu : MonoBehaviour {
 	}
 
 	void ClearContextText() {
-		nameLabel.text = "";
-		rarityLabel.text = "";
-		infoLabel1.text = "";
-		infoLabel2.text = "";
-		infoLabel1.transform.DestroyChildren();
-		infoLabel2.transform.DestroyChildren();
+		popup.nameLabel.text = "";
+		popup.rarityLabel.text = "";
+		popup.infoLabel1.text = "";
+		popup.infoLabel2.text = "";
+		popup.infoLabel1.transform.DestroyChildren();
+		popup.infoLabel2.transform.DestroyChildren();
 	}
 
 	void RebuildSlots(int slotCount) {
