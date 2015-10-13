@@ -52,19 +52,22 @@ public class Gene {
 		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
 		GenePointer gp = geneGameObject.GetComponent<GenePointer>();
 		UISprite s = geneGameObject.GetComponent<UISprite>();
-		switch (quality) {
-		case Quality.Standard:  
-		case Quality.Common:    s.spriteName = "cardCommon"; break;
-		case Quality.Rare:      s.spriteName = "cardRare"; break;
-		case Quality.Epic:      s.spriteName = "cardEpic"; break;
-		case Quality.Legendary: s.spriteName = "cardLegendary"; break;
-		}
-
-		if(type == GeneType.MonsterGene)
-			s.spriteName = "Icon_Magical_Defense";
-
+		s.spriteName = GetSpriteNameWithQuality(quality);
 		gp.gene = this;
 		return geneGameObject;
+	}
+
+	static public string GetSpriteNameWithQuality(Quality q) {
+		string spriteName = "";
+		switch (q) {
+		case Quality.Standard:  
+		case Quality.Common:    spriteName = "cardCommon"; break;
+		case Quality.Rare:      spriteName = "cardRare"; break;
+		case Quality.Epic:      spriteName = "cardEpic"; break;
+		case Quality.Legendary: spriteName = "cardLegendary"; break;
+		}
+
+		return spriteName;
 	}
 }
 

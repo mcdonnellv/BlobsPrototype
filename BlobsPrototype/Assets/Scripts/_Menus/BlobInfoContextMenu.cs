@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BlobInfoContextMenu : MonoBehaviour {
 
@@ -13,6 +14,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	public List<UILabel> statLabels;
 	public List<UILabel> statNameLabels;
 	public GameObject geneGrid;
+	public GameObject statGrid;
 
 	public UILabel actionButton1Label;
 	public UILabel actionButton2Label;
@@ -27,6 +29,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	GameManager2 gameManager;
 	BreedManager breedManager;
 	RoomManager roomManager;
+
 
 
 
@@ -67,7 +70,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 			bool isIdle = (blob.state == Blob.State.Idle);
 			actionButton1.isEnabled = !isIdle ? false : true;
-			actionButton1Label.text = blob.GetActionString();
 			actionButton2.isEnabled = !isIdle ? false : true;
 			actionButton2Label.text = "Sell +" + blob.sellValue.ToString() + "[gold]";
 			Blob spouse = blob.GetSpouse();
@@ -96,10 +98,23 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				go.transform.localPosition = new Vector3(0f,0f,0f);
 			}
 
-			//foreach(Stat s in blob.stats) {
-				//GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
-				//TODO: statGameObject.
-			//}
+			int i=0;
+			foreach(int s in blob.stats.values) {
+				if(s == 0) {
+					i++;
+					continue;
+				}
+				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
+				statGameObject.transform.parent = statGrid.transform;
+				UIGrid grid = statGrid.GetComponent<UIGrid>();
+				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
+				statGameObject.transform.localPosition = new Vector3(0f,0f,0f);
+				grid.Reposition();
+				List<UILabel> labels = statGameObject.GetComponentsInChildren<UILabel>().ToList();
+				labels[0].text = s.ToString();
+				labels[1].text = Stat.GetStatIdByIndex(i).ToString();
+				i++;
+			}
 		}
 
 		DisplayBlobImage();
@@ -121,7 +136,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		genderLabel.text = "Unknown";
 		qualityLabel.text = "[" + ColorToHex(ColorDefines.ColorForQuality(blob.quality)) + "]" + blob.quality.ToString() + "[-]";
 		genderSprite.gameObject.SetActive(false);
-		actionButton1Label.text = blob.GetActionString();
 		partnerDisplayContainer.gameObject.SetActive(false);
 		actionButton2.gameObject.SetActive(false);
 		actionButton1.isEnabled = true;
@@ -194,12 +208,15 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 
 	public void ActionButton1Pressed() {
-		BreedManager breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-		dismissButton.SendMessage("OnClick");
-		if(blob.hasHatched)
-			breedManager.AttemptBreed(blob, blob.GetSpouse());
-		else
-			blob.Hatch(true);
+//		BreedManager breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
+//		dismissButton.SendMessage("OnClick");
+//		if(blob.hasHatched)
+//			breedManager.AttemptBreed(blob, blob.GetSpouse());
+//		else
+//			blob.Hatch(true);
+		hudManager.inventoryMenu.Show(InventoryMenu.Mode.Feed);
+		actionButton1.isEnabled = false;
+		actionButton2.isEnabled = false;
 	}
 
 

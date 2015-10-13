@@ -202,7 +202,19 @@ public class GeneManagerInspector : Editor {
 					string[] allItems =  new string[im.items.Count];
 					foreach(Item i in im.items)
 						allItems[im.items.IndexOf(i)] = i.itemName;
-					int index = EditorGUILayout.Popup("Item", 0, allItems, GUILayout.Width(180f));
+
+					int index = 0;
+					if(gr.item != null)
+						index = im.items.IndexOf(gr.item);
+					int oldIndexValue = index;
+					index = EditorGUILayout.Popup("Item", index, allItems, GUILayout.Width(180f));
+					if(oldIndexValue != index || gr.item == null) {
+						gr.item = im.items[index];
+					}
+					gr.amount = EditorGUILayout.IntField("Amount", gr.amount, GUILayout.Width(140f));
+
+					if(gr.amount == 0)
+						gr.amount = 1;
 					break;
 				}
 

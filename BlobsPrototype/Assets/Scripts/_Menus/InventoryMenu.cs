@@ -10,32 +10,74 @@ public class InventoryMenu : MonoBehaviour {
 		ItemsTab,
 	};
 
+	public enum Mode {
+		None = -1,
+		Inventory,
+		Feed,
+	};
+
 	public UITweener animationWindow;
 	public UILabel windowTitleLabel;
 	public UILabel storageCapacityLabel;
+	public UILabel instructionalLabel;
 	public UISprite genesTab;
 	public UISprite itemsTab;
 	public GameObject grid;
+	public GameObject storageContainer;
+	public GameObject feedContainer;
 	public GenesMenu genesMenu;
 	public ItemsMenu itemsMenu;
-	public ItemInfoPopup popup;
+	public ItemInfoPopup itemInfoPopup;
 	Tab activeTab;
 	GameManager2 gameManager;
-
+	public Mode mode = Mode.None;
 	
-	public void Show() {
-		if(gameManager == null)
-			gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
+	public void ShowInventory() {
+		Show(Mode.Inventory);
+	}
 
+	public void Show(Mode modeParam) {
+		if(gameManager == null) {
+			gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
+		}
+
+		mode = modeParam;
 		gameObject.SetActive(true);
 		transform.localScale = new Vector3(0,0,0);
 		animationWindow.onFinished.Clear();
 		animationWindow.PlayForward();
-		GenesTabPressed();
+
+		switch(mode) {
+		case Mode.None:	
+		case Mode.Inventory:	
+			GenesTabPressed();
+			instructionalLabel.text = "";
+			windowTitleLabel.text = "INVENTORY";
+			genesTab.gameObject.SetActive(true);
+			itemsTab.gameObject.SetActive(true);
+			feedContainer.gameObject.SetActive(false);
+			storageContainer.gameObject.SetActive(true);
+			break;
+		case Mode.Feed:
+			ItemsTabPressed();
+			genesTab.gameObject.SetActive(false);
+			itemsTab.gameObject.SetActive(false);
+			instructionalLabel.text = "Select an item";
+			windowTitleLabel.text = "FEED BLOB";
+			feedContainer.gameObject.SetActive(true);
+			storageContainer.gameObject.SetActive(false);
+			break;
+		}
 	}
 	
 	public void Hide() {
-		popup.Hide();
+		switch(mode) {
+		case Mode.Feed:
+			gameManager.hudMan.blobInfoContextMenu.actionButton1.isEnabled = true;
+			gameManager.hudMan.blobInfoContextMenu.actionButton2.isEnabled = true;
+			break;
+		}
+		itemInfoPopup.Hide();
 		animationWindow.onFinished.Add(new EventDelegate(this, "DisableWindow"));
 		animationWindow.PlayReverse();
 	}
@@ -72,12 +114,12 @@ public class InventoryMenu : MonoBehaviour {
 	}
 
 	void ClearContextText() {
-		popup.nameLabel.text = "";
-		popup.rarityLabel.text = "";
-		popup.infoLabel1.text = "";
-		popup.infoLabel2.text = "";
-		popup.infoLabel1.transform.DestroyChildren();
-		popup.infoLabel2.transform.DestroyChildren();
+		itemInfoPopup.nameLabel.text = "";
+		itemInfoPopup.rarityLabel.text = "";
+		itemInfoPopup.infoLabel1.text = "";
+		itemInfoPopup.infoLabel2.text = "";
+		itemInfoPopup.infoLabel1.transform.DestroyChildren();
+		itemInfoPopup.infoLabel2.transform.DestroyChildren();
 	}
 
 	void RebuildSlots(int slotCount) {
@@ -96,6 +138,35 @@ public class InventoryMenu : MonoBehaviour {
 		switch (activeTab) {
 		case Tab.GenesTab: gameManager.gameVars.inventoryGeneSlots +=5; GenesTabPressed(); break;
 		case Tab.ItemsTab: gameManager.gameVars.inventoryItemSlots +=5; ItemsTabPressed(); break;
+		}
+	}
+
+	public void FeedButtonPressed() {
+		Item item = itemsMenu.GetSelectedItem();
+		if(item == null)
+			gameManager.hudMan.popup.Show("Feed Blob", "No item selected.");
+		else
+			gameManager.hudMan.popup.Show("Feed Blob", "Feed [EEBE63]" + item.itemName + "[-] to the blob?", this, "FeedConfirmed");
+	}
+
+	public void FeedConfirmed() {
+		itemsMenu.DeteteSelectedItem();
+		//TODO: notify blob he ate something
+	}
+
+	public void DeteteSelectedItemAsk() {
+		string itemName = "";
+		switch(activeTab) {
+		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().itemName; break; 
+		case Tab.ItemsTab: itemName = itemsMenu.GetSelectedItem().itemName; break;
+		}
+		gameManager.hudMan.popup.Show("Delete", "Are you sure you want to delete [EEBE63]" + itemName + "[-]?", this, "DeteteSelectedItem");
+	}
+
+	public void DeteteSelectedItem() {
+		switch(activeTab) {
+		case Tab.GenesTab: genesMenu.DeteteSelectedGene(); break; 
+		case Tab.ItemsTab: itemsMenu.DeteteSelectedItem(); break;
 		}
 	}
 

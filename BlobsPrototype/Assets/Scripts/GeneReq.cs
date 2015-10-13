@@ -13,5 +13,7 @@ public class GeneReq {
 	public Stat.Identifier statId;
 	public int amount;
 	public Item item;
+	public bool fulfilled = false;
+	public int fulfilledAmount = 0;
 }
 
