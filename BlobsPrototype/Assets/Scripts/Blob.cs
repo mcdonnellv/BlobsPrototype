@@ -103,6 +103,7 @@ public class Blob : MonoBehaviour {
 	public DateTime heartbrokenRecoverTime;
 	public DateTime mateFindTime;
 	public List<Gene> genes;
+	public Dictionary<string, int> itemsConsumed;
 	public Color color;
 	public string colorName;
 	public int allowedGeneCount { get {return GetGeneCountFromQuality(quality);} }
@@ -129,6 +130,8 @@ public class Blob : MonoBehaviour {
 
 	public Blob () {
 		stats = new Stats();
+		genes = new List<Gene>();
+		itemsConsumed = new Dictionary<string, int>();
 		quality = Quality.Common;
 		level = 1;
 		onMission = false;
@@ -136,7 +139,6 @@ public class Blob : MonoBehaviour {
 		hasHatched = false;
 		actionReadyTime  = new DateTime(0); 
 		actionDuration = new TimeSpan(0);
-		genes = new List<Gene>();
 		bodyPartSprites = new Dictionary<string, Texture>();
 		momId = -1;
 		dadId = -1;
@@ -540,6 +542,25 @@ public class Blob : MonoBehaviour {
 			StartActionWithDuration(new TimeSpan(workingDelay.Ticks * level));
 		}
 
+	}
+
+	public void EatItem(Item item) {
+		// assume the item has been deleted already from inventory
+		if(itemsConsumed.ContainsKey(item.itemName) ==  false)
+			itemsConsumed.Add(item.itemName, 1);
+		else 
+			itemsConsumed[item.itemName]++;
+
+		//check all genes. see if item consumed was a requirement for activation.
+		foreach(Gene gene in genes) {
+			foreach(GeneReq geneReq in gene.activationReq) {
+				if(geneReq.id == GeneReq.Identifier.ConsumeReq && geneReq.item.itemName == item.itemName) {
+					geneReq.fulfilledAmount++;
+					if(geneReq.fulfilledAmount == geneReq.amount)
+						geneReq.fulfilled = true;
+				}
+			}
+		}
 	}
 
 

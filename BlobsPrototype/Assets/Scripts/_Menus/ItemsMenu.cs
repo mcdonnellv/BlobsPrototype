@@ -11,9 +11,10 @@ public class ItemsMenu : MonoBehaviour {
 	public ItemInfoPopup itemInfoPopup;
 	GameObject itemSlotHighlight;
 	int selectedIndex = -1;
-	
+	ItemManager itemManager;
+
 	public void Show() {
-		ItemManager itemManager = GameObject.Find ("ItemManager").GetComponent<ItemManager>();
+		itemManager = GameObject.Find ("ItemManager").GetComponent<ItemManager>();
 		
 		foreach(Item i in itemManager.storedItems) {
 			if(i == null)
@@ -31,7 +32,8 @@ public class ItemsMenu : MonoBehaviour {
 		else if(selectedIndex != -1 && selectedIndex < itemManager.storedItems.Count)
 			ShowInfoForItem(itemManager.storedItems[selectedIndex]);
 		else if(itemManager.storedItems.Count == 0) {
-			itemSlotHighlight.gameObject.SetActive(false);
+			if(itemSlotHighlight)
+				itemSlotHighlight.gameObject.SetActive(false);
 			selectedIndex = -1;
 			nameLabel.text = "";
 			rarityLabel.text = "";
@@ -56,7 +58,10 @@ public class ItemsMenu : MonoBehaviour {
 	
 	
 	public void ShowInfoForItemGameObject(ItemPointer itemPointer) {
+		HudManager hudManager = GameObject.Find ("HudManager").GetComponent<HudManager>();
 		itemInfoPopup.Show();
+		bool showDeleteButton = hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory;
+		itemInfoPopup.deleteButton.gameObject.SetActive(showDeleteButton);
 		Item item = itemPointer.item;
 		Transform parentSocket = itemPointer.transform.parent;
 		selectedIndex = parentSocket.GetSiblingIndex();
@@ -73,6 +78,30 @@ public class ItemsMenu : MonoBehaviour {
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + "[-]";
 		infoLabel1.text = item.description;
 		infoLabel2.text = "";
+	}
+
+	public Item GetItemFromIndex(int index) {
+		if(index < 0 && index >= grid.transform.childCount)
+			return null;
+
+		Transform socket = grid.transform.GetChild(index);
+		ItemPointer ip = socket.GetComponentInChildren<ItemPointer>();
+		return ip.item;
+	}
+
+	public Item GetSelectedItem() {
+		return GetItemFromIndex(selectedIndex);
+	}
+
+	public void DeteteSelectedItem() {
+		Transform socket = grid.transform.GetChild(selectedIndex);
+		ItemPointer ip = socket.GetComponentInChildren<ItemPointer>();
+		Item item = ip.item;
+		socket.DestroyChildren();
+		itemManager.storedItems.Remove(item);
+
+		selectedIndex = -1;
+		itemInfoPopup.Hide();
 	}
 
 	void Update() {

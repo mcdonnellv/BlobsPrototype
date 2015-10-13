@@ -5,16 +5,13 @@ using System.Collections.Generic;
 public class GenesMenu : MonoBehaviour {
 	
 	public GameObject grid;
-	public UILabel nameLabel;
-	public UILabel rarityLabel;
-	public UILabel infoLabel1;
-	public UILabel infoLabel2;
 	public ItemInfoPopup itemInfoPopup;
 	GameObject geneSlotHighlight;
 	int selectedIndex = -1;
+	GeneManager geneManager;
 
 	public void Show() {
-		GeneManager geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
+		geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
 
 		foreach(Gene g in geneManager.storedGenes) {
 			if(g == null)
@@ -33,10 +30,10 @@ public class GenesMenu : MonoBehaviour {
 			ShowInfoForGene(geneManager.storedGenes[selectedIndex]);
 		else if(geneManager.storedGenes.Count == 0) {
 			selectedIndex = -1;
-			nameLabel.text = "";
-			rarityLabel.text = "";
-			infoLabel1.text = "";
-			infoLabel2.text = "";
+			itemInfoPopup.nameLabel.text = "";
+			itemInfoPopup.rarityLabel.text = "";
+			itemInfoPopup.infoLabel1.text = "";
+			itemInfoPopup.infoLabel2.text = "";
 			itemInfoPopup.Hide();
 		}
 	}
@@ -56,7 +53,11 @@ public class GenesMenu : MonoBehaviour {
 
 
 	public void ShowInfoForGeneGameObject(GenePointer genePointer) {
+
+		HudManager hudManager = GameObject.Find ("HudManager").GetComponent<HudManager>();
 		itemInfoPopup.Show();
+		bool showDeleteButton = hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory;
+		itemInfoPopup.deleteButton.gameObject.SetActive(showDeleteButton);
 		Gene gene = genePointer.gene;
 		Transform parentSocket = genePointer.transform.parent;
 		selectedIndex = parentSocket.GetSiblingIndex();
@@ -68,28 +69,31 @@ public class GenesMenu : MonoBehaviour {
 		geneSlotHighlight.transform.localScale = new Vector3(1f,1f,1f);
 		geneSlotHighlight.transform.localPosition = new Vector3(0f,0f,0f);
 		geneSlotHighlight.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth;
+		itemInfoPopup.ShowInfoForGene(gene);
+	}
 
+	public Gene GetGeneFromIndex(int index) {
+		if(index < 0 && index >= grid.transform.childCount)
+			return null;
 		
-		nameLabel.text = gene.itemName;
-		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + "[-]";
-		infoLabel1.text = gene.description;
-		infoLabel2.text = "";
-		infoLabel2.transform.DestroyChildren();
-
-		foreach(Stat s in gene.stats) {
-			int index = gene.stats.IndexOf(s);
-			GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
-			statGameObject.transform.SetParent(infoLabel2.transform);
-			statGameObject.transform.localScale = new Vector3(1f,1f,1f);
-			statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
-			UISprite sprite = statGameObject.GetComponentInChildren<UISprite>();
-			sprite.alpha = 0f;
-			UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
-			labels[0].text = (s.modifier == Stat.Modifier.Added) ? ("+" + s.amount.ToString()) : ("+" + s.amount.ToString() + "%");
-			labels[0].depth = infoLabel2.depth + 2;
-			labels[1].text = "[fist]" + s.id.ToString();
-			labels[1].depth = infoLabel2.depth + 2;
-		}
+		Transform socket = grid.transform.GetChild(index);
+		GenePointer gp = socket.GetComponentInChildren<GenePointer>();
+		return gp.gene;
+	}
+	
+	public Gene GetSelectedGene() {
+		return GetGeneFromIndex(selectedIndex);
+	}
+	
+	public void DeteteSelectedGene() {
+		Transform socket = grid.transform.GetChild(selectedIndex);
+		GenePointer gp = socket.GetComponentInChildren<GenePointer>();
+		Gene gene = gp.gene;
+		socket.DestroyChildren();
+		geneManager.storedGenes.Remove(gene);
+		
+		selectedIndex = -1;
+		itemInfoPopup.Hide();
 	}
 
 	void Update() {
