@@ -127,6 +127,7 @@ public class Blob : MonoBehaviour {
 	BreedManager breedManager;
 	BlobFloatingDisplay floatingDisplay;
 	HudManager hudManager;
+	GeneManager geneManager;
 
 	public Blob () {
 		stats = new Stats();
@@ -160,6 +161,7 @@ public class Blob : MonoBehaviour {
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
 
 		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
@@ -381,22 +383,9 @@ public class Blob : MonoBehaviour {
 
 
 	public void AddRandomGene(Quality q) {
-		Gene g = new Gene();
+		Gene g = geneManager.genes[UnityEngine.Random.Range(0, geneManager.genes.Count)];
 		genes.Add(g);
-		g.quality = (q == Quality.None) ? (Quality)UnityEngine.Random.Range(0,5) : q;
-		g.itemName = "Gene";
-		Stat s = new Stat();
-		s.id = (Stat.Identifier) UnityEngine.Random.Range(0,4);
-		s.modifier = (Stat.Modifier) UnityEngine.Random.Range(0,2);
-		if(s.modifier == Stat.Modifier.Added)
-			s.amount = ((int)g.quality) * 2 + UnityEngine.Random.Range(1,3);
-		else
-			s.amount = ((int)g.quality) * 2 + UnityEngine.Random.Range(1,3) * 5;
-		g.stats.Add(s);
-		if(s.modifier == Stat.Modifier.Added)
-			g.description = "+" + s.amount.ToString() + " to " + s.id.ToString();
-		else
-			g.description = s.id.ToString() + " increased by " + s.amount + "%";
+
 	}
 
 
@@ -512,7 +501,7 @@ public class Blob : MonoBehaviour {
 				if(s.modifier != Stat.Modifier.Added)
 					continue;
 				int i = (int)s.id;
-				stats.values[(int)s.id] += s.amount; break;
+				stats.values[(int)s.id] += s.amount;
 			}
 		}
 	}
@@ -556,8 +545,10 @@ public class Blob : MonoBehaviour {
 			foreach(GeneReq geneReq in gene.activationReq) {
 				if(geneReq.id == GeneReq.Identifier.ConsumeReq && geneReq.item.itemName == item.itemName) {
 					geneReq.fulfilledAmount++;
-					if(geneReq.fulfilledAmount == geneReq.amount)
+					if(geneReq.fulfilledAmount >= geneReq.amount) {
+						geneReq.fulfilledAmount = geneReq.amount;
 						geneReq.fulfilled = true;
+					}
 				}
 			}
 		}

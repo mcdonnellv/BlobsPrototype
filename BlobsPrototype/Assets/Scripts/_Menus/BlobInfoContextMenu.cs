@@ -6,7 +6,7 @@ using System.Linq;
 
 public class BlobInfoContextMenu : MonoBehaviour {
 
-	Blob blob;
+	public Blob blob;
 	public UILabel partnerLabel;
 	public UILabel rankLabel;
 	public UILabel genderLabel;
@@ -99,6 +99,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 			}
 
 			int i=0;
+			statGrid.transform.DestroyChildren();
 			foreach(int s in blob.stats.values) {
 				if(s == 0) {
 					i++;

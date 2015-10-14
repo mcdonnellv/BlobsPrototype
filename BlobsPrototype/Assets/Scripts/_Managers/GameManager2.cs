@@ -59,7 +59,8 @@ public class GameManager2 : MonoBehaviour {
 			blob.state = Blob.State.Idle;
 			room.AddBlob(blob);
 
-			blob.AddRandomGene(Quality.Standard);
+			//blob.AddRandomGene(Quality.Standard);
+			blob.genes.Add(geneManager.genes[0]);
 		}
 	}
 

@@ -34,7 +34,6 @@ public class ItemsMenu : MonoBehaviour {
 			itemInfoPopup.nameLabel.text = "";
 			itemInfoPopup.rarityLabel.text = "";
 			itemInfoPopup.infoLabel1.text = "";
-			itemInfoPopup.infoLabel2.text = "";
 			itemInfoPopup.Hide();
 		}
 	}
@@ -52,7 +51,8 @@ public class ItemsMenu : MonoBehaviour {
 			ShowInfoForItemGameObject(itemPointer);
 	}
 	
-	
+
+
 	public void ShowInfoForItemGameObject(ItemPointer itemPointer) {
 		HudManager hudManager = GameObject.Find ("HudManager").GetComponent<HudManager>();
 		itemInfoPopup.Show();
@@ -69,14 +69,7 @@ public class ItemsMenu : MonoBehaviour {
 		itemSlotHighlight.transform.localScale = new Vector3(1f,1f,1f);
 		itemSlotHighlight.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth;
 		itemSlotHighlight.transform.localPosition = new Vector3(0f,0f,0f);
-		
-		itemInfoPopup.nameLabel.text = item.itemName;
-		itemInfoPopup.rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + "[-]";
-		itemInfoPopup.infoLabel1.text = item.description;
-		itemInfoPopup.infoLabel2.text = "";
-		UISprite originalIcon = itemPointer.gameObject.GetComponent<UISprite>();
-		itemInfoPopup.icon.atlas = originalIcon.atlas;
-		itemInfoPopup.icon.spriteName = originalIcon.spriteName;
+		itemInfoPopup.ShowInfoForItem(item);
 	}
 
 	public Item GetItemFromIndex(int index) {

@@ -117,9 +117,6 @@ public class InventoryMenu : MonoBehaviour {
 		itemInfoPopup.nameLabel.text = "";
 		itemInfoPopup.rarityLabel.text = "";
 		itemInfoPopup.infoLabel1.text = "";
-		itemInfoPopup.infoLabel2.text = "";
-		itemInfoPopup.infoLabel1.transform.DestroyChildren();
-		itemInfoPopup.infoLabel2.transform.DestroyChildren();
 	}
 
 	void RebuildSlots(int slotCount) {
@@ -150,8 +147,9 @@ public class InventoryMenu : MonoBehaviour {
 	}
 
 	public void FeedConfirmed() {
+		Item item = itemsMenu.GetSelectedItem();
+		gameManager.hudMan.blobInfoContextMenu.blob.EatItem(item);
 		itemsMenu.DeteteSelectedItem();
-		//TODO: notify blob he ate something
 	}
 
 	public void DeteteSelectedItemAsk() {
