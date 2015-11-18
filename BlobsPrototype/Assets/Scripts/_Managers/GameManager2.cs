@@ -51,12 +51,12 @@ public class GameManager2 : MonoBehaviour {
 
 			GameObject blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
 			blob = blobGameObject.AddComponent<Blob>();
-			blob.male = (i % 2 == 0);
+			blob.gender = (i % 2 == 0 ? Gender.Male : Gender.Female);
 			blob.Setup();
 			blob.Hatch(false);
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
 			blob.actionDuration = new TimeSpan(0);
-			blob.state = Blob.State.Idle;
+			blob.state = BlobState.Idle;
 			room.AddBlob(blob);
 
 			//blob.AddRandomGene(Quality.Standard);
@@ -74,24 +74,6 @@ public class GameManager2 : MonoBehaviour {
 	public void AddChocolate(int value) {
 		gameVars.AddChocolate(value);
 		hudMan.UpdateChocolate(gameVars.chocolate);
-	}
-
-
-	public int GetAverageLevel() {
-		float cummulativeLevel = 0f;
-		int totalBlobs = 0;
-		List <Blob> allBlobs = gameVars.allBlobs;
-		foreach (Room room in roomMan.rooms) {
-			foreach (Blob blob in room.blobs) {
-				if(blob.hasHatched){
-					cummulativeLevel += blob.level;
-					totalBlobs++;
-				}
-			}
-		}
-		
-		float averageLevel = cummulativeLevel / totalBlobs;
-		return Mathf.RoundToInt(averageLevel);
 	}
 
 

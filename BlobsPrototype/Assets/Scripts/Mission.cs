@@ -9,8 +9,6 @@ public class Mission
 	public int reward;
 	public int ageRequirement;
 	public float requirementBonus;
-	public BlobJob jobRequirement;
-	public BlobTrait traitRequirement;
 	public Blob blob;
 	public bool active;
 	public bool successful;
@@ -24,50 +22,14 @@ public class Mission
 		durationCounting = 0f;
 		requirementBonus = 0f;
 		reward = 30;
-		jobRequirement = BlobJob.None;
-		traitRequirement = BlobTrait.None;
 		blob = null;
 		active = false;
 		successful = true;
 		successChance = 1f;
 	}
 
-	public float GetSuccessChance(Blob blob)
-	{
-		float agePenalty = .25f;
-		float chance = 1f;
-		float otherbonusTotal = 1f - chance;
-		float reqCount = 0;
-
-		if (jobRequirement != BlobJob.None)
-			reqCount++;
-
-		if (traitRequirement != BlobTrait.None)
-			reqCount++;
-
-		if (ageRequirement > 0)
-			reqCount++;
-
-		if (reqCount > 0)
-		{
-			float piece = otherbonusTotal / reqCount;
-
-			if (jobRequirement != BlobJob.None && jobRequirement == blob.job)
-				chance += piece;
-
-			if (traitRequirement != BlobTrait.None && traitRequirement == blob.trait)
-				chance += piece;
-
-//			if (ageRequirement > 0)
-//				chance -= agePenalty * (ageRequirement - blob.age);
-
-			chance = (chance < 0f) ? 0f : ((chance > 1f) ? 1f : chance);
-		}
-
-
-		chance = Mathf.Round(chance * 100f) / 100f;
-
-		return chance;
+	public float GetSuccessChance(Blob blob) {
+		return 0f;
 	}
 
 

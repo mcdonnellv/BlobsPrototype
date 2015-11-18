@@ -14,69 +14,11 @@ public class BreedManager : MonoBehaviour {
 	Blob potentialPairBlob2;
 
 	public int GetBreedCost() {
-		int averageLevel = gameManager.GetAverageLevel();
-		return 0;//averageLevel * 10;
-	}
-
-	public void FindSpouse(Blob blob) {
-		List<Blob> blobs = blob.room.blobs;
-		List<Blob> otherGenderSingleBlobs = new List<Blob>();
-		Blob newSpouse = null;
-		
-		foreach(Blob b in blobs)
-		{
-			if(b == blob || 
-			   b.spouseId != -1 || 
-			   !b.hasHatched || 
-			   blob.male == b.male || 
-			   (b.female && b.unfertilizedEggs == 0))
-				continue;
-			otherGenderSingleBlobs.Add(b);
-		}
-		
-		
-		if(otherGenderSingleBlobs.Count > 0)
-			newSpouse = otherGenderSingleBlobs[UnityEngine.Random.Range(0, otherGenderSingleBlobs.Count)];
-		else
-		{
-			hudManager.popup.Show("Cannot Find a Mate", 
-			                      "There are no available " + (blob.male ? "fertile female" : "male") + " blobs.");
-			return;
-		}
-		
-		PairBlobs(blob, newSpouse);
-	}
-
-
-	public void PairBlobs(Blob blob1, Blob blob2) {
-		blob1.spouseId = blob2.id;
-		blob2.spouseId = blob1.id;
-		blob1.state = Blob.State.Dating;
-		blob2.state = Blob.State.Dating;
-		blob1.StartActionWithDuration(blob1.mateFindDelay);
-		blob2.StartActionWithDuration(blob2.mateFindDelay);
-	}
-
-
-	public void UnPairBlob(Blob blob1) {
-		Blob blob2 = blob1.GetSpouse();
-		if(blob2 == null)
-			return;
-		blob1.spouseId = -1;
-		blob2.spouseId = -1;
-		blob1.state = Blob.State.Depressed;
-		blob2.state = Blob.State.Depressed;
-		blob1.StartActionWithDuration(blob1.depressedDelay);
-		blob2.StartActionWithDuration(blob2.depressedDelay);
-		blob1.ChangeColor("Default", ColorDefines.defaultBlobColor);
-		blob2.ChangeColor("Default",ColorDefines.defaultBlobColor);
+		return 0;
 	}
 
 
 	public void AskBlobsInteract(Blob blob1, Blob blob2) {
-
-		if(blob2.isNugget || blob1.isNugget)
-			return;
 
 		if(!blob2.hasHatched || !blob1.hasHatched)
 			return;
@@ -100,8 +42,8 @@ public class BreedManager : MonoBehaviour {
 		male.spouseId = female.id;
 		female.spouseId = male.id;
 		gameManager.AddGold(-cost);
-		male.state = Blob.State.Breeding;
-		female.state = Blob.State.Breeding;
+		male.state = BlobState.Breeding;
+		female.state = BlobState.Breeding;
 		male.StartActionWithDuration(male.breedReadyDelay);
 		female.StartActionWithDuration(female.breedReadyDelay);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
@@ -112,7 +54,7 @@ public class BreedManager : MonoBehaviour {
 	public void BreedBlobs(Blob male, Blob female) {
 		Blob newBlob = CreateBlobFromParents(male, female);
 		female.room.AddBlob(newBlob);
-		newBlob.state = Blob.State.Hatching;
+		newBlob.state = BlobState.Hatching;
 		newBlob.StartActionWithDuration(newBlob.blobHatchDelay);
 	}
 
@@ -120,31 +62,9 @@ public class BreedManager : MonoBehaviour {
 	public Blob CreateBlobFromParents(Blob dad, Blob mom) {
 		GameObject blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
 		Blob blob = blobGameObject.AddComponent<Blob>();
-		blob.dadId = dad.id;
-		blob.momId = mom.id;
-		blob.hasHatched = false;
-
-		// figure out Rank
-		float rng = UnityEngine.Random.Range(0f,1f);
-		int lvl = (int)((dad.level + mom.level) / 2f);
-		if(rng > .7f)
-			lvl++;
-		else if(rng < .3f)
-			lvl--;
-		blob.level = Mathf.Clamp(lvl, 1, 100);
-
-		// spawn nugget or Blob
-		blob.isNugget = (UnityEngine.Random.Range(0f,1f) > .4f);
-		if(blob.isNugget) {
-			blob.SetupNugget();
-			return blob;
-		}
 
 		// figure gender
-		if (GetTotalUnfertilizedEggs(dad.room.blobs) <= 0)
-			blob.male = false;
-		else
-			blob.male = (UnityEngine.Random.Range(0, 2) == 0) ? true : false;
+		blob.gender = (UnityEngine.Random.Range(0, 2) == 0) ? Gender.Male : Gender.Female;
 
 		// figure out quality
 		blob.quality = Blob.GetRandomQuality();
@@ -179,16 +99,6 @@ public class BreedManager : MonoBehaviour {
 		return false;
 	}
 
-	int GetTotalUnfertilizedEggs(List<Blob> blobs) {
-		int total = 0;
-		foreach(Blob blob in blobs) {
-			if(blob.male)
-				continue;
-			total += blob.unfertilizedEggs;
-		}
-		return total;
-	}
-
 
 	bool CheckBreedBlobErrors(Blob blob1, Blob blob2) {
 		int cost = GetBreedCost();
@@ -210,13 +120,7 @@ public class BreedManager : MonoBehaviour {
 		
 		return false;
 	}
-
-
-
-	void PairBlobsConfirmed() {
-		PairBlobs(potentialPairBlob1, potentialPairBlob2);
-	}
-
+	
 
 	// Use this for initialization
 	void Start () {

@@ -21,8 +21,7 @@ public class BlobDragDropItem : UIDragDropItem {
 		sp.enabled = false;
 
 		Blob blob = gameObject.GetComponent<Blob>();
-		//if(blob.isNugget == false)
-			blob.room.ShowFloatingSprites(blob);
+		blob.room.ShowFloatingSprites(blob);
 		animator.SetBool("dragging", true);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
 			hudManager.blobInfoContextMenu.Dismiss();

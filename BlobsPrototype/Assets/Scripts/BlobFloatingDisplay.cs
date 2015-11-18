@@ -58,8 +58,8 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 	public void ShowBlobInfo(Blob blobDraggedParam) {
 		blobDragged = blobDraggedParam;
-		if(blob.isNugget || !blob.hasHatched || 
-		   blobDragged.isNugget || !blobDragged.hasHatched || 
+		if(!blob.hasHatched || 
+		  !blobDragged.hasHatched || 
 		   blobDragged.isInfant || blob.isInfant) {
 			if(blob != blobDragged)
 				blob.gameObject.GetComponent<UIWidget>().alpha = .5f;
@@ -71,9 +71,6 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 		if(blobDragged.male == blob.male)
 			greyOut = true;
-
-		levelLabel.gameObject.SetActive(true);
-		levelLabel.text = blob.level.ToString();
 
 		if(blob == blobDragged)
 			greyOut = false;
@@ -124,8 +121,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 			}
 			System.TimeSpan ts = (blob.actionReadyTime - System.DateTime.Now);
 			float fraction = (float)(ts.TotalSeconds / blob.actionDuration.TotalSeconds);
-			bool reverse = (blob.state == Blob.State.Depressed);
-			progressBar.value = reverse ? (fraction) : (1f - fraction);
+			progressBar.value = (1f - fraction);
 		}
 		else if(progressBar.gameObject.activeSelf == true) {
 			progressBar.gameObject.SetActive(false);

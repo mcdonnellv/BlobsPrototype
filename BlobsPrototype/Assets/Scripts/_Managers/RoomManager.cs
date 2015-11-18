@@ -58,10 +58,6 @@ public class RoomManager : MonoBehaviour {
 		rocm.roomInfo.text = room.type.ToString() + " (Level " + (room.size - minSize + 1).ToString() + ")";
 		rocm.UpdateUpgradeRoomCost(RoomCostForSize(room.size + 1), (room.size >= maxSize), null);
 		string reqStr = null;
-		int highestBlobLevel = GetHighestBlobLevel();
-		int newRoomRequirement = NewRoomRequirement();
-		if(highestBlobLevel < newRoomRequirement)
-			reqStr = "Rank " + newRoomRequirement.ToString() + " Blob Required" ;
 		rocm.UpdateCreateRoomCost(NewRoomCost(), reqStr);
 	}
 
@@ -129,15 +125,6 @@ public class RoomManager : MonoBehaviour {
 		return null;
 	}
 
-	int GetHighestBlobLevel() {
-		int highestLevel = 0;
-		foreach(Room r in rooms)
-			foreach(Blob b in r.blobs)
-				if(b.level > highestLevel)
-					highestLevel =  b.level;
-		return highestLevel;
-	}
-
 
 	public int RoomCostForSize(int size) {
 		float pow = 2.5f;
@@ -149,15 +136,6 @@ public class RoomManager : MonoBehaviour {
 		int numRooms = rooms.Count;
 		float pow = numRooms + .5f;
 		return (int)Mathf.Pow(2, pow) * 1000;
-	}
-
-	public int NewRoomRequirement() {
-		int numRooms = rooms.Count;
-		float powf = 1 + ((numRooms - 1) * .5f);
-		int pow = Mathf.CeilToInt(powf);
-		int blobLevelRequired = (int)Mathf.Pow(5, pow);
-		blobLevelRequired = Mathf.Clamp(blobLevelRequired, 0, 100);
-		return blobLevelRequired;
 	}
 
 

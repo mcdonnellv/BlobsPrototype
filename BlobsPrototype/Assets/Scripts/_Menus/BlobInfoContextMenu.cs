@@ -24,7 +24,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	public UIButton dismissButton;
 	public UIProgressBar progressBar;
 	public UIWidget blobSpritesContainer;
-	public PartnerDisplayContainer partnerDisplayContainer;
 	HudManager hudManager;
 	GameManager2 gameManager;
 	BreedManager breedManager;
@@ -36,16 +35,8 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 	public void DisplayWithBlob(Blob blobParam) {
 		blob = blobParam;
-
-		if(blob.state == Blob.State.Nugget) {
-			DisplayNuggetInfo();
-			return;
-		}
-
-
 		actionButton1.gameObject.SetActive(true);
 		actionButton2.gameObject.SetActive(true);
-		partnerDisplayContainer.gameObject.SetActive(true);
 		qualityLabel.fontSize = 24;
 		rankLabel.fontSize = 24;
 
@@ -55,7 +46,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		else {
 			partnerLabel.text = (blob.spouseId == -1) ? "No Partner" : "Partner Info";
 			genderLabel.text = blob.male ? "Male" : "Female";
-			rankLabel.text = "Rank " + blob.level.ToString();
 			qualityLabel.text = "[" + ColorToHex(ColorDefines.ColorForQuality(blob.quality)) + "]" + blob.quality.ToString() + "[-]";
 			genderSprite.gameObject.SetActive(true);
 			if(blob.male) {
@@ -68,12 +58,11 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				genderSprite.color = ColorDefines.femaleColor;
 			}
 
-			bool isIdle = (blob.state == Blob.State.Idle);
+			bool isIdle = (blob.state == BlobState.Idle);
 			actionButton1.isEnabled = !isIdle ? false : true;
 			actionButton2.isEnabled = !isIdle ? false : true;
-			actionButton2Label.text = "Sell +" + blob.sellValue.ToString() + "[gold]";
+			actionButton2Label.text = "Sell +1[gold]";
 			Blob spouse = blob.GetSpouse();
-			partnerDisplayContainer.DisplayWithBlob(spouse);
 
 			foreach (UILabel l in statNameLabels) 
 				l.text = Stat.GetStatIdByIndex(statNameLabels.IndexOf(l)).ToString();
@@ -137,35 +126,8 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		genderLabel.text = "Unknown";
 		qualityLabel.text = "[" + ColorToHex(ColorDefines.ColorForQuality(blob.quality)) + "]" + blob.quality.ToString() + "[-]";
 		genderSprite.gameObject.SetActive(false);
-		partnerDisplayContainer.gameObject.SetActive(false);
 		actionButton2.gameObject.SetActive(false);
 		actionButton1.isEnabled = true;
-	}
-
-	void DisplayNuggetInfo() {
-		rankLabel.text = "[FEC520]Gold Nugget[-]";
-		rankLabel.fontSize = 28;
-		genderLabel.text = "-";
-		qualityLabel.text = "SELL NUGGETS FOR GOLD";
-		qualityLabel.fontSize = 18;
-		genderSprite.gameObject.SetActive(false);
-		actionButton1.gameObject.SetActive(false);
-		actionButton2.gameObject.SetActive(true);
-		actionButton1.isEnabled = false;
-		actionButton2.isEnabled = true;
-		actionButton2Label.text = "Sell +" + blob.sellValue.ToString() + "[gold]";
-		DisplayBlobImage();
-		partnerDisplayContainer.gameObject.SetActive(false);
-		partnerDisplayContainer.gameObject.SetActive(false);
-
-		if(IsDisplayed() == false) {
-			TweenPosition tp = gameObject.GetComponent<TweenPosition>();
-			tp.PlayForward();
-			tp.enabled = true;
-		}
-		
-		RoomManager roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
-		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
 	}
 
 
@@ -180,7 +142,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		Destroy(blobGameObject.GetComponent("BoxCollider"));
 		Destroy(blobGameObject.GetComponent("BlobDragDropItem"));
 		Destroy(blobGameObject.GetComponent("UIButton"));
-		if(blob.state == Blob.State.Nugget || !blob.hasHatched)
+		if(!blob.hasHatched)
 			blobGameObject.transform.localPosition = new Vector3(0f, -10f, 0f);
 	}
 
@@ -209,12 +171,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 
 	public void ActionButton1Pressed() {
-//		BreedManager breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-//		dismissButton.SendMessage("OnClick");
-//		if(blob.hasHatched)
-//			breedManager.AttemptBreed(blob, blob.GetSpouse());
-//		else
-//			blob.Hatch(true);
 		hudManager.inventoryMenu.Show(InventoryMenu.Mode.Feed);
 		actionButton1.isEnabled = false;
 		actionButton2.isEnabled = false;
@@ -222,18 +178,14 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 
 	public void ActionButton2Pressed() {
-		if(blob.isNugget) {
-			SellBlobConfirmed();
-			return;
-		}
 		hudManager.popup.Show("Sell Blob", 
-		                      "Are you sure you want to sell this blob for " + blob.sellValue.ToString() + "[gold]?", 
+		                      "Are you sure you want to sell this blob for 1[gold]?", 
 		                      this, "SellBlobConfirmed");
 	}
 
 
 	void SellBlobConfirmed() {
-		gameManager.AddGold(blob.sellValue);
+		gameManager.AddGold(1);
 		blob.room.DeleteBlob(blob);
 		UIButton.current = null;
 		dismissButton.SendMessage("OnClick");
@@ -258,8 +210,7 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				progressBar.gameObject.SetActive(true);
 			System.TimeSpan ts = (blob.actionReadyTime - System.DateTime.Now);
 			float fraction = (float)(ts.TotalSeconds / blob.actionDuration.TotalSeconds);
-			bool reverse = (blob.state == Blob.State.Depressed);
-			progressBar.value = reverse ? (fraction) : (1f - fraction);
+			progressBar.value = 1f - fraction;
 		}
 		else if(progressBar.gameObject.activeSelf == true)
 			progressBar.gameObject.SetActive(false);

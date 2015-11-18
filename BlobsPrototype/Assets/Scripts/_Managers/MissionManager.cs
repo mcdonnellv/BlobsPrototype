@@ -158,7 +158,7 @@ public class MissionManager : MonoBehaviour
 	{
 		Mission mission = missions[curMissionIndex];
 		//mission.blob = gm.blobs[gm.curSelectedIndex];
-		mission.blob.onMission = true;
+		mission.blob.missionId = curMissionIndex;
 		//gm.EnableSelectMode(false);
 		//gm.breedingView.SetActive(false);
 		//gm.missionView.SetActive(true);
@@ -180,7 +180,7 @@ public class MissionManager : MonoBehaviour
 		}
 		else
 		{
-			mission.blob.onMission = false;
+			mission.blob.missionId = -1;
 			mission.blob = null;
 			UpdateMissionList();
 		}
@@ -194,7 +194,7 @@ public class MissionManager : MonoBehaviour
 		if (mission.active)
 		{
 			mission.active = false;
-			mission.blob.onMission = false;
+			mission.blob.missionId = -1;
 			//if(mission.successful)
 			//	gm.AddGold(mission.reward);
 			missions.Remove(mission);
