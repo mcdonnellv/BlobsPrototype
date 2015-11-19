@@ -33,7 +33,8 @@ public class GenesMenu : MonoBehaviour {
 
 			itemInfoPopup.nameLabel.text = "";
 			itemInfoPopup.rarityLabel.text = "";
-			itemInfoPopup.infoLabel1.text = "";
+			itemInfoPopup.infoLabelSingle.text = "";
+			itemInfoPopup.infoLabelDouble.text = "";
 			itemInfoPopup.Hide();
 		}
 	}

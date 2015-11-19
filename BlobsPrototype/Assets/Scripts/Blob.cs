@@ -12,16 +12,16 @@ public class Blob : MonoBehaviour {
 	public BlobState state = BlobState.Idle;
 	public int id;
 	public int spouseId;
-	public Gender gender;
-	public Quality quality;
 	public int missionId;
 	public int missionCount;
-	public DateTime birthday;
-	public List<Gene> genes;
-	public Stats stats;
-	public Dictionary<string, int> itemsConsumed;
 	public int tilePosX;
 	public int tilePosY;
+	public Gender gender;
+	public Quality quality;
+	public DateTime birthday;
+	public List<Gene> genes;
+	public CombatStats combatStats;
+	public Dictionary<string, int> itemsConsumed;
 	public Room room;
 	public DateTime actionReadyTime;
 	public TimeSpan actionDuration;
@@ -54,17 +54,13 @@ public class Blob : MonoBehaviour {
 	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
 	TimeSpan breedReadyStandard = new TimeSpan(0,0,1);
 
+	
 
-
-
-
-
-
-
+	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.DisplayWithBlob(this); }
+	public string GetBlobStateString() { return state.ToString(); }
 
 	public Blob () {
-		stats = new Stats();
-		stats.Reset(0);
+		combatStats = new CombatStats();
 		genes = new List<Gene>();
 		itemsConsumed = new Dictionary<string, int>();
 		quality = Quality.Common;
@@ -76,7 +72,6 @@ public class Blob : MonoBehaviour {
 		color = ColorDefines.defaultBlobColor;
 		tilePosX = 0;
 		tilePosY = 0;
-
 		missionCount = 0;
 	}
 
@@ -95,25 +90,17 @@ public class Blob : MonoBehaviour {
 		blobsprites[1].spriteName = tex.name;
 		tex = bodyPartSprites["Eyes"];
 		blobsprites[2].spriteName = tex.name;
-
 		blobsprites[0].gameObject.SetActive(true);
 		blobsprites[1].gameObject.SetActive(false);
 		blobsprites[2].gameObject.SetActive(false);
 		blobsprites[3].gameObject.SetActive(false);
 
 		UIButton button = gameObject.GetComponent<UIButton>();
-		EventDelegate ed = new EventDelegate(this, "BlobPressed");
-		button.onClick.Add(ed);
+		button.onClick.Add(new EventDelegate(this, "BlobPressed"));
 
 		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
 		floatingDisplay.blob = this;
 	}
-
-
-	public void DisplayBlobInfo() {
-		hudManager.blobInfoContextMenu.DisplayWithBlob(this);
-	}
-
 
 	public void UpdateBlobInfoIfDisplayed() {
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
@@ -121,11 +108,6 @@ public class Blob : MonoBehaviour {
 			hudManager.blobInfoContextMenu.DisplayWithBlob(this);
 	}
 
-
-	public string GetBlobStateString() {
-		return state.ToString();
-	}
-	
 	
 	public Blob GetSpouse() {
 		List<Blob> blobs = room.blobs;
@@ -170,13 +152,14 @@ public class Blob : MonoBehaviour {
 			DisplayBlobInfo();
 	}
 
+
 	public void GraduateAdult() {
 		transform.localScale = new Vector3(1f, 1f, 1f);
 	}
 
 	
 	public void OrderGenes() {
-		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();
+		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.geneName).ToList();
 	}
 	
 	
@@ -211,6 +194,7 @@ public class Blob : MonoBehaviour {
 		color = c;
 	}
 
+
 	public UISprite GetBodySprite() {
 		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
 		return blobsprites[1];
@@ -219,12 +203,12 @@ public class Blob : MonoBehaviour {
 	
 	static public int GetGeneCountFromQuality(Quality q) {
 		switch (q) {
-		case Quality.Common: return 3;
-		case Quality.Rare: return 4;
-		case Quality.Epic: return 5;
-		case Quality.Legendary: return 6;
+		case Quality.Common: return 2;
+		case Quality.Rare: return 3;
+		case Quality.Epic: return 4;
+		case Quality.Legendary: return 5;
 		}
-		return 3;
+		return 2;
 	}
 	
 	
@@ -264,9 +248,8 @@ public class Blob : MonoBehaviour {
 
 
 	public void AddRandomGene(Quality q) {
-		Gene g = geneManager.genes[UnityEngine.Random.Range(0, geneManager.genes.Count)];
-		genes.Add(g);
-
+		BaseGene g = geneManager.genes[UnityEngine.Random.Range(0, geneManager.genes.Count)];
+		genes.Add(new Gene(g));
 	}
 
 
@@ -283,8 +266,6 @@ public class Blob : MonoBehaviour {
 
 
 	void CollectWork() {
-		int index = (int)Stat.Identifier.Dexterity;
-		int amount = Mathf.CeilToInt(stats.values[index] / 5f);
 		gameManager.AddGold(1);
 		floatingDisplay.HideHarvestSprite();
 		state = BlobState.Idle;
@@ -335,38 +316,46 @@ public class Blob : MonoBehaviour {
 
 
 	public void CalculateStats() {
-		stats.Reset(0);
-		CalculateAddedStats();
-		CalculatePercentStats();
-	}
+		combatStats.SetValues(100);
 
-
-	void CalculateAddedStats() {
 		foreach(Gene g in genes) {
-			foreach(Stat s in g.stats) {
-				if(s.modifier != Stat.Modifier.Added)
-					continue;
-				int i = (int)s.id;
-				stats.values[(int)s.id] += s.amount;
-			}
+			if(g.active && g.modifier == AbilityModifier.Added)
+				combatStats.CalculateAddedStats(g.traitType, g.value);
+		}
+
+		foreach(Gene g in genes) {
+			if(g.active && g.modifier == AbilityModifier.Percent)
+				combatStats.CalculatePercentStats(g.traitType, g.value);
 		}
 	}
 
-	void CalculatePercentStats() {
-		Stats st = new Stats();
-		st.Reset(0);
-		foreach(Gene g in genes) {
-			foreach(Stat s in g.stats) {
-				if(s.modifier != Stat.Modifier.Percent)
-					continue;
-				int i = (int)s.id;
-				st.values[i] += s.amount;
+	
+	public void EatItem(Item item) {
+		// assume the item has been deleted already from inventory
+		if(itemsConsumed.ContainsKey(item.itemName) ==  false)
+			itemsConsumed.Add(item.itemName, 1);
+		else 
+			itemsConsumed[item.itemName]++;
+
+		bool updateDisplay = false;
+		//check all genes. see if item consumed was a requirement for activation.
+		foreach(Gene gene in genes) {
+			if(gene.active)
+				continue;
+			foreach(GeneActivationRequirement req in gene.activationRequirements) {
+				if(req.item.itemName == item.itemName) {
+					Mathf.Clamp(++req.amountConsumed, 0, req.amountNeeded);
+					gene.CheckActivationStatus();
+					if(gene.active)
+						updateDisplay = true;
+				}
 			}
 		}
 
-		for(int i=0; i< stats.values.Count; i++)
-			stats.values[i] = (int) (stats.values[i] * (.01f * st.values[i] + 1f));
+		if (updateDisplay)
+			UpdateBlobInfoIfDisplayed();
 	}
+
 
 	void Update() {
 		if(actionDuration.TotalSeconds > 0 && actionReadyTime <= System.DateTime.Now)
@@ -375,27 +364,6 @@ public class Blob : MonoBehaviour {
 		if(room != null && room.type == Room.RoomType.Workshop && state == BlobState.Idle) {
 			state = BlobState.Working;
 			StartActionWithDuration(new TimeSpan(workingDelay.Ticks));
-		}
-	}
-
-	public void EatItem(Item item) {
-		// assume the item has been deleted already from inventory
-		if(itemsConsumed.ContainsKey(item.itemName) ==  false)
-			itemsConsumed.Add(item.itemName, 1);
-		else 
-			itemsConsumed[item.itemName]++;
-
-		//check all genes. see if item consumed was a requirement for activation.
-		foreach(Gene gene in genes) {
-			foreach(GeneReq geneReq in gene.activationReq) {
-				if(geneReq.id == GeneReq.Identifier.ConsumeReq && geneReq.item.itemName == item.itemName) {
-					geneReq.fulfilledAmount++;
-					if(geneReq.fulfilledAmount >= geneReq.amount) {
-						geneReq.fulfilledAmount = geneReq.amount;
-						geneReq.fulfilled = true;
-					}
-				}
-			}
 		}
 	}
 

@@ -12,7 +12,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	public UILabel genderLabel;
 	public UILabel qualityLabel;
 	public List<UILabel> statLabels;
-	public List<UILabel> statNameLabels;
 	public GameObject geneGrid;
 	public GameObject statGrid;
 
@@ -64,12 +63,12 @@ public class BlobInfoContextMenu : MonoBehaviour {
 			actionButton2Label.text = "Sell +1[gold]";
 			Blob spouse = blob.GetSpouse();
 
-			foreach (UILabel l in statNameLabels) 
-				l.text = Stat.GetStatIdByIndex(statNameLabels.IndexOf(l)).ToString();
-
 			blob.CalculateStats();
-			foreach (UILabel l in statLabels) 
-				l.text = blob.stats.values[statLabels.IndexOf(l)].ToString();
+
+			statLabels[0].text = blob.combatStats.health.ToString();
+			statLabels[1].text = blob.combatStats.stamina.ToString();
+			statLabels[2].text = blob.combatStats.attack.ToString();
+			statLabels[3].text = blob.combatStats.armor.ToString();
 
 			foreach(Transform c in geneGrid.transform) {
 				c.DestroyChildren();
@@ -85,25 +84,6 @@ public class BlobInfoContextMenu : MonoBehaviour {
 				go.transform.parent = parentSocket;
 				go.transform.localScale = new Vector3(1f,1f,1f);
 				go.transform.localPosition = new Vector3(0f,0f,0f);
-			}
-
-			int i=0;
-			statGrid.transform.DestroyChildren();
-			foreach(int s in blob.stats.values) {
-				if(s == 0) {
-					i++;
-					continue;
-				}
-				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Stat Container"));
-				statGameObject.transform.parent = statGrid.transform;
-				UIGrid grid = statGrid.GetComponent<UIGrid>();
-				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
-				statGameObject.transform.localPosition = new Vector3(0f,0f,0f);
-				grid.Reposition();
-				List<UILabel> labels = statGameObject.GetComponentsInChildren<UILabel>().ToList();
-				labels[0].text = s.ToString();
-				labels[1].text = Stat.GetStatIdByIndex(i).ToString();
-				i++;
 			}
 		}
 

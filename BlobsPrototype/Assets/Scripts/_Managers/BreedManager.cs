@@ -69,34 +69,17 @@ public class BreedManager : MonoBehaviour {
 		// figure out quality
 		blob.quality = Blob.GetRandomQuality();
 
-		// figure out passed on genes
-		List<Gene> parentGenes = dad.genes.Union(mom.genes).ToList();
-		foreach(Gene g in parentGenes) {
-			if(g.type == Gene.GeneType.MonsterGene)
-				blob.genes.Add(g);
-			else if(UnityEngine.Random.Range(0f,1f) <= Gene.PassOnChanceForQuality(g.quality))
-				blob.genes.Add(g);
+		// passed on genes
+		blob.genes = dad.genes.Intersect(mom.genes).ToList();
+
+		// activate/deactivate genes
+		foreach(Gene g in blob.genes) {
+			g.state = GeneState.Passive;
 		}
-
-		// figure out revealed genes if any
-		float roll = UnityEngine.Random.Range(0f,1f);
-		if(GeneQualityHelper(Quality.Legendary, roll, blob) == false)
-			if(GeneQualityHelper(Quality.Epic, roll, blob) == false)
-				if(GeneQualityHelper(Quality.Rare, roll, blob) == false)
-					if(GeneQualityHelper(Quality.Common, roll, blob) == false)
-						GeneQualityHelper(Quality.Standard, roll, blob);
-
+		blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
 
 		blob.Setup();
 		return blob;
-	}
-
-	bool GeneQualityHelper(Quality q, float roll, Blob blob) {
-		if(roll <= Gene.RevealChanceForQuality(q)) {
-			blob.AddRandomGene(q);
-			return true;
-		}
-		return false;
 	}
 
 

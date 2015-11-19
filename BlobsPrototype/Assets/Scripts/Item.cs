@@ -3,13 +3,29 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public class Item {
+public class BaseItem {
 	public string itemName = "";
 	public string description = "";
 	public string iconName;
 	public UIAtlas iconAtlas;
 	public Quality quality = Quality.Common;
+	public int maxStack = 99;
+}
 
+
+[Serializable]
+public class Item : BaseItem {
+
+	public int count = 0;
+
+	public Item(BaseItem b) {
+		itemName = b.itemName;
+		description = b.description;
+		iconName = b.iconName;
+		iconAtlas = b.iconAtlas;
+		quality = b.quality;
+		maxStack = b.maxStack;
+	}
 
 	public GameObject CreateItemGameObject() {
 		GameObject itemGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Item"));

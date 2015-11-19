@@ -33,7 +33,8 @@ public class ItemsMenu : MonoBehaviour {
 			selectedIndex = -1;
 			itemInfoPopup.nameLabel.text = "";
 			itemInfoPopup.rarityLabel.text = "";
-			itemInfoPopup.infoLabel1.text = "";
+			itemInfoPopup.infoLabelSingle.text = "";
+			itemInfoPopup.infoLabelDouble.text = "";
 			itemInfoPopup.Hide();
 		}
 	}
@@ -89,10 +90,13 @@ public class ItemsMenu : MonoBehaviour {
 		Transform socket = grid.transform.GetChild(selectedIndex);
 		ItemPointer ip = socket.GetComponentInChildren<ItemPointer>();
 		Item item = ip.item;
-		socket.DestroyChildren();
-		itemManager.storedItems.Remove(item);
+		itemManager.RemoveItemFromStorage(item);
 
-		selectedIndex = -1;
+		if(item.count <= 0) {
+			socket.DestroyChildren();
+			selectedIndex = -1;
+		}
+
 		itemInfoPopup.Hide();
 	}
 

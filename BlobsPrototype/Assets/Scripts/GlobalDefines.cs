@@ -24,6 +24,34 @@ public enum BlobState {
 	WorkingReady,
 };
 
+public enum CombatStatType {
+	Attack = 0,
+	Armor,
+	Health,
+	Stamina,
+};
+
+public enum AbilityModifier {
+	Added,
+	Percent,
+};
+
+
+public enum TraitType {
+	None,
+	AttackMod,
+	ArmorMod,
+	HealthMod,
+	StaminaMod,
+	TraitTypeCt,
+};
+
+public enum GeneState {
+	Passive,
+	Available,
+	Active,
+};
+
 
 public class GlobalDefines : MonoBehaviour {
 }

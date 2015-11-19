@@ -116,7 +116,8 @@ public class InventoryMenu : MonoBehaviour {
 	void ClearContextText() {
 		itemInfoPopup.nameLabel.text = "";
 		itemInfoPopup.rarityLabel.text = "";
-		itemInfoPopup.infoLabel1.text = "";
+		itemInfoPopup.infoLabelSingle.text = "";
+		itemInfoPopup.infoLabelDouble.text = "";
 	}
 
 	void RebuildSlots(int slotCount) {
@@ -155,7 +156,7 @@ public class InventoryMenu : MonoBehaviour {
 	public void DeteteSelectedItemAsk() {
 		string itemName = "";
 		switch(activeTab) {
-		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().itemName; break; 
+		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().geneName; break; 
 		case Tab.ItemsTab: itemName = itemsMenu.GetSelectedItem().itemName; break;
 		}
 		gameManager.hudMan.popup.Show("Delete", "Are you sure you want to delete [EEBE63]" + itemName + "[-]?", this, "DeteteSelectedItem");

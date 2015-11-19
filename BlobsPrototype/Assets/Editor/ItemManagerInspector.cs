@@ -11,14 +11,12 @@ public class ItemManagerInspector : Editor {
 	string newName = "";
 	bool mConfirmDelete = false;
 	static int mIndex = 0;
-	static GeneReq.Identifier geneReqIdTemp;
-	static Stat.Identifier statIdTemp;
 	
 	
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(80f);
 		itemManager = (ItemManager)target;
-		Item item = null;
+		BaseItem item = null;
 
 		if (itemManager.items == null || itemManager.items.Count == 0)
 			mIndex = 0;
@@ -52,7 +50,7 @@ public class ItemManagerInspector : Editor {
 
 			if (atlas != itemManager.iconAtlas) {
 				itemManager.iconAtlas = atlas;
-				foreach (Item i in itemManager.items) i.iconAtlas = atlas;
+				foreach (BaseItem i in itemManager.items) i.iconAtlas = atlas;
 			}
 
 			// "New" button
@@ -60,7 +58,7 @@ public class ItemManagerInspector : Editor {
 				newName = EditorGUILayout.TextField(newName, GUILayout.Width(100f));
 				GUI.backgroundColor = Color.green;
 				if (GUILayout.Button("New Item") && itemManager.DoesNameExistInList(newName) == false){
-					Item i = new Item();
+					BaseItem i = new BaseItem();
 					i.itemName = newName;
 					if(item != null) {
 						if(newName == "")
