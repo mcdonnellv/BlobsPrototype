@@ -36,6 +36,8 @@ public class Blob : MonoBehaviour {
 	public bool isInfant { get {return (!isAdult && hasHatched);} }
 	public bool isAdult { get {return missionCount >= 3;} }
 	public bool hasHatched { get {return birthday != DateTime.MinValue;} }
+	public bool canBreed { get {return isAdult && state == BlobState.Idle;} }
+	public bool canMerge { get {return hasHatched && state == BlobState.Idle;} }
 	public TimeSpan age {get {return DateTime.Now - birthday;} }
 	public int allowedGeneCount { get {return GetGeneCountFromQuality(quality);} }
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
@@ -146,6 +148,7 @@ public class Blob : MonoBehaviour {
 		blobsprites[3].gameObject.SetActive(false);
 		transform.localScale = new Vector3(0.5f, 0.5f, 1f);
 		birthday = DateTime.Now;
+		state = BlobState.Idle;
 
 		floatingDisplay.HideHarvestSprite();
 		if(displayInfo)

@@ -58,9 +58,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 	public void ShowBlobInfo(Blob blobDraggedParam) {
 		blobDragged = blobDraggedParam;
-		if(!blob.hasHatched || 
-		  !blobDragged.hasHatched || 
-		   blobDragged.isInfant || blob.isInfant) {
+		if(!blob.hasHatched || !blobDragged.hasHatched) {
 			if(blob != blobDragged)
 				blob.gameObject.GetComponent<UIWidget>().alpha = .5f;
 			return;
@@ -68,9 +66,6 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 		ShowSprites();
 		bool greyOut = false;
-
-		if(blobDragged.male == blob.male)
-			greyOut = true;
 
 		if(blob == blobDragged)
 			greyOut = false;

@@ -7,6 +7,8 @@ public class BlobInteractPopup : MonoBehaviour {
 	public UITweener animationWindow;
 	public GameObject window;
 	public GameObject BG;
+	public UIButton leftButton;
+	public UIButton rightButton;
 	Blob blob1;
 	Blob blob2;
 
@@ -24,6 +26,9 @@ public class BlobInteractPopup : MonoBehaviour {
 		animationBG.PlayForward();
 		animationWindow.onFinished.Clear();
 		animationWindow.PlayForward();
+
+		leftButton.isEnabled = (blob1.canBreed && blob2.canBreed);
+		rightButton.isEnabled = (blob1.canMerge && blob2.canMerge);
 	}
 	
 	// Use this for initialization

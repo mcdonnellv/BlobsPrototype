@@ -15,16 +15,19 @@ public class BlobDragDropItem : UIDragDropItem {
 	}
 
 	protected override void OnDrag (Vector2 delta) {
+		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		if(hudManager.dragToUi == false) {
 		UICenterOnChild coc = roomManager.scrollView.GetComponent<UICenterOnChild>();
-		SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
-		coc.enabled = false;
-		sp.enabled = false;
+			SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
+			coc.enabled = false;
+			sp.enabled = false;
+			Blob blob = gameObject.GetComponent<Blob>();
+			blob.room.ShowFloatingSprites(blob);
+			animator.SetBool("dragging", true);
+			if(hudManager.blobInfoContextMenu.IsDisplayed())
+				hudManager.blobInfoContextMenu.Dismiss();
+		}
 
-		Blob blob = gameObject.GetComponent<Blob>();
-		blob.room.ShowFloatingSprites(blob);
-		animator.SetBool("dragging", true);
-		if(hudManager.blobInfoContextMenu.IsDisplayed())
-			hudManager.blobInfoContextMenu.Dismiss();
 		base.OnDrag(delta);
 	}
 
@@ -44,45 +47,54 @@ public class BlobDragDropItem : UIDragDropItem {
 		blob.room.HideFloatingSprites();
 		if (surface != null && blob != null)
 		{
-			Tile tile = (Tile)surface.GetComponent<Tile>();
-			if(tile == null)
-			{
-				tile = (surface.transform.parent == null) ? null : surface.transform.parent.GetComponent<Tile>();
-				if(tile == null)
-				{
+			BlobDragDropContainer blobContainer =  (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
+			if (blobContainer == null) {
+				blobContainer = (surface.transform.parent == null) ? null : surface.transform.parent.GetComponent<BlobDragDropContainer>();
+				if(blobContainer == null) {
 					ReEnableCollider();
 					return;
 				}
 				surface = surface.transform.parent.gameObject;
 			}
 
-			Room room = surface.transform.parent.GetComponent<Room>();
-			Blob curentOccupant = room.GetBlobOnTile(tile.xPos, tile.yPos);
-			if(curentOccupant != null && blob != curentOccupant)
-			{
-				hudManager.blobInteractPopup.Show(blob, curentOccupant);
-				ReEnableCollider();
+			Tile tile = (Tile)surface.GetComponent<Tile>();
+			if(tile != null) {
+				DropBlobOnTile(blob, tile);
 				return;
-			}
-
-			if(blob.room != room) {
-				if(blob.spouseId == -1) {
-					Room oldRoom = blob.room;
-					room.AddBlobToTile(blob, tile.xPos, tile.yPos);
-					oldRoom.blobs.Remove(blob);
-				}
-				else {
-					hudManager.popup.Show("Cannot Move", "This Blob is paried with a blob from the previous room. Unpair them first.");
-					ReEnableCollider();
-					return;
-				}
-			}
-			else {
-				blob.tilePosX = tile.xPos;
-				blob.tilePosY = tile.yPos;
 			}
 		}
 		base.OnDragDropRelease(surface);
+	}
+
+
+	void DropBlobOnTile(Blob blob, Tile tile) {
+		Room room = tile.transform.parent.GetComponent<Room>();
+		Blob curentOccupant = room.GetBlobOnTile(tile.xPos, tile.yPos);
+		if(curentOccupant != null && blob != curentOccupant) {
+			if ((blob.canBreed && curentOccupant.canBreed) || (blob.canMerge && curentOccupant.canMerge))
+				hudManager.blobInteractPopup.Show(blob, curentOccupant);
+			ReEnableCollider();
+			return;
+		}
+		
+		if(blob.room != room) {
+			if(blob.spouseId == -1) {
+				Room oldRoom = blob.room;
+				room.AddBlobToTile(blob, tile.xPos, tile.yPos);
+				oldRoom.blobs.Remove(blob);
+			}
+			else {
+				hudManager.popup.Show("Cannot Move", "This Blob is paried with a blob from the previous room. Unpair them first.");
+				ReEnableCollider();
+				return;
+			}
+		}
+		else {
+			blob.tilePosX = tile.xPos;
+			blob.tilePosY = tile.yPos;
+		}
+
+		base.OnDragDropRelease(tile.gameObject);
 	}
 
 
@@ -97,22 +109,21 @@ public class BlobDragDropItem : UIDragDropItem {
 
 
 	protected override void OnDragDropMove (Vector2 delta) {
-
-		Vector2 dir = new Vector2(0f, 0f); 
-		if(mTrans.position.x > 1.5f)
-			dir.x += -1;
-		else if(mTrans.position.x < -1.5f)
-			dir.x += 1;
-
-		if(mTrans.position.y > .7f)
-			dir.y += -1;
-		else if(mTrans.position.y < -.7f)
-			dir.y += 1;
-
-		dir.Normalize();
-		roomManager.scrollVector = dir;
-
-
+		if(hudManager.dragToUi == false) {
+			Vector2 dir = new Vector2(0f, 0f); 
+			if(mTrans.position.x > 1.5f)
+				dir.x += -1;
+			else if(mTrans.position.x < -1.5f)
+				dir.x += 1;
+			
+			if(mTrans.position.y > .7f)
+				dir.y += -1;
+			else if(mTrans.position.y < -.7f)
+				dir.y += 1;
+			
+			dir.Normalize();
+			roomManager.scrollVector = dir;
+		}
 		mTrans.localPosition += (Vector3)delta;
 	}
 

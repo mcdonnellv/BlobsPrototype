@@ -57,9 +57,9 @@ public class GameManager2 : MonoBehaviour {
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
 			blob.actionDuration = new TimeSpan(0);
 			blob.state = BlobState.Idle;
+			blob.missionCount = 3;
 			room.AddBlob(blob);
 
-			//blob.AddRandomGene(Quality.Standard);
 			blob.genes.Add(new Gene(geneManager.genes[0]));
 			blob.genes[0].state = GeneState.Available;
 		}

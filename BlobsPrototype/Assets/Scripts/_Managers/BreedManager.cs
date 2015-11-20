@@ -118,12 +118,6 @@ public class BreedManager : MonoBehaviour {
 
 
 	bool CheckMergeBlobErrors(Blob blob1, Blob blob2) {
-
-		if(blob1.room.IsRoomFull()) {
-			hudManager.popup.Show("Cannot Merge", "Room is full. Sell or move a blob to free space");
-			return true;
-		}
-
 		if(gameManager.gameVars.gold < GetMergeCost()) {
 			hudManager.popup.Show("Cannot Merge", "You do not have enough gold.");
 			return true;
@@ -141,10 +135,15 @@ public class BreedManager : MonoBehaviour {
 
 		gameManager.AddGold(-cost);
 		Room room = blob1.room;
-		Blob newBlob =CreateBlobFromParents(blob1, blob2, BlobInteractAction.Merge);
+		Blob newBlob = CreateBlobFromParents(blob1, blob2, BlobInteractAction.Merge);
 		newBlob.state = BlobState.Hatching;
 		newBlob.StartActionWithDuration(newBlob.blobHatchDelay);
-
+		blob1.tilePosX = -1;
+		blob1.tilePosY = -1;
+		blob2.tilePosX = -1;
+		blob2.tilePosY = -1;
+		room.blobs.Remove(blob1);
+		room.blobs.Remove(blob2);
 		room.AddBlob(newBlob);
 		room.DeleteBlob(blob1);
 		room.DeleteBlob(blob2);

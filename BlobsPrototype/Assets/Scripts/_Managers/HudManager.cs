@@ -15,6 +15,7 @@ public class HudManager : MonoBehaviour {
 	public Popup popup;
 	public ItemInfoPopup itemInfoPopup;
 	public BlobInteractPopup blobInteractPopup;
+	public bool dragToUi = true;
 	
 	public void UpdateGold(int gold) {goldLabel.text = gold.ToString() + "[gold]";}
 	public void UpdateChocolate(int chocolate) {chocolateLabel.text = chocolate.ToString() + "[token]";}
