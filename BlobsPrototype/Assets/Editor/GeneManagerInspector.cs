@@ -205,4 +205,10 @@ public class GeneManagerInspector : Editor {
 		}
 	}
 }
+
+
+
+
+
+
 	

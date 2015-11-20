@@ -60,8 +60,7 @@ public class BlobDragDropItem : UIDragDropItem {
 			Blob curentOccupant = room.GetBlobOnTile(tile.xPos, tile.yPos);
 			if(curentOccupant != null && blob != curentOccupant)
 			{
-				BreedManager breedmanager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-				breedmanager.AskBlobsInteract(blob, curentOccupant);
+				hudManager.blobInteractPopup.Show(blob, curentOccupant);
 				ReEnableCollider();
 				return;
 			}

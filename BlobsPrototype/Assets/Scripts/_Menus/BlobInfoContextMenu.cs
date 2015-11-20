@@ -23,6 +23,8 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	public UIButton dismissButton;
 	public UIProgressBar progressBar;
 	public UIWidget blobSpritesContainer;
+	public UISprite changeFlashObject;
+	public TweenAlpha changeFlashAnim;
 	HudManager hudManager;
 	GameManager2 gameManager;
 	BreedManager breedManager;
@@ -33,6 +35,11 @@ public class BlobInfoContextMenu : MonoBehaviour {
 
 
 	public void DisplayWithBlob(Blob blobParam) {
+
+		if(IsDisplayed()) 
+			QuickAnimOutIn();
+
+		hudManager.itemInfoPopup.Hide();
 		blob = blobParam;
 		actionButton1.gameObject.SetActive(true);
 		actionButton2.gameObject.SetActive(true);
@@ -132,6 +139,12 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		TweenPosition tp = gameObject.GetComponent<TweenPosition>();
 		tp.PlayReverse();
 		//roomManager.scrollView.GetComponent<UICenterOnChild>().CenterOn(blob.room.transform);
+	}
+
+	public void QuickAnimOutIn() {
+		changeFlashObject.gameObject.SetActive(true);
+		changeFlashAnim.Play();
+		changeFlashAnim.enabled = true;
 	}
 
 

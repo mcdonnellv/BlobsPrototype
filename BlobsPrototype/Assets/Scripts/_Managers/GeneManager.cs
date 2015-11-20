@@ -44,4 +44,22 @@ public class GeneManager : MonoBehaviour {
 		blob.CalculateStats();
 		blob.UpdateBlobInfoIfDisplayed();
 	}
+
+
+	public List<BaseGene> GetBaseGeneListFromGeneList (List<Gene> geneListParam) {
+		List<BaseGene> baseGenes = new List<BaseGene>();
+		foreach(Gene gene in geneListParam) {
+			BaseGene baseGene = GetGeneByName(gene.geneName);
+			baseGenes.Add(baseGene);
+		}
+		return baseGenes;
+	}
+
+	public List<Gene> CreateGeneListFromBaseGeneList (List<BaseGene> baseGeneListParam) {
+		List<Gene> geneList = new List<Gene>();
+		foreach(BaseGene baseGene in baseGeneListParam) {
+			geneList.Add(new Gene(baseGene));
+		}
+		return geneList;
+	}
 }

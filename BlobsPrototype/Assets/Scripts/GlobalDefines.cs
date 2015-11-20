@@ -52,6 +52,11 @@ public enum GeneState {
 	Active,
 };
 
+public enum BlobInteractAction {
+	Breed,
+	Merge,
+};
+
 
 public class GlobalDefines : MonoBehaviour {
 }

@@ -50,7 +50,7 @@ public class Blob : MonoBehaviour {
 	GeneManager geneManager;
 	
 	// time delays
-	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,5);
+	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,1);
 	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
 	TimeSpan breedReadyStandard = new TimeSpan(0,0,1);
 
