@@ -1,44 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Popup : MonoBehaviour 
-{
-	public UILabel headerLabel;
-	public UILabel bodyLabel;
+public class Popup : GenericGameMenu {
 
+	public UILabel bodyLabel;
 	public UIWidget singleChoiceContainer;
 	public UIWidget doubleChoiceContainer;
-
-	public UITweener animationBG;
-	public UITweener animationWindow;
-
-	public GameObject window;
-	public GameObject BG;
-
 	UIButton okButton;
 	UIButton cancelButton;
-
 	EventDelegate assignedOkEventDelegate;
 
-	void Start() {
-		//gameObject.SetActive(false);
-	}
 
-	public void Show(string header, string body)
-	{
-		gameObject.SetActive(true);
-		headerLabel.text = header;
+	public void Show(string header, string body) {
+		base.Show(header);
 		bodyLabel.text = body;
-		SetupStartAnimation();
 		EnableSingleContainer();
 	}
 
 
 	public void Show(string header, string body, MonoBehaviour target, string methodName) {
-		gameObject.SetActive(true);
-		headerLabel.text = header;
+		base.Show(header);
 		bodyLabel.text = body;
-		SetupStartAnimation();
 		EnableDoubleContainer();
 		if (assignedOkEventDelegate != null)
 			okButton.onClick.Remove(assignedOkEventDelegate);
@@ -46,14 +28,6 @@ public class Popup : MonoBehaviour
 		okButton.onClick.Add(assignedOkEventDelegate);
 	}
 
-	void SetupStartAnimation() {
-		window.SetActive(true);
-		window.transform.localScale = new Vector3(0,0,0);
-		animationBG.onFinished.Clear();
-		animationBG.PlayForward();
-		animationWindow.onFinished.Clear();
-		animationWindow.PlayForward();
-	}
 
 	void EnableSingleContainer() {
 		singleChoiceContainer.gameObject.SetActive(true);
@@ -78,23 +52,10 @@ public class Popup : MonoBehaviour
 	}
 
 
-	public void Hide() {
-		animationWindow.onFinished.Add(new EventDelegate(animationBG, "PlayReverse"));
-		animationWindow.onFinished.Add(new EventDelegate(this, "DisableWindow"));
-		animationWindow.PlayReverse();
-		animationBG.onFinished.Add(new EventDelegate(this, "DisablePopup"));
-	}
-
-	void DisableWindow() {
-		window.SetActive(false);
-	}
-
-	void DisablePopup() {
+	public void Cleanup() {
 		okButton.onClick.Remove(assignedOkEventDelegate);
 		assignedOkEventDelegate = null;
-		animationWindow.enabled = false;
-		animationBG.enabled = false;
-		gameObject.SetActive(false);
+		base.Cleanup();
 	}
 
 

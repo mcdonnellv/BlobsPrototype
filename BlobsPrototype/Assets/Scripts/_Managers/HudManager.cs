@@ -23,9 +23,9 @@ public class HudManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		cheatMenu.Hide();
-		inventoryMenu.Hide();
-		itemInfoPopup.Hide();
+		cheatMenu.gameObject.SetActive(false);
+		inventoryMenu.gameObject.SetActive(false);
+		itemInfoPopup.gameObject.SetActive(false);
 	}
 	
 	// Update is called once per frame

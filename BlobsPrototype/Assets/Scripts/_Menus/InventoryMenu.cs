@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class InventoryMenu : MonoBehaviour {
+public class InventoryMenu : GenericGameMenu {
 
 	public enum Tab {
 		None = -1,
@@ -15,9 +15,7 @@ public class InventoryMenu : MonoBehaviour {
 		Inventory,
 		Feed,
 	};
-
-	public UITweener animationWindow;
-	public UILabel windowTitleLabel;
+	
 	public UILabel storageCapacityLabel;
 	public UILabel instructionalLabel;
 	public UISprite genesTab;
@@ -31,28 +29,24 @@ public class InventoryMenu : MonoBehaviour {
 	Tab activeTab;
 	GameManager2 gameManager;
 	public Mode mode = Mode.None;
+
 	
-	public void ShowInventory() {
-		Show(Mode.Inventory);
-	}
+
+	public void Pressed() {	Show(); }
+
+	public void Show() { Show(Mode.Inventory); }
 
 	public void Show(Mode modeParam) {
-		if(gameManager == null) {
-			gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
-		}
-
+		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		mode = modeParam;
-		gameObject.SetActive(true);
-		transform.localScale = new Vector3(0,0,0);
-		animationWindow.onFinished.Clear();
-		animationWindow.PlayForward();
+		base.Show();
 
 		switch(mode) {
 		case Mode.None:	
 		case Mode.Inventory:	
 			GenesTabPressed();
 			instructionalLabel.text = "";
-			windowTitleLabel.text = "INVENTORY";
+			headerLabel.text = "INVENTORY";
 			genesTab.gameObject.SetActive(true);
 			itemsTab.gameObject.SetActive(true);
 			feedContainer.gameObject.SetActive(false);
@@ -63,7 +57,7 @@ public class InventoryMenu : MonoBehaviour {
 			genesTab.gameObject.SetActive(false);
 			itemsTab.gameObject.SetActive(false);
 			instructionalLabel.text = "Select an item";
-			windowTitleLabel.text = "FEED BLOB";
+			headerLabel.text = "FEED BLOB";
 			feedContainer.gameObject.SetActive(true);
 			storageContainer.gameObject.SetActive(false);
 			break;
@@ -78,15 +72,9 @@ public class InventoryMenu : MonoBehaviour {
 			break;
 		}
 		itemInfoPopup.Hide();
-		animationWindow.onFinished.Add(new EventDelegate(this, "DisableWindow"));
-		animationWindow.PlayReverse();
+		base.Hide();
 	}
 	
-	void DisableWindow() {
-		animationWindow.onFinished.Clear();
-		gameObject.SetActive(false);
-	}
-
 	public void GenesTabPressed() {
 		activeTab = Tab.GenesTab;
 		genesTab.alpha = 1f;

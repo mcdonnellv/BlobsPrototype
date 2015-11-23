@@ -58,7 +58,7 @@ public class Blob : MonoBehaviour {
 
 	
 
-	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.DisplayWithBlob(this); }
+	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.Show(this); }
 	public string GetBlobStateString() { return state.ToString(); }
 
 	public Blob () {
@@ -107,7 +107,7 @@ public class Blob : MonoBehaviour {
 	public void UpdateBlobInfoIfDisplayed() {
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
-			hudManager.blobInfoContextMenu.DisplayWithBlob(this);
+			hudManager.blobInfoContextMenu.Show(this);
 	}
 
 	
@@ -125,7 +125,7 @@ public class Blob : MonoBehaviour {
 		if(!hasHatched && state == BlobState.HatchReady) {
 			Hatch(true);
 			if(hudManager.blobInfoContextMenu.IsDisplayed())
-				hudManager.blobInfoContextMenu.Dismiss();
+				hudManager.blobInfoContextMenu.Hide();
 			return;
 		}
 

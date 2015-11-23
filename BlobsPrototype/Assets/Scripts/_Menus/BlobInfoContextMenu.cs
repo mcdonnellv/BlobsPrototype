@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BlobInfoContextMenu : MonoBehaviour {
+public class BlobInfoContextMenu : GenericGameMenu {
 
 	public Blob blob;
 	public UILabel partnerLabel;
@@ -31,13 +31,17 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	RoomManager roomManager;
 
 
+	public Blob DisplayedBlob() { return blob; }
+	public bool IsDisplayed() { return (transform.localPosition == ((TweenPosition)animationWindow).to && animationWindow.enabled == false); }
 
-
-
-	public void DisplayWithBlob(Blob blobParam) {
-
-		if(IsDisplayed()) 
-			QuickAnimOutIn();
+	public void Show(Blob blobParam) {
+		gameObject.SetActive(true);
+		if(IsDisplayed() && blobParam != blob) // We are just changing the displayed blobs
+			FlashChangeAnim();
+		else {
+			base.Show();
+			window.transform.localScale = new Vector3(1,1,1);
+		}
 
 		hudManager.itemInfoPopup.Hide();
 		blob = blobParam;
@@ -46,63 +50,12 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		qualityLabel.fontSize = 24;
 		rankLabel.fontSize = 24;
 
-		if(blob.hasHatched == false) {
+		if(blob.hasHatched == false)
 			DisplayEggInfo();
-		}
-		else {
-			partnerLabel.text = (blob.spouseId == -1) ? "No Partner" : "Partner Info";
-			genderLabel.text = blob.male ? "Male" : "Female";
-			qualityLabel.text = "[" + ColorToHex(ColorDefines.ColorForQuality(blob.quality)) + "]" + blob.quality.ToString() + "[-]";
-			genderSprite.gameObject.SetActive(true);
-			if(blob.male) {
-				genderSprite.spriteName = "maleIcon";
-				genderSprite.color = ColorDefines.maleColor;
-			}
-			
-			if(blob.female) {
-				genderSprite.spriteName = "femaleIcon";
-				genderSprite.color = ColorDefines.femaleColor;
-			}
-
-			bool isIdle = (blob.state == BlobState.Idle);
-			actionButton1.isEnabled = !isIdle ? false : true;
-			actionButton2.isEnabled = !isIdle ? false : true;
-			actionButton2Label.text = "Sell +1[gold]";
-			Blob spouse = blob.GetSpouse();
-
-			blob.CalculateStats();
-
-			statLabels[0].text = blob.combatStats.health.ToString();
-			statLabels[1].text = blob.combatStats.stamina.ToString();
-			statLabels[2].text = blob.combatStats.attack.ToString();
-			statLabels[3].text = blob.combatStats.armor.ToString();
-
-			foreach(Transform c in geneGrid.transform) {
-				c.DestroyChildren();
-				c.gameObject.SetActive((c.GetSiblingIndex() < blob.allowedGeneCount));
-			}
-
-			foreach(Gene g in blob.genes) {
-				if (blob.genes.IndexOf(g) >= blob.allowedGeneCount)
-					break;
-				Transform parentSocket = geneGrid.transform.GetChild(blob.genes.IndexOf(g));
-				parentSocket.DestroyChildren();
-				GameObject go = g.CreateGeneGameObject();
-				go.transform.parent = parentSocket;
-				go.transform.localScale = new Vector3(1f,1f,1f);
-				go.transform.localPosition = new Vector3(0f,0f,0f);
-			}
-		}
+		else
+			DisplayBlobInfo();
 
 		DisplayBlobImage();
-
-
-		if(IsDisplayed() == false) {
-			TweenPosition tp = gameObject.GetComponent<TweenPosition>();
-			tp.PlayForward();
-			tp.enabled = true;
-		}
-
 		RoomManager roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
 	}
@@ -111,10 +64,45 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	void DisplayEggInfo() {
 		rankLabel.text = "Unknown";
 		genderLabel.text = "Unknown";
-		qualityLabel.text = "[" + ColorToHex(ColorDefines.ColorForQuality(blob.quality)) + "]" + blob.quality.ToString() + "[-]";
+		qualityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(blob.quality)) + blob.quality.ToString() + "[-]";
 		genderSprite.gameObject.SetActive(false);
 		actionButton2.gameObject.SetActive(false);
 		actionButton1.isEnabled = true;
+	}
+
+
+	void DisplayBlobInfo() {
+		partnerLabel.text = (blob.spouseId == -1) ? "No Partner" : "Partner Info";
+		genderLabel.text = blob.male ? "Male" : "Female";
+		qualityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(blob.quality)) + blob.quality.ToString() + "[-]";
+		genderSprite.gameObject.SetActive(true);
+		genderSprite.spriteName = (blob.male) ? "maleIcon" : "femaleIcon";
+		genderSprite.color = (blob.male) ? ColorDefines.maleColor : ColorDefines.femaleColor;
+		actionButton1.isEnabled = (blob.state != BlobState.Idle) ? false : true;
+		actionButton2.isEnabled = (blob.state != BlobState.Idle) ? false : true;
+		actionButton2Label.text = "Sell +1[gold]";
+		Blob spouse = blob.GetSpouse();
+		blob.CalculateStats();
+		statLabels[0].text = blob.combatStats.health.ToString();
+		statLabels[1].text = blob.combatStats.stamina.ToString();
+		statLabels[2].text = blob.combatStats.attack.ToString();
+		statLabels[3].text = blob.combatStats.armor.ToString();
+		
+		foreach(Transform c in geneGrid.transform) {
+			c.DestroyChildren();
+			c.gameObject.SetActive((c.GetSiblingIndex() < blob.allowedGeneCount));
+		}
+		
+		foreach(Gene g in blob.genes) {
+			if (blob.genes.IndexOf(g) >= blob.allowedGeneCount)
+				break;
+			Transform parentSocket = geneGrid.transform.GetChild(blob.genes.IndexOf(g));
+			parentSocket.DestroyChildren();
+			GameObject go = g.CreateGeneGameObject();
+			go.transform.parent = parentSocket;
+			go.transform.localScale = new Vector3(1f,1f,1f);
+			go.transform.localPosition = new Vector3(0f,0f,0f);
+		}
 	}
 
 
@@ -134,33 +122,16 @@ public class BlobInfoContextMenu : MonoBehaviour {
 	}
 
 
-	public void Dismiss() {
+	public void Hide() {
 		hudManager.itemInfoPopup.Hide();
-		TweenPosition tp = gameObject.GetComponent<TweenPosition>();
-		tp.PlayReverse();
-		//roomManager.scrollView.GetComponent<UICenterOnChild>().CenterOn(blob.room.transform);
+		base.Hide();
 	}
 
-	public void QuickAnimOutIn() {
+	public void FlashChangeAnim() {
 		changeFlashObject.gameObject.SetActive(true);
 		changeFlashAnim.Play();
 		changeFlashAnim.enabled = true;
-	}
-
-
-	public Blob DisplayedBlob() { return blob; }
-
-
-	public bool IsDisplayed() {
-		TweenPosition tp = gameObject.GetComponent<TweenPosition>();
-		return (transform.localPosition == tp.to && tp.enabled == false);
-	}
-
-
-	string ColorToHex(Color32 color) {
-		string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
-		return hex;
-	}
+	} 
 
 
 	public void ActionButton1Pressed() {
@@ -207,7 +178,5 @@ public class BlobInfoContextMenu : MonoBehaviour {
 		}
 		else if(progressBar.gameObject.activeSelf == true)
 			progressBar.gameObject.SetActive(false);
-
-	
 	}
 }
