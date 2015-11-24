@@ -82,6 +82,8 @@ public class Gene : BaseGene {
 		state = GeneState.Active;
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		hudManager.popup.Show("Gene", "The " + geneName + " gene has been activated!");
+		if(hudManager.inventoryMenu.displayed)
+			hudManager.inventoryMenu.Hide();
 	}
 
 }

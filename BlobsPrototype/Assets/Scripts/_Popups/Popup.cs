@@ -8,7 +8,6 @@ public class Popup : GenericGameMenu {
 	public UIWidget doubleChoiceContainer;
 	UIButton okButton;
 	UIButton cancelButton;
-	EventDelegate assignedOkEventDelegate;
 
 
 	public void Show(string header, string body) {
@@ -22,10 +21,10 @@ public class Popup : GenericGameMenu {
 		base.Show(header);
 		bodyLabel.text = body;
 		EnableDoubleContainer();
-		if (assignedOkEventDelegate != null)
-			okButton.onClick.Remove(assignedOkEventDelegate);
-		assignedOkEventDelegate = new EventDelegate(target, methodName);
+		EventDelegate assignedOkEventDelegate = new EventDelegate(target, methodName);
+		okButton.onClick.Clear();
 		okButton.onClick.Add(assignedOkEventDelegate);
+		okButton.onClick.Add(new EventDelegate(this, "Hide"));
 	}
 
 
@@ -50,14 +49,5 @@ public class Popup : GenericGameMenu {
 		okLabel.text = "Confirm";
 		cancelLabel.text = "Cancel";
 	}
-
-
-	public void Cleanup() {
-		okButton.onClick.Remove(assignedOkEventDelegate);
-		assignedOkEventDelegate = null;
-		base.Cleanup();
-	}
-
-
 }
 

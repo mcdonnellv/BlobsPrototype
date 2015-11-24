@@ -9,7 +9,10 @@ public class ColorDefines {
 	static public Color defaultBlobColor = new Color(0.529f, 0.506f, 0.459f, 1f);
 	public static Color maleColor { get{ return new Color(0.259f, 0.753f, 0.984f, 1f);} }
 	public static Color femaleColor { get{ return new Color(0.984f, 0.537f, 0.659f, 1f);} }
-
+	public static Color activeCellColor { get{ return new Color(0.4f, 0.647f, 0.812f, 1f);} }
+	public static Color inactiveCellColor { get{ return new Color(0.5f, 0.5f, 0.5f, 1f);} }
+	public static Color positiveTextColor { get{ return new Color(.33f, 1f, .33f, 1f);} }
+	public static Color negativeTextColor { get{ return new Color(1f, .33f, .33f, 1f);} }
 
 	public static void BuildColorDefines() {
 		//blobColorSet01.Add("Pastel Brown", "836953");

@@ -11,6 +11,12 @@ public class CheatMenu : GenericGameMenu {
 
 	public void AddGold() { hudManager.UpdateGold(gameManager.gameVars.AddGold(1000)); }
 
+	public void IncrementMissionCount() { 
+		foreach(Blob blob in roomManager.currentRoom.blobs)
+			if(blob.hasHatched)
+				blob.ReturnFromMission();
+	}
+
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GeneDragDropContainer : UIDragDropContainer {
+public class GeneDragDropContainer : InventoryContainer {
 	public enum GeneSlotType {
 		BlobInfoContextMenuGeneSlot,
 		GenePoolMenuGeneSlot

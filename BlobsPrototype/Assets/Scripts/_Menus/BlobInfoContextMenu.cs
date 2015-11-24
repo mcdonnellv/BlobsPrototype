@@ -12,8 +12,8 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UILabel genderLabel;
 	public UILabel qualityLabel;
 	public List<UILabel> statLabels;
-	public GameObject geneGrid;
-	public GameObject statGrid;
+	public UIGrid geneGrid;
+	public UIGrid statGrid;
 
 	public UILabel actionButton1Label;
 	public UILabel actionButton2Label;
@@ -32,11 +32,10 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	public Blob DisplayedBlob() { return blob; }
-	public bool IsDisplayed() { return (transform.localPosition == ((TweenPosition)animationWindow).to && animationWindow.enabled == false); }
 
 	public void Show(Blob blobParam) {
 		gameObject.SetActive(true);
-		if(IsDisplayed() && blobParam != blob) // We are just changing the displayed blobs
+		if(displayed && blobParam != blob) // We are just changing the displayed blobs
 			FlashChangeAnim();
 		else {
 			base.Show();
@@ -72,7 +71,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	void DisplayBlobInfo() {
-		partnerLabel.text = (blob.spouseId == -1) ? "No Partner" : "Partner Info";
 		genderLabel.text = blob.male ? "Male" : "Female";
 		qualityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(blob.quality)) + blob.quality.ToString() + "[-]";
 		genderSprite.gameObject.SetActive(true);
@@ -81,27 +79,83 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		actionButton1.isEnabled = (blob.state != BlobState.Idle) ? false : true;
 		actionButton2.isEnabled = (blob.state != BlobState.Idle) ? false : true;
 		actionButton2Label.text = "Sell +1[gold]";
-		Blob spouse = blob.GetSpouse();
+
+		UpdateStats();
+		DestroyGeneCells();
+		BuildEmptyGeneCells();
+		FillGeneCells();
+	}
+
+
+	void UpdateStats() {
 		blob.CalculateStats();
 		statLabels[0].text = blob.combatStats.health.ToString();
 		statLabels[1].text = blob.combatStats.stamina.ToString();
 		statLabels[2].text = blob.combatStats.attack.ToString();
 		statLabels[3].text = blob.combatStats.armor.ToString();
-		
-		foreach(Transform c in geneGrid.transform) {
-			c.DestroyChildren();
-			c.gameObject.SetActive((c.GetSiblingIndex() < blob.allowedGeneCount));
-		}
-		
-		foreach(Gene g in blob.genes) {
-			if (blob.genes.IndexOf(g) >= blob.allowedGeneCount)
-				break;
-			Transform parentSocket = geneGrid.transform.GetChild(blob.genes.IndexOf(g));
-			parentSocket.DestroyChildren();
-			GameObject go = g.CreateGeneGameObject();
-			go.transform.parent = parentSocket;
+		UpdateStatColors();
+	}
+
+
+	void UpdateStatColors() {
+		if(blob.combatStats.health > CombatStats.defaultHealth)
+			statLabels[0].color = ColorDefines.positiveTextColor;
+		if(blob.combatStats.health < CombatStats.defaultHealth)
+			statLabels[0].color = ColorDefines.negativeTextColor;
+
+		if(blob.combatStats.stamina > CombatStats.defaultStamina)
+			statLabels[1].color = ColorDefines.positiveTextColor;
+		if(blob.combatStats.stamina < CombatStats.defaultStamina)
+			statLabels[1].color = ColorDefines.negativeTextColor;
+
+		if(blob.combatStats.attack > CombatStats.defaultAttack)
+			statLabels[2].color = ColorDefines.positiveTextColor;
+		if(blob.combatStats.attack < CombatStats.defaultAttack)
+			statLabels[2].color = ColorDefines.negativeTextColor;
+
+		if(blob.combatStats.armor > CombatStats.defaultArmor)
+			statLabels[3].color = ColorDefines.positiveTextColor;
+		if(blob.combatStats.armor < CombatStats.defaultArmor)
+			statLabels[3].color = ColorDefines.negativeTextColor;
+	}
+
+	void DestroyGeneCells() {
+		geneGrid.transform.DestroyChildren();
+	}
+
+
+	void BuildEmptyGeneCells() {
+		for(int i = 0; i < blob.allowedGeneCount; i++) {
+			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("Gene Cell"));
+			GeneCell geneCell = go.GetComponent<GeneCell>();
+			geneCell.nameLabel.text = "Empty";
+			go.transform.parent = geneGrid.transform;
 			go.transform.localScale = new Vector3(1f,1f,1f);
 			go.transform.localPosition = new Vector3(0f,0f,0f);
+			geneCell.Deactivate();
+		}
+
+		geneGrid.Reposition();
+	}
+
+	void FillGeneCells() {
+		foreach(Gene g in blob.genes) {
+			int index = blob.genes.IndexOf(g);
+			if (index >= geneGrid.transform.childCount)
+				break;
+
+			GeneCell geneCell = geneGrid.transform.GetChild(index).GetComponent<GeneCell>();
+			GameObject go = g.CreateGeneGameObject();
+			geneCell.socketSprite.transform.DestroyChildren();
+			go.transform.parent = geneCell.socketSprite.transform;
+			go.transform.localScale = new Vector3(1f,1f,1f);
+			go.transform.localPosition = new Vector3(0f,0f,0f);
+			geneCell.nameLabel.text = g.geneName;
+			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
+			if(g.active)
+				geneCell.Activate();
+			else
+				geneCell.Deactivate();
 		}
 	}
 
@@ -163,7 +217,32 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 		roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 	}
-	
+
+
+	public void GeneCellPressed(GeneCell geneCell) {
+		GenePointer gp = geneCell.GetGenePointer();
+		if(gp == null) {
+			//pressed a gene cell taht is empty, intentions is to add a gene
+			if(hudManager.inventoryMenu.mode != InventoryMenu.Mode.AddGene) {
+				hudManager.itemInfoPopup.Hide();
+				hudManager.inventoryMenu.Show(InventoryMenu.Mode.AddGene);
+			}
+		}
+		else {
+			hudManager.inventoryMenu.Hide();
+			hudManager.inventoryMenu.genesMenu.ShowInfoForGeneGameObject(gp);
+		}
+	}
+
+
+	public void AddGeneToBlob(Gene gene) {
+		blob.genes.Add(gene);
+		DestroyGeneCells();
+		BuildEmptyGeneCells();
+		FillGeneCells();
+	}
+
+
 	// Update is called once per frame
 	void Update () {
 		if(blob == null)

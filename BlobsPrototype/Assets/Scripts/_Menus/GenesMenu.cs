@@ -9,6 +9,7 @@ public class GenesMenu : MonoBehaviour {
 	GameObject geneSlotHighlight;
 	int selectedIndex = -1;
 	GeneManager geneManager;
+	Gene selectedGene;
 
 	public void Show() {
 		geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
@@ -25,20 +26,24 @@ public class GenesMenu : MonoBehaviour {
 		}
 
 		if(selectedIndex == -1 && geneManager.storedGenes.Count > 0)
-			ShowInfoForGene(geneManager.storedGenes[0]);
-		else if(selectedIndex != -1 && selectedIndex < geneManager.storedGenes.Count)
-			ShowInfoForGene(geneManager.storedGenes[selectedIndex]);
-		else if(geneManager.storedGenes.Count == 0) {
-			selectedIndex = -1;
+			selectedIndex = 0;
 
-			itemInfoPopup.nameLabel.text = "";
-			itemInfoPopup.rarityLabel.text = "";
-			itemInfoPopup.infoLabelSingle.text = "";
-			itemInfoPopup.infoLabelDouble.text = "";
+		if(geneManager.storedGenes.Count == 0) {
+			selectedIndex = -1;
+			itemInfoPopup.ClearFields();
 			itemInfoPopup.Hide();
 		}
+
+		if(selectedIndex < geneManager.storedGenes.Count && selectedIndex >= 0) //check within bounds
+			selectedGene = geneManager.storedGenes[selectedIndex];
+
+		if (selectedGene != null)
+			Invoke("ShowInfoForSelectedGene", .3f);
 	}
 
+	public void ShowInfoForSelectedGene() {
+		ShowInfoForGene(selectedGene);
+	}
 
 	public void ShowInfoForGene(Gene gene) {
 		GenePointer genePointer = null;
@@ -76,11 +81,13 @@ public class GenesMenu : MonoBehaviour {
 	public Gene GetGeneFromIndex(int index) {
 		if(index < 0 && index >= grid.transform.childCount)
 			return null;
-
 		Transform socket = grid.transform.GetChild(index);
 		GenePointer gp = socket.GetComponentInChildren<GenePointer>();
-		return gp.gene;
+		if(gp != null)
+			return gp.gene;
+		return null;
 	}
+
 	
 	public Gene GetSelectedGene() {
 		return GetGeneFromIndex(selectedIndex);

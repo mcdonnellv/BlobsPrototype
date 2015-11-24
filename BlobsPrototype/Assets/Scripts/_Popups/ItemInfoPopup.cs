@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ItemInfoPopup : MonoBehaviour {
+public class ItemInfoPopup : GenericGameMenu {
 
-	public UITweener animationWindow;
 	public UIButton deleteButton;
-	public UILabel nameLabel;
 	public UILabel rarityLabel;
 	public UILabel infoLabelSingle;
 	public UILabel infoLabelDouble;
@@ -15,40 +13,50 @@ public class ItemInfoPopup : MonoBehaviour {
 	public GameObject singlePanelLabel;
 	public UIGrid doublePanelUpperGrid;
 	public UIGrid doublePanelLowerGrid;
+	public Gene gene = null;
+	public Item item = null;
+	public static Vector3 position1 = new Vector3(330f, -650f, 0f);
+	public static Vector3 position2 = new Vector3(-30f, -650f, 0f);
 
 	public void Show() {
 		gameObject.SetActive(true);
-		transform.localScale = new Vector3(0,0,0);
-		animationWindow.onFinished.Clear();
-		animationWindow.PlayForward();
+		if(displayed) // We are just changing the displayed info
+			FlashChangeAnim();
+		else 
+			base.Show();
 		deleteButton.gameObject.SetActive(false);
-	}
-	
-	public void Hide() {
-		animationWindow.onFinished.Add(new EventDelegate(this, "DisableWindow"));
-		animationWindow.PlayReverse();
+		AdjustPosition();
 	}
 
-	void DisableWindow() {
-		animationWindow.onFinished.Clear();
-		gameObject.SetActive(false);
+
+	public void AdjustPosition() {
+		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
+		transform.localPosition = position2;
+		if(hudManager.inventoryMenu.displayed)
+			transform.localPosition = position1;
 	}
+
 
 	public void DeleteButtonPressed() {}
 
+	public void ClearFields() {
+		headerLabel.text = "";
+		rarityLabel.text = "";
+		infoLabelSingle.text = "";
+		infoLabelDouble.text = "";
+	}
 
-	public void ShowInfoForGene(Gene gene) {
+
+	public void ShowInfoForGene(Gene g) {
+		gene = g;
 		doublePanel.gameObject.SetActive(true);
 		singlePanel.gameObject.SetActive(false);
 
-		nameLabel.text = gene.geneName;
+		headerLabel.text = gene.geneName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
 		infoLabelSingle.text = gene.description;
 		doublePanelUpperGrid.transform.DestroyChildren();
 		doublePanelLowerGrid.transform.DestroyChildren();
-
-		//UISprite originalIcon = gene.CreateGeneGameObject .genePointer.gameObject.GetComponent<UISprite>();
-		//icon.atlas = null;//originalIcon.atlas;
 		icon.spriteName = Gene.GetSpriteNameWithQuality(gene.quality);
 
 		infoLabelDouble.text = gene.description;
@@ -77,14 +85,20 @@ public class ItemInfoPopup : MonoBehaviour {
 		doublePanelLowerGrid.Reposition();
 	}
 
-	public void ShowInfoForItem(Item item) {
+	public void ShowInfoForItem(Item i) {
+		item = i;
 		doublePanel.gameObject.SetActive(false);
 		singlePanel.gameObject.SetActive(true);
 		
-		nameLabel.text = item.itemName + "   x" + item.count;
+		headerLabel.text = item.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + " Item[-]";
 		infoLabelSingle.text = item.description;
 		icon.atlas = item.iconAtlas;
 		icon.spriteName = item.iconName;
 	}
+
+	public void FlashChangeAnim() {
+		animationWindow.ResetToBeginning();
+		animationWindow.PlayForward();
+	} 
 }

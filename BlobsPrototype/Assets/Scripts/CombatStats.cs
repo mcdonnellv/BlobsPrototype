@@ -8,15 +8,20 @@ public class CombatStats : MonoBehaviour {
 	public int health;
 	public int stamina;
 
+	public static int defaultAttack = 100;
+	public static int defaultArmor = 100;
+	public static int defaultHealth = 100;
+	public static int defaultStamina = 100;
+
 	public CombatStats() {
-		SetValues(0);
+		SetDefaultValues();
 	}
 
-	public void SetValues(int v) {
-		attack = v;
-		armor = v;
-		health = v;
-		stamina = v;
+	public void SetDefaultValues() {
+		attack = defaultAttack;
+		armor = defaultArmor;
+		health = defaultHealth;
+		stamina = defaultStamina;
 	}
 
 	public void CalculateAddedStats(TraitType t, float v) {

@@ -106,7 +106,7 @@ public class Blob : MonoBehaviour {
 
 	public void UpdateBlobInfoIfDisplayed() {
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
+		if(hudManager.blobInfoContextMenu.displayed && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
 			hudManager.blobInfoContextMenu.Show(this);
 	}
 
@@ -124,7 +124,7 @@ public class Blob : MonoBehaviour {
 	void BlobPressed() {
 		if(!hasHatched && state == BlobState.HatchReady) {
 			Hatch(true);
-			if(hudManager.blobInfoContextMenu.IsDisplayed())
+			if(hudManager.blobInfoContextMenu.displayed)
 				hudManager.blobInfoContextMenu.Hide();
 			return;
 		}
@@ -153,11 +153,6 @@ public class Blob : MonoBehaviour {
 		floatingDisplay.HideHarvestSprite();
 		if(displayInfo)
 			DisplayBlobInfo();
-	}
-
-
-	public void GraduateAdult() {
-		transform.localScale = new Vector3(1f, 1f, 1f);
 	}
 
 	
@@ -319,7 +314,7 @@ public class Blob : MonoBehaviour {
 
 
 	public void CalculateStats() {
-		combatStats.SetValues(100);
+		combatStats.SetDefaultValues();
 
 		foreach(Gene g in genes) {
 			if(g.active && g.modifier == AbilityModifier.Added)
@@ -357,6 +352,14 @@ public class Blob : MonoBehaviour {
 
 		if (updateDisplay)
 			UpdateBlobInfoIfDisplayed();
+	}
+
+
+	public void ReturnFromMission() {
+		missionCount++;
+		if(isAdult)
+			transform.localScale = new Vector3(1f, 1f, 1f);
+
 	}
 
 

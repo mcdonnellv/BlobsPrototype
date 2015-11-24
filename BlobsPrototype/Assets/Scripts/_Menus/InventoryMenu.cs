@@ -14,6 +14,7 @@ public class InventoryMenu : GenericGameMenu {
 		None = -1,
 		Inventory,
 		Feed,
+		AddGene,
 	};
 	
 	public UILabel storageCapacityLabel;
@@ -22,13 +23,14 @@ public class InventoryMenu : GenericGameMenu {
 	public UISprite itemsTab;
 	public GameObject grid;
 	public GameObject storageContainer;
-	public GameObject feedContainer;
+	public GameObject actionContainer;
 	public GenesMenu genesMenu;
 	public ItemsMenu itemsMenu;
 	public ItemInfoPopup itemInfoPopup;
 	Tab activeTab;
 	GameManager2 gameManager;
 	public Mode mode = Mode.None;
+	public Mode reopenMode = Mode.None;
 
 	
 
@@ -37,6 +39,14 @@ public class InventoryMenu : GenericGameMenu {
 	public void Show() { Show(Mode.Inventory); }
 
 	public void Show(Mode modeParam) {
+		if(displayed) {
+			if (mode != Mode.None) {
+				reopenMode = modeParam;
+				Hide();
+				return;
+			}
+		}
+
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		mode = modeParam;
 		base.Show();
@@ -49,30 +59,72 @@ public class InventoryMenu : GenericGameMenu {
 			headerLabel.text = "INVENTORY";
 			genesTab.gameObject.SetActive(true);
 			itemsTab.gameObject.SetActive(true);
-			feedContainer.gameObject.SetActive(false);
+			actionContainer.gameObject.SetActive(false);
 			storageContainer.gameObject.SetActive(true);
 			break;
+
 		case Mode.Feed:
 			ItemsTabPressed();
 			genesTab.gameObject.SetActive(false);
 			itemsTab.gameObject.SetActive(false);
 			instructionalLabel.text = "Select an item";
 			headerLabel.text = "FEED BLOB";
-			feedContainer.gameObject.SetActive(true);
+			actionContainer.gameObject.SetActive(true);
 			storageContainer.gameObject.SetActive(false);
+			actionContainer.GetComponentInChildren<UILabel>().text = "FEED";
+			break;
+
+		case Mode.AddGene:
+			GenesTabPressed();
+			instructionalLabel.text = "Chose a gene to add";
+			headerLabel.text = "ADD GENE";
+			genesTab.gameObject.SetActive(false);
+			itemsTab.gameObject.SetActive(false);
+			actionContainer.gameObject.SetActive(true);
+			storageContainer.gameObject.SetActive(false);
+			actionContainer.GetComponentInChildren<UILabel>().text = "ADD";
 			break;
 		}
 	}
-	
+
+
+	public void SetDisplayed() {
+		base.SetDisplayed();
+		itemInfoPopup.AdjustPosition();
+	}
+
+
 	public void Hide() {
+		if(!displayed)
+			return;
+
 		switch(mode) {
 		case Mode.Feed:
 			gameManager.hudMan.blobInfoContextMenu.actionButton1.isEnabled = true;
 			gameManager.hudMan.blobInfoContextMenu.actionButton2.isEnabled = true;
 			break;
 		}
-		itemInfoPopup.Hide();
+
+		mode = Mode.None;
 		base.Hide();
+	}
+
+
+	public override void Cleanup() {
+		base.Cleanup();
+		
+		if(reopenMode != Mode.None) {
+			Invoke("Reopen", .01f);
+		}
+
+		itemInfoPopup.AdjustPosition();
+		itemInfoPopup.HideInstant();
+	}
+
+
+	void Reopen() {
+		Show(reopenMode);
+		reopenMode = Mode.None;
 	}
 	
 	public void GenesTabPressed() {
@@ -102,10 +154,7 @@ public class InventoryMenu : GenericGameMenu {
 	}
 
 	void ClearContextText() {
-		itemInfoPopup.nameLabel.text = "";
-		itemInfoPopup.rarityLabel.text = "";
-		itemInfoPopup.infoLabelSingle.text = "";
-		itemInfoPopup.infoLabelDouble.text = "";
+		itemInfoPopup.ClearFields();
 	}
 
 	void RebuildSlots(int slotCount) {
@@ -120,25 +169,44 @@ public class InventoryMenu : GenericGameMenu {
 		gridComponent.Reposition();
 	}
 
-	public void increaseCapacityButtonPressed() {
+	public void IncreaseCapacityButtonPressed() {
 		switch (activeTab) {
 		case Tab.GenesTab: gameManager.gameVars.inventoryGeneSlots +=5; GenesTabPressed(); break;
 		case Tab.ItemsTab: gameManager.gameVars.inventoryItemSlots +=5; ItemsTabPressed(); break;
 		}
 	}
 
-	public void FeedButtonPressed() {
-		Item item = itemsMenu.GetSelectedItem();
-		if(item == null)
-			gameManager.hudMan.popup.Show("Feed Blob", "No item selected.");
-		else
-			gameManager.hudMan.popup.Show("Feed Blob", "Feed [EEBE63]" + item.itemName + "[-] to the blob?", this, "FeedConfirmed");
+	public void ActionButtonPressed() {
+		switch(mode) {
+		case Mode.Feed:
+			Item item = itemsMenu.GetSelectedItem();
+			if(item == null)
+				gameManager.hudMan.popup.Show("Feed Blob", "No item selected");
+			else
+				gameManager.hudMan.popup.Show("Feed Blob", "Feed [EEBE63]" + item.itemName + "[-] to the blob?", this, "FeedConfirmed");
+			break;
+		case Mode.AddGene:
+			Gene gene = genesMenu.GetSelectedGene();
+			if(gene == null)
+				gameManager.hudMan.popup.Show("Add Gene", "No gene selected");
+			else
+				gameManager.hudMan.popup.Show("Add Gene", "Add [EEBE63]" + gene.geneName + "[-] to the blob?", this, "GeneAddConfirmed");
+			break;
+		}
 	}
 
 	public void FeedConfirmed() {
 		Item item = itemsMenu.GetSelectedItem();
 		gameManager.hudMan.blobInfoContextMenu.blob.EatItem(item);
 		itemsMenu.DeteteSelectedItem();
+	}
+
+
+	public void GeneAddConfirmed() {
+		Gene gene = genesMenu.GetSelectedGene();
+		gameManager.hudMan.blobInfoContextMenu.AddGeneToBlob(gene);
+		genesMenu.DeteteSelectedGene();
+		Hide();
 	}
 
 	public void DeteteSelectedItemAsk() {
