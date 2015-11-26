@@ -47,8 +47,7 @@ public class BaseThingMenu : MonoBehaviour {
 		go.transform.parent = parentSocket;
 		go.transform.localScale = Vector3.one;
 		go.transform.localPosition = Vector3.zero;
-		//UIGrid socketGrid = parentSocket.gameObject.GetComponentInChildren<UIGrid>();
-		//socketGrid.Reposition();
+		go.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth + 1;
 	}
 
 

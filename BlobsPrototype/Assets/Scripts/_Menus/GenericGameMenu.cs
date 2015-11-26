@@ -23,6 +23,7 @@ public class GenericGameMenu : MonoBehaviour {
 			popupPositions[(int)PopupPosition.Center] = Vector3.zero;
 			popupPositions[(int)PopupPosition.Right1] = new Vector3(435f, 0f, 0f);
 			popupPositions[(int)PopupPosition.Right2] = new Vector3(300f, 0f, 0f);
+			popupPositions[(int)PopupPosition.Left1] = new Vector3(-45, 0f, 0f);
 		}
 	}
 
@@ -33,7 +34,7 @@ public class GenericGameMenu : MonoBehaviour {
 		if(oldPosition == Vector3.one)
 			oldPosition = transform.localPosition;
 		if(defaultStartPosition != PopupPosition.DontSet)
-			transform.localPosition = popupPositions[(int)defaultStartPosition];
+			ChangePosition(defaultStartPosition);
 
 		window.SetActive(true);
 		window.transform.localScale = Vector3.zero;
@@ -46,7 +47,12 @@ public class GenericGameMenu : MonoBehaviour {
 			animationBG = BG.GetComponent<UITweener>();
 			animationBG.onFinished.Clear();
 			animationBG.PlayForward();
+			BG.transform.localPosition = transform.localPosition;
 		}
+	}
+
+	public void ChangePosition(PopupPosition positionID) {
+		transform.localPosition = popupPositions[(int)positionID];
 	}
 
 
@@ -96,8 +102,9 @@ public class GenericGameMenu : MonoBehaviour {
 
 	public virtual void Cleanup() {
 		animationWindow.enabled = false;
-		if(animationBG != null)
+		if(animationBG != null) {
 			animationBG.enabled = false;
+		}
 		displayed = false;
 		gameObject.SetActive(false);
 	}

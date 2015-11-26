@@ -62,6 +62,7 @@ public enum PopupPosition {
 	Center = 0,
 	Right1,
 	Right2,
+	Left1,
 	Max,
 };
 
