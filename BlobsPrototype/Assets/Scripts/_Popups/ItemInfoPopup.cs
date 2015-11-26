@@ -15,25 +15,14 @@ public class ItemInfoPopup : GenericGameMenu {
 	public UIGrid doublePanelLowerGrid;
 	public Gene gene = null;
 	public Item item = null;
-	public static Vector3 position1 = new Vector3(330f, -650f, 0f);
-	public static Vector3 position2 = new Vector3(-30f, -650f, 0f);
 
 	public void Show() {
 		gameObject.SetActive(true);
-		if(displayed) // We are just changing the displayed info
+		if(IsDisplayed()) // We are just changing the displayed info
 			FlashChangeAnim();
 		else 
 			base.Show();
 		deleteButton.gameObject.SetActive(false);
-		AdjustPosition();
-	}
-
-
-	public void AdjustPosition() {
-		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		transform.localPosition = position2;
-		if(hudManager.inventoryMenu.displayed)
-			transform.localPosition = position1;
 	}
 
 
@@ -47,12 +36,12 @@ public class ItemInfoPopup : GenericGameMenu {
 	}
 
 
-	public void ShowInfoForGene(Gene g) {
+	public void PopulateInfoFromGene(Gene g) {
 		gene = g;
 		doublePanel.gameObject.SetActive(true);
 		singlePanel.gameObject.SetActive(false);
 
-		headerLabel.text = gene.geneName;
+		headerLabel.text = gene.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
 		infoLabelSingle.text = gene.description;
 		doublePanelUpperGrid.transform.DestroyChildren();
@@ -85,7 +74,7 @@ public class ItemInfoPopup : GenericGameMenu {
 		doublePanelLowerGrid.Reposition();
 	}
 
-	public void ShowInfoForItem(Item i) {
+	public void PopulateInfoFromItem(Item i) {
 		item = i;
 		doublePanel.gameObject.SetActive(false);
 		singlePanel.gameObject.SetActive(true);

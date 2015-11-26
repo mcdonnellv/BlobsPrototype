@@ -57,6 +57,15 @@ public enum BlobInteractAction {
 	Merge,
 };
 
+public enum PopupPosition {
+	DontSet = -1,
+	Center = 0,
+	Right1,
+	Right2,
+	Max,
+};
+
+
 
 public class GlobalDefines : MonoBehaviour {
 }

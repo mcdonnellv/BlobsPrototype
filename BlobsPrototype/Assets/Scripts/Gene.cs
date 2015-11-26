@@ -4,13 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 [Serializable]
-public class BaseGene {
-	public string geneName = "";
-	public string description = "";
+public class BaseGene : BaseThing {
 	public TraitType traitType = TraitType.None;
 	public int value = 0;
 	public AbilityModifier modifier = AbilityModifier.Added;
-	public Quality quality = Quality.Common;
 	public List<GeneActivationRequirement> activationRequirements = new List<GeneActivationRequirement>();
 }
 
@@ -18,12 +15,12 @@ public class BaseGene {
 public class Gene : BaseGene {
 
 	public GeneState state;
-	public string name { get{return geneName;} }
+	public string name { get{return itemName;} }
 	public bool active { get{return state == GeneState.Active;} }
 
 
 	public Gene() {
-		geneName = "";
+		itemName = "";
 		description = "";
 		quality = Quality.Common;
 		traitType = TraitType.None;
@@ -33,7 +30,7 @@ public class Gene : BaseGene {
 	}
 
 	public Gene(BaseGene b) {
-		geneName = b.geneName;
+		itemName = b.itemName;
 		description = b.description;
 		quality = b.quality;
 		traitType = b.traitType;
@@ -81,8 +78,8 @@ public class Gene : BaseGene {
 	void Activate() {
 		state = GeneState.Active;
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		hudManager.popup.Show("Gene", "The " + geneName + " gene has been activated!");
-		if(hudManager.inventoryMenu.displayed)
+		hudManager.popup.Show("Gene", "The " + itemName + " gene has been activated!");
+		if(hudManager.inventoryMenu.IsDisplayed())
 			hudManager.inventoryMenu.Hide();
 	}
 

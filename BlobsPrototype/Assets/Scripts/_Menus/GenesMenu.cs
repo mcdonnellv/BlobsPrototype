@@ -2,79 +2,41 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GenesMenu : MonoBehaviour {
+public class GenesMenu : BaseThingMenu {
 	
-	public GameObject grid;
-	public ItemInfoPopup itemInfoPopup;
-	GameObject geneSlotHighlight;
-	int selectedIndex = -1;
-	GeneManager geneManager;
-	Gene selectedGene;
+	Gene selectedGene = null;
+	GeneManager _gm;
+	GeneManager geneManager { get{ if(_gm == null) _gm = GameObject.Find("GeneManager").GetComponent<GeneManager>(); return _gm; } }
+	public override void SetSelectedThing(int index) { selectedGene = geneManager.storedGenes[index]; }
+	public override BaseThing GetSelectedThing() {return (BaseThing)selectedGene; }
+	public override void ShowInfo() { ShowInfoForGeneGameObject(GetGenePointerFromGene(selectedGene)); }
+	public override GameObject CreateGameObject(BaseThing g) { return ((Gene)g).CreateGeneGameObject(); }
+	public Gene GetSelectedGene() { return GetGeneFromIndex(selectedIndex); }
 
 	public void Show() {
-		geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
-
-		foreach(Gene g in geneManager.storedGenes) {
-			if(g == null)
-				continue;
-			Transform parentSocket = grid.transform.GetChild(geneManager.storedGenes.IndexOf(g));
-
-			GameObject go = g.CreateGeneGameObject();
-			go.transform.parent = parentSocket;
-			go.transform.localScale = new Vector3(1f,1f,1f);
-			go.transform.localPosition = new Vector3(0f,0f,0f);
+		foreach(Gene gene in geneManager.storedGenes) {
+			if(gene == null) continue;
+			SetupThingInSocket(gene ,geneManager.storedGenes.IndexOf(gene));
 		}
-
-		if(selectedIndex == -1 && geneManager.storedGenes.Count > 0)
-			selectedIndex = 0;
-
-		if(geneManager.storedGenes.Count == 0) {
-			selectedIndex = -1;
-			itemInfoPopup.ClearFields();
-			itemInfoPopup.Hide();
-		}
-
-		if(selectedIndex < geneManager.storedGenes.Count && selectedIndex >= 0) //check within bounds
-			selectedGene = geneManager.storedGenes[selectedIndex];
-
-		if (selectedGene != null)
-			Invoke("ShowInfoForSelectedGene", .3f);
+		SelectedThingSetup(geneManager.storedGenes.Count);
 	}
 
-	public void ShowInfoForSelectedGene() {
-		ShowInfoForGene(selectedGene);
-	}
 
-	public void ShowInfoForGene(Gene gene) {
-		GenePointer genePointer = null;
+	public GenePointer GetGenePointerFromGene(Gene gene) {
 		foreach(Transform socket in grid.transform) {
 			GenePointer gp = socket.GetComponentInChildren<GenePointer>();
 			if(gp != null && gp.gene == gene)
-				genePointer = gp;
+				return gp;
 		}
-
-		if(genePointer != null)
-			ShowInfoForGeneGameObject(genePointer);
+		return null;
 	}
 
-
+	
 	public void ShowInfoForGeneGameObject(GenePointer genePointer) {
-		HudManager hudManager = GameObject.Find ("HudManager").GetComponent<HudManager>();
-		itemInfoPopup.Show();
-		bool showDeleteButton = hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory;
-		itemInfoPopup.deleteButton.gameObject.SetActive(showDeleteButton);
-		Gene gene = genePointer.gene;
-		Transform parentSocket = genePointer.transform.parent;
-		selectedIndex = parentSocket.GetSiblingIndex();
-
-		if(geneSlotHighlight != null)
-			GameObject.Destroy(geneSlotHighlight);
-		geneSlotHighlight = (GameObject)GameObject.Instantiate(Resources.Load("Gene Slot Highlight"));
-		geneSlotHighlight.transform.parent = parentSocket;
-		geneSlotHighlight.transform.localScale = new Vector3(1f,1f,1f);
-		geneSlotHighlight.transform.localPosition = new Vector3(0f,0f,0f);
-		geneSlotHighlight.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth;
-		itemInfoPopup.ShowInfoForGene(gene);
+		if(genePointer == null) return;
+		base.DisplayInfoPopup();
+		base.CreateSlotHighlight(genePointer.transform.parent);
+		itemInfoPopup.PopulateInfoFromGene(genePointer.gene);
 	}
 
 
@@ -88,25 +50,11 @@ public class GenesMenu : MonoBehaviour {
 		return null;
 	}
 
-	
-	public Gene GetSelectedGene() {
-		return GetGeneFromIndex(selectedIndex);
-	}
-	
-	public void DeteteSelectedGene() {
+
+	public override void DeleteSelectedThing() {
 		Transform socket = grid.transform.GetChild(selectedIndex);
 		GenePointer gp = socket.GetComponentInChildren<GenePointer>();
-		Gene gene = gp.gene;
-		socket.DestroyChildren();
-		geneManager.storedGenes.Remove(gene);
-		
-		selectedIndex = -1;
-		itemInfoPopup.Hide();
-	}
-
-	void Update() {
-
-		if(geneSlotHighlight != null)
-			geneSlotHighlight.transform.localPosition = new Vector3(0f,0f,0f);
+		geneManager.storedGenes.Remove(gp.gene);
+		CleanUpAfterDelete(0, gp.gameObject);
 	}
 }

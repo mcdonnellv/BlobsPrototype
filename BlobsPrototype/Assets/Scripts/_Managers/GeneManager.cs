@@ -16,7 +16,7 @@ public class GeneManager : MonoBehaviour {
 
 	public BaseGene GetGeneByName(string nameParam){
 		foreach(BaseGene m in genes)
-			if (m.geneName == nameParam)
+			if (m.itemName == nameParam)
 				return m;
 		return null;
 	}
@@ -24,7 +24,7 @@ public class GeneManager : MonoBehaviour {
 
 	public bool DoesNameExistInList(string nameParam){
 		foreach(BaseGene m in genes)
-			if (m.geneName == nameParam)
+			if (m.itemName == nameParam)
 				return true;
 		return false;
 	}
@@ -49,7 +49,7 @@ public class GeneManager : MonoBehaviour {
 	public List<BaseGene> GetBaseGeneListFromGeneList (List<Gene> geneListParam) {
 		List<BaseGene> baseGenes = new List<BaseGene>();
 		foreach(Gene gene in geneListParam) {
-			BaseGene baseGene = GetGeneByName(gene.geneName);
+			BaseGene baseGene = GetGeneByName(gene.itemName);
 			baseGenes.Add(baseGene);
 		}
 		return baseGenes;

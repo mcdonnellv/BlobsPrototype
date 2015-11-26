@@ -106,7 +106,7 @@ public class Blob : MonoBehaviour {
 
 	public void UpdateBlobInfoIfDisplayed() {
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		if(hudManager.blobInfoContextMenu.displayed && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
+		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
 			hudManager.blobInfoContextMenu.Show(this);
 	}
 
@@ -124,7 +124,7 @@ public class Blob : MonoBehaviour {
 	void BlobPressed() {
 		if(!hasHatched && state == BlobState.HatchReady) {
 			Hatch(true);
-			if(hudManager.blobInfoContextMenu.displayed)
+			if(hudManager.blobInfoContextMenu.IsDisplayed())
 				hudManager.blobInfoContextMenu.Hide();
 			return;
 		}
@@ -157,7 +157,7 @@ public class Blob : MonoBehaviour {
 
 	
 	public void OrderGenes() {
-		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.geneName).ToList();
+		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();
 	}
 	
 	

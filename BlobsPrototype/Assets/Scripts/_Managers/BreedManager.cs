@@ -51,7 +51,7 @@ public class BreedManager : MonoBehaviour {
 		female.state = BlobState.Breeding;
 		male.StartActionWithDuration(male.breedReadyDelay);
 		female.StartActionWithDuration(female.breedReadyDelay);
-		if(hudManager.blobInfoContextMenu.displayed)
+		if(hudManager.blobInfoContextMenu.IsDisplayed())
 			hudManager.blobInfoContextMenu.Show(blob1);
 	}
 

@@ -39,7 +39,7 @@ public class InventoryMenu : GenericGameMenu {
 	public void Show() { Show(Mode.Inventory); }
 
 	public void Show(Mode modeParam) {
-		if(displayed) {
+		if(IsDisplayed()) {
 			if (mode != Mode.None) {
 				reopenMode = modeParam;
 				Hide();
@@ -54,7 +54,7 @@ public class InventoryMenu : GenericGameMenu {
 		switch(mode) {
 		case Mode.None:	
 		case Mode.Inventory:	
-			GenesTabPressed();
+			ActivateGenesTab();
 			instructionalLabel.text = "";
 			headerLabel.text = "INVENTORY";
 			genesTab.gameObject.SetActive(true);
@@ -64,7 +64,7 @@ public class InventoryMenu : GenericGameMenu {
 			break;
 
 		case Mode.Feed:
-			ItemsTabPressed();
+			ActivateItemsTab();
 			genesTab.gameObject.SetActive(false);
 			itemsTab.gameObject.SetActive(false);
 			instructionalLabel.text = "Select an item";
@@ -75,7 +75,7 @@ public class InventoryMenu : GenericGameMenu {
 			break;
 
 		case Mode.AddGene:
-			GenesTabPressed();
+			ActivateGenesTab();
 			instructionalLabel.text = "Chose a gene to add";
 			headerLabel.text = "ADD GENE";
 			genesTab.gameObject.SetActive(false);
@@ -88,14 +88,8 @@ public class InventoryMenu : GenericGameMenu {
 	}
 
 
-	public void SetDisplayed() {
-		base.SetDisplayed();
-		itemInfoPopup.AdjustPosition();
-	}
-
-
 	public void Hide() {
-		if(!displayed)
+		if(!IsDisplayed())
 			return;
 
 		switch(mode) {
@@ -106,19 +100,15 @@ public class InventoryMenu : GenericGameMenu {
 		}
 
 		mode = Mode.None;
+		itemInfoPopup.Hide();
 		base.Hide();
 	}
 
 
 	public override void Cleanup() {
 		base.Cleanup();
-		
-		if(reopenMode != Mode.None) {
+		if(reopenMode != Mode.None)
 			Invoke("Reopen", .01f);
-		}
-
-		itemInfoPopup.AdjustPosition();
-		itemInfoPopup.HideInstant();
 	}
 
 
@@ -126,8 +116,20 @@ public class InventoryMenu : GenericGameMenu {
 		Show(reopenMode);
 		reopenMode = Mode.None;
 	}
-	
-	public void GenesTabPressed() {
+
+	public void GenesTabPressed() { 
+		ActivateGenesTab();
+		genesMenu.ShowInfo();
+
+	}
+
+	public void ItemsTabPressed() { 
+		ActivateItemsTab();
+		itemsMenu.ShowInfo();
+	}
+
+
+	public void ActivateGenesTab() {
 		activeTab = Tab.GenesTab;
 		genesTab.alpha = 1f;
 		itemsTab.alpha = .5f;
@@ -137,7 +139,7 @@ public class InventoryMenu : GenericGameMenu {
 		storageCapacityLabel.text = gameManager.geneManager.storedGenes.Count.ToString() + " / " + gameManager.gameVars.inventoryGeneSlots.ToString();
 	}
 
-	public void ItemsTabPressed() {
+	public void ActivateItemsTab() {
 		activeTab = Tab.ItemsTab;
 		genesTab.alpha = .5f;
 		itemsTab.alpha = 1f;
@@ -190,7 +192,7 @@ public class InventoryMenu : GenericGameMenu {
 			if(gene == null)
 				gameManager.hudMan.popup.Show("Add Gene", "No gene selected");
 			else
-				gameManager.hudMan.popup.Show("Add Gene", "Add [EEBE63]" + gene.geneName + "[-] to the blob?", this, "GeneAddConfirmed");
+				gameManager.hudMan.popup.Show("Add Gene", "Add [EEBE63]" + gene.itemName + "[-] to the blob?", this, "GeneAddConfirmed");
 			break;
 		}
 	}
@@ -198,21 +200,21 @@ public class InventoryMenu : GenericGameMenu {
 	public void FeedConfirmed() {
 		Item item = itemsMenu.GetSelectedItem();
 		gameManager.hudMan.blobInfoContextMenu.blob.EatItem(item);
-		itemsMenu.DeteteSelectedItem();
+		itemsMenu.DeleteSelectedThing();
 	}
 
 
 	public void GeneAddConfirmed() {
 		Gene gene = genesMenu.GetSelectedGene();
 		gameManager.hudMan.blobInfoContextMenu.AddGeneToBlob(gene);
-		genesMenu.DeteteSelectedGene();
+		genesMenu.DeleteSelectedThing();
 		Hide();
 	}
 
 	public void DeteteSelectedItemAsk() {
 		string itemName = "";
 		switch(activeTab) {
-		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().geneName; break; 
+		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().itemName; break; 
 		case Tab.ItemsTab: itemName = itemsMenu.GetSelectedItem().itemName; break;
 		}
 		gameManager.hudMan.popup.Show("Delete", "Are you sure you want to delete [EEBE63]" + itemName + "[-]?", this, "DeteteSelectedItem");
@@ -220,8 +222,8 @@ public class InventoryMenu : GenericGameMenu {
 
 	public void DeteteSelectedItem() {
 		switch(activeTab) {
-		case Tab.GenesTab: genesMenu.DeteteSelectedGene(); break; 
-		case Tab.ItemsTab: itemsMenu.DeteteSelectedItem(); break;
+		case Tab.GenesTab: genesMenu.DeleteSelectedThing(); break; 
+		case Tab.ItemsTab: itemsMenu.DeleteSelectedThing(); break;
 		}
 	}
 

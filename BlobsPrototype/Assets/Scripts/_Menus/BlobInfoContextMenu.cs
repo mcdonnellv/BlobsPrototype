@@ -35,7 +35,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	public void Show(Blob blobParam) {
 		gameObject.SetActive(true);
-		if(displayed && blobParam != blob) // We are just changing the displayed blobs
+		if(IsDisplayed() && blobParam != blob) // We are just changing the displayed blobs
 			FlashChangeAnim();
 		else {
 			base.Show();
@@ -150,7 +150,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			go.transform.parent = geneCell.socketSprite.transform;
 			go.transform.localScale = new Vector3(1f,1f,1f);
 			go.transform.localPosition = new Vector3(0f,0f,0f);
-			geneCell.nameLabel.text = g.geneName;
+			geneCell.nameLabel.text = g.itemName;
 			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
 			if(g.active)
 				geneCell.Activate();

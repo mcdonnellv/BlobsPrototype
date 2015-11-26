@@ -31,7 +31,7 @@ public class GeneManagerInspector : Editor {
 
 		if (mConfirmDelete){
 			// Show the confirmation dialog
-			GUILayout.Label("Are you sure you want to delete '" + item.geneName + "'?");
+			GUILayout.Label("Are you sure you want to delete '" + item.itemName + "'?");
 			NGUIEditorTools.DrawSeparator();
 			
 			GUILayout.BeginHorizontal();{
@@ -54,10 +54,10 @@ public class GeneManagerInspector : Editor {
 				GUI.backgroundColor = Color.green;
 				if (GUILayout.Button("New Gene") && mm.DoesNameExistInList(newName) == false){
 					BaseGene g = new BaseGene();
-					g.geneName = newName;
+					g.itemName = newName;
 					if(item != null) {
 						if(newName == "")
-							g.geneName = item.geneName + " copy";
+							g.itemName = item.itemName + " copy";
 						g.description = item.description;
 						g.quality = item.quality;
 						g.value = item.value;
@@ -74,7 +74,7 @@ public class GeneManagerInspector : Editor {
 			GUI.backgroundColor = Color.white;
 
 			if(GUILayout.Button ("Sort"))
-				mm.genes = mm.genes.OrderBy(x => x.traitType).ThenByDescending(x => x.quality).ThenBy(x => x.geneName).ToList();
+				mm.genes = mm.genes.OrderBy(x => x.traitType).ThenByDescending(x => x.quality).ThenBy(x => x.itemName).ToList();
 
 			if (item != null) {
 				NGUIEditorTools.DrawSeparator();
@@ -100,13 +100,13 @@ public class GeneManagerInspector : Editor {
 
 			// Item name and delete item button
 			GUILayout.BeginHorizontal();{
-				string itemName = EditorGUILayout.TextField("Gene Name", item.geneName);
+				string itemName = EditorGUILayout.TextField("Gene Name", item.itemName);
 				GUI.backgroundColor = Color.red;
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))
 					mConfirmDelete = true;
 				GUI.backgroundColor = Color.white;
-				if (!itemName.Equals(item.geneName) && mm.DoesNameExistInList(itemName) == false)
-					item.geneName = itemName;
+				if (!itemName.Equals(item.itemName) && mm.DoesNameExistInList(itemName) == false)
+					item.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
 			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(100f));
