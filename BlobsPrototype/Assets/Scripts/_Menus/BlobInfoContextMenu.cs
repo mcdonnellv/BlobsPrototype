@@ -11,6 +11,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UILabel rankLabel;
 	public UILabel genderLabel;
 	public UILabel qualityLabel;
+	public UILabel elementLabel;
 	public List<UILabel> statLabels;
 	public UIGrid geneGrid;
 	public UIGrid statGrid;
@@ -42,7 +43,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			window.transform.localScale = new Vector3(1,1,1);
 		}
 
-		hudManager.itemInfoPopup.Hide();
 		blob = blobParam;
 		actionButton1.gameObject.SetActive(true);
 		actionButton2.gameObject.SetActive(true);
@@ -93,11 +93,16 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		statLabels[1].text = blob.combatStats.stamina.ToString();
 		statLabels[2].text = blob.combatStats.attack.ToString();
 		statLabels[3].text = blob.combatStats.armor.ToString();
+		elementLabel.text = blob.combatStats.element.ToString();
 		UpdateStatColors();
 	}
 
 
 	void UpdateStatColors() {
+		statLabels[0].color = Color.white;
+		statLabels[1].color = Color.white;
+		statLabels[2].color = Color.white;
+		statLabels[3].color = Color.white;
 		if(blob.combatStats.health > CombatStats.defaultHealth)
 			statLabels[0].color = ColorDefines.positiveTextColor;
 		if(blob.combatStats.health < CombatStats.defaultHealth)
@@ -117,6 +122,8 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			statLabels[3].color = ColorDefines.positiveTextColor;
 		if(blob.combatStats.armor < CombatStats.defaultArmor)
 			statLabels[3].color = ColorDefines.negativeTextColor;
+
+		elementLabel.color = ColorDefines.ColorForElement(blob.combatStats.element);
 	}
 
 	void DestroyGeneCells() {
@@ -177,7 +184,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	public void Hide() {
-		hudManager.itemInfoPopup.Hide();
 		base.Hide();
 	}
 
@@ -222,21 +228,30 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public void GeneCellPressed(GeneCell geneCell) {
 		GenePointer gp = geneCell.GetGenePointer();
 		if(gp == null) {
-			//pressed a gene cell that is empty, intentions is to add a gene
+			//pressed a gene cell that is empty, intention is to add a gene
 			if(hudManager.inventoryMenu.mode != InventoryMenu.Mode.AddGene) {
 				hudManager.itemInfoPopup.Hide();
 				hudManager.inventoryMenu.Show(InventoryMenu.Mode.AddGene);
 			}
 		}
-		else {
-			hudManager.inventoryMenu.genesMenu.ShowInfoForGeneGameObject(gp);
-			hudManager.itemInfoPopup.ChangePosition(PopupPosition.Left1);
-		}
+		else
+			DisplayInfoPopupWithGene(gp.gene);
+	}
+
+
+	public void DisplayInfoPopupWithGene(Gene gene) {
+		hudManager.itemInfoPopup.defaultStartPosition = PopupPosition.Left1;
+		hudManager.itemInfoPopup.Show(this);
+		hudManager.itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
+		hudManager.itemInfoPopup.PopulateInfoFromGene(gene);
 	}
 
 
 	public void AddGeneToBlob(Gene gene) {
 		blob.genes.Add(gene);
+		//if(gene.quality == Quality.Bad)
+			gene.state = GeneState.Available;
+		gene.CheckActivationStatus();
 		DestroyGeneCells();
 		BuildEmptyGeneCells();
 		FillGeneCells();

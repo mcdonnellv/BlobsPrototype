@@ -87,8 +87,14 @@ public class BreedManager : MonoBehaviour {
 		// activate/deactivate genes
 		foreach(Gene g in blob.genes) 
 			g.state = GeneState.Passive;
-
 		blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
+
+		// give random element
+		if(blobInteractAction == BlobInteractAction.Breed)
+			blob.nativeElement = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
+		if(blobInteractAction == BlobInteractAction.Merge)
+			blob.nativeElement = (UnityEngine.Random.Range(0, 2) == 0) ? dad.combatStats.element : mom.combatStats.element;
+		
 
 		blob.Setup();
 		return blob;

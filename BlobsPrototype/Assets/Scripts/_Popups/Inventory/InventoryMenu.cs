@@ -100,7 +100,6 @@ public class InventoryMenu : GenericGameMenu {
 		}
 
 		mode = Mode.None;
-		itemInfoPopup.Hide();
 		base.Hide();
 	}
 

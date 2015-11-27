@@ -3,6 +3,7 @@ using System.Collections;
 
 public enum Quality {
 	None = -1,
+	Bad,
 	Standard,
 	Common,
 	Rare,
@@ -10,10 +11,12 @@ public enum Quality {
 	Legendary,
 };
 
+
 public enum Gender {
 	Male,
 	Female,
 }
+
 
 public enum BlobState {
 	Idle,
@@ -24,14 +27,18 @@ public enum BlobState {
 	WorkingReady,
 };
 
+
 public enum CombatStatType {
 	Attack = 0,
 	Armor,
 	Health,
 	Stamina,
+	Element,
 };
 
+
 public enum AbilityModifier {
+	NA,
 	Added,
 	Percent,
 };
@@ -43,8 +50,21 @@ public enum TraitType {
 	ArmorMod,
 	HealthMod,
 	StaminaMod,
+	SetElement,
 	TraitTypeCt,
 };
+
+
+public enum Element {
+	None = -1,
+	Black = 0,
+	Blue,
+	White,
+	Red,
+	Green,
+	ElementCt,
+};
+
 
 public enum GeneState {
 	Passive,
@@ -52,10 +72,12 @@ public enum GeneState {
 	Active,
 };
 
+
 public enum BlobInteractAction {
 	Breed,
 	Merge,
 };
+
 
 public enum PopupPosition {
 	DontSet = -1,

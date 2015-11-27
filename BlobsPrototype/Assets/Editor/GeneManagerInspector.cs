@@ -6,8 +6,8 @@ using System.Linq;
 
 [CustomEditor(typeof(GeneManager))]
 public class GeneManagerInspector : Editor {
-	GeneManager mm;
-	ItemManager im;
+	GeneManager geneManager;
+	ItemManager itemManager;
 	string newName = "";
 	static int mIndex = 0;
 	bool mConfirmDelete = false;
@@ -15,18 +15,18 @@ public class GeneManagerInspector : Editor {
 
 	public override void OnInspectorGUI(){
 		NGUIEditorTools.SetLabelWidth(80f);
-		mm = (GeneManager)target;
+		geneManager = (GeneManager)target;
 
-		if(im == null)
-			im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+		if(itemManager == null)
+			itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
 		BaseGene item = null;
 
-		if (mm.genes == null || mm.genes.Count == 0)
+		if (geneManager.genes == null || geneManager.genes.Count == 0)
 			mIndex = 0;
 		else{
-			mIndex = Mathf.Clamp(mIndex, 0, mm.genes.Count - 1);
-			item = mm.genes[mIndex];
+			mIndex = Mathf.Clamp(mIndex, 0, geneManager.genes.Count - 1);
+			item = geneManager.genes[mIndex];
 		}
 
 		if (mConfirmDelete){
@@ -40,7 +40,7 @@ public class GeneManagerInspector : Editor {
 				GUI.backgroundColor = Color.red;
 				
 				if (GUILayout.Button("Delete")){
-					mm.genes.RemoveAt(mIndex);
+					geneManager.genes.RemoveAt(mIndex);
 					mConfirmDelete = false;
 				}
 				GUI.backgroundColor = Color.white;
@@ -52,7 +52,7 @@ public class GeneManagerInspector : Editor {
 			EditorGUILayout.BeginHorizontal();{
 				newName = EditorGUILayout.TextField(newName, GUILayout.Width(100f));
 				GUI.backgroundColor = Color.green;
-				if (GUILayout.Button("New Gene") && mm.DoesNameExistInList(newName) == false){
+				if (GUILayout.Button("New Gene") && geneManager.DoesNameExistInList(newName) == false){
 					BaseGene g = new BaseGene();
 					g.itemName = newName;
 					if(item != null) {
@@ -64,8 +64,8 @@ public class GeneManagerInspector : Editor {
 						g.modifier = item.modifier;
 						g.traitType = item.traitType;
 					}
-					mm.genes.Add(g);
-					mIndex = mm.genes.Count - 1;
+					geneManager.genes.Add(g);
+					mIndex = geneManager.genes.Count - 1;
 					newName = "";
 					item = g;
 				}
@@ -74,7 +74,7 @@ public class GeneManagerInspector : Editor {
 			GUI.backgroundColor = Color.white;
 
 			if(GUILayout.Button ("Sort"))
-				mm.genes = mm.genes.OrderBy(x => x.traitType).ThenByDescending(x => x.quality).ThenBy(x => x.itemName).ToList();
+				geneManager.genes = geneManager.genes.OrderBy(x => x.traitType).ThenByDescending(x => x.quality).ThenBy(x => x.itemName).ToList();
 
 			if (item != null) {
 				NGUIEditorTools.DrawSeparator();
@@ -85,8 +85,8 @@ public class GeneManagerInspector : Editor {
 					if (GUILayout.Button("<<")) { mConfirmDelete = false; --mIndex; }
 					GUI.color = Color.white;
 					mIndex = EditorGUILayout.IntField(mIndex + 1, GUILayout.Width(40f)) - 1;
-					GUILayout.Label("/ " + mm.genes.Count, GUILayout.Width(40f));
-					if (mIndex + 1 == mm.genes.Count) GUI.color = Color.grey;
+					GUILayout.Label("/ " + geneManager.genes.Count, GUILayout.Width(40f));
+					if (mIndex + 1 == geneManager.genes.Count) GUI.color = Color.grey;
 					if (GUILayout.Button(">>")) { mConfirmDelete = false; ++mIndex; }
 					GUI.color = Color.white;
 				}
@@ -105,7 +105,7 @@ public class GeneManagerInspector : Editor {
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))
 					mConfirmDelete = true;
 				GUI.backgroundColor = Color.white;
-				if (!itemName.Equals(item.itemName) && mm.DoesNameExistInList(itemName) == false)
+				if (!itemName.Equals(item.itemName) && geneManager.DoesNameExistInList(itemName) == false)
 					item.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
@@ -170,19 +170,22 @@ public class GeneManagerInspector : Editor {
 			GUILayout.EndHorizontal();
 
 			List <GeneActivationRequirement> toDelete = new List<GeneActivationRequirement>();
+			string[] allItems =  new string[itemManager.items.Count];
+			foreach(BaseItem i in itemManager.items)
+				allItems[itemManager.items.IndexOf(i)] = i.itemName;
+
 			foreach(GeneActivationRequirement gr in item.activationRequirements) {
 				GUILayout.BeginHorizontal(); 
-				string[] allItems =  new string[im.items.Count];
-				foreach(BaseItem i in im.items)
-					allItems[im.items.IndexOf(i)] = i.itemName;
-
 				int index = 0;
-				if(gr.item != null)
-					index = im.items.IndexOf(gr.item);
+				if(gr.item != null) {
+					BaseItem itm = itemManager.GetBaseItemWithName(gr.item.itemName);
+					index = itemManager.items.IndexOf(itm);
+				}
+					
 				int oldIndexValue = index;
 				index = EditorGUILayout.Popup("Item", index, allItems, GUILayout.Width(180f));
 				if(oldIndexValue != index || gr.item == null) {
-					gr.item = im.items[index];
+					gr.item = itemManager.items[index];
 				}
 				gr.amountNeeded = EditorGUILayout.IntField("Amount", gr.amountNeeded, GUILayout.Width(140f));
 

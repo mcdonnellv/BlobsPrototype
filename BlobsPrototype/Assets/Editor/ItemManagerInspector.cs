@@ -153,6 +153,8 @@ public class ItemManagerInspector : Editor {
 						}
 					}
 				}
+				else
+					item.iconAtlas = itemManager.iconAtlas;
 
 				// Calculate the extra spacing necessary for the icon to show up properly and not overlap anything
 				if (drawIcon) {

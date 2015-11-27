@@ -5,85 +5,102 @@ public class ItemInfoPopup : GenericGameMenu {
 
 	public UIButton deleteButton;
 	public UILabel rarityLabel;
-	public UILabel infoLabelSingle;
-	public UILabel infoLabelDouble;
+	public UILabel upperPanelInfoLabel;
 	public UISprite icon;
-	public GameObject singlePanel;
-	public GameObject doublePanel;
-	public GameObject singlePanelLabel;
-	public UIGrid doublePanelUpperGrid;
-	public UIGrid doublePanelLowerGrid;
-	public Gene gene = null;
-	public Item item = null;
+	public UIGrid lowerPanelGrid;
+	public UIWidget upperPanel;
+	public UIWidget lowerPanel;
+	[HideInInspector] public Gene gene = null;
+	[HideInInspector] public Item item = null;
+	[HideInInspector] public GenericGameMenu owner = null;
+	public int defaultWindowHeight = 414;
 
-	public void Show() {
+
+	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner) Hide();}
+	public void Cleanup() { base.Cleanup(); owner = null; }
+	public void DeleteButtonPressed() {}
+
+
+	public void Show(GenericGameMenu caller) {
+
 		gameObject.SetActive(true);
-		if(IsDisplayed()) // We are just changing the displayed info
+		if(IsDisplayed() && owner == caller) // We are just changing the displayed info
 			FlashChangeAnim();
 		else 
 			base.Show();
-		deleteButton.gameObject.SetActive(false);
+		owner = caller;
+		ShowDeleteButton(false);
 	}
 
 
-	public void DeleteButtonPressed() {}
+	public void ResizeWindow() {
+		int height = defaultWindowHeight;
+		if(!deleteButton.gameObject.activeInHierarchy)
+			height -= 40;
+		if(!lowerPanel.gameObject.activeInHierarchy)
+			height -= 120;
+		window.GetComponent<UISprite>().height = height;
+	}
+
+
+	public void ShowDeleteButton(bool enable) { 
+		deleteButton.gameObject.SetActive(enable);
+		ResizeWindow();
+	}
+
 
 	public void ClearFields() {
 		headerLabel.text = "";
 		rarityLabel.text = "";
-		infoLabelSingle.text = "";
-		infoLabelDouble.text = "";
+		upperPanelInfoLabel.text = "";
 	}
 
 
 	public void PopulateInfoFromGene(Gene g) {
 		gene = g;
-		doublePanel.gameObject.SetActive(true);
-		singlePanel.gameObject.SetActive(false);
 
 		headerLabel.text = gene.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
-		infoLabelSingle.text = gene.description;
-		doublePanelUpperGrid.transform.DestroyChildren();
-		doublePanelLowerGrid.transform.DestroyChildren();
+		lowerPanelGrid.transform.DestroyChildren();
 		icon.spriteName = Gene.GetSpriteNameWithQuality(gene.quality);
+		upperPanelInfoLabel.text = gene.description;
+		if(gene.state != GeneState.Active && gene.activationRequirements.Count > 0)
+			upperPanelInfoLabel.text += " when activated";
 
-		infoLabelDouble.text = gene.description;
-		if(gene.state != GeneState.Active)
-			infoLabelDouble.text += " when activated";
-		
-		infoLabelDouble.color = (gene.state == GeneState.Active)?Color.white : Color.gray;
-
-		foreach(GeneActivationRequirement req in gene.activationRequirements) {
-			int index = gene.activationRequirements.IndexOf(req);
-			GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Requirement Container"));
-			statGameObject.transform.SetParent(doublePanelLowerGrid.transform);
-			statGameObject.transform.localScale = new Vector3(1f,1f,1f);
-			statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
-			UISprite[] sprites = statGameObject.GetComponentsInChildren<UISprite>();
-			sprites[0].atlas = req.item.iconAtlas;
-			sprites[0].spriteName = req.item.iconName;
-			UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
-			labels[0].text = "Feed " + req.amountNeeded.ToString() + " " + req.item.itemName;
-			labels[1].text = req.amountConsumed.ToString() + " / " + req.amountNeeded.ToString();
-			labels[0].color = (req.fulfilled)?Color.white : Color.gray;
-			labels[1].color = (req.fulfilled)?Color.white : Color.gray;
+		if(gene.activationRequirements.Count > 0) {
+			lowerPanel.gameObject.SetActive(true);
+			foreach(GeneActivationRequirement req in gene.activationRequirements) {
+				int index = gene.activationRequirements.IndexOf(req);
+				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Requirement Container"));
+				statGameObject.transform.SetParent(lowerPanelGrid.transform);
+				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
+				statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
+				UISprite[] sprites = statGameObject.GetComponentsInChildren<UISprite>();
+				sprites[0].atlas = req.item.iconAtlas;
+				sprites[0].spriteName = req.item.iconName;
+				UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
+				labels[0].text = "Feed " + req.amountNeeded.ToString() + " " + req.item.itemName;
+				labels[1].text = req.amountConsumed.ToString() + " / " + req.amountNeeded.ToString();
+				labels[0].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
+				labels[1].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
+			}
 		}
-
-		doublePanelUpperGrid.Reposition();
-		doublePanelLowerGrid.Reposition();
+		else
+			lowerPanel.gameObject.SetActive(false);
+		
+		lowerPanelGrid.Reposition();
+		ResizeWindow();
 	}
 
 	public void PopulateInfoFromItem(Item i) {
 		item = i;
-		doublePanel.gameObject.SetActive(false);
-		singlePanel.gameObject.SetActive(true);
-		
+		lowerPanel.gameObject.SetActive(false);
 		headerLabel.text = item.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + " Item[-]";
-		infoLabelSingle.text = item.description;
+		upperPanelInfoLabel.text = item.description;
 		icon.atlas = item.iconAtlas;
 		icon.spriteName = item.iconName;
+		ResizeWindow();
 	}
 
 	public void FlashChangeAnim() {

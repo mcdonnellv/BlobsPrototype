@@ -7,7 +7,7 @@ using System.Linq;
 public class BaseGene : BaseThing {
 	public TraitType traitType = TraitType.None;
 	public int value = 0;
-	public AbilityModifier modifier = AbilityModifier.Added;
+	public AbilityModifier modifier = AbilityModifier.NA;
 	public List<GeneActivationRequirement> activationRequirements = new List<GeneActivationRequirement>();
 }
 
@@ -35,6 +35,7 @@ public class Gene : BaseGene {
 		quality = b.quality;
 		traitType = b.traitType;
 		value = b.value;
+		modifier = b.modifier;
 		activationRequirements = new List<GeneActivationRequirement>();
 		foreach (GeneActivationRequirement req in b.activationRequirements)
 			activationRequirements.Add(new GeneActivationRequirement(req));
@@ -54,6 +55,7 @@ public class Gene : BaseGene {
 	static public string GetSpriteNameWithQuality(Quality q) {
 		string spriteName = "";
 		switch (q) {
+		case Quality.Bad:
 		case Quality.Standard:  
 		case Quality.Common:    spriteName = "cardCommon"; break;
 		case Quality.Rare:      spriteName = "cardRare"; break;
@@ -81,6 +83,7 @@ public class Gene : BaseGene {
 		hudManager.popup.Show("Gene", "The " + itemName + " gene has been activated!");
 		if(hudManager.inventoryMenu.IsDisplayed())
 			hudManager.inventoryMenu.Hide();
+		hudManager.blobInfoContextMenu.Show(hudManager.blobInfoContextMenu.blob);
 	}
 
 }

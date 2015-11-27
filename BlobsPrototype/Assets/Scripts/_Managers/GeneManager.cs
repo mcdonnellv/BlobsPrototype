@@ -7,26 +7,20 @@ public class GeneManager : MonoBehaviour {
 	public List<Gene> storedGenes = new List<Gene>();
 
 
-	public void FirstTimeSetup() {
-		foreach(BaseGene bg in genes) {
-			storedGenes.Add(new Gene(bg)); //temorarily add all possibble genes to your inventory
-		}
-	}
-
-
-	public BaseGene GetGeneByName(string nameParam){
-		foreach(BaseGene m in genes)
-			if (m.itemName == nameParam)
-				return m;
+	public bool DoesNameExistInList(string nameParam){return (GetBaseGeneWithName(nameParam) != null); }
+	
+	public BaseGene GetBaseGeneWithName(string nameParam) {
+		foreach(BaseGene g in genes)
+			if (g.itemName == nameParam)
+				return g;
 		return null;
 	}
 
 
-	public bool DoesNameExistInList(string nameParam){
-		foreach(BaseGene m in genes)
-			if (m.itemName == nameParam)
-				return true;
-		return false;
+	public void FirstTimeSetup() {
+		foreach(BaseGene bg in genes) {
+			storedGenes.Add(new Gene(bg)); //temorarily add all possibble genes to your inventory
+		}
 	}
 
 
@@ -49,7 +43,7 @@ public class GeneManager : MonoBehaviour {
 	public List<BaseGene> GetBaseGeneListFromGeneList (List<Gene> geneListParam) {
 		List<BaseGene> baseGenes = new List<BaseGene>();
 		foreach(Gene gene in geneListParam) {
-			BaseGene baseGene = GetGeneByName(gene.itemName);
+			BaseGene baseGene = GetBaseGeneWithName(gene.itemName);
 			baseGenes.Add(baseGene);
 		}
 		return baseGenes;

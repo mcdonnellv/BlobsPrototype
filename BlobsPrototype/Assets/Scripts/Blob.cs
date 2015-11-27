@@ -21,10 +21,12 @@ public class Blob : MonoBehaviour {
 	public DateTime birthday;
 	public List<Gene> genes;
 	public CombatStats combatStats;
+	public Element nativeElement;
 	public Dictionary<string, int> itemsConsumed;
 	public Room room;
 	public DateTime actionReadyTime;
 	public TimeSpan actionDuration;
+	public Dictionary<string,string> blobColor;
 
 	// visual
 	public Color color;
@@ -83,7 +85,6 @@ public class Blob : MonoBehaviour {
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
-
 		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
 		SetEyeTexture();
@@ -96,12 +97,21 @@ public class Blob : MonoBehaviour {
 		blobsprites[1].gameObject.SetActive(false);
 		blobsprites[2].gameObject.SetActive(false);
 		blobsprites[3].gameObject.SetActive(false);
-
 		UIButton button = gameObject.GetComponent<UIButton>();
 		button.onClick.Add(new EventDelegate(this, "BlobPressed"));
-
 		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
 		floatingDisplay.blob = this;
+		SetColorFromElement(nativeElement);
+	}
+
+	public void SetColorFromElement(Element e) {
+		if(ColorDefines.elementColorTables.Count == 0)
+			ColorDefines.BuildColorDefines();
+		Dictionary<string,string> elementColors = ColorDefines.elementColorTables[e];
+		int randIndex = UnityEngine.Random.Range(0, elementColors.Keys.Count);
+		string key = elementColors.Keys.ElementAt(randIndex);
+		string colorHexStr = elementColors[key];
+		ChangeColor(key, ColorDefines.HexStringToColor(colorHexStr));
 	}
 
 	public void UpdateBlobInfoIfDisplayed() {
@@ -180,7 +190,6 @@ public class Blob : MonoBehaviour {
 
 
 	public void ChangeColor(string colorStr, Color c) {
-
 		UISprite body = GetBodySprite();
 		TweenColor tc = body.gameObject.GetComponent<TweenColor>();
 		if (tc == null)
@@ -316,15 +325,22 @@ public class Blob : MonoBehaviour {
 	public void CalculateStats() {
 		combatStats.SetDefaultValues();
 
-		foreach(Gene g in genes) {
+		foreach(Gene g in genes)
+			if(g.active && g.modifier == AbilityModifier.NA)
+				combatStats.CalculateOtherStats(g.traitType, g.value);
+
+		foreach(Gene g in genes)
 			if(g.active && g.modifier == AbilityModifier.Added)
 				combatStats.CalculateAddedStats(g.traitType, g.value);
-		}
 
-		foreach(Gene g in genes) {
+		foreach(Gene g in genes) 
 			if(g.active && g.modifier == AbilityModifier.Percent)
 				combatStats.CalculatePercentStats(g.traitType, g.value);
-		}
+	
+		if(combatStats.element == Element.None)
+			combatStats.element = nativeElement;
+
+		SetColorFromElement(combatStats.element);
 	}
 
 	

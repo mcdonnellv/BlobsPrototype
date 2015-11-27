@@ -5,18 +5,27 @@ using System.Collections.Generic;
 
 [Serializable]
 public class ItemManager : MonoBehaviour {
-	public List<BaseItem> items = new List<BaseItem>(); // All items
+	public  List<BaseItem> items = new List<BaseItem>(); // All items
 	public List<Item> storedItems = new List<Item>();
 	public UIAtlas iconAtlas;
 
-	public void FirstTimeSetup() {
-		foreach(BaseItem b in items) {
-			AddItemToStorage(b, 3);
-		}
+	public bool DoesNameExistInList(string nameParam){return (GetBaseItemWithName(nameParam) != null); }
+
+	public BaseItem GetBaseItemWithName(string nameParam) {
+		foreach(BaseItem i in items)
+			if (i.itemName == nameParam)
+				return i;
+		return null;
 	}
+
 
 	public void AddItemToStorage(BaseItem b) { AddItemToStorage(b, 1); }
 	public void RemoveItemFromStorage(BaseItem b) { RemoveItemFromStorage(b, 1); }
+
+	public void FirstTimeSetup() {
+		foreach(BaseItem b in items)
+			AddItemToStorage(b, 3);
+	}
 
 	public void AddItemToStorage(BaseItem b, int count) {
 		Item i = GetItemFromStorageByName(b.itemName);
@@ -36,13 +45,7 @@ public class ItemManager : MonoBehaviour {
 		if(i.count <=0)
 			storedItems.Remove(i);
 	}
-
-	public bool DoesNameExistInList(string nameParam){
-		foreach(BaseItem i in storedItems)
-			if (i.itemName == nameParam)
-				return true;
-		return false;
-	}
+	
 
 	public Item GetItemFromStorageByName(string nameParam) {
 		foreach(Item i in storedItems)
@@ -50,4 +53,6 @@ public class ItemManager : MonoBehaviour {
 				return i;
 		return null;
 	}
+
+
 }

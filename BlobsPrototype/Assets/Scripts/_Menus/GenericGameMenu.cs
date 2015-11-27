@@ -80,6 +80,8 @@ public class GenericGameMenu : MonoBehaviour {
 			animationWindow.onFinished.Add(new EventDelegate(animationBG, "PlayReverse"));
 			animationBG.onFinished.Add(new EventDelegate(this, "Cleanup"));
 		}
+
+		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
 	}
 
 

@@ -30,8 +30,8 @@ public class BaseThingMenu : MonoBehaviour {
 			itemInfoPopup.ClearFields();
 			itemInfoPopup.Hide();
 		}
-		
-		if(selectedIndex < itemCount && selectedIndex >= 0) //check within bounds
+		selectedIndex = (selectedIndex >= itemCount) ? itemCount - 1 : selectedIndex;
+		if(selectedIndex >= 0 && selectedIndex < itemCount) //check within bounds
 			SetSelectedThing(selectedIndex);
 	}
 
@@ -47,15 +47,14 @@ public class BaseThingMenu : MonoBehaviour {
 		go.transform.parent = parentSocket;
 		go.transform.localScale = Vector3.one;
 		go.transform.localPosition = Vector3.zero;
-		go.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth + 1;
+		go.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth + 2;
 	}
 
 
 	public void DisplayInfoPopup() {
 		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
-		itemInfoPopup.Show();
-		bool showDeleteButton = hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory;
-		itemInfoPopup.deleteButton.gameObject.SetActive(showDeleteButton);
+		itemInfoPopup.Show(hudManager.inventoryMenu);
+		itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
 	}
 
 	public virtual void UpdateItemCounts() {

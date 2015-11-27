@@ -7,11 +7,13 @@ public class CombatStats : MonoBehaviour {
 	public int armor;
 	public int health;
 	public int stamina;
+	public Element element;
 
 	public static int defaultAttack = 100;
 	public static int defaultArmor = 100;
 	public static int defaultHealth = 100;
 	public static int defaultStamina = 100;
+	public static Element defaultElement = Element.None;
 
 	public CombatStats() {
 		SetDefaultValues();
@@ -22,6 +24,14 @@ public class CombatStats : MonoBehaviour {
 		armor = defaultArmor;
 		health = defaultHealth;
 		stamina = defaultStamina;
+		element = defaultElement;
+	}
+
+	public void CalculateOtherStats(TraitType t, float v) {
+		int value = (int)v;
+		switch (t) {
+		case TraitType.SetElement: element = (Element)v; break;
+		}
 	}
 
 	public void CalculateAddedStats(TraitType t, float v) {
