@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GeneManager : MonoBehaviour {
 	public List<BaseGene> genes = new List<BaseGene>(); // All original genes
 	public List<Gene> storedGenes = new List<Gene>();
+	public UIAtlas iconAtlas;
 
 
 	public bool DoesNameExistInList(string nameParam){return (GetBaseGeneWithName(nameParam) != null); }
+	public bool DoesIdExistInList(int idParam) {return (GetBaseGeneByID(idParam) != null); }
 	
 	public BaseGene GetBaseGeneWithName(string nameParam) {
 		foreach(BaseGene g in genes)
@@ -16,6 +19,21 @@ public class GeneManager : MonoBehaviour {
 		return null;
 	}
 
+	public BaseGene GetBaseGeneByID(int idParam) {
+		foreach(BaseGene i in genes)
+			if (i.id == idParam)
+				return i;
+		return null;
+	}
+
+	public int GetNextAvailableID() {
+		int lowestIdVal = 0;
+		List<BaseGene> sortedByID = genes.OrderBy(x => x.id).ToList();
+		foreach(BaseGene i in sortedByID)
+			if (i.id == lowestIdVal)
+				lowestIdVal++;
+		return lowestIdVal;
+	}
 
 	public void FirstTimeSetup() {
 		foreach(BaseGene bg in genes) {

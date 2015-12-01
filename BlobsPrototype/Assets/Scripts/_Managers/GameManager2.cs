@@ -15,6 +15,7 @@ public class GameManager2 : MonoBehaviour {
 	public RoomManager roomMan;
 	public GeneManager geneManager;
 	public ItemManager itemManager;
+	public QuestManager questManager;
 
 	// Use this for initialization
 	void Start () {
@@ -32,6 +33,7 @@ public class GameManager2 : MonoBehaviour {
 			gameVars.inventoryGeneSlots = 20;
 			geneManager.FirstTimeSetup();
 			itemManager.FirstTimeSetup();
+			questManager.FirstTimeSetup();
 		}
 		else {
 			gameVars = GenericDeSerialize<GameVariables>("GameVariables.dat");

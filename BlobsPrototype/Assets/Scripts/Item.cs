@@ -4,15 +4,16 @@ using System.Collections.Generic;
 
 [Serializable]
 public class BaseThing {
+	public int id;
 	public string itemName = "";
 	public string description = "";
 	public Quality quality = Quality.Common;
+	public string iconName;
+	public UIAtlas iconAtlas;
 }
 
 [Serializable]
 public class BaseItem : BaseThing {
-	public string iconName;
-	public UIAtlas iconAtlas;
 	public int maxStack = 99;
 }
 

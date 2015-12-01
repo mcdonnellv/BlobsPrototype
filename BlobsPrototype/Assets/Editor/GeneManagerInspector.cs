@@ -5,20 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 [CustomEditor(typeof(GeneManager))]
-public class GeneManagerInspector : Editor {
+public class GeneManagerInspector : GenericManagerInspector {
 	GeneManager geneManager;
-	ItemManager itemManager;
-	string newName = "";
-	static int mIndex = 0;
-	bool mConfirmDelete = false;
 
 
 	public override void OnInspectorGUI(){
 		NGUIEditorTools.SetLabelWidth(80f);
 		geneManager = (GeneManager)target;
-
-		if(itemManager == null)
-			itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
 		BaseGene item = null;
 
@@ -48,6 +41,14 @@ public class GeneManagerInspector : Editor {
 			GUILayout.EndHorizontal();
 		}
 		else {
+			// Database icon atlas
+			UIAtlas atlas = EditorGUILayout.ObjectField("Icon Atlas", geneManager.iconAtlas, typeof(UIAtlas), false) as UIAtlas;
+			
+			if (atlas != geneManager.iconAtlas) {
+				geneManager.iconAtlas = atlas;
+				foreach (BaseGene i in geneManager.genes) i.iconAtlas = atlas;
+			}
+
 			// "New" button
 			EditorGUILayout.BeginHorizontal();{
 				newName = EditorGUILayout.TextField(newName, GUILayout.Width(100f));
@@ -63,6 +64,7 @@ public class GeneManagerInspector : Editor {
 						g.value = item.value;
 						g.modifier = item.modifier;
 						g.traitType = item.traitType;
+						g.id = geneManager.GetNextAvailableID();
 					}
 					geneManager.genes.Add(g);
 					mIndex = geneManager.genes.Count - 1;
@@ -73,33 +75,24 @@ public class GeneManagerInspector : Editor {
 			EditorGUILayout.EndHorizontal();
 			GUI.backgroundColor = Color.white;
 
-			if(GUILayout.Button ("Sort"))
-				geneManager.genes = geneManager.genes.OrderBy(x => x.traitType).ThenByDescending(x => x.quality).ThenBy(x => x.itemName).ToList();
+			GUILayout.BeginHorizontal();
+			if(GUILayout.Button ("Sort by ID"))
+				geneManager.genes = geneManager.genes.OrderBy(x => x.id).ToList();
+			if(GUILayout.Button ("Sort by Name"))
+				geneManager.genes = geneManager.genes.OrderBy(x => x.itemName).ToList();
+			GUILayout.EndHorizontal();
 
-			if (item != null) {
-				NGUIEditorTools.DrawSeparator();
-				
-				// Navigation section
-				GUILayout.BeginHorizontal();{
-					if (mIndex == 0) GUI.color = Color.grey;
-					if (GUILayout.Button("<<")) { mConfirmDelete = false; --mIndex; }
-					GUI.color = Color.white;
-					mIndex = EditorGUILayout.IntField(mIndex + 1, GUILayout.Width(40f)) - 1;
-					GUILayout.Label("/ " + geneManager.genes.Count, GUILayout.Width(40f));
-					if (mIndex + 1 == geneManager.genes.Count) GUI.color = Color.grey;
-					if (GUILayout.Button(">>")) { mConfirmDelete = false; ++mIndex; }
-					GUI.color = Color.white;
-				}
-				GUILayout.EndHorizontal();
-				NGUIEditorTools.DrawSeparator();
-			}
-
-
-			if (item == null)
+			if(item == null)
 				return;
+
+			NavigationSection(geneManager.genes.Count);
 
 			// Item name and delete item button
 			GUILayout.BeginHorizontal();{
+				int newId = EditorGUILayout.IntField("ID", item.id, GUILayout.Width(60f));
+				if(newId != item.id)
+					item.id = (geneManager.DoesIdExistInList(newId)) ? geneManager.GetNextAvailableID() : item.id = newId;
+				NGUIEditorTools.SetLabelWidth(40f);
 				string itemName = EditorGUILayout.TextField("Gene Name", item.itemName);
 				GUI.backgroundColor = Color.red;
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))
@@ -118,42 +111,8 @@ public class GeneManagerInspector : Editor {
 			}
 			GUILayout.EndHorizontal();
 
-//			EditorGUILayout.Space();
-//			EditorGUILayout.LabelField("Stats");
-//			EditorGUI.indentLevel++;
-//			if(item.stats == null)
-//				item.stats = new List<Stat>();
-//
-//			for(int i=0; i < (int)TraitType.TraitTypeCt; i++) {
-//				TraitType traitTypeId = (TraitType)i;
-//				Stat stat = null;
-//				foreach (Stat s in item.stats) {
-//					if(s.id == traitTypeId)
-//						stat = s;
-//				}
-//
-//				GUILayout.BeginHorizontal();{
-//					if(stat != null) {
-//						stat.amount = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString(), stat.amount, GUILayout.Width(140f));
-//						stat.modifier = (Stat.Modifier)EditorGUILayout.EnumPopup(stat.modifier);
-//						if(stat.amount == 0)
-//							item.stats.Remove(stat);
-//					}
-//					else {
-//						int val = EditorGUILayout.IntField(Stat.GetStatIdByIndex(i).ToString(), 0, GUILayout.Width(140f));
-//						if (val != 0) {
-//							Stat newStat = new Stat();
-//							newStat.id = statID;
-//							newStat.amount = val;
-//							item.stats.Add(newStat);
-//						}
-//					}
-//				}
-//				GUILayout.EndHorizontal();
-//			}
-//			EditorGUI.indentLevel--;
-
-
+			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;
+			SpriteSelection(item);
 
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField("Activation Requirements");
@@ -170,32 +129,25 @@ public class GeneManagerInspector : Editor {
 			GUILayout.EndHorizontal();
 
 			List <GeneActivationRequirement> toDelete = new List<GeneActivationRequirement>();
-			string[] allItems =  new string[itemManager.items.Count];
-			foreach(BaseItem i in itemManager.items)
-				allItems[itemManager.items.IndexOf(i)] = i.itemName;
 
-			foreach(GeneActivationRequirement gr in item.activationRequirements) {
+
+			foreach(GeneActivationRequirement req in item.activationRequirements) {
 				GUILayout.BeginHorizontal(); 
 				int index = 0;
-				if(gr.item != null) {
-					BaseItem itm = itemManager.GetBaseItemWithName(gr.item.itemName);
+				if(req.itemId >= 0) {
+					BaseItem itm = itemManager.GetBaseItemByID(req.itemId);
 					index = itemManager.items.IndexOf(itm);
 				}
 					
-				int oldIndexValue = index;
-				index = EditorGUILayout.Popup("Item", index, allItems, GUILayout.Width(180f));
-				if(oldIndexValue != index || gr.item == null) {
-					gr.item = itemManager.items[index];
-				}
-				gr.amountNeeded = EditorGUILayout.IntField("Amount", gr.amountNeeded, GUILayout.Width(140f));
-
-				if(gr.amountNeeded == 0)
-					gr.amountNeeded = 1;
-
+				int newIndex = EditorGUILayout.Popup("Item", index, allItems, GUILayout.Width(180f));
+				if(newIndex != index || req.itemId < 0) 
+					req.itemId = itemManager.items[newIndex].id;
+				req.amountNeeded = EditorGUILayout.IntField("Amount", req.amountNeeded, GUILayout.Width(140f));
+				req.amountNeeded = Mathf.Max(1, req.amountNeeded);
 
 				GUI.backgroundColor = Color.red;
 				if (GUILayout.Button("Del", GUILayout.Width(35f)))
-					toDelete.Add(gr);
+					toDelete.Add(req);
 				GUI.backgroundColor = Color.white;
 				GUILayout.EndHorizontal();
 			}

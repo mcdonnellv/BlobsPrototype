@@ -32,6 +32,8 @@ public class Gene : BaseGene {
 	public Gene(BaseGene b) {
 		itemName = b.itemName;
 		description = b.description;
+		iconName = b.iconName;
+		iconAtlas = b.iconAtlas;
 		quality = b.quality;
 		traitType = b.traitType;
 		value = b.value;
@@ -47,23 +49,10 @@ public class Gene : BaseGene {
 		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
 		GenePointer gp = geneGameObject.GetComponent<GenePointer>();
 		UISprite s = geneGameObject.GetComponent<UISprite>();
-		s.spriteName = GetSpriteNameWithQuality(quality);
+		s.atlas = iconAtlas;
+		s.spriteName = iconName;
 		gp.gene = this;
 		return geneGameObject;
-	}
-
-	static public string GetSpriteNameWithQuality(Quality q) {
-		string spriteName = "";
-		switch (q) {
-		case Quality.Bad:
-		case Quality.Standard:  
-		case Quality.Common:    spriteName = "cardCommon"; break;
-		case Quality.Rare:      spriteName = "cardRare"; break;
-		case Quality.Epic:      spriteName = "cardEpic"; break;
-		case Quality.Legendary: spriteName = "cardLegendary"; break;
-		}
-
-		return spriteName;
 	}
 
 	public void CheckActivationStatus() {

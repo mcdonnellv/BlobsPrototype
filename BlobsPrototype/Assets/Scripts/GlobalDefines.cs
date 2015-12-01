@@ -84,10 +84,22 @@ public enum PopupPosition {
 	Center = 0,
 	Right1,
 	Right2,
+	Right3,
 	Left1,
 	Max,
 };
 
+public enum QuestState {
+	Available,
+	Embarked,
+	Completed,
+};
+
+public enum QuestType {
+	Gathering, // will give resources
+	Combat, // will give items for crafting
+	Scouting, // will add rare quests if successful
+};
 
 
 public class GlobalDefines : MonoBehaviour {

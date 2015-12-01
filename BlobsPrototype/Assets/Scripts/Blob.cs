@@ -357,7 +357,7 @@ public class Blob : MonoBehaviour {
 			if(gene.active)
 				continue;
 			foreach(GeneActivationRequirement req in gene.activationRequirements) {
-				if(req.item.itemName == item.itemName) {
+				if(req.itemId == item.id) {
 					Mathf.Clamp(++req.amountConsumed, 0, req.amountNeeded);
 					gene.CheckActivationStatus();
 					if(gene.active)

@@ -15,6 +15,7 @@ public class ColorDefines {
 	public static Color positiveTextColor { get{ return new Color(.33f, 1f, .33f, 1f);} }
 	public static Color negativeTextColor { get{ return new Color(1f, .33f, .33f, 1f);} }
 	public static Color inactiveTextColor { get{ return new Color(1f, 1f, 1f, 1f);} }
+	public static Color goldenTextColor { get{ return new Color(1f, 0.773f, 0.082f, 1f);} }
 
 	public static void BuildColorDefines() {
 		//blobColorSet01.Add("Pastel Brown", "836953");

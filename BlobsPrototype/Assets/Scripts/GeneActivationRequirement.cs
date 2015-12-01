@@ -5,7 +5,7 @@ using System;
 public class GeneActivationRequirement {
 	public int amountNeeded;
 	public int amountConsumed;
-	public BaseItem item;
+	public int itemId = -1;
 	public bool fulfilled { get{return amountConsumed >= amountNeeded;} }
 
 	public GeneActivationRequirement() {}
@@ -13,6 +13,6 @@ public class GeneActivationRequirement {
 	public GeneActivationRequirement(GeneActivationRequirement r) {
 		amountNeeded = r.amountNeeded;
 		amountConsumed = 0;
-		item = r.item;
+		itemId = r.itemId;
 	}
 }

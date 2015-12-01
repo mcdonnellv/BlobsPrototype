@@ -62,7 +62,8 @@ public class ItemInfoPopup : GenericGameMenu {
 		headerLabel.text = gene.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
 		lowerPanelGrid.transform.DestroyChildren();
-		icon.spriteName = Gene.GetSpriteNameWithQuality(gene.quality);
+		icon.spriteName = g.iconName;
+		icon.atlas = g.iconAtlas;
 		upperPanelInfoLabel.text = gene.description;
 		if(gene.state != GeneState.Active && gene.activationRequirements.Count > 0)
 			upperPanelInfoLabel.text += " when activated";
@@ -76,10 +77,12 @@ public class ItemInfoPopup : GenericGameMenu {
 				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
 				statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
 				UISprite[] sprites = statGameObject.GetComponentsInChildren<UISprite>();
-				sprites[0].atlas = req.item.iconAtlas;
-				sprites[0].spriteName = req.item.iconName;
+				ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+				BaseItem item = itemManager.GetBaseItemByID(req.itemId);
+				sprites[0].atlas = item.iconAtlas;
+				sprites[0].spriteName = item.iconName;
 				UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
-				labels[0].text = "Feed " + req.amountNeeded.ToString() + " " + req.item.itemName;
+				labels[0].text = "Feed " + req.amountNeeded.ToString() + " " + item.itemName;
 				labels[1].text = req.amountConsumed.ToString() + " / " + req.amountNeeded.ToString();
 				labels[0].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
 				labels[1].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
