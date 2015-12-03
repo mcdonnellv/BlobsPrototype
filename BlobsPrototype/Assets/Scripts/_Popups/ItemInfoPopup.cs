@@ -105,9 +105,4 @@ public class ItemInfoPopup : GenericGameMenu {
 		icon.spriteName = item.iconName;
 		ResizeWindow();
 	}
-
-	public void FlashChangeAnim() {
-		animationWindow.ResetToBeginning();
-		animationWindow.PlayForward();
-	} 
 }

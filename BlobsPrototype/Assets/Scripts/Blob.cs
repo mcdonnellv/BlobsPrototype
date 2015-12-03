@@ -50,7 +50,8 @@ public class Blob : MonoBehaviour {
 	GameManager2 gameManager;
 	BreedManager breedManager;
 	BlobFloatingDisplay floatingDisplay;
-	HudManager hudManager;
+	HudManager _hudManager;
+	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
 	GeneManager geneManager;
 	
 	// time delays
@@ -60,7 +61,7 @@ public class Blob : MonoBehaviour {
 
 	
 
-	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.Show(this); }
+	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.Show(id); }
 	public string GetBlobStateString() { return state.ToString(); }
 
 	public Blob () {
@@ -83,7 +84,6 @@ public class Blob : MonoBehaviour {
 	public void Setup() {
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
 		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
@@ -117,7 +117,7 @@ public class Blob : MonoBehaviour {
 	public void UpdateBlobInfoIfDisplayed() {
 		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
-			hudManager.blobInfoContextMenu.Show(this);
+			hudManager.blobInfoContextMenu.Show(id);
 	}
 
 	

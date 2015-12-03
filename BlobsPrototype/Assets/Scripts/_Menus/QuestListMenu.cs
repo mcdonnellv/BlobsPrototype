@@ -43,13 +43,19 @@ public class QuestListMenu : GenericGameMenu {
 
 
 	public void QuestCellPressed(QuestCell questCell) {
-		Invoke("ShowDetails", .2f);
+		//Invoke("ShowDetails", .2f);
 		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
-		Hide();
+		questDetailsMenu.Show(this, selectedQuest);
 	}
 
-	public void ShowDetails() {
-		questDetailsMenu.Show(selectedQuest);
+
+	public void HideDetails() {
+		questDetailsMenu.Hide();
+	}
+
+	public void Hide() {
+		//questDetailsMenu.Hide();
+		base.Hide();
 	}
 }
 

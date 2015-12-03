@@ -15,7 +15,8 @@ public class HudManager : MonoBehaviour {
 	public Popup popup;
 	public ItemInfoPopup itemInfoPopup;
 	public BlobInteractPopup blobInteractPopup;
-	public bool dragToUi = true;
+	public bool dragToUi = false;
+	public GameObject dragObjectHelper;
 
 	public Camera popupCameraParam;
 	static Camera popupCamera;

@@ -2,34 +2,47 @@
 using System.Collections;
 
 public class BlobDragDropItem : UIDragDropItem {
-	Animator animator;
-	UIScrollView scrollView;
-	RoomManager roomManager;
-	HudManager hudManager;
+	Animator animator { get { return GetComponent<Animator>(); } }
+	UIScrollView scrollView { get { return roomManager.scrollView; } }
+	RoomManager _roomManager;
+	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	HudManager _hudManager;
+	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
+	public bool uiClone = false;
 
-	void Start () {
-		roomManager = GameObject.Find ("RoomManager").GetComponent<RoomManager> ();
-		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		scrollView = roomManager.scrollView;
-		animator = GetComponent<Animator>();
+
+
+	protected override void OnClone (GameObject original) {
+		uiClone = true;
+		cloneOnDrag = false;
+		Vector3 worldPos = transform.position;
+		transform.parent = hudManager.dragObjectHelper.transform;
+		transform.localPosition = Vector3.zero;
+		transform.position += worldPos;
 	}
+
+
+	protected override void OnDragStart () {
+		cloneOnDrag = hudManager.dragToUi && !uiClone;
+		base.OnDragStart();
+	}
+
 
 	protected override void OnDrag (Vector2 delta) {
-		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		if(hudManager.dragToUi == false) {
+		if (!interactable) return;
+		if (!mDragging || !enabled || mTouch != UICamera.currentTouch) return;
 		UICenterOnChild coc = roomManager.scrollView.GetComponent<UICenterOnChild>();
-			SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
-			coc.enabled = false;
-			sp.enabled = false;
-			Blob blob = gameObject.GetComponent<Blob>();
-			blob.room.ShowFloatingSprites(blob);
-			animator.SetBool("dragging", true);
-			if(hudManager.blobInfoContextMenu.IsDisplayed())
-				hudManager.blobInfoContextMenu.Hide();
-		}
-
-		base.OnDrag(delta);
+		SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
+		coc.enabled = false;
+		sp.enabled = false;
+		Blob blob = gameObject.GetComponent<Blob>();
+		blob.room.ShowFloatingSprites(blob);
+		animator.SetBool("dragging", true);
+		if(hudManager.blobInfoContextMenu.IsDisplayed())
+			hudManager.blobInfoContextMenu.Hide();
+		OnDragDropMove(delta * mRoot.pixelSizeAdjustment);
 	}
+
 
 	protected override void OnDragDropEnd () {
 		UICenterOnChild coc = roomManager.scrollView.GetComponent<UICenterOnChild>();
@@ -37,17 +50,23 @@ public class BlobDragDropItem : UIDragDropItem {
 		coc.enabled = true;
 		sp.enabled = true;
 	}
-
-
+	
 
 	protected override void OnDragDropRelease (GameObject surface) {
-		roomManager.scrollVector = new Vector2(0f,0f);
-		animator.SetBool("dragging", false);
 		Blob blob = gameObject.GetComponent<Blob>();
 		blob.room.HideFloatingSprites();
-		if (surface != null && blob != null)
-		{
-			BlobDragDropContainer blobContainer =  (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
+		roomManager.scrollVector = new Vector2(0f,0f);
+		animator.SetBool("dragging", false);
+
+		if(uiClone) {
+			OnDragDropReleaseForClone(surface);
+			//GameObject.Destroy(gameObject);
+			return;
+		}
+
+
+		if (surface != null && blob != null) {
+			BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
 			if (blobContainer == null) {
 				blobContainer = (surface.transform.parent == null) ? null : surface.transform.parent.GetComponent<BlobDragDropContainer>();
 				if(blobContainer == null) {
@@ -66,6 +85,24 @@ public class BlobDragDropItem : UIDragDropItem {
 		base.OnDragDropRelease(surface);
 	}
 
+
+	void OnDragDropReleaseForClone (GameObject surface) {
+		if(surface == null) {
+			GameObject.Destroy(gameObject);
+			return;
+		}
+
+		BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
+
+		if(blobContainer == null || blobContainer.hasBlob) {
+			GameObject.Destroy(gameObject);
+			return;
+		}
+
+		Blob blob = gameObject.GetComponent<Blob>();
+		base.OnDragDropRelease(surface);
+		blobContainer.BlobAdded(blob);
+	}
 
 	void DropBlobOnTile(Blob blob, Tile tile) {
 		Room room = tile.transform.parent.GetComponent<Room>();
@@ -109,21 +146,24 @@ public class BlobDragDropItem : UIDragDropItem {
 
 
 	protected override void OnDragDropMove (Vector2 delta) {
-		if(hudManager.dragToUi == false) {
-			Vector2 dir = new Vector2(0f, 0f); 
-			if(mTrans.position.x > 1.5f)
-				dir.x += -1;
-			else if(mTrans.position.x < -1.5f)
-				dir.x += 1;
-			
-			if(mTrans.position.y > .7f)
-				dir.y += -1;
-			else if(mTrans.position.y < -.7f)
-				dir.y += 1;
-			
-			dir.Normalize();
-			roomManager.scrollVector = dir;
+		if(uiClone) {
+			mTrans.localPosition += (Vector3)delta;
+			return;
 		}
+
+		Vector2 dir = new Vector2(0f, 0f); 
+		if(mTrans.position.x > 1.5f)
+			dir.x += -1;
+		else if(mTrans.position.x < -1.5f)
+			dir.x += 1;
+		
+		if(mTrans.position.y > .7f)
+			dir.y += -1;
+		else if(mTrans.position.y < -.7f)
+			dir.y += 1;
+		
+		dir.Normalize();
+		roomManager.scrollVector = dir;
 		mTrans.localPosition += (Vector3)delta;
 	}
 

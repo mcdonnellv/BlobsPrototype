@@ -29,21 +29,24 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	HudManager hudManager;
 	GameManager2 gameManager;
 	BreedManager breedManager;
-	RoomManager roomManager;
+	RoomManager _roomManager;
+	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
 
+	
 
 	public Blob DisplayedBlob() { return blob; }
 
-	public void Show(Blob blobParam) {
+	public void Show(int blobId) {
+		Blob newBlob = roomManager.GetBlobByID(blobId);
 		gameObject.SetActive(true);
-		if(IsDisplayed() && blobParam != blob) // We are just changing the displayed blobs
+		if(IsDisplayed() && newBlob != blob) // We are just changing the displayed blobs
 			FlashChangeAnim();
 		else {
 			base.Show();
 			window.transform.localScale = new Vector3(1,1,1);
 		}
 
-		blob = blobParam;
+		blob = newBlob;
 		actionButton1.gameObject.SetActive(true);
 		actionButton2.gameObject.SetActive(true);
 		qualityLabel.fontSize = 24;
@@ -55,7 +58,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			DisplayBlobInfo();
 
 		DisplayBlobImage();
-		RoomManager roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+
 		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
 	}
 
@@ -221,7 +224,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-		roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 	}
 
 

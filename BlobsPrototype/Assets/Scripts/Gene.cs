@@ -72,7 +72,7 @@ public class Gene : BaseGene {
 		hudManager.popup.Show("Gene", "The " + itemName + " gene has been activated!");
 		if(hudManager.inventoryMenu.IsDisplayed())
 			hudManager.inventoryMenu.Hide();
-		hudManager.blobInfoContextMenu.Show(hudManager.blobInfoContextMenu.blob);
+		hudManager.blobInfoContextMenu.Show(hudManager.blobInfoContextMenu.blob.id);
 	}
 
 }

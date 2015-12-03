@@ -15,7 +15,7 @@ public class GenericGameMenu : MonoBehaviour {
 	
 
 	public bool IsDisplayed() { return displayed; }
-
+	public float GetAnimationDelay() {  return animationWindow.duration; }
 
 	public GenericGameMenu() {
 		if (popupPositions == null) {
@@ -66,7 +66,7 @@ public class GenericGameMenu : MonoBehaviour {
 
 	public void Show(string header) {
 		Show();
-		headerLabel.text = header;
+		headerLabel.text = header.ToUpper();
 	}
 	
 
@@ -111,4 +111,9 @@ public class GenericGameMenu : MonoBehaviour {
 		displayed = false;
 		gameObject.SetActive(false);
 	}
+
+	public void FlashChangeAnim() {
+		animationWindow.ResetToBeginning();
+		animationWindow.PlayForward();
+	} 
 }

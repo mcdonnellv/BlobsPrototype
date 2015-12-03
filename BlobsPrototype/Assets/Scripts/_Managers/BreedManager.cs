@@ -52,7 +52,7 @@ public class BreedManager : MonoBehaviour {
 		male.StartActionWithDuration(male.breedReadyDelay);
 		female.StartActionWithDuration(female.breedReadyDelay);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
-			hudManager.blobInfoContextMenu.Show(blob1);
+			hudManager.blobInfoContextMenu.Show(blob1.id);
 	}
 
 
