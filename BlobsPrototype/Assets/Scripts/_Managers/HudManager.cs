@@ -15,6 +15,9 @@ public class HudManager : MonoBehaviour {
 	public Popup popup;
 	public ItemInfoPopup itemInfoPopup;
 	public BlobInteractPopup blobInteractPopup;
+	public LootMenu lootMenu;
+	public PotentialLootMenu potentialLootMenu;
+
 	public bool dragToUi = false;
 	public GameObject dragObjectHelper;
 

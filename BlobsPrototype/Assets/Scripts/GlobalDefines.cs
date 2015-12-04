@@ -76,7 +76,7 @@ public enum GeneState {
 public enum BlobInteractAction {
 	Breed,
 	Merge,
-};
+}; 
 
 
 public enum PopupPosition {
@@ -86,6 +86,7 @@ public enum PopupPosition {
 	Right2,
 	Right3,
 	Left1,
+	Left2,
 	Max,
 };
 
@@ -103,4 +104,16 @@ public enum QuestType {
 
 
 public class GlobalDefines : MonoBehaviour {
+
+	public static float GetQualityPercentage(Quality q) {
+		switch (q)	{
+		case Quality.Common: return    .700f;
+		case Quality.Rare: return      .244f;
+		case Quality.Epic: return      .044f;
+		case Quality.Legendary: return .012f;
+		}
+		return 0;
+	}
 }
+
+

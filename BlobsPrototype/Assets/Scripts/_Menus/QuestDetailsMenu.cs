@@ -11,8 +11,11 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public UILabel rarityLabel;
 	public UIButton selectButton;
 	public GameObject blobContainer;
+	public UIButton rewardsButton;
+	public UIGrid blobGrid;
 	public Quest quest;
-	public int defaultWindowHeight = 684;
+	bool questSelected = false;
+	int defaultWindowHeight = 578;
 	HudManager _hudManager;
 	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
 	
@@ -20,7 +23,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner && !HasBeenSelected()) Hide();}
 	public void Pressed() {	Show(); }
-	public bool HasBeenSelected() {return blobContainer.gameObject.activeInHierarchy; }
+	public bool HasBeenSelected() {return questSelected; }
 
 	public void Show(GenericGameMenu caller, Quest questParam) {
 		gameObject.SetActive(true);
@@ -54,23 +57,22 @@ public class QuestDetailsMenu : GenericGameMenu {
 		}
 
 		blobContainer.SetActive(true);
-		UIGrid grid = blobContainer.GetComponentInChildren<UIGrid>();
 		int blobsRequired = quest.blobsAllowed;
-		foreach(Transform child in grid.transform) {
+		foreach(Transform child in blobGrid.transform) {
 			child.gameObject.SetActive(blobsRequired > 0);
 			blobsRequired--;
 		}
 
-		grid.Reposition();
+		blobGrid.Reposition();
 		blobContainer.SetActive(false);
 		selectButton.gameObject.SetActive(true);
+		rewardsButton.gameObject.SetActive(true);
 		ResizeWindow();
 	}
 
 
 	public void SelectQuest() {
-		blobContainer.SetActive(true);
-		selectButton.gameObject.SetActive(false);
+		questSelected = true;
 		owner.Hide();
 		animationWindow.PlayReverse();
 		Invoke("ChangePositionToRight", GetAnimationDelay());
@@ -78,7 +80,15 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 
+	public void ViewRewards() {
+		hudManager.potentialLootMenu.Show(quest);
+	}
+
+
 	public void ChangePositionToRight() {
+		blobContainer.SetActive(true);
+		selectButton.gameObject.SetActive(false);
+		rewardsButton.gameObject.SetActive(false);
 		ChangePosition(PopupPosition.Right1);
 		ResizeWindow();
 		animationWindow.PlayForward();
@@ -93,8 +103,10 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 
 	public void UnSelectQuest() {
+		questSelected = false;
 		blobContainer.SetActive(false);
 		selectButton.gameObject.SetActive(true);
+		rewardsButton.gameObject.SetActive(true);
 		animationWindow.PlayReverse();
 		owner.Invoke("Show", GetAnimationDelay()/2);
 		hudManager.dragToUi = false;
@@ -105,16 +117,15 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void ResizeWindow() {
 		int height = defaultWindowHeight;
 		if(!HasBeenSelected())
-			height -= 100;
+			height -= 50;
 		window.GetComponent<UISprite>().height = height;
 	}
 
 
 	public void BlobAddedToContainer(BlobDragDropContainer blobDragDropContainer) {
-		UIGrid grid = blobContainer.GetComponentInChildren<UIGrid>();
 		Blob blobAdded = blobDragDropContainer.GetComponentInChildren<Blob>();
 
-		foreach(Transform child in grid.transform) {
+		foreach(Transform child in blobGrid.transform) {
 			if(child == blobDragDropContainer.transform)
 				continue;
 			Blob blob = child.GetComponentInChildren<Blob>();
@@ -127,8 +138,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 	List<Blob> GetChosenBlobs() {
 		List<Blob> blobs = new List<Blob>();
-		UIGrid grid = blobContainer.GetComponentInChildren<UIGrid>();
-		foreach(Transform child in grid.transform) {
+		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
 			if(blob != null)
 				blobs.Add(blob);
@@ -138,8 +148,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 	void ClearBlobs() {
-		UIGrid grid = blobContainer.GetComponentInChildren<UIGrid>();
-		foreach(Transform child in grid.transform) {
+		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
 			if(blob != null) 
 					GameObject.Destroy(blob.gameObject);
@@ -158,8 +167,18 @@ public class QuestDetailsMenu : GenericGameMenu {
 		foreach(Blob blob in blobs)
 			blob.missionCount++;
 		Hide();
-		hudManager.popup.Show("Quest", "Quest completed!");
+		hudManager.popup.Show("Quest", "Quest completed!", this, "GiveReward");
 		ClearBlobs();
+	}
+
+	public void GiveReward() {
+		hudManager.lootMenu.Show(quest);
+	}
+
+
+	public override void Cleanup() {
+		questSelected = false;
+		base.Cleanup();
 	}
 
 }

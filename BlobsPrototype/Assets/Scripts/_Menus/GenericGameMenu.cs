@@ -25,6 +25,7 @@ public class GenericGameMenu : MonoBehaviour {
 			popupPositions[(int)PopupPosition.Right2] = new Vector3(300f, 0f, 0f);
 			popupPositions[(int)PopupPosition.Right3] = new Vector3(21f, 0f, 0f);
 			popupPositions[(int)PopupPosition.Left1] = new Vector3(-45, 0f, 0f);
+			popupPositions[(int)PopupPosition.Left2] = new Vector3(-356, 0f, 0f);
 		}
 	}
 

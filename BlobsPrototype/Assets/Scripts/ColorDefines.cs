@@ -93,9 +93,9 @@ public class ColorDefines {
 		switch (q) {
 		case Quality.Bad:       return new Color(1f, .33f, .33f, 1f);
 		case Quality.Standard:  return new Color(.7f, .7f, .7f, 1f);
-		case Quality.Rare:      return new Color(0.255f, 0.616f, 1f, .5f);
-		case Quality.Epic:      return new Color(0.957f, 0.294f, 1f, .5f);
-		case Quality.Legendary: return new Color(1f, 0.773f, 0.082f, .5f);
+		case Quality.Rare:      return new Color(0.255f, 0.616f, 1f, 1f);
+		case Quality.Epic:      return new Color(0.957f, 0.294f, 1f, 1f);
+		case Quality.Legendary: return new Color(1f, 0.773f, 0.082f, 1f);
 		}
 		return Color.white;
 	}
