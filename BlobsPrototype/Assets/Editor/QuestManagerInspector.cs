@@ -109,7 +109,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 			GUILayout.EndHorizontal();
 
 			NGUIEditorTools.SetLabelWidth(100);
-			quest.blobsAllowed = Mathf.Max(1, Mathf.Min(Quest.maxBlobsAllowed, EditorGUILayout.IntField("Blobs Allowed", quest.blobsAllowed, GUILayout.Width(130f))));
+			quest.blobsRequired = Mathf.Max(1, Mathf.Min(Quest.maxblobsRequired, EditorGUILayout.IntField("Blobs Allowed", quest.blobsRequired, GUILayout.Width(130f))));
 
 			quest.type = (QuestType)EditorGUILayout.EnumPopup("Type",quest.type);
 			quest.quality = (Quality)EditorGUILayout.EnumPopup("Quality",quest.quality);

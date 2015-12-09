@@ -6,8 +6,7 @@ public class BlobDragDropItem : UIDragDropItem {
 	UIScrollView scrollView { get { return roomManager.scrollView; } }
 	RoomManager _roomManager;
 	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
-	HudManager _hudManager;
-	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	public bool uiClone = false;
 
 
@@ -87,7 +86,9 @@ public class BlobDragDropItem : UIDragDropItem {
 
 
 	void OnDragDropReleaseForClone (GameObject surface) {
+		Blob blob = gameObject.GetComponent<Blob>();
 		if(surface == null) {
+			transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
 			GameObject.Destroy(gameObject);
 			return;
 		}
@@ -95,11 +96,11 @@ public class BlobDragDropItem : UIDragDropItem {
 		BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
 
 		if(blobContainer == null || blobContainer.hasBlob) {
+			transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
 			GameObject.Destroy(gameObject);
 			return;
 		}
 
-		Blob blob = gameObject.GetComponent<Blob>();
 		base.OnDragDropRelease(surface);
 		blobContainer.BlobAdded(blob);
 	}

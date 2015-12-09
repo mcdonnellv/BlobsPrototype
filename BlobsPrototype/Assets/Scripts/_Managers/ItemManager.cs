@@ -43,8 +43,8 @@ public class ItemManager : MonoBehaviour {
 
 
 	public void FirstTimeSetup() {
-		foreach(BaseItem b in items)
-			AddItemToStorage(b, 3);
+		//foreach(BaseItem b in items)
+		//	AddItemToStorage(b, 3);
 	}
 
 	public void AddItemToStorage(BaseItem b, int count) {

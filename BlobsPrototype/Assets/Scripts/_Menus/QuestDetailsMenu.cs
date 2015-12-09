@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class QuestDetailsMenu : GenericGameMenu {
 	public QuestListMenu questListMenu;
@@ -9,21 +10,23 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public UISprite icon;
 	public UILabel durationLabel;
 	public UILabel rarityLabel;
+	public UILabel infoLabel;
 	public UIButton selectButton;
 	public GameObject blobContainer;
+	public UIWidget objectiveContainer;
 	public UIButton rewardsButton;
 	public UIGrid blobGrid;
 	public Quest quest;
 	bool questSelected = false;
-	int defaultWindowHeight = 578;
-	HudManager _hudManager;
-	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
-	
+	int defaultWindowHeight = 500;
+	HudManager hudManager { get { return HudManager.hudManager; } }
+
 	[HideInInspector] public GenericGameMenu owner = null;
 
 	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner && !HasBeenSelected()) Hide();}
 	public void Pressed() {	Show(); }
 	public bool HasBeenSelected() {return questSelected; }
+
 
 	public void Show(GenericGameMenu caller, Quest questParam) {
 		gameObject.SetActive(true);
@@ -35,6 +38,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 		quest = questParam;
 		Setup();
 	}
+
 
 	void Setup() {
 		headerLabel.text = quest.itemName;
@@ -57,16 +61,35 @@ public class QuestDetailsMenu : GenericGameMenu {
 		}
 
 		blobContainer.SetActive(true);
-		int blobsRequired = quest.blobsAllowed;
+		int blobsRequired = quest.blobsRequired;
+		int index = 0;
 		foreach(Transform child in blobGrid.transform) {
+			if(index < quest.blobsRequired) {
+				List<UISprite> sprites = child.gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+				sprites[0].color = ColorDefines.ColorForElement(quest.elementRequirements[index]);
+			}
 			child.gameObject.SetActive(blobsRequired > 0);
 			blobsRequired--;
+			index++;
 		}
 
+		ClearBlobs();
 		blobGrid.Reposition();
 		blobContainer.SetActive(false);
-		selectButton.gameObject.SetActive(true);
-		rewardsButton.gameObject.SetActive(true);
+		objectiveContainer.gameObject.SetActive(true);
+
+		switch(quest.state) {
+		case QuestState.Embarked: 
+			selectButton.isEnabled = false; 
+			selectButton.GetComponentInChildren<UILabel>().text = "IN PROGRESS";
+			break;
+		default: 
+			selectButton.isEnabled = true; 
+			selectButton.GetComponentInChildren<UILabel>().text = "SELECT";
+			break;
+		}
+
+		UpdateInfoText();
 		ResizeWindow();
 	}
 
@@ -87,8 +110,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 	public void ChangePositionToRight() {
 		blobContainer.SetActive(true);
-		selectButton.gameObject.SetActive(false);
-		rewardsButton.gameObject.SetActive(false);
+		objectiveContainer.gameObject.SetActive(false);
 		ChangePosition(PopupPosition.Right1);
 		ResizeWindow();
 		animationWindow.PlayForward();
@@ -105,8 +127,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void UnSelectQuest() {
 		questSelected = false;
 		blobContainer.SetActive(false);
-		selectButton.gameObject.SetActive(true);
-		rewardsButton.gameObject.SetActive(true);
+		objectiveContainer.gameObject.SetActive(true);
 		animationWindow.PlayReverse();
 		owner.Invoke("Show", GetAnimationDelay()/2);
 		hudManager.dragToUi = false;
@@ -115,69 +136,88 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 
 	public void ResizeWindow() {
-		int height = defaultWindowHeight;
-		if(!HasBeenSelected())
-			height -= 50;
-		window.GetComponent<UISprite>().height = height;
+		//int height = defaultWindowHeight;
+		//if(!HasBeenSelected())
+			//height = 534;
+		//window.GetComponent<UISprite>().height = height;
 	}
 
 
 	public void BlobAddedToContainer(BlobDragDropContainer blobDragDropContainer) {
 		Blob blobAdded = blobDragDropContainer.GetComponentInChildren<Blob>();
-
 		foreach(Transform child in blobGrid.transform) {
 			if(child == blobDragDropContainer.transform)
 				continue;
 			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null) {
-				if(blob.id == blobAdded.id)
+			if(blob != null) 
+				if(blob.id == blobAdded.id) 
+
 					GameObject.Destroy(blob.gameObject);
-			}
+				
+
 		}
+		quest.AddBlob(blobAdded.id, blobDragDropContainer.transform.GetSiblingIndex());
+		UpdateInfoText();
 	}
 
-	List<Blob> GetChosenBlobs() {
-		List<Blob> blobs = new List<Blob>();
+
+	public void BlobRemovedFromContainer(int blobId) {
+		quest.RemoveBlob(blobId);
+		UpdateInfoText();
+
+	}
+
+
+	void UpdateInfoText() {
+		if(quest.blobIds.Count < quest.blobsRequired)
+			infoLabel.text = "DRAG BLOBS TO FORM A PARTY";
+		else if(quest.IsHighYield())
+			infoLabel.text = "REWARD YIELD: HIGH";
+		else
+			infoLabel.text = "REWARD YIELD: LOW";
+	}
+
+
+	List<int> GetChosenBlobs() {
+		List<int> blobs = new List<int>();
 		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
 			if(blob != null)
-				blobs.Add(blob);
+				blobs.Add(blob.id);
 		}
 
 		return blobs;
 	}
 
+
 	void ClearBlobs() {
 		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
 			if(blob != null) 
-					GameObject.Destroy(blob.gameObject);
+				GameObject.Destroy(blob.gameObject);
 		}
 	}
 
 
 	public void Depart() {
-		//simulate mission success
-		List<Blob> blobs = GetChosenBlobs();
-		if(blobs.Count != quest.blobsAllowed) {
+		List<int> blobs = GetChosenBlobs();
+		if(blobs.Count != quest.blobsRequired) {
 			hudManager.popup.Show("Quest", "Add more blobs to start this quest");
 			return;
 		}
-
-		foreach(Blob blob in blobs)
-			blob.missionCount++;
+		quest.Start(GetChosenBlobs());
 		Hide();
-		hudManager.popup.Show("Quest", "Quest completed!", this, "GiveReward");
-		ClearBlobs();
 	}
 
-	public void GiveReward() {
-		hudManager.lootMenu.Show(quest);
+
+	public void QuestCompleted(){
+		ClearBlobs();
 	}
 
 
 	public override void Cleanup() {
 		questSelected = false;
+		hudManager.dragToUi = false;
 		base.Cleanup();
 	}
 

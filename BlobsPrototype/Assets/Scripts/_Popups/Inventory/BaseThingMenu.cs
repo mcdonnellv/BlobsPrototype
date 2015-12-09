@@ -3,15 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BaseThingMenu : MonoBehaviour {
-
-
+	
 	public GameObject grid;
 	public ItemInfoPopup itemInfoPopup;
 	protected int selectedIndex = -1;
 	protected GameObject slotHighlight;
-
-	private HudManager _hm;
-	HudManager hudManager { get{ if(_hm == null) _hm = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hm; } }
+	HudManager hudManager { get { return HudManager.hudManager; } }
 
 
 	public virtual GameObject CreateGameObject(BaseThing g) {return null;}
@@ -50,13 +47,6 @@ public class BaseThingMenu : MonoBehaviour {
 		go.GetComponent<UISprite>().depth = parentSocket.GetComponent<UISprite>().depth + 2;
 	}
 
-
-	public void DisplayInfoPopup() {
-		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
-		itemInfoPopup.Show(hudManager.inventoryMenu);
-		itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
-	}
-
 	public virtual void UpdateItemCounts() {
 		foreach(Transform inventorySocket in grid.transform)
 			inventorySocket.gameObject.GetComponentInChildren<UILabel>().text = "";
@@ -77,7 +67,6 @@ public class BaseThingMenu : MonoBehaviour {
 		selectedIndex = socket.GetSiblingIndex();
 	}
 
-
 	public virtual void DeleteSelectedThing() {}
 
 	public void CleanUpAfterDelete(int itemsLeft, GameObject pointerObject) {
@@ -88,7 +77,6 @@ public class BaseThingMenu : MonoBehaviour {
 			itemInfoPopup.Hide();
 		}
 	}
-
 
 	void Update() {
 		if(slotHighlight != null)

@@ -26,7 +26,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UIWidget blobSpritesContainer;
 	public UISprite changeFlashObject;
 	public TweenAlpha changeFlashAnim;
-	HudManager hudManager;
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	GameManager2 gameManager;
 	BreedManager breedManager;
 	RoomManager _roomManager;
@@ -155,7 +155,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 				break;
 
 			GeneCell geneCell = geneGrid.transform.GetChild(index).GetComponent<GeneCell>();
-			GameObject go = g.CreateGeneGameObject();
+			GameObject go = g.CreateGeneGameObject(this);
 			geneCell.socketSprite.transform.DestroyChildren();
 			go.transform.parent = geneCell.socketSprite.transform;
 			go.transform.localScale = new Vector3(1f,1f,1f);
@@ -221,7 +221,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	// Use this for initialization
 	void Start () {
-		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 	}
@@ -237,17 +236,8 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			}
 		}
 		else
-			DisplayInfoPopupWithGene(gp.gene);
+			GenePressed(gp);
 	}
-
-
-	public void DisplayInfoPopupWithGene(Gene gene) {
-		hudManager.itemInfoPopup.defaultStartPosition = PopupPosition.Left1;
-		hudManager.itemInfoPopup.Show(this);
-		hudManager.itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
-		hudManager.itemInfoPopup.PopulateInfoFromGene(gene);
-	}
-
 
 	public void AddGeneToBlob(Gene gene) {
 		blob.genes.Add(gene);
@@ -257,6 +247,15 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		DestroyGeneCells();
 		BuildEmptyGeneCells();
 		FillGeneCells();
+	}
+
+
+	public void GenePressed(GenePointer genePointer) {
+		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
+		if(genePointer == null) 
+			return;
+		itemInfoPopup.defaultStartPosition = PopupPosition.Left1;
+		itemInfoPopup.Show(this, genePointer.gene);
 	}
 
 

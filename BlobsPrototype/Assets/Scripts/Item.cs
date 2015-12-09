@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +10,7 @@ public class BaseThing {
 	public Quality quality = Quality.Common;
 	public string iconName;
 	public UIAtlas iconAtlas;
+	public int sellValue = 0;
 }
 
 [Serializable]
@@ -21,20 +22,23 @@ public class BaseItem : BaseThing {
 [Serializable]
 public class Item : BaseItem {
 
-	public int count = 0;
+	public int count = 1;
 
 	public Item(BaseItem b) {
+		id = b.id;
 		itemName = b.itemName;
 		description = b.description;
 		iconName = b.iconName;
 		iconAtlas = b.iconAtlas;
 		quality = b.quality;
 		maxStack = b.maxStack;
+		sellValue = b.sellValue;
 	}
 
-	public GameObject CreateItemGameObject() {
+	public GameObject CreateItemGameObject(MonoBehaviour owner) {
 		GameObject itemGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Item"));
 		ItemPointer ip = itemGameObject.GetComponent<ItemPointer>();
+		ip.owningMenu = owner;
 		UISprite s = itemGameObject.GetComponent<UISprite>();
 		s.atlas = iconAtlas;
 		s.spriteName = iconName;

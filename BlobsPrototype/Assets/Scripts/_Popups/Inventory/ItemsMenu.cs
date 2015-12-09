@@ -9,8 +9,8 @@ public class ItemsMenu : BaseThingMenu {
 	ItemManager itemManager { get{ if(_im == null) _im = GameObject.Find("ItemManager").GetComponent<ItemManager>(); return _im; } }
 	public override void SetSelectedThing(int index) { selectedItem = itemManager.storedItems[index]; }
 	public override BaseThing GetSelectedThing() {return (BaseThing)selectedItem; }
-	public override void ShowInfo() { ShowInfoForItemGameObject(GetItemPointerFromItem(selectedItem)); }
-	public override GameObject CreateGameObject(BaseThing g) { return ((Item)g).CreateItemGameObject(); }
+	public override void ShowInfo() { ItemPressed(GetItemPointerFromItem(selectedItem)); }
+	public override GameObject CreateGameObject(BaseThing g) { return ((Item)g).CreateItemGameObject(this); }
 	public Item GetSelectedItem() { return GetItemFromIndex(selectedIndex); }
 
 	public void Show() {
@@ -42,14 +42,6 @@ public class ItemsMenu : BaseThingMenu {
 	}
 
 
-	public void ShowInfoForItemGameObject(ItemPointer itemPointer) {
-		if(itemPointer == null) return;
-		base.DisplayInfoPopup();
-		base.CreateSlotHighlight(itemPointer.transform.parent);
-		itemInfoPopup.PopulateInfoFromItem(itemPointer.item);
-	}
-
-
 	public Item GetItemFromIndex(int index) {
 		if(index < 0 && index >= grid.transform.childCount)
 			return null;
@@ -67,5 +59,17 @@ public class ItemsMenu : BaseThingMenu {
 		itemManager.RemoveItemFromStorage(ip.item);
 		CleanUpAfterDelete(ip.item.count, ip.gameObject);
 		UpdateItemCounts();
+	}
+
+
+	public void ItemPressed(ItemPointer itemPointer) {
+		HudManager hudManager = HudManager.hudManager;
+		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
+		if(itemPointer == null) 
+			return;
+		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
+		itemInfoPopup.Show(hudManager.inventoryMenu, itemPointer.item);
+		itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
+		CreateSlotHighlight(itemPointer.transform.parent);
 	}
 }

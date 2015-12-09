@@ -4,7 +4,7 @@ using System.Collections;
 public class CheatMenu : GenericGameMenu {
 
 	GameManager2 gameManager;
-	HudManager hudManager;
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	RoomManager roomManager;
 
 	public void Pressed() {	base.Show(); }
@@ -14,13 +14,12 @@ public class CheatMenu : GenericGameMenu {
 	public void IncrementMissionCount() { 
 		foreach(Blob blob in roomManager.currentRoom.blobs)
 			if(blob.hasHatched)
-				blob.ReturnFromMission();
+				blob.ReturnFromQuest();
 	}
 
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();
-		hudManager = GameObject.Find ("HudManager").GetComponent<HudManager> ();
 		roomManager = GameObject.Find ("RoomManager").GetComponent<RoomManager> ();
 	}
 

@@ -20,9 +20,8 @@ public class GeneDragDropItem : UIDragDropItem {
 
 		if (gddcTo.type == gddcFrom.type)
 			return;
-
-		HudManager hudManager = GameObject.Find ("HudManager").GetComponent<HudManager>();
-		Blob blob = hudManager.blobInfoContextMenu.DisplayedBlob();
+		
+		Blob blob = HudManager.hudManager.blobInfoContextMenu.DisplayedBlob();
 		GeneManager geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
 
 		if (gddcFrom.type == GeneDragDropContainer.GeneSlotType.BlobInfoContextMenuGeneSlot && 

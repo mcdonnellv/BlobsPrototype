@@ -45,14 +45,17 @@ public class Blob : MonoBehaviour {
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
+	Animator animator { get { return GetComponent<Animator>(); } }
+	BlobDragDropItem blobDragDropItem { get { return GetComponent<BlobDragDropItem>(); } }
 	
 	// managers
 	GameManager2 gameManager;
 	BreedManager breedManager;
-	BlobFloatingDisplay floatingDisplay;
-	HudManager _hudManager;
-	HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
+	public BlobFloatingDisplay floatingDisplay;
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	GeneManager geneManager;
+	RoomManager _roomManager;
+	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
 	
 	// time delays
 	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,1);
@@ -115,7 +118,6 @@ public class Blob : MonoBehaviour {
 	}
 
 	public void UpdateBlobInfoIfDisplayed() {
-		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
 			hudManager.blobInfoContextMenu.Show(id);
 	}
@@ -266,6 +268,7 @@ public class Blob : MonoBehaviour {
 		case BlobState.Hatching: return "Hatching";
 		case BlobState.HatchReady: return "Hatch";
 		case BlobState.Working: return "Working";
+		case BlobState.OnQuest: return "AWAY";
 		}
 		
 		return "Breed";
@@ -292,6 +295,7 @@ public class Blob : MonoBehaviour {
 		case BlobState.Breeding: BreedingDone(); break;
 		case BlobState.Hatching: HatchingDone(); break;
 		case BlobState.Working: WorkingDone(); break;
+		case BlobState.OnQuest: QuestDone(); break;
 		}
 		UpdateBlobInfoIfDisplayed();
 	}
@@ -311,6 +315,11 @@ public class Blob : MonoBehaviour {
 
 	public void HatchingDone() {
 		state = BlobState.HatchReady;
+	}
+
+	public void QuestDone() {
+		ReturnFromQuest();
+		state = BlobState.Idle;
 	}
 
 	public void PrepareForDelete() {
@@ -371,11 +380,24 @@ public class Blob : MonoBehaviour {
 	}
 
 
-	public void ReturnFromMission() {
+	public void ReturnFromQuest() {
 		missionCount++;
+		missionId = -1;
 		if(isAdult)
 			transform.localScale = new Vector3(1f, 1f, 1f);
+		floatingDisplay.stateLabel.gameObject.SetActive(false);
+		animator.SetBool("away", false);
+		blobDragDropItem.interactable = true;
+	}
 
+
+	public void DepartForQuest(Quest quest) {
+		missionId = quest.id;
+		floatingDisplay.stateLabel.gameObject.SetActive(true);
+		floatingDisplay.stateLabel.text = "AWAY";
+		state = BlobState.OnQuest;
+		animator.SetBool("away", true);
+		blobDragDropItem.interactable = false;
 	}
 
 

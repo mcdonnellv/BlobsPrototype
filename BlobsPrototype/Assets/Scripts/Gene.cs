@@ -30,6 +30,7 @@ public class Gene : BaseGene {
 	}
 
 	public Gene(BaseGene b) {
+		id = b.id;
 		itemName = b.itemName;
 		description = b.description;
 		iconName = b.iconName;
@@ -45,9 +46,10 @@ public class Gene : BaseGene {
 		state = GeneState.Passive;
 	}
 
-	public GameObject CreateGeneGameObject() {
+	public GameObject CreateGeneGameObject(MonoBehaviour owner) {
 		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
 		GenePointer gp = geneGameObject.GetComponent<GenePointer>();
+		gp.owningMenu = owner;
 		UISprite s = geneGameObject.GetComponent<UISprite>();
 		s.atlas = iconAtlas;
 		s.spriteName = iconName;
@@ -67,8 +69,8 @@ public class Gene : BaseGene {
 	}
 
 	void Activate() {
+		HudManager hudManager = HudManager.hudManager;
 		state = GeneState.Active;
-		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		hudManager.popup.Show("Gene", "The " + itemName + " gene has been activated!");
 		if(hudManager.inventoryMenu.IsDisplayed())
 			hudManager.inventoryMenu.Hide();

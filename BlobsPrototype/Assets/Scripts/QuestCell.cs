@@ -21,4 +21,17 @@ public class QuestCell : MonoBehaviour {
 		QuestListMenu questListMenu = gameObject.GetComponentInParent<QuestListMenu>();
 		questListMenu.QuestCellPressed(this);
 	}
+
+	public void DisplayBlobImage(Blob blob, int index) {
+		Transform slot = blobSlotGrid.transform.GetChild(index);
+		GameObject blobGameObject = (GameObject)GameObject.Instantiate(blob.gameObject);
+		blobGameObject.transform.SetParent(slot);
+		blobGameObject.transform.localPosition = new Vector3(0f, -4f, 0f);
+		blobGameObject.transform.localScale = blob.transform.localScale / 4f;
+		Destroy(blobGameObject.transform.Find("FloatingDisplay").gameObject);
+		Destroy(blobGameObject.GetComponent("Blob"));
+		Destroy(blobGameObject.GetComponent("BoxCollider"));
+		Destroy(blobGameObject.GetComponent("BlobDragDropItem"));
+		Destroy(blobGameObject.GetComponent("UIButton"));
+	}
 }

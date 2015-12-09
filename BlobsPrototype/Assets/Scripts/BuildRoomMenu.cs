@@ -4,7 +4,7 @@ using System.Collections;
 public class BuildRoomMenu : MonoBehaviour {
 
 	GameManager2 gameManager;
-	HudManager hudManager;
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	RoomManager roomManager;
 
 	public void Show() { gameObject.SetActive(true);}
@@ -13,7 +13,6 @@ public class BuildRoomMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();
-		hudManager = GameObject.Find ("HudManager").GetComponent<HudManager> ();
 		roomManager = GameObject.Find ("RoomManager").GetComponent<RoomManager> ();
 	}
 }

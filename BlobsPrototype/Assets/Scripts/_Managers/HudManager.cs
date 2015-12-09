@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class HudManager : MonoBehaviour {
+	private static HudManager _hudManager;
+	public static HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
 
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;

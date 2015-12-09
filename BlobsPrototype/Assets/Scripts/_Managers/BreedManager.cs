@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class BreedManager : MonoBehaviour {
 
-	HudManager hudManager;
+	HudManager hudManager { get { return HudManager.hudManager; } }
 	GameManager2 gameManager;
 	RoomManager roomManager;
 	GeneManager geneManager;
@@ -161,7 +161,6 @@ public class BreedManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
-		hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
 		roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
 		ColorDefines.BuildColorDefines();

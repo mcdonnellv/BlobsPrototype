@@ -4,6 +4,7 @@ using System.Collections;
 public class ItemInfoPopup : GenericGameMenu {
 
 	public UIButton deleteButton;
+	public UILabel deleteButtonLabel;
 	public UILabel rarityLabel;
 	public UILabel upperPanelInfoLabel;
 	public UISprite icon;
@@ -18,11 +19,24 @@ public class ItemInfoPopup : GenericGameMenu {
 
 	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner) Hide();}
 	public void Cleanup() { base.Cleanup(); owner = null; }
-	public void DeleteButtonPressed() {}
 
+
+	public void DeleteButtonPressed() {
+		owner.SendMessage("DeleteButtonPressed");
+	}
+
+
+	public void Show(GenericGameMenu caller, Item i) {
+		Show(caller);
+		if(i != null) PopulateInfoFromItem(i);
+	}
+
+	public void Show(GenericGameMenu caller, Gene g) {
+		Show(caller);
+		if(g != null) PopulateInfoFromGene(g);
+	}
 
 	public void Show(GenericGameMenu caller) {
-
 		gameObject.SetActive(true);
 		if(IsDisplayed() && owner == caller) // We are just changing the displayed info
 			FlashChangeAnim();
@@ -90,7 +104,8 @@ public class ItemInfoPopup : GenericGameMenu {
 		}
 		else
 			lowerPanel.gameObject.SetActive(false);
-		
+
+		deleteButtonLabel.text = "Delete";
 		lowerPanelGrid.Reposition();
 		ResizeWindow();
 	}
@@ -103,6 +118,7 @@ public class ItemInfoPopup : GenericGameMenu {
 		upperPanelInfoLabel.text = item.description;
 		icon.atlas = item.iconAtlas;
 		icon.spriteName = item.iconName;
+		deleteButtonLabel.text = "Sell for " + item.sellValue.ToString() + "[gold]";
 		ResizeWindow();
 	}
 }

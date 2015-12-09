@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class QuestManager : MonoBehaviour {
+	HudManager hudManager { get { return HudManager.hudManager; } }
+	RoomManager _roomManager;
+	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
 	public List<BaseQuest> quests = new List<BaseQuest>(); // All quests
 	public List<Quest> availableQuests = new List<Quest>(); //current quests
 	public UIAtlas iconAtlas;
@@ -42,5 +45,23 @@ public class QuestManager : MonoBehaviour {
 
 	public void AddQuestToList(BaseQuest bq) {
 		availableQuests.Add(new Quest(bq));
+	}
+
+
+	public void QuestCompleted(Quest quest) {
+		hudManager.lootMenu.Show(quest);
+		foreach(int blobId in quest.blobIds) {
+			Blob blob = roomManager.GetBlobByID(blobId);
+			blob.ActionDone();
+		}
+		availableQuests.Remove(quest);
+	}
+
+
+	void Update() {
+		foreach(Quest quest in availableQuests) {
+			if(quest.state == QuestState.Embarked && quest.actionReadyTime <= System.DateTime.Now)
+				quest.Complete();
+		}
 	}
 }

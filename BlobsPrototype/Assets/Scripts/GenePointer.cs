@@ -1,12 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class GenePointer : MonoBehaviour {
 	public Gene gene;
+	public MonoBehaviour owningMenu = null;
 
 	public void GenePressed() {
-		HudManager hudManager = GameObject.Find("HudManager").GetComponent<HudManager>();
-		hudManager.inventoryMenu.genesMenu.ShowInfoForGeneGameObject(this);
+		if(owningMenu != null)
+			owningMenu.SendMessage("GenePressed", this);
 	}
 }

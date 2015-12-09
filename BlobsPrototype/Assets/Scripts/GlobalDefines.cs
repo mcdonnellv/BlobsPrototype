@@ -25,6 +25,7 @@ public enum BlobState {
 	HatchReady,
 	Working,
 	WorkingReady,
+	OnQuest,
 };
 
 
@@ -91,6 +92,7 @@ public enum PopupPosition {
 };
 
 public enum QuestState {
+	NotAvailable,
 	Available,
 	Embarked,
 	Completed,

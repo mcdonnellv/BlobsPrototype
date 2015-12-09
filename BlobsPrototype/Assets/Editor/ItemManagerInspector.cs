@@ -102,6 +102,7 @@ using System.Linq;
 			GUILayout.EndHorizontal();
 			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(100f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality",item.quality);
+			item.sellValue = EditorGUILayout.IntField("Value", item.sellValue);
 			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;
 			SpriteSelection(item);
 		}

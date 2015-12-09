@@ -210,20 +210,39 @@ public class InventoryMenu : GenericGameMenu {
 		Hide();
 	}
 
-	public void DeteteSelectedItemAsk() {
-		string itemName = "";
-		switch(activeTab) {
-		case Tab.GenesTab: itemName = genesMenu.GetSelectedGene().itemName; break; 
-		case Tab.ItemsTab: itemName = itemsMenu.GetSelectedItem().itemName; break;
-		}
-		gameManager.hudMan.popup.Show("Delete", "Are you sure you want to delete [EEBE63]" + itemName + "[-]?", this, "DeteteSelectedItem");
+	void DeleteSelectedItemAsk() {
+		BaseThing thing = GetSelectedItem();
+		if(thing.sellValue > 0)
+			gameManager.hudMan.popup.Show("Sell", "Are you sure you want to sell [EEBE63]" + thing.itemName + "[-]?", this, "SellSelectedItem");
+		else
+			gameManager.hudMan.popup.Show("Delete", "Are you sure you want to delete [EEBE63]" + thing.itemName + "[-]?", this, "DeleteSelectedItem");
 	}
 
-	public void DeteteSelectedItem() {
+
+	BaseThing GetSelectedItem() {
+		BaseThing thing = null;
+		switch(activeTab) {
+		case Tab.GenesTab: thing = (BaseThing)genesMenu.GetSelectedGene();break; 
+		case Tab.ItemsTab: thing = (BaseThing)itemsMenu.GetSelectedItem(); break;
+		}
+		return thing;
+	}
+
+	void DeleteSelectedItem() {
 		switch(activeTab) {
 		case Tab.GenesTab: genesMenu.DeleteSelectedThing(); break; 
 		case Tab.ItemsTab: itemsMenu.DeleteSelectedThing(); break;
 		}
+	}
+
+	void SellSelectedItem() {
+		BaseThing thing = GetSelectedItem();
+		gameManager.AddGold(thing.sellValue);
+		DeleteSelectedItem();
+	}
+
+	void DeleteButtonPressed() {
+		DeleteSelectedItemAsk();
 	}
 
 }

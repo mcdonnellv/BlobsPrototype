@@ -8,7 +8,7 @@ public class PotentialLootMenu : GenericGameMenu {
 	public Quest quest;
 	private ItemManager _im;
 	ItemManager itemManager { get{ if(_im == null) _im = GameObject.Find("ItemManager").GetComponent<ItemManager>(); return _im; } }
-	int defaultWindowHeight = 180;
+	int defaultWindowHeight = 228;
 
 
 	public void Show(Quest questParam) {
@@ -23,8 +23,19 @@ public class PotentialLootMenu : GenericGameMenu {
 		ResizeWindow();
 	}
 
+
 	void RebuildSlots() {
 		List<LootEntry> lootList = quest.LootTableA.Union(quest.LootTableB).ToList();
+
+		// prune dupes for simple display
+		for(int i = 0; i < lootList.Count; i++) {
+			LootEntry lootEntryBase = lootList[i];
+			for(int j = i + 1; j < lootList.Count; j++) {
+				LootEntry lootEntryComp = lootList[j];
+				if(lootEntryBase.itemId == lootEntryComp.itemId)
+					lootList.RemoveAt(j);
+			}
+		}
 
 		grid.transform.DestroyChildren();
 		foreach (LootEntry loot in lootList) {
@@ -41,7 +52,7 @@ public class PotentialLootMenu : GenericGameMenu {
 
 	void SetupItemInSocket(LootEntry loot, GameObject parentSocket){
 		Item item = new Item(itemManager.GetBaseItemByID(loot.itemId));
-		GameObject go = item.CreateItemGameObject();
+		GameObject go = item.CreateItemGameObject(this);
 		go.transform.parent = parentSocket.transform;
 		go.transform.localScale = Vector3.one;
 		go.transform.localPosition = Vector3.zero;
@@ -49,6 +60,15 @@ public class PotentialLootMenu : GenericGameMenu {
 		UISprite socketSprite = parentSocket.GetComponentInChildren<UISprite>();
 		itemSprite.depth = socketSprite.depth + 2;
 		socketSprite.color = ColorDefines.ColorForQuality(item.quality);
+	}
+
+	public void ItemPressed(ItemPointer itemPointer) {
+		HudManager hudManager = HudManager.hudManager;
+		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
+		if(itemPointer == null) 
+			return;
+		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
+		itemInfoPopup.Show(this, itemPointer.item);
 	}
 
 
