@@ -67,6 +67,17 @@ public enum Element {
 };
 
 
+public enum Sigil {
+	None = -1,
+	A,
+	B,
+	C,
+	D,
+	E,
+	SigilCt,
+};
+
+
 public enum GeneState {
 	Passive,
 	Available,
@@ -115,6 +126,17 @@ public class GlobalDefines : MonoBehaviour {
 		case Quality.Legendary: return .012f;
 		}
 		return 0;
+	}
+
+	public static string StringForSigil(Sigil sigil) {
+		switch (sigil)	{
+		case Sigil.A: return "[sigilA]";
+		case Sigil.B: return "[sigilB]";
+		case Sigil.C: return "[sigilC]";
+		case Sigil.D: return "[sigilD]";
+		case Sigil.E: return "[sigilE]";
+		}
+		return "";
 	}
 }
 

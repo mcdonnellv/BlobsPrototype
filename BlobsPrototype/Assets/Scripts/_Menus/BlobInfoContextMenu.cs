@@ -12,6 +12,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UILabel genderLabel;
 	public UILabel qualityLabel;
 	public UILabel elementLabel;
+	public UILabel sigilLabel;
 	public List<UILabel> statLabels;
 	public UIGrid geneGrid;
 	public UIGrid statGrid;
@@ -96,7 +97,8 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		statLabels[1].text = blob.combatStats.stamina.ToString();
 		statLabels[2].text = blob.combatStats.attack.ToString();
 		statLabels[3].text = blob.combatStats.armor.ToString();
-		elementLabel.text = blob.combatStats.element.ToString();
+		elementLabel.text = blob.element.ToString();
+		sigilLabel.text = GlobalDefines.StringForSigil(blob.sigil);
 		UpdateStatColors();
 	}
 

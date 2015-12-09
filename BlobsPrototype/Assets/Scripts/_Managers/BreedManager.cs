@@ -89,15 +89,58 @@ public class BreedManager : MonoBehaviour {
 			g.state = GeneState.Passive;
 		blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
 
-		// give random element
-		if(blobInteractAction == BlobInteractAction.Breed)
-			blob.nativeElement = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
-		if(blobInteractAction == BlobInteractAction.Merge)
-			blob.nativeElement = (UnityEngine.Random.Range(0, 2) == 0) ? dad.combatStats.element : mom.combatStats.element;
-		
+		// give random element and sigil
+		switch(blobInteractAction) {
+		case BlobInteractAction.Breed:
+			blob.nativeElement = GetOffSpringElement(dad.element, mom.element);
+			blob.sigil = GetOffSpringSigil(dad.sigil, mom.sigil);
+			break;
+		case BlobInteractAction.Merge:
+			blob.nativeElement = (UnityEngine.Random.Range(0, 2) == 0) ? dad.element : mom.element;
+			blob.sigil = (UnityEngine.Random.Range(0, 2) == 0) ? dad.sigil : mom.sigil;
+			break;
+		}
 
 		blob.Setup();
 		return blob;
+	}
+
+
+	Element GetOffSpringElement(Element e1, Element e2) {
+		Element[] possibleElements = new Element[12];
+		int max = (int)Element.ElementCt;
+		possibleElements[0] = (Element)((int)(e1 - 1) % max);
+		possibleElements[1] = e1;
+		possibleElements[2] = e1;
+		possibleElements[3] = e1;
+		possibleElements[4] = e1;
+		possibleElements[5] = (Element)((int)(e1 + 1) % max);
+		possibleElements[6] = (Element)((int)(e2 - 1) % max);
+		possibleElements[7] = e2;
+		possibleElements[8] = e2;
+		possibleElements[9] = e2;
+		possibleElements[10] = e2;
+		possibleElements[11] = (Element)((int)(e2 + 1) % max);
+		return possibleElements[UnityEngine.Random.Range(0, 12)];
+	}
+
+
+	Sigil GetOffSpringSigil(Sigil s1, Sigil s2) {
+		Sigil[] possibleSigils = new Sigil[12];
+		int max = (int)Sigil.SigilCt;
+		possibleSigils[0] = (Sigil)((int)(s1 - 1) % max);
+		possibleSigils[1] = s1;
+		possibleSigils[2] = s1;
+		possibleSigils[3] = s1;
+		possibleSigils[4] = s1;
+		possibleSigils[5] = (Sigil)((int)(s1 + 1) % max);
+		possibleSigils[6] = (Sigil)((int)(s2 - 1) % max);
+		possibleSigils[7] = s2;
+		possibleSigils[8] = s2;
+		possibleSigils[9] = s2;
+		possibleSigils[10] = s2;
+		possibleSigils[11] = (Sigil)((int)(s2 + 1) % max);
+		return possibleSigils[UnityEngine.Random.Range(0, 12)];
 	}
 
 
@@ -163,7 +206,6 @@ public class BreedManager : MonoBehaviour {
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
-		ColorDefines.BuildColorDefines();
 	}
 	
 	// Update is called once per frame

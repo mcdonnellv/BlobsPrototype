@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public class CombatStats : MonoBehaviour {
+public class CombatStats {
 	public int attack;
 	public int armor;
 	public int health;

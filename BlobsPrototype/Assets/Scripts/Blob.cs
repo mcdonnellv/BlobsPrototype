@@ -22,6 +22,8 @@ public class Blob : MonoBehaviour {
 	public List<Gene> genes;
 	public CombatStats combatStats;
 	public Element nativeElement;
+	public Sigil sigil;
+	public Element element { get { return combatStats.element; } }
 	public Dictionary<string, int> itemsConsumed;
 	public Room room;
 	public DateTime actionReadyTime;
@@ -85,6 +87,7 @@ public class Blob : MonoBehaviour {
 
 
 	public void Setup() {
+
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
@@ -308,7 +311,7 @@ public class Blob : MonoBehaviour {
 	
 	public void BreedingDone() {
 		if(female)
-			breedManager.BreedBlobs(this, GetSpouse());
+			breedManager.BreedBlobs(GetSpouse(), this);
 		state = BlobState.Idle;
 	}
 
@@ -332,6 +335,7 @@ public class Blob : MonoBehaviour {
 
 
 	public void CalculateStats() {
+		Element preCalcElement = (element == Element.None) ? nativeElement : element;
 		combatStats.SetDefaultValues();
 
 		foreach(Gene g in genes)
@@ -349,7 +353,8 @@ public class Blob : MonoBehaviour {
 		if(combatStats.element == Element.None)
 			combatStats.element = nativeElement;
 
-		SetColorFromElement(combatStats.element);
+		if(preCalcElement != element)
+			SetColorFromElement(combatStats.element);
 	}
 
 	

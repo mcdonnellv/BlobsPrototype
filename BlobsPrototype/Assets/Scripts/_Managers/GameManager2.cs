@@ -55,6 +55,7 @@ public class GameManager2 : MonoBehaviour {
 			blob = blobGameObject.AddComponent<Blob>();
 			blob.gender = (i % 2 == 0 ? Gender.Male : Gender.Female);
 			blob.nativeElement = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
+			blob.sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
 			blob.Setup();
 			blob.Hatch(false);
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
