@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public class ItemsMenu : BaseThingMenu {
 
 	Item selectedItem = null;
-	private ItemManager _im;
-	ItemManager itemManager { get{ if(_im == null) _im = GameObject.Find("ItemManager").GetComponent<ItemManager>(); return _im; } }
+	ItemManager itemManager { get { return ItemManager.itemManager; } }
 	public override void SetSelectedThing(int index) { selectedItem = itemManager.storedItems[index]; }
 	public override BaseThing GetSelectedThing() {return (BaseThing)selectedItem; }
 	public override void ShowInfo() { ItemPressed(GetItemPointerFromItem(selectedItem)); }

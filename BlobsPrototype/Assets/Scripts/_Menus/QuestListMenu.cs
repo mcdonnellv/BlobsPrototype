@@ -5,21 +5,27 @@ using System.Collections;
 public class QuestListMenu : GenericGameMenu {
 	public UIGrid grid;
 	public QuestDetailsMenu questDetailsMenu;
-	QuestManager questManager;
+	public UIButton completeButton;
+	public UIButton selectButton;
+	public UILabel inProgressLabel;
+	QuestManager questManager { get { return QuestManager.questManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	Quest selectedQuest;
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+
 
 	public void Pressed() {	Show(); }
 
+
 	public void Show() { 
 		base.Show(); 
-		window.transform.localScale = new Vector3(1,1,1); 
+		//window.transform.localScale = new Vector3(1,1,1); 
 		SetupQuestCells(); 
+		if(questDetailsMenu.IsDisplayed())
+			questDetailsMenu.UnSelectQuest();
 	}
 
+
 	void SetupQuestCells() {
-		questManager = GameObject.Find("QuestManager").GetComponent<QuestManager>();
 		grid.transform.DestroyChildren();
 		foreach(Quest quest in questManager.availableQuests) {
 			GameObject cellGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Quest Cell"));
@@ -34,7 +40,8 @@ public class QuestListMenu : GenericGameMenu {
 			questCell.icon.atlas = quest.iconAtlas;
 
 			foreach(int blobId in quest.blobIds) 
-				questCell.DisplayBlobImage(roomManager.GetBlobByID(blobId), quest.blobIds.IndexOf(blobId));
+				if(blobId != -1)
+					questCell.DisplayBlobImage(roomManager.GetBlobByID(blobId), quest.blobIds.IndexOf(blobId));
 
 			string timeString = "0 sec";
 			switch(quest.state) {
@@ -56,17 +63,39 @@ public class QuestListMenu : GenericGameMenu {
 	}
 
 
+	public void SetDisplayed() {
+		base.SetDisplayed();
+		SelectFirstQuest();
+	}
+
+
+	void SelectFirstQuest() {
+		if(grid.transform.childCount > 0){
+			QuestCell questCell = grid.transform.GetChild(0).GetComponent<QuestCell>();
+			questCell.Pressed();
+		}
+	}
+
+
 	public void QuestCellPressed(QuestCell questCell) {
 		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
+		questDetailsMenu.Show(this, selectedQuest, false);
+		questDetailsMenu.PopulateWithBlobs();
 		switch(selectedQuest.state) {
 		case QuestState.Available:
-		case QuestState.Embarked: 
-			questDetailsMenu.Show(this, selectedQuest);
+			selectButton.gameObject.SetActive(true);
+			completeButton.gameObject.SetActive(false);
+			inProgressLabel.gameObject.SetActive(false);
+			break;
+		case QuestState.Embarked:
+			selectButton.gameObject.SetActive(false);
+			completeButton.gameObject.SetActive(false);
+			inProgressLabel.gameObject.SetActive(true);
 			break;
 		case QuestState.Completed: 
-			questDetailsMenu.QuestCompleted(); 
-			questManager.QuestCompleted(selectedQuest);
-			SetupQuestCells();
+			selectButton.gameObject.SetActive(false);
+			completeButton.gameObject.SetActive(true);
+			inProgressLabel.gameObject.SetActive(false);
 			break;
 		}
 	}
@@ -75,18 +104,32 @@ public class QuestListMenu : GenericGameMenu {
 	public void HideDetails() {
 		questDetailsMenu.Hide();
 	}
+	
 
-	public void Hide() {
-		//questDetailsMenu.Hide();
-		base.Hide();
+	public void Dismiss() {
+		questDetailsMenu.Hide();
+		Invoke("Hide", questDetailsMenu.GetAnimationDelay() * .4f);
 	}
 
-	void Update() {
-		foreach(Quest quest in questManager.availableQuests) {
-			int index = questManager.availableQuests.IndexOf(quest);
-			Transform cellTransform = grid.transform.GetChild(index);
-			QuestCell questCell = cellTransform.GetComponent<QuestCell>();
 
+	public void SelectQuestPressed() {
+		questDetailsMenu.SelectQuest();
+		Invoke("Hide", questDetailsMenu.GetAnimationDelay() * .4f);
+	}
+
+	public void CompleteQuestPressed() {
+		questDetailsMenu.QuestCompleted(); 
+		questManager.QuestCompleted(selectedQuest);
+		SetupQuestCells();
+		SelectFirstQuest();
+	}
+
+
+	void Update() {
+		foreach(Transform cellTransform in grid.transform) {
+			int index = cellTransform.GetSiblingIndex();
+			QuestCell questCell = cellTransform.GetComponent<QuestCell>();
+			Quest quest = questManager.availableQuests[index];
 			if(quest.state == QuestState.Embarked) {
 				string timeString = "";
 				if(quest.state == QuestState.Embarked) {

@@ -11,6 +11,7 @@ public class ItemInfoPopup : GenericGameMenu {
 	public UIGrid lowerPanelGrid;
 	public UIWidget upperPanel;
 	public UIWidget lowerPanel;
+	ItemManager itemManager { get { return ItemManager.itemManager; } }
 	[HideInInspector] public Gene gene = null;
 	[HideInInspector] public Item item = null;
 	[HideInInspector] public GenericGameMenu owner = null;
@@ -91,7 +92,6 @@ public class ItemInfoPopup : GenericGameMenu {
 				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
 				statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
 				UISprite[] sprites = statGameObject.GetComponentsInChildren<UISprite>();
-				ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 				BaseItem item = itemManager.GetBaseItemByID(req.itemId);
 				sprites[0].atlas = item.iconAtlas;
 				sprites[0].spriteName = item.iconName;

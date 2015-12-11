@@ -6,6 +6,7 @@ public class HudManager : MonoBehaviour {
 	private static HudManager _hudManager;
 	public static HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
 
+	public UIAtlas sigilAtlas;
 	public UILabel averageQualityLabel;
 	public UILabel goldLabel;
 	public UILabel chocolateLabel;
@@ -36,7 +37,7 @@ public class HudManager : MonoBehaviour {
 	void Start () {
 		HudManager.popupCamera = popupCameraParam;
 		foreach(Transform child in popupCamera.transform.parent) {
-			if(child.GetComponent<GenericGameMenu>()) 
+			if(child.GetComponentInChildren<GenericGameMenu>()) 
 				child.gameObject.SetActive(false);
 		}
 		popupCamera.enabled = false;

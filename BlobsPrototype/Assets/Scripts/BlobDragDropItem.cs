@@ -1,11 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BlobDragDropItem : UIDragDropItem {
 	Animator animator { get { return GetComponent<Animator>(); } }
 	UIScrollView scrollView { get { return roomManager.scrollView; } }
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	public bool uiClone = false;
 
@@ -56,14 +55,10 @@ public class BlobDragDropItem : UIDragDropItem {
 		blob.room.HideFloatingSprites();
 		roomManager.scrollVector = new Vector2(0f,0f);
 		animator.SetBool("dragging", false);
-
 		if(uiClone) {
 			OnDragDropReleaseForClone(surface);
-			//GameObject.Destroy(gameObject);
 			return;
 		}
-
-
 		if (surface != null && blob != null) {
 			BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
 			if (blobContainer == null) {
@@ -74,7 +69,6 @@ public class BlobDragDropItem : UIDragDropItem {
 				}
 				surface = surface.transform.parent.gameObject;
 			}
-
 			Tile tile = (Tile)surface.GetComponent<Tile>();
 			if(tile != null) {
 				DropBlobOnTile(blob, tile);
@@ -87,23 +81,27 @@ public class BlobDragDropItem : UIDragDropItem {
 
 	void OnDragDropReleaseForClone (GameObject surface) {
 		Blob blob = gameObject.GetComponent<Blob>();
+		transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
 		if(surface == null) {
-			transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
+			GameObject.Destroy(gameObject);
+			return;
+		}
+		BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponentInParent<BlobDragDropContainer>();
+
+		if(blobContainer == null || blobContainer.uiContainer == false) {
 			GameObject.Destroy(gameObject);
 			return;
 		}
 
-		BlobDragDropContainer blobContainer = (BlobDragDropContainer)surface.GetComponent<BlobDragDropContainer>();
-
-		if(blobContainer == null || blobContainer.hasBlob) {
-			transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
-			GameObject.Destroy(gameObject);
-			return;
+		if(blobContainer.hasBlob) {
+			BlobDragDropItem currentResident = blobContainer.gameObject.GetComponentInChildren<BlobDragDropItem>();
+			GameObject.Destroy(currentResident.gameObject);
 		}
 
 		base.OnDragDropRelease(surface);
 		blobContainer.BlobAdded(blob);
 	}
+
 
 	void DropBlobOnTile(Blob blob, Tile tile) {
 		Room room = tile.transform.parent.GetComponent<Room>();
@@ -114,7 +112,6 @@ public class BlobDragDropItem : UIDragDropItem {
 			ReEnableCollider();
 			return;
 		}
-		
 		if(blob.room != room) {
 			if(blob.spouseId == -1) {
 				Room oldRoom = blob.room;
@@ -131,7 +128,6 @@ public class BlobDragDropItem : UIDragDropItem {
 			blob.tilePosX = tile.xPos;
 			blob.tilePosY = tile.yPos;
 		}
-
 		base.OnDragDropRelease(tile.gameObject);
 	}
 
@@ -151,7 +147,6 @@ public class BlobDragDropItem : UIDragDropItem {
 			mTrans.localPosition += (Vector3)delta;
 			return;
 		}
-
 		Vector2 dir = new Vector2(0f, 0f); 
 		if(mTrans.position.x > 1.5f)
 			dir.x += -1;
@@ -162,14 +157,10 @@ public class BlobDragDropItem : UIDragDropItem {
 			dir.y += -1;
 		else if(mTrans.position.y < -.7f)
 			dir.y += 1;
-		
 		dir.Normalize();
 		roomManager.scrollVector = dir;
 		mTrans.localPosition += (Vector3)delta;
 	}
-
-
-
 
 
 	void Update() {

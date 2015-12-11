@@ -7,6 +7,10 @@ using System.Linq;
 
 [Serializable]
 public class ItemManager : MonoBehaviour {
+	private static ItemManager _itemManager;
+	public static ItemManager itemManager { get {if(_itemManager == null) _itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>(); return _itemManager; } }
+
+
 	public List<BaseItem> items = new List<BaseItem>(); // All items
 	public List<Item> storedItems = new List<Item>();
 	public UIAtlas iconAtlas;

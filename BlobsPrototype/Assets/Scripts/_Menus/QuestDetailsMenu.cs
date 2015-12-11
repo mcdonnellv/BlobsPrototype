@@ -6,29 +6,51 @@ using System.Linq;
 public class QuestDetailsMenu : GenericGameMenu {
 	public QuestListMenu questListMenu;
 	public UILabel descriptionLabel;
-	public UILabel objectiveLabel;
 	public UISprite icon;
 	public UILabel durationLabel;
 	public UILabel rarityLabel;
-	public UILabel infoLabel;
-	public UIButton selectButton;
-	public GameObject blobContainer;
-	public UIWidget objectiveContainer;
-	public UIButton rewardsButton;
+	public UIButton departButton;
+	public UIButton cancelButton;
 	public UIGrid blobGrid;
-	public Quest quest;
-	bool questSelected = false;
-	int defaultWindowHeight = 500;
-	HudManager hudManager { get { return HudManager.hudManager; } }
+	public PotentialLootMenu potentialLootMenu;
+	public UILabel blobInfoLabel;
+	public UISprite blobInfoBG;
+	public UILabel rewardInfoLabel;
+	public UISprite rewardInfoBG;
+	public UIWidget requirementsContainer;
+	public UIWidget rewardsContainer;
 
+
+	[HideInInspector] public Quest quest;
 	[HideInInspector] public GenericGameMenu owner = null;
-
-	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner && !HasBeenSelected()) Hide();}
+	int defaultWindowHeight = 554;//742;
+	HudManager hudManager { get { return HudManager.hudManager; } }
+	QuestManager questManager { get { return QuestManager.questManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	public void Pressed() {	Show(); }
-	public bool HasBeenSelected() {return questSelected; }
+	public bool IsSelected()  {return (owner == null || !owner.IsDisplayed()); }
 
 
-	public void Show(GenericGameMenu caller, Quest questParam) {
+	public void ResizeWindow() { 
+		int height = defaultWindowHeight;
+		requirementsContainer.transform.localPosition = new Vector3(0,-278,0);
+		rewardsContainer.transform.localPosition = GetRewardsContainerPosition();
+		requirementsContainer.height = 117;
+		if(quest.blobsRequired > 3) {
+			requirementsContainer.transform.localPosition = new Vector3(0,-260,0);
+			requirementsContainer.height = 180;
+		}
+
+		if(IsSelected()) 
+			height += 110;
+		window.GetComponent<UISprite>().height = height;
+	}
+
+
+	public void QuestCompleted() { ClearBlobs(); }
+
+
+	public void Show(GenericGameMenu caller, Quest questParam, bool showButtons) {
 		gameObject.SetActive(true);
 		if(IsDisplayed() && owner == caller && quest != questParam) // We are just changing the displayed info
 			FlashChangeAnim();
@@ -36,9 +58,10 @@ public class QuestDetailsMenu : GenericGameMenu {
 			base.Show(); 
 		owner = caller;
 		quest = questParam;
+		ShowButtons(showButtons);
 		Setup();
 	}
-
+	
 
 	void Setup() {
 		headerLabel.text = quest.itemName;
@@ -54,66 +77,56 @@ public class QuestDetailsMenu : GenericGameMenu {
 		if(quest.mins > 0)
 			timeString += quest.mins.ToString() + " min";
 		durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
-		switch(quest.type) {
-		case QuestType.Combat: objectiveLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + "Objective: [-] Eliminate the monster"; break;
-		case QuestType.Scouting:
-		case QuestType.Gathering: objectiveLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + "Objective: [-] Deploy blobs and await their return"; break;
-		}
-
-		blobContainer.SetActive(true);
 		int blobsRequired = quest.blobsRequired;
-		int index = 0;
+
+
 		foreach(Transform child in blobGrid.transform) {
-			if(index < quest.blobsRequired) {
-				List<UISprite> sprites = child.gameObject.GetComponentsInChildren<UISprite>(true).ToList();
-				sprites[0].color = ColorDefines.ColorForElement(quest.elementRequirements[index]);
-			}
-			child.gameObject.SetActive(blobsRequired > 0);
-			blobsRequired--;
-			index++;
+			bool active = (child.GetSiblingIndex() < quest.blobsRequired);
+			child.gameObject.SetActive(active);
+			if(!active)
+				continue;
+			BlobQuestSlot blobSlot = child.GetComponent<BlobQuestSlot>();
+			blobSlot.fulfilledSprite.gameObject.SetActive(false);
+			blobSlot.sigilSprite.alpha = .5f;
+			blobSlot.socketSprite.alpha = .5f;
+			Element element = quest.elementRequirements[child.GetSiblingIndex()];
+			Color colorRequired = ColorDefines.ColorForElement(element);
+			blobSlot.colorBgSprite.color = (element == Element.None) ? ColorDefines.defaultBlobSocketColor: colorRequired;
+			Sigil sigil = quest.sigilRequirements[child.GetSiblingIndex()];
+			blobSlot.sigilSprite.gameObject.SetActive(sigil != Sigil.None);
+			if(sigil != Sigil.None)
+				blobSlot.sigilSprite.spriteName = GlobalDefines.SpriteNameForSigil(sigil);
 		}
 
 		ClearBlobs();
 		blobGrid.Reposition();
-		blobContainer.SetActive(false);
-		objectiveContainer.gameObject.SetActive(true);
-
-		switch(quest.state) {
-		case QuestState.Embarked: 
-			selectButton.isEnabled = false; 
-			selectButton.GetComponentInChildren<UILabel>().text = "IN PROGRESS";
-			break;
-		default: 
-			selectButton.isEnabled = true; 
-			selectButton.GetComponentInChildren<UILabel>().text = "SELECT";
-			break;
-		}
-
-		UpdateInfoText();
+		UpdateRewardInfoLabel();
 		ResizeWindow();
+		potentialLootMenu.RebuildSlots(quest);
 	}
 
 
 	public void SelectQuest() {
-		questSelected = true;
-		owner.Hide();
 		animationWindow.PlayReverse();
 		Invoke("ChangePositionToRight", GetAnimationDelay());
 		hudManager.dragToUi = true;
 	}
-
-
-	public void ViewRewards() {
-		hudManager.potentialLootMenu.Show(quest);
-	}
-
+	
 
 	public void ChangePositionToRight() {
-		blobContainer.SetActive(true);
-		objectiveContainer.gameObject.SetActive(false);
+		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
+		ShowButtons(true);
 		ChangePosition(PopupPosition.Right1);
+		owner = null;
 		ResizeWindow();
 		animationWindow.PlayForward();
+
+		foreach(Transform child in blobGrid.transform) {
+			BlobDragDropItem dragDropItem = child.GetComponentInChildren<BlobDragDropItem>();
+			if(dragDropItem != null) {
+				dragDropItem.interactable = true;
+			}
+		}
 	}
 
 
@@ -125,56 +138,126 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 
 	public void UnSelectQuest() {
-		questSelected = false;
-		blobContainer.SetActive(false);
-		objectiveContainer.gameObject.SetActive(true);
 		animationWindow.PlayReverse();
 		owner.Invoke("Show", GetAnimationDelay()/2);
 		hudManager.dragToUi = false;
 		Hide();
 	}
+	
 
+	public void PopulateWithBlobs() {
+		foreach(Transform child in blobGrid.transform) {
+			int index = child.GetSiblingIndex();
+			if(index >= quest.blobsRequired)
+				break;
+			int blobID = quest.blobIds[index];
+			if(blobID == -1)
+				continue;
+			Blob blob = roomManager.GetBlobByID(quest.blobIds[index]);
+			if(blob == null)
+				continue;
+			BlobQuestSlot blobSlot = child.GetComponent<BlobQuestSlot>();
+			blobSlot.socket.transform.DestroyChildren();
+			GameObject blobGameObject = (GameObject)GameObject.Instantiate(blob.gameObject);
+			blobGameObject.transform.SetParent(blobSlot.socket.transform);
+			blobGameObject.transform.localPosition = new Vector3(0f, -18f, 1f);
+			blobGameObject.transform.localScale = new Vector3(.6f, .6f, .6f);
 
-	public void ResizeWindow() {
-		//int height = defaultWindowHeight;
-		//if(!HasBeenSelected())
-			//height = 534;
-		//window.GetComponent<UISprite>().height = height;
+			BlobDragDropItem dragDropItem = blobGameObject.GetComponent<BlobDragDropItem>();
+			dragDropItem.uiClone = true;
+			dragDropItem.interactable = false;
+			blobSlot.socketSprite.alpha = 1f;
+			blobSlot.sigilSprite.alpha = .15f;
+		}
 	}
 
 
-	public void BlobAddedToContainer(BlobDragDropContainer blobDragDropContainer) {
-		Blob blobAdded = blobDragDropContainer.GetComponentInChildren<Blob>();
+	public void BlobAddedToContainer(BlobContainerPackage package) {
+		Blob blobToAdd = package.blob;
+		BlobDragDropContainer blobDragDropContainer = package.container;
+		int containerIndex = blobDragDropContainer.transform.parent.GetSiblingIndex();
+
+		//if this blob is also in other containers remove it from those containers
 		foreach(Transform child in blobGrid.transform) {
-			if(child == blobDragDropContainer.transform)
+			if(child.GetComponentInChildren<BlobDragDropContainer>() == blobDragDropContainer || !child.gameObject.activeSelf)
 				continue;
 			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null) 
-				if(blob.id == blobAdded.id) 
-
-					GameObject.Destroy(blob.gameObject);
-				
-
+			if(blob != null && blob.id == blobToAdd.id) {
+				BlobRemovedFromContainer(blob.id);
+				GameObject.Destroy(blob.gameObject);
+			}
 		}
-		quest.AddBlob(blobAdded.id, blobDragDropContainer.transform.GetSiblingIndex());
-		UpdateInfoText();
-	}
+		quest.AddBlob(blobToAdd.id, containerIndex);
 
+		// now check to see if elements and sigils match
+		BlobQuestSlot blobSlot = blobDragDropContainer.GetComponentInParent<BlobQuestSlot>();
+		bool match = questManager.DoesBlobMatchSlot(quest, blobToAdd, containerIndex);
+		blobSlot.fulfilledSprite.gameObject.SetActive(match);
+		blobSlot.socketSprite.alpha = 1f;
+		blobSlot.sigilSprite.alpha = .15f;
+		UpdateRewardInfoLabel();
+		departButton.isEnabled = questManager.IsPartyFull(quest);
+	}
+	
 
 	public void BlobRemovedFromContainer(int blobId) {
+		int index = quest.blobIds.IndexOf(blobId);
+		Transform slot = blobGrid.transform.GetChild(index);
+		BlobQuestSlot blobSlot = slot.GetComponentInParent<BlobQuestSlot>();
+		blobSlot.fulfilledSprite.gameObject.SetActive(false);
+		blobSlot.socketSprite.alpha = .5f;
+		blobSlot.sigilSprite.alpha = .5f;
 		quest.RemoveBlob(blobId);
-		UpdateInfoText();
-
+		UpdateRewardInfoLabel();
+		departButton.isEnabled = questManager.IsPartyFull(quest);
 	}
 
 
-	void UpdateInfoText() {
-		if(quest.blobIds.Count < quest.blobsRequired)
-			infoLabel.text = "DRAG BLOBS TO FORM A PARTY";
-		else if(quest.IsHighYield())
-			infoLabel.text = "REWARD YIELD: HIGH";
-		else
-			infoLabel.text = "REWARD YIELD: LOW";
+	void ShowButtons(bool show) {
+		departButton.gameObject.SetActive(show);
+		cancelButton.gameObject.SetActive(show);
+		if(show) {
+			departButton.isEnabled = questManager.IsPartyFull(quest);
+			//rewardsContainer.transform.localPosition = new Vector3(0,-462,0);
+			blobInfoBG.gameObject.SetActive(true);
+		}
+		else {
+			rewardInfoBG.gameObject.SetActive(false);
+			//rewardsContainer.transform.localPosition = new Vector3(0,-443,0);
+			blobInfoBG.gameObject.SetActive(false);
+		}
+	}
+
+
+	Vector3 GetRewardsContainerPosition() {
+		Vector3 pos = new Vector3(0,-462,0);
+		if(quest.blobsRequired > 3) 
+			pos.y -= 30;
+		if(!IsSelected())
+			pos.y += 19;
+		return pos;
+	}
+
+	void UpdateRewardInfoLabel() {
+		if(IsSelected() ==  false)
+			return;
+
+		bool full = questManager.IsPartyFull(quest);
+		if(!full) {
+			rewardInfoLabel.text = "";
+			rewardsContainer.transform.localPosition = GetRewardsContainerPosition();
+		}
+		else {
+			int ct = questManager.GetRewardCount(quest);
+			rewardInfoLabel.text = "YOU WILL GET " + ct.ToString() + ((ct > 1) ? " ITEMS" : " ITEM");
+			Vector3 pos = GetRewardsContainerPosition();
+			pos.y += blobInfoBG.height;
+			rewardsContainer.transform.localPosition = pos;
+		}
+
+		blobInfoLabel.text = "DRAG BLOBS HERE";
+		blobInfoBG.gameObject.SetActive(!full);
+		rewardInfoBG.gameObject.SetActive(full);
 	}
 
 
@@ -185,15 +268,15 @@ public class QuestDetailsMenu : GenericGameMenu {
 			if(blob != null)
 				blobs.Add(blob.id);
 		}
-
 		return blobs;
 	}
 
 
 	void ClearBlobs() {
+		//quest.RemoveAllBlobs();
 		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null) 
+			if(blob != null)
 				GameObject.Destroy(blob.gameObject);
 		}
 	}
@@ -210,13 +293,13 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 
-	public void QuestCompleted(){
-		ClearBlobs();
+	public void FlashChangeAnim() {
+		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
+		base.FlashChangeAnim();
 	}
 
 
 	public override void Cleanup() {
-		questSelected = false;
 		hudManager.dragToUi = false;
 		base.Cleanup();
 	}

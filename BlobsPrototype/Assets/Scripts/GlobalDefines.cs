@@ -61,8 +61,8 @@ public enum Element {
 	Black = 0,
 	Blue,
 	White,
-	Red,
 	Green,
+	Red,
 	ElementCt,
 };
 
@@ -99,6 +99,10 @@ public enum PopupPosition {
 	Right3,
 	Left1,
 	Left2,
+	Popup1,
+	Popup2,
+	QuestDetails1,
+	QuestDetails2,
 	Max,
 };
 
@@ -135,6 +139,17 @@ public class GlobalDefines : MonoBehaviour {
 		case Sigil.C: return "[sigilC]";
 		case Sigil.D: return "[sigilD]";
 		case Sigil.E: return "[sigilE]";
+		}
+		return "";
+	}
+
+	public static string SpriteNameForSigil(Sigil sigil) {
+		switch (sigil)	{
+		case Sigil.A: return "sigil_skull";
+		case Sigil.B: return "sigil_tornado";
+		case Sigil.C: return "sigil_omega";
+		case Sigil.D: return "sigil_fire";
+		case Sigil.E: return "sigil_thunder";
 		}
 		return "";
 	}

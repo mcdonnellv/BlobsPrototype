@@ -20,6 +20,10 @@ public class BaseQuest : BaseThing {
 	public List<LootEntry> LootTableA = new List<LootEntry>(); // moster specific loot
 	public List<LootEntry> LootTableB = new List<LootEntry>(); // more generic loot common across all quests
 	public int blobsRequired = 1;
+	public bool usesElements = false;
+	public bool usesSigils = false;
+	public bool mixedElements = false;
+	public bool mixedSigils = false;
 
 }
 
@@ -27,13 +31,13 @@ public class BaseQuest : BaseThing {
 [Serializable]
 public class Quest : BaseQuest {
 	public static int maxblobsRequired = 5;
-	public List<int> blobIds = new List<int>();
+	public List<int> blobIds;
 	public QuestState state;
 	public DateTime actionReadyTime;
 	public List<Element> elementRequirements = new List<Element>();
+	public List<Sigil> sigilRequirements = new List<Sigil>();
 
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 
 	public Quest(BaseQuest b) {
@@ -49,12 +53,34 @@ public class Quest : BaseQuest {
 		days = b.days;
 		LootTableA = b.LootTableA.ToList();
 		LootTableB = b.LootTableB.ToList();
+		usesElements = b.usesElements;
+		usesSigils = b.usesSigils;
+		mixedElements = b.mixedElements;
+		mixedSigils = b.mixedSigils;
 
+		Element element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
+		Sigil sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
 		for(int i = 0; i < blobsRequired; i++) {
-			Element element = (Element)UnityEngine.Random.Range((int)Element.None, (int)Element.ElementCt);
-			elementRequirements.Add(element);
+			if(usesElements) {
+				elementRequirements.Add(element);
+				if(mixedElements) 
+					element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
+			}
+			else
+				elementRequirements.Add(Element.None);
+
+			if(usesSigils) {
+				sigilRequirements.Add(sigil);
+				if(mixedSigils) 
+					sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
+			}
+			else
+				sigilRequirements.Add(Sigil.None);
 		}
-		
+
+		blobIds = new List<int>();
+		for(int i = 0; i < blobsRequired; i++)
+			blobIds.Add(-1);
 		state = QuestState.Available;
 	}
 
@@ -81,20 +107,24 @@ public class Quest : BaseQuest {
 	}
 
 	public void Clear() {
-		blobIds.Clear();
+		RemoveAllBlobs();
 		state = QuestState.NotAvailable;
 	}
 
-	public void AddBlob (int id, int index) {
-		foreach(int blobID in blobIds)
-			if(id == blobID)
-				blobIds.Remove(id); //remove dupes
+	public void RemoveAllBlobs() {
+		for(int i = 0; i < blobsRequired; i++)
+			blobIds[i] = -1;
+	}
 
+	public void AddBlob (int id, int index) {
+		RemoveBlob(id);
 		blobIds[index] = id;//  order matters
 	}
 
 	public void RemoveBlob (int id) {
-		blobIds.Remove(id);
+		for(int i = 0; i < blobIds.Count; i++)
+			if(id == blobIds[i])
+				blobIds[i] = -1;
 	}
 
 	public bool IsHighYield() {

@@ -56,8 +56,7 @@ public class Blob : MonoBehaviour {
 	public BlobFloatingDisplay floatingDisplay;
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	GeneManager geneManager;
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	
 	// time delays
 	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,1);
@@ -87,7 +86,6 @@ public class Blob : MonoBehaviour {
 
 
 	public void Setup() {
-
 		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
 		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
@@ -107,6 +105,7 @@ public class Blob : MonoBehaviour {
 		button.onClick.Add(new EventDelegate(this, "BlobPressed"));
 		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
 		floatingDisplay.blob = this;
+		combatStats.element = nativeElement;
 		SetColorFromElement(nativeElement);
 	}
 

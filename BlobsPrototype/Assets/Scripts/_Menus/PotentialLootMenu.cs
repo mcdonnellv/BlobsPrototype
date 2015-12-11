@@ -3,28 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class PotentialLootMenu : GenericGameMenu {
-	public UIGrid grid;
-	public Quest quest;
+public class PotentialLootMenu : UIGrid {
 	private ItemManager _im;
 	ItemManager itemManager { get{ if(_im == null) _im = GameObject.Find("ItemManager").GetComponent<ItemManager>(); return _im; } }
-	int defaultWindowHeight = 228;
 
 
-	public void Show(Quest questParam) {
-		quest = questParam;
-		base.Show();
-		Setup();
-	}
-
-
-	void Setup() {
-		RebuildSlots();
-		ResizeWindow();
-	}
-
-
-	void RebuildSlots() {
+	public void RebuildSlots(Quest quest) {
 		List<LootEntry> lootList = quest.LootTableA.Union(quest.LootTableB).ToList();
 
 		// prune dupes for simple display
@@ -37,16 +21,16 @@ public class PotentialLootMenu : GenericGameMenu {
 			}
 		}
 
-		grid.transform.DestroyChildren();
+		transform.DestroyChildren();
 		foreach (LootEntry loot in lootList) {
 			GameObject slot = (GameObject)GameObject.Instantiate(Resources.Load("Possible Reward Slot"));
-			slot.transform.parent = grid.transform;
+			slot.transform.parent = transform;
 			slot.transform.localScale = new Vector3(1f,1f,1f);
 			UISprite sprite = slot.GetComponentInChildren<UISprite>();
 			sprite.depth = 1;
 			SetupItemInSocket(loot, slot);
 		}
-		grid.Reposition();
+		Reposition();
 	}
 
 
@@ -62,21 +46,14 @@ public class PotentialLootMenu : GenericGameMenu {
 		socketSprite.color = ColorDefines.ColorForQuality(item.quality);
 	}
 
+
 	public void ItemPressed(ItemPointer itemPointer) {
 		HudManager hudManager = HudManager.hudManager;
 		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
 		if(itemPointer == null) 
 			return;
-		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
-		itemInfoPopup.Show(this, itemPointer.item);
-	}
-
-
-	public void ResizeWindow() {
-		int height = defaultWindowHeight;
-		int slotCount = grid.transform.childCount;
-		int additionalRows = slotCount / 4;
-		height += 60 * additionalRows;
-		window.GetComponent<UISprite>().height = height;
+		QuestDetailsMenu questMenu = gameObject.GetComponentInParent<QuestDetailsMenu>();
+		itemInfoPopup.defaultStartPosition = questMenu.IsSelected() ? PopupPosition.Popup2 : PopupPosition.Popup1;
+		itemInfoPopup.Show(questMenu, itemPointer.item);
 	}
 }

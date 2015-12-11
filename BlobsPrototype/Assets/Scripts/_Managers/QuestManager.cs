@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class QuestManager : MonoBehaviour {
+	private static QuestManager _questManager;
+	public static QuestManager questManager { get {if(_questManager == null) _questManager = GameObject.Find("QuestManager").GetComponent<QuestManager>(); return _questManager; } }
+
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	public List<BaseQuest> quests = new List<BaseQuest>(); // All quests
 	public List<Quest> availableQuests = new List<Quest>(); //current quests
 	public UIAtlas iconAtlas;
@@ -51,10 +53,45 @@ public class QuestManager : MonoBehaviour {
 	public void QuestCompleted(Quest quest) {
 		hudManager.lootMenu.Show(quest);
 		foreach(int blobId in quest.blobIds) {
+			if(blobId == -1)
+				continue;
 			Blob blob = roomManager.GetBlobByID(blobId);
 			blob.ActionDone();
 		}
 		availableQuests.Remove(quest);
+	}
+
+
+	public int GetRewardCount(Quest quest) {
+		if(IsPartyFull(quest) == false)
+			return 0;
+		
+		int matchCt = 0;
+		for(int i=0; i<quest.blobsRequired; i++) {
+			Blob blob = roomManager.GetBlobByID(quest.blobIds[i]);
+			if(DoesBlobMatchSlot(quest, blob, i))
+				matchCt++;
+		}
+		
+		float ct = 2f + (1f * matchCt / quest.blobsRequired) * 3f;
+		return Mathf.FloorToInt(ct);
+	}
+
+
+	public bool DoesBlobMatchSlot(Quest quest, Blob blob, int index) {
+		bool match = true;
+		if(quest.usesSigils && blob.sigil != quest.sigilRequirements[index])
+			match = false;
+		if(quest.usesElements && blob.element != quest.elementRequirements[index])
+			match = false;
+		return match;
+	}
+
+	public bool IsPartyFull(Quest quest) {
+		foreach(int blobId in quest.blobIds) 
+			if(blobId == -1) 
+				return false;
+		return true;
 	}
 
 

@@ -26,6 +26,9 @@ public class GenericGameMenu : MonoBehaviour {
 			popupPositions[(int)PopupPosition.Right3] = new Vector3(21f, 0f, 0f);
 			popupPositions[(int)PopupPosition.Left1] = new Vector3(-45, 0f, 0f);
 			popupPositions[(int)PopupPosition.Left2] = new Vector3(-356, 0f, 0f);
+			popupPositions[(int)PopupPosition.Popup1] = new Vector3(-470, -150f, 0f);
+			popupPositions[(int)PopupPosition.Popup2] = new Vector3(140, -150f, 0f);
+			popupPositions[(int)PopupPosition.QuestDetails1] = new Vector3(-190, -18f, 0f);
 		}
 	}
 
@@ -114,6 +117,7 @@ public class GenericGameMenu : MonoBehaviour {
 	}
 
 	public void FlashChangeAnim() {
+		ChangePosition(defaultStartPosition);
 		animationWindow.ResetToBeginning();
 		animationWindow.PlayForward();
 	} 

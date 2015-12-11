@@ -30,8 +30,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	GameManager2 gameManager;
 	BreedManager breedManager;
-	RoomManager _roomManager;
-	RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 	
 
@@ -178,11 +177,11 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		blobGameObject.transform.SetParent(blobSpritesContainer.transform);
 		blobGameObject.transform.localPosition = new Vector3(0f, -18f, 0f);
 		blobGameObject.transform.localScale = blob.transform.localScale;
-		Destroy(blobGameObject.transform.Find("FloatingDisplay").gameObject);
-		Destroy(blobGameObject.GetComponent("Blob"));
-		Destroy(blobGameObject.GetComponent("BoxCollider"));
-		Destroy(blobGameObject.GetComponent("BlobDragDropItem"));
-		Destroy(blobGameObject.GetComponent("UIButton"));
+		Destroy(gameObject.transform.Find("FloatingDisplay").gameObject);
+		Destroy(gameObject.GetComponent("Blob"));
+		Destroy(gameObject.GetComponent("BoxCollider"));
+		Destroy(gameObject.GetComponent("BlobDragDropItem"));
+		Destroy(gameObject.GetComponent("UIButton"));
 		if(!blob.hasHatched)
 			blobGameObject.transform.localPosition = new Vector3(0f, -10f, 0f);
 	}

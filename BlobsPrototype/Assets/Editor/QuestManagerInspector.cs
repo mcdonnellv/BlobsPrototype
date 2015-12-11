@@ -110,9 +110,15 @@ public class QuestManagerInspector : GenericManagerInspector {
 
 			NGUIEditorTools.SetLabelWidth(100);
 			quest.blobsRequired = Mathf.Max(1, Mathf.Min(Quest.maxblobsRequired, EditorGUILayout.IntField("Blobs Allowed", quest.blobsRequired, GUILayout.Width(130f))));
-
 			quest.type = (QuestType)EditorGUILayout.EnumPopup("Type",quest.type);
 			quest.quality = (Quality)EditorGUILayout.EnumPopup("Quality",quest.quality);
+
+			quest.usesElements = EditorGUILayout.Toggle("Uses Elements", quest.usesElements);
+			if(quest.usesElements)
+				quest.mixedElements = EditorGUILayout.Toggle("Mixed Elements", quest.mixedElements);
+			quest.usesSigils = EditorGUILayout.Toggle("Uses Sigils", quest.usesSigils);
+			if(quest.usesSigils)
+				quest.mixedSigils = EditorGUILayout.Toggle("Mixed Sigils", quest.mixedSigils);
 			NGUIEditorTools.DrawSeparator();
 			LootTable(quest, quest.LootTableA, "Loot Table A");
 			NGUIEditorTools.DrawSeparator();

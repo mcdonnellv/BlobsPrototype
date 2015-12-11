@@ -5,7 +5,7 @@ public class CheatMenu : GenericGameMenu {
 
 	GameManager2 gameManager;
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	RoomManager roomManager;
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 	public void Pressed() {	base.Show(); }
 
@@ -20,7 +20,6 @@ public class CheatMenu : GenericGameMenu {
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();
-		roomManager = GameObject.Find ("RoomManager").GetComponent<RoomManager> ();
 	}
 
 	// Update is called once per frame

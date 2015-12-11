@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 
 public class RoomManager : MonoBehaviour {
 
+	private static RoomManager _roomManager;
+	public static RoomManager roomManager { get {if(_roomManager == null) _roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>(); return _roomManager; } }
+
 	public List<Room> rooms = new List<Room>();
 	public GameObject[] floorTiles;
 	public UIScrollView scrollView;

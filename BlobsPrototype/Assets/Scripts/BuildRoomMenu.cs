@@ -5,7 +5,7 @@ public class BuildRoomMenu : MonoBehaviour {
 
 	GameManager2 gameManager;
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	RoomManager roomManager;
+	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 	public void Show() { gameObject.SetActive(true);}
 	public void Hide() { gameObject.SetActive(false);}
@@ -13,6 +13,5 @@ public class BuildRoomMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();
-		roomManager = GameObject.Find ("RoomManager").GetComponent<RoomManager> ();
 	}
 }

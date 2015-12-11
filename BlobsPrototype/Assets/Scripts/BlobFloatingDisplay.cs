@@ -11,6 +11,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 	public UISprite heartSprite;
 	public UISprite harvestSprite;
 	public UISprite levelSprite;
+	public UIWidget widget;
 	Blob blobDragged;
 
 
@@ -60,7 +61,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		blobDragged = blobDraggedParam;
 		if(!blob.hasHatched || !blobDragged.hasHatched) {
 			if(blob != blobDragged)
-				blob.gameObject.GetComponent<UIWidget>().alpha = .5f;
+				widget.alpha = .5f;
 			return;
 		}
 
@@ -72,10 +73,10 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 		if(greyOut) {
 			genderSprite.color = Color.white;
-			blob.gameObject.GetComponent<UIWidget>().alpha = .5f;
+			widget.alpha = .5f;
 		}
 		else {
-			blob.gameObject.GetComponent<UIWidget>().alpha = 1f;
+			widget.alpha = 1f;
 		}
 	}
 
@@ -90,7 +91,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 	public void HideBlobInfo() {
 		HideSprites();
 		levelLabel.gameObject.SetActive(false);
-		blob.gameObject.GetComponent<UIWidget>().alpha = 1f;
+		widget.alpha = 1f;
 	}
 
 
