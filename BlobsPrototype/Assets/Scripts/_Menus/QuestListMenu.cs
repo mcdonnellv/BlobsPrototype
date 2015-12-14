@@ -81,7 +81,12 @@ public class QuestListMenu : GenericGameMenu {
 		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
 		questDetailsMenu.Show(this, selectedQuest, false);
 		questDetailsMenu.PopulateWithBlobs();
-		switch(selectedQuest.state) {
+		UpdateObjectStates(selectedQuest);
+	}
+
+
+	void UpdateObjectStates(Quest quest) {
+		switch(quest.state) {
 		case QuestState.Available:
 			selectButton.gameObject.SetActive(true);
 			completeButton.gameObject.SetActive(false);
@@ -117,11 +122,33 @@ public class QuestListMenu : GenericGameMenu {
 		Invoke("Hide", questDetailsMenu.GetAnimationDelay() * .4f);
 	}
 
+
 	public void CompleteQuestPressed() {
-		questDetailsMenu.QuestCompleted(); 
-		questManager.QuestCompleted(selectedQuest);
+		questManager.CollectRewardsForQuest(selectedQuest);
+	}
+
+
+	public void RewardsCollected() {
+		questDetailsMenu.ClearBlobs(); 
 		SetupQuestCells();
 		SelectFirstQuest();
+	}
+
+
+	public void QuestComplete(Quest quest) {
+		QuestCell questCell = GetQuestCellFromQuest(quest);
+		questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + "COMPLETE" + "[-]";
+		if(quest == selectedQuest)
+			UpdateObjectStates(quest);
+
+	}
+
+
+	QuestCell GetQuestCellFromQuest(Quest quest) {
+		int index = questManager.availableQuests.IndexOf(quest);
+		Transform cellTransform = grid.transform.GetChild(index);
+		QuestCell questCell = cellTransform.GetComponent<QuestCell>();
+		return questCell;
 	}
 
 
@@ -148,8 +175,6 @@ public class QuestListMenu : GenericGameMenu {
 				}
 				questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
 			}
-			else if(quest.state == QuestState.Completed)
-				questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + "COMPLETE" + "[-]";
 		}
 	}
 }

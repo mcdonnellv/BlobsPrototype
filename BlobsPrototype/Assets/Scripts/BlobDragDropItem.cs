@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class BlobDragDropItem : UIDragDropItem {
-	Animator animator { get { return GetComponent<Animator>(); } }
+	Animator animator { get { return GetComponentInChildren<Animator>(); } }
 	UIScrollView scrollView { get { return roomManager.scrollView; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }

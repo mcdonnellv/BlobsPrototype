@@ -15,18 +15,21 @@ public class HudManager : MonoBehaviour {
 	public RoomOptionsContextMenu roomOptionsContextMenu;
 	public CheatMenu cheatMenu;
 	public BuildRoomMenu buildRoomMenu;
+	public QuestListMenu questListMenu;
 	public Popup popup;
 	public ItemInfoPopup itemInfoPopup;
 	public BlobInteractPopup blobInteractPopup;
 	public LootMenu lootMenu;
-	public PotentialLootMenu potentialLootMenu;
+	public GameObject hudRoot;
+	public GameObject mainHudObject;
+	public NotificationIndicator notificationIndicator;
 
 	public bool dragToUi = false;
 	public GameObject dragObjectHelper;
 
-	public Camera popupCameraParam;
-	static Camera popupCamera;
+	public Camera popupCamera;
 	static int popupRefCount = 0;
+	static int showHudRefCount = 0;
 
 	void EnablePopupCam(bool enable) { popupCamera.enabled = enable; }
 	public void UpdateGold(int gold) {goldLabel.text = gold.ToString() + "[gold]";}
@@ -35,24 +38,40 @@ public class HudManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		HudManager.popupCamera = popupCameraParam;
 		foreach(Transform child in popupCamera.transform.parent) {
 			if(child.GetComponentInChildren<GenericGameMenu>()) 
 				child.gameObject.SetActive(false);
 		}
 		popupCamera.enabled = false;
+		ShowHud(true);
 	}
 
-	public static void IncrementPopupRefCount() {
-		popupRefCount++;
+
+	public void IncrementPopupRefCount() {
+		HudManager.popupRefCount++;
 		popupCamera.enabled = popupRefCount > 0;
 	}
 
-	public static  void DecrementPopupRefCount() {
-		popupRefCount--;
+
+	public  void DecrementPopupRefCount() {
+		HudManager.popupRefCount--;
 		popupCamera.enabled = popupRefCount > 0;
 	}
 
+
+	public void ShowHud(bool show) {
+		if(show)
+			showHudRefCount++;
+		else
+			showHudRefCount--;
+		mainHudObject.SetActive(showHudRefCount > 0);
+	}
+
+	public void Broadcast(string functionName, System.Object message) { hudRoot.BroadcastMessage(functionName, message); }
+	public void ShowNotice(string text) { notificationIndicator.AddNoticeToQueue(text); }
+	public void ShowError(string text) { notificationIndicator.AddErrorToQueue(text); }
+	public void ShowPersistentNotice(string text) { notificationIndicator.DisplayPersistentNotice(text); }
+	public void HidePersistentNotice() { notificationIndicator.HidePersistentNotice(); }
 
 	// Update is called once per frame
 	void Update () {

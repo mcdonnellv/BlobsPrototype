@@ -47,7 +47,7 @@ public class RoomManager : MonoBehaviour {
 
 
 	public void SetCurrentRoom(Room room) {
-		hudManager.roomOptionsContextMenu.DisplayWithRoom(room);
+		//hudManager.roomOptionsContextMenu.DisplayWithRoom(room);
 		MoveScrollViewToRoom(room);
 		currentRoom = room;
 		UpdateRoomOptionsContextMenuValues(currentRoom);

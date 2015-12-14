@@ -4,13 +4,11 @@ using System.Collections;
 public class BlobFloatingDisplay : MonoBehaviour {
 	public UIProgressBar progressBar;
 	public UILabel stateLabel;
-	public UILabel levelLabel;
-	public UIPanel spritePanel;
 	public Blob blob;
 	public UISprite genderSprite;
-	public UISprite heartSprite;
+	public UISprite sigilSprite;
 	public UISprite harvestSprite;
-	public UISprite levelSprite;
+	public UISprite spriteBG;
 	public UIWidget widget;
 	Blob blobDragged;
 
@@ -20,7 +18,6 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		stateLabel.gameObject.SetActive(true);
 		harvestSprite.gameObject.SetActive(false);
 		stateLabel.text = "";
-		levelLabel.text = "";
 		progressBar.gameObject.SetActive(false);
 		HideSprites();
 	}
@@ -38,24 +35,16 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		}
 	}
 
-
-	public void ShowHeartSprite() {
-		if (blob.spouseId == blobDragged.id || (blobDragged == blob && blob.spouseId != -1))
-			heartSprite.gameObject.SetActive(true);
-	}
-
-	public void ShowLevelSprite() {
-		levelSprite.gameObject.SetActive(true);
-	}
-
-	public void ShowHarvestSprite() {
-		harvestSprite.gameObject.SetActive(true);
+	public void ShowSigilSprite() {
+		sigilSprite.gameObject.SetActive(true);
+		sigilSprite.atlas = HudManager.hudManager.sigilAtlas;
+		sigilSprite.spriteName = GlobalDefines.SpriteNameForSigil(blob.sigil);
+		sigilSprite.color = ColorDefines.ColorForElement(blob.element);
 	}
 
 
-	public void HideHarvestSprite() {
-		harvestSprite.gameObject.SetActive(false);
-	}
+	public void ShowHarvestSprite() { harvestSprite.gameObject.SetActive(true); }
+	public void HideHarvestSprite() { harvestSprite.gameObject.SetActive(false); }
 
 	public void ShowBlobInfo(Blob blobDraggedParam) {
 		blobDragged = blobDraggedParam;
@@ -80,25 +69,30 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		}
 	}
 
+	public void ShowBlobInfo() {
+		if(!blob.hasHatched) 
+			return;
+		ShowSprites();
+	}
+
 
 	public void ShowSprites() {
+		spriteBG.gameObject.SetActive(true);
 		ShowGenderSprite();
-		ShowLevelSprite();
-		spritePanel.gameObject.GetComponent<UIGrid>().Reposition();
+		ShowSigilSprite();
 	}
 
 
 	public void HideBlobInfo() {
 		HideSprites();
-		levelLabel.gameObject.SetActive(false);
 		widget.alpha = 1f;
 	}
 
 
 	public void HideSprites() {
+		spriteBG.gameObject.SetActive(false);
 		genderSprite.gameObject.SetActive(false);
-		heartSprite.gameObject.SetActive(false);
-		levelSprite.gameObject.SetActive(false);
+		sigilSprite.gameObject.SetActive(false);
 	}
 
 

@@ -122,6 +122,7 @@ public class Room : MonoBehaviour {
 		return new Vector2(0,-1);
 	}
 
+
 	Tile GetTile(int x, int y)
 	{
 		foreach(Tile tile in tiles)
@@ -130,10 +131,15 @@ public class Room : MonoBehaviour {
 		return null;
 	}
 
+
 	public void ShowFloatingSprites(Blob blobDragged) {
 		foreach(Blob b in blobs)
-			b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().ShowBlobInfo(blobDragged);
+			if(blobDragged == null)
+				b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().ShowBlobInfo();
+			else
+				b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().ShowBlobInfo(blobDragged);
 	}
+
 
 	public void HideFloatingSprites() {
 		foreach(Blob b in blobs)

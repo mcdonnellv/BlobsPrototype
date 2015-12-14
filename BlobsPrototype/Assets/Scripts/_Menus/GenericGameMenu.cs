@@ -35,7 +35,7 @@ public class GenericGameMenu : MonoBehaviour {
 
 	public void Show() {
 		gameObject.SetActive(true);
-		HudManager.IncrementPopupRefCount();
+		HudManager.hudManager.IncrementPopupRefCount();
 		if(oldPosition == Vector3.one)
 			oldPosition = transform.localPosition;
 		if(defaultStartPosition != PopupPosition.DontSet)
@@ -99,7 +99,7 @@ public class GenericGameMenu : MonoBehaviour {
 	public void DisableWindow() {
 		animationWindow.onFinished.Clear();
 		window.SetActive(false);
-		HudManager.DecrementPopupRefCount();
+		HudManager.hudManager.DecrementPopupRefCount();
 		if(defaultStartPosition != PopupPosition.DontSet && oldPosition != Vector3.one)
 			transform.localPosition = oldPosition;
 

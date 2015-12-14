@@ -62,6 +62,7 @@ public class GameManager2 : MonoBehaviour {
 			blob.actionDuration = new TimeSpan(0);
 			blob.state = BlobState.Idle;
 			blob.missionCount = 3;
+			blob.UpdateGrowth();
 			room.AddBlob(blob);
 
 			blob.genes.Add(new Gene(geneManager.genes[0]));

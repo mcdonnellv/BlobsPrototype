@@ -60,6 +60,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		DisplayBlobImage();
 
 		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
+		blob.room.ShowFloatingSprites(null);
 	}
 
 
@@ -173,21 +174,12 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	void DisplayBlobImage() {
 		blobSpritesContainer.transform.DestroyChildren();
-		GameObject blobGameObject = (GameObject)GameObject.Instantiate(blob.gameObject);
-		blobGameObject.transform.SetParent(blobSpritesContainer.transform);
-		blobGameObject.transform.localPosition = new Vector3(0f, -18f, 0f);
-		blobGameObject.transform.localScale = blob.transform.localScale;
-		Destroy(gameObject.transform.Find("FloatingDisplay").gameObject);
-		Destroy(gameObject.GetComponent("Blob"));
-		Destroy(gameObject.GetComponent("BoxCollider"));
-		Destroy(gameObject.GetComponent("BlobDragDropItem"));
-		Destroy(gameObject.GetComponent("UIButton"));
-		if(!blob.hasHatched)
-			blobGameObject.transform.localPosition = new Vector3(0f, -10f, 0f);
+		blob.CreateDuplicateForUi(blobSpritesContainer.transform, false);
 	}
 
 
 	public void Hide() {
+		blob.room.HideFloatingSprites();
 		base.Hide();
 	}
 

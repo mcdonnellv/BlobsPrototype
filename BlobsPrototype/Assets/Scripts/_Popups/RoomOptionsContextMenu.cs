@@ -47,6 +47,9 @@ public class RoomOptionsContextMenu : MonoBehaviour {
 	}
 
 
+	public void Show() { DisplayWithRoom(RoomManager.roomManager.currentRoom); }
+
+
 	public void DisplayWithRoom(Room roomParam) {
 		displayRoomQueued = false;
 		if(IsDisplayed() == true) {

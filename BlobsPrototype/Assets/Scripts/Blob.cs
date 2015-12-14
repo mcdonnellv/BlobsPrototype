@@ -33,6 +33,7 @@ public class Blob : MonoBehaviour {
 	// visual
 	public Color color;
 	public Dictionary<string, Texture> bodyPartSprites;
+	public GameObject blobSpriteContainer;
 	
 	// helpers
 	public bool male { get {return gender == Gender.Male;} }
@@ -47,7 +48,7 @@ public class Blob : MonoBehaviour {
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
-	Animator animator { get { return GetComponent<Animator>(); } }
+	Animator animator { get { return GetComponentInChildren<Animator>(); } }
 	BlobDragDropItem blobDragDropItem { get { return GetComponent<BlobDragDropItem>(); } }
 	
 	// managers
@@ -65,7 +66,11 @@ public class Blob : MonoBehaviour {
 
 	
 
-	public void DisplayBlobInfo() { hudManager.blobInfoContextMenu.Show(id); }
+	public void DisplayBlobInfo() { 
+		if(hasHatched == false)
+			return;
+		hudManager.blobInfoContextMenu.Show(id); 
+	}
 	public string GetBlobStateString() { return state.ToString(); }
 
 	public Blob () {
@@ -92,7 +97,9 @@ public class Blob : MonoBehaviour {
 		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
 		SetEyeTexture();
-		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+
+		blobSpriteContainer = gameObject.GetComponentInChildren<UIWidget>().gameObject;
+		List<UISprite> blobsprites = blobSpriteContainer.GetComponentsInChildren<UISprite>(true).ToList();
 		Texture tex = bodyPartSprites["Body"];
 		blobsprites[1].spriteName = tex.name;
 		tex = bodyPartSprites["Eyes"];
@@ -100,7 +107,6 @@ public class Blob : MonoBehaviour {
 		blobsprites[0].gameObject.SetActive(true);
 		blobsprites[1].gameObject.SetActive(false);
 		blobsprites[2].gameObject.SetActive(false);
-		blobsprites[3].gameObject.SetActive(false);
 		UIButton button = gameObject.GetComponent<UIButton>();
 		button.onClick.Add(new EventDelegate(this, "BlobPressed"));
 		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
@@ -155,12 +161,11 @@ public class Blob : MonoBehaviour {
 	public void Hatch(bool displayInfo) {
 		if(hasHatched)
 			return;
-		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
+		List<UISprite> blobsprites = blobSpriteContainer.GetComponentsInChildren<UISprite>(true).ToList();
 		blobsprites[0].gameObject.SetActive(false);
 		blobsprites[1].gameObject.SetActive(true);
 		blobsprites[2].gameObject.SetActive(true);
-		blobsprites[3].gameObject.SetActive(false);
-		transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+		blobSpriteContainer.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
 		birthday = DateTime.Now;
 		state = BlobState.Idle;
 
@@ -387,11 +392,15 @@ public class Blob : MonoBehaviour {
 	public void ReturnFromQuest() {
 		missionCount++;
 		missionId = -1;
-		if(isAdult)
-			transform.localScale = new Vector3(1f, 1f, 1f);
+		UpdateGrowth();
 		floatingDisplay.stateLabel.gameObject.SetActive(false);
 		animator.SetBool("away", false);
 		blobDragDropItem.interactable = true;
+	}
+
+	public void UpdateGrowth() {
+		if(isAdult)
+			blobSpriteContainer.transform.localScale = new Vector3(1f, 1f, 1f);
 	}
 
 
@@ -404,6 +413,23 @@ public class Blob : MonoBehaviour {
 		blobDragDropItem.interactable = false;
 	}
 
+
+	public GameObject CreateDuplicateForUi(Transform newParent, bool canInteract) {
+		GameObject newBlobGameObject = (GameObject)GameObject.Instantiate(gameObject);
+		newBlobGameObject.transform.parent = newParent;
+		newBlobGameObject.transform.localPosition = new Vector3(0f, -18f, 0f);
+		newBlobGameObject.transform.localScale = transform.localScale;
+		BlobFloatingDisplay floatingDisplay = newBlobGameObject.GetComponentInChildren<BlobFloatingDisplay>();
+		GameObject.Destroy(floatingDisplay.gameObject);
+
+		if(canInteract == false) {
+			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<Blob>());
+			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<BoxCollider>());
+			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<BlobDragDropItem>());
+			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<UIButton>());
+		}
+		return newBlobGameObject;
+	}
 
 	void Update() {
 		if(actionDuration.TotalSeconds > 0 && actionReadyTime <= System.DateTime.Now)

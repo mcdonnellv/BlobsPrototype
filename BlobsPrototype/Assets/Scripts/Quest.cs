@@ -104,6 +104,9 @@ public class Quest : BaseQuest {
 
 	public void Complete() {
 		state = QuestState.Completed;
+		// announce
+		HudManager.hudManager.Broadcast("QuestComplete", this);
+		HudManager.hudManager.ShowNotice("Quest Complete");
 	}
 
 	public void Clear() {

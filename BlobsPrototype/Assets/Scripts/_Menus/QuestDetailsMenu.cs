@@ -47,9 +47,6 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 
-	public void QuestCompleted() { ClearBlobs(); }
-
-
 	public void Show(GenericGameMenu caller, Quest questParam, bool showButtons) {
 		gameObject.SetActive(true);
 		if(IsDisplayed() && owner == caller && quest != questParam) // We are just changing the displayed info
@@ -109,11 +106,13 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void SelectQuest() {
 		animationWindow.PlayReverse();
 		Invoke("ChangePositionToRight", GetAnimationDelay());
+		hudManager.ShowHud(false);
 		hudManager.dragToUi = true;
 	}
 	
 
 	public void ChangePositionToRight() {
+		hudManager.ShowPersistentNotice("Drag Blobs to the quest");
 		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
 		ShowButtons(true);
 		ChangePosition(PopupPosition.Right1);
@@ -140,7 +139,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void UnSelectQuest() {
 		animationWindow.PlayReverse();
 		owner.Invoke("Show", GetAnimationDelay()/2);
+		hudManager.ShowHud(true);
 		hudManager.dragToUi = false;
+		hudManager.HidePersistentNotice();
 		Hide();
 	}
 	
@@ -158,8 +159,8 @@ public class QuestDetailsMenu : GenericGameMenu {
 				continue;
 			BlobQuestSlot blobSlot = child.GetComponent<BlobQuestSlot>();
 			blobSlot.socket.transform.DestroyChildren();
-			GameObject blobGameObject = (GameObject)GameObject.Instantiate(blob.gameObject);
-			blobGameObject.transform.SetParent(blobSlot.socket.transform);
+
+			GameObject blobGameObject = blob.CreateDuplicateForUi(blobSlot.socket.transform, true);
 			blobGameObject.transform.localPosition = new Vector3(0f, -18f, 1f);
 			blobGameObject.transform.localScale = new Vector3(.6f, .6f, .6f);
 
@@ -272,7 +273,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 
-	void ClearBlobs() {
+	public void ClearBlobs() {
 		//quest.RemoveAllBlobs();
 		foreach(Transform child in blobGrid.transform) {
 			Blob blob = child.GetComponentInChildren<Blob>();
@@ -300,7 +301,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 
 	public override void Cleanup() {
+		hudManager.ShowHud(true);
 		hudManager.dragToUi = false;
+		hudManager.HidePersistentNotice();
 		base.Cleanup();
 	}
 

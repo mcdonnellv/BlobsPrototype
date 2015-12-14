@@ -73,8 +73,10 @@ public class LootMenu : GenericGameMenu {
 		itemManager.AddItemToStorage(itemManager.GetBaseItemByID(ip.item.id));
 		lootCell.transform.parent = null;
 		GameObject.Destroy(lootCell.gameObject);
-		if(grid.transform.childCount == 0)
+		if(grid.transform.childCount == 0) {
+			HudManager.hudManager.questListMenu.RewardsCollected();
 			Hide();
+		}
 		else
 			grid.Reposition();
 	}

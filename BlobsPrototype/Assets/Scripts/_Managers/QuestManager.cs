@@ -50,7 +50,7 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
-	public void QuestCompleted(Quest quest) {
+	public void CollectRewardsForQuest(Quest quest) {
 		hudManager.lootMenu.Show(quest);
 		foreach(int blobId in quest.blobIds) {
 			if(blobId == -1)
