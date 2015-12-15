@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class GeneDragDropItem : UIDragDropItem {
+	GeneManager geneManager  { get { return GeneManager.geneManager; } }
 
 	protected override void OnDrag (Vector2 delta) {
 		gameObject.GetComponent<GenePointer>().GenePressed();
@@ -22,7 +23,6 @@ public class GeneDragDropItem : UIDragDropItem {
 			return;
 		
 		Blob blob = HudManager.hudManager.blobInfoContextMenu.DisplayedBlob();
-		GeneManager geneManager = GameObject.Find ("GeneManager").GetComponent<GeneManager>();
 
 		if (gddcFrom.type == GeneDragDropContainer.GeneSlotType.BlobInfoContextMenuGeneSlot && 
 		    gddcTo.type == GeneDragDropContainer.GeneSlotType.GenePoolMenuGeneSlot)

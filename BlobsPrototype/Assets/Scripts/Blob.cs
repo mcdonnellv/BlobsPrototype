@@ -50,19 +50,19 @@ public class Blob : MonoBehaviour {
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
 	Animator animator { get { return GetComponentInChildren<Animator>(); } }
 	BlobDragDropItem blobDragDropItem { get { return GetComponent<BlobDragDropItem>(); } }
-	
-	// managers
-	GameManager2 gameManager;
-	BreedManager breedManager;
 	public BlobFloatingDisplay floatingDisplay;
+
+	// managers
+	GameManager2 gameManager { get { return GameManager2.gameManager; } }
+	BreedManager breedManager { get { return BreedManager.breedManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	GeneManager geneManager;
+	GeneManager geneManager { get { return GeneManager.geneManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	
 	// time delays
 	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,1);
 	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
-	TimeSpan breedReadyStandard = new TimeSpan(0,0,1);
+	TimeSpan breedReadyStandard = new TimeSpan(0,0,3);
 
 	
 
@@ -71,7 +71,6 @@ public class Blob : MonoBehaviour {
 			return;
 		hudManager.blobInfoContextMenu.Show(id); 
 	}
-	public string GetBlobStateString() { return state.ToString(); }
 
 	public Blob () {
 		combatStats = new CombatStats();
@@ -91,9 +90,6 @@ public class Blob : MonoBehaviour {
 
 
 	public void Setup() {
-		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
-		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
 		id = gameManager.gameVars.blobsSpawned++;
 		SetBodyTexture();
 		SetEyeTexture();
@@ -248,7 +244,10 @@ public class Blob : MonoBehaviour {
 		switch(blobState) {
 		case BlobState.Breeding:
 		case BlobState.Hatching: 
-		case BlobState.Working: 	return true;
+		case BlobState.Working: 	
+		case BlobState.Questing:
+		case BlobState.QuestComplete:
+			return true;
 		}
 		return false;
 	}
@@ -270,15 +269,17 @@ public class Blob : MonoBehaviour {
 
 
 	public string GetActionString() {
+		string retString = "";
 		switch(state) {
-		case BlobState.Breeding: return "Breeding";
-		case BlobState.Hatching: return "Hatching";
-		case BlobState.HatchReady: return "Hatch";
-		case BlobState.Working: return "Working";
-		case BlobState.OnQuest: return "AWAY";
+		case BlobState.Idle: retString = "Idle"; break;
+		case BlobState.Breeding: retString = "Breeding"; break;
+		case BlobState.Hatching: retString = "Hatching"; break;
+		case BlobState.HatchReady: retString = "Hatch"; break;
+		case BlobState.Working: retString = "Working"; break;
+		case BlobState.Questing: retString = "Questing"; break;
+		case BlobState.QuestComplete: retString = "Complete"; break;
 		}
-		
-		return "Breed";
+		return retString.ToUpper();
 	}
 
 
@@ -302,7 +303,7 @@ public class Blob : MonoBehaviour {
 		case BlobState.Breeding: BreedingDone(); break;
 		case BlobState.Hatching: HatchingDone(); break;
 		case BlobState.Working: WorkingDone(); break;
-		case BlobState.OnQuest: QuestDone(); break;
+		case BlobState.Questing: QuestDone(); break;
 		}
 		UpdateBlobInfoIfDisplayed();
 	}
@@ -325,6 +326,10 @@ public class Blob : MonoBehaviour {
 	}
 
 	public void QuestDone() {
+		state = BlobState.QuestComplete;
+	}
+
+	public void CompleteQuest() {
 		ReturnFromQuest();
 		state = BlobState.Idle;
 	}
@@ -408,7 +413,8 @@ public class Blob : MonoBehaviour {
 		missionId = quest.id;
 		floatingDisplay.stateLabel.gameObject.SetActive(true);
 		floatingDisplay.stateLabel.text = "AWAY";
-		state = BlobState.OnQuest;
+		state = BlobState.Questing;
+		StartActionWithDuration(quest.GetActionReadyDuration());
 		animator.SetBool("away", true);
 		blobDragDropItem.interactable = false;
 	}

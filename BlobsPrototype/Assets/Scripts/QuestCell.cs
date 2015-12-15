@@ -8,6 +8,7 @@ public class QuestCell : MonoBehaviour {
 	public UILabel rarityLabel;
 	public UIGrid blobSlotGrid;
 	public UISprite foreGround;
+	public UILabel newLabel;
 
 	public void SetupBlobCells(int count) {
 		foreach(Transform child in blobSlotGrid.transform) {

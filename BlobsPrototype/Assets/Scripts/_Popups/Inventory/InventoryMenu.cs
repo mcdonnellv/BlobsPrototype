@@ -28,7 +28,7 @@ public class InventoryMenu : GenericGameMenu {
 	public ItemsMenu itemsMenu;
 	public ItemInfoPopup itemInfoPopup;
 	Tab activeTab;
-	GameManager2 gameManager;
+	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	public Mode mode = Mode.None;
 	public Mode reopenMode = Mode.None;
 
@@ -47,7 +47,6 @@ public class InventoryMenu : GenericGameMenu {
 			}
 		}
 
-		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
 		mode = modeParam;
 		base.Show();
 

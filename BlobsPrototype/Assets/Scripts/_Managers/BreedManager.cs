@@ -6,11 +6,12 @@ using System.Collections.Generic;
 
 
 public class BreedManager : MonoBehaviour {
-
+	private static BreedManager _breedManager;
+	public static BreedManager breedManager { get {if(_breedManager == null) _breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>(); return _breedManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	GameManager2 gameManager;
+	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
-	GeneManager geneManager;
+	GeneManager geneManager  { get { return GeneManager.geneManager; } }
 
 	Blob potentialPairBlob1;
 	Blob potentialPairBlob2;
@@ -31,7 +32,6 @@ public class BreedManager : MonoBehaviour {
 
 		if(blobInteractAction == BlobInteractAction.Merge)
 			AttemptMerge(blob1, blob2);
-
 	}
 
 
@@ -208,14 +208,6 @@ public class BreedManager : MonoBehaviour {
 	}
 
 
-
-
-	// Use this for initialization
-	void Start () {
-		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
-		geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>();
-	}
-	
 	// Update is called once per frame
 	void Update () {
 	

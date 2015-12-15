@@ -36,6 +36,7 @@ public class Quest : BaseQuest {
 	public DateTime actionReadyTime;
 	public List<Element> elementRequirements = new List<Element>();
 	public List<Sigil> sigilRequirements = new List<Sigil>();
+	public bool alreadySeen = false;
 
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
@@ -90,13 +91,20 @@ public class Quest : BaseQuest {
 			Blob blob = roomManager.GetBlobByID(blobID);
 			blob.DepartForQuest(this);
 		}
-
-		TimeSpan actionDuration = new TimeSpan(days, hrs, mins, 0);
-		if(actionDuration.TotalSeconds == 0)
-			actionDuration = new TimeSpan(0, 0, 0, 5);
-		actionReadyTime = System.DateTime.Now + actionDuration;
+		actionReadyTime = GetActionReadyTime();
 		state = QuestState.Embarked;
 	}
+
+
+	public TimeSpan GetActionReadyDuration() { 
+		TimeSpan actionDuration = new TimeSpan(days, hrs, mins, 0); 
+		if(actionDuration.TotalSeconds == 0)
+			actionDuration = new TimeSpan(0, 0, 0, 5);
+		return actionDuration;
+	}
+
+	public DateTime GetActionReadyTime() { return System.DateTime.Now + GetActionReadyDuration(); }
+
 
 	public void MakeAvailable() {
 		state = QuestState.Available;

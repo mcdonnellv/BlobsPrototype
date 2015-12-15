@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GeneManager : MonoBehaviour {
+	private static GeneManager _geneManager;
+	public static GeneManager geneManager { get {if(_geneManager == null) _geneManager = GameObject.Find("GeneManager").GetComponent<GeneManager>(); return _geneManager; } }
+
 	public List<BaseGene> genes = new List<BaseGene>(); // All original genes
 	public List<Gene> storedGenes = new List<Gene>();
 	public UIAtlas iconAtlas;

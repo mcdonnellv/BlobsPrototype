@@ -19,15 +19,13 @@ public class RoomManager : MonoBehaviour {
 	public int maxSize;
 	public int minSize;
 	int tileWidth = 100;
-	GameManager2 gameManager;
+	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }
 
 
 	public Room CreateRoom(int size, Room.RoomType type) {
 		if(worldTransform == null)
 			worldTransform = scrollView.transform;
-		if(gameManager == null)
-			gameManager = GameObject.Find ("GameManager2").GetComponent<GameManager2> ();
 
 		size = Mathf.Clamp (size, 0, maxSize);
 		GameObject roomObject = new GameObject ("RoomObject");

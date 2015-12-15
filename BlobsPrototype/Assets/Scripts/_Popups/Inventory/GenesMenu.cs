@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public class GenesMenu : BaseThingMenu {
 	
 	Gene selectedGene = null;
-	private GeneManager _gm;
-	GeneManager geneManager { get{ if(_gm == null) _gm = GameObject.Find("GeneManager").GetComponent<GeneManager>(); return _gm; } }
+	GeneManager geneManager  { get { return GeneManager.geneManager; } }
 	public override void SetSelectedThing(int index) { selectedGene = geneManager.storedGenes[index]; }
 	public override BaseThing GetSelectedThing() {return (BaseThing)selectedGene; }
 	public override void ShowInfo() { GenePressed(GetGenePointerFromGene(selectedGene)); }

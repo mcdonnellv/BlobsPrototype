@@ -56,7 +56,7 @@ public class QuestManager : MonoBehaviour {
 			if(blobId == -1)
 				continue;
 			Blob blob = roomManager.GetBlobByID(blobId);
-			blob.ActionDone();
+			blob.CompleteQuest();
 		}
 		availableQuests.Remove(quest);
 	}

@@ -7,24 +7,23 @@ public class BlobInteractPopup : GenericGameMenu {
 	public UIButton rightButton;
 	Blob blob1;
 	Blob blob2;
-	BreedManager breedmanager;
+	BreedManager breedManager { get { return BreedManager.breedManager; } }
 	
 	public void Show(Blob a, Blob b) {
 		blob1 = a;
 		blob2 = b;
 		base.Show();
-		breedmanager = GameObject.Find ("BreedManager").GetComponent<BreedManager> ();
 		leftButton.isEnabled = (blob1.canBreed && blob2.canBreed);
 		rightButton.isEnabled = (blob1.canMerge && blob2.canMerge);
 	}
 	
 	public void LeftButtonPressed() {
-		breedmanager.AskBlobsInteract(blob1, blob2, BlobInteractAction.Breed);
+		breedManager.AskBlobsInteract(blob1, blob2, BlobInteractAction.Breed);
 		Hide();
 	}
 
 	public void RightButtonPressed() {
-		breedmanager.AskBlobsInteract(blob1, blob2, BlobInteractAction.Merge);
+		breedManager.AskBlobsInteract(blob1, blob2, BlobInteractAction.Merge);
 		Hide();
 	}
 }

@@ -38,6 +38,8 @@ public class QuestListMenu : GenericGameMenu {
 			questCell.rarityLabel.gameObject.SetActive(quest.quality > Quality.Common);
 			questCell.icon.spriteName = quest.iconName;
 			questCell.icon.atlas = quest.iconAtlas;
+			questCell.newLabel.gameObject.SetActive(!quest.alreadySeen);
+			quest.alreadySeen = true;
 
 			foreach(int blobId in quest.blobIds) 
 				if(blobId != -1)
@@ -48,12 +50,7 @@ public class QuestListMenu : GenericGameMenu {
 			case QuestState.Embarked : 
 				break;
 			case QuestState.Available :
-				if(quest.days > 0)
-					timeString += quest.days.ToString() + " day";
-				if(quest.hrs > 0)
-					timeString += quest.hrs.ToString() + " hr";
-				if(quest.mins > 0)
-					timeString += quest.mins.ToString() + " min";
+				timeString = GlobalDefines.TimeToString(quest.GetActionReadyDuration());
 				break;
 			}
 
@@ -159,20 +156,8 @@ public class QuestListMenu : GenericGameMenu {
 			Quest quest = questManager.availableQuests[index];
 			if(quest.state == QuestState.Embarked) {
 				string timeString = "";
-				if(quest.state == QuestState.Embarked) {
-					DateTime now = System.DateTime.Now;
-					TimeSpan ts = quest.actionReadyTime - now;
-					if(ts.Days > 0)
-						timeString += ts.Days.ToString() + " day";
-					if(ts.Days == 0 && ts.Hours > 0)
-						timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + " hr";
-					if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes > 0)
-						timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + " min";
-					if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds > 0)
-						timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + " sec";
-					if(timeString == "")
-						timeString = "0 sec";
-				}
+				if(quest.state == QuestState.Embarked) 
+					timeString = GlobalDefines.TimeToString(quest.actionReadyTime - System.DateTime.Now);
 				questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
 			}
 		}

@@ -7,16 +7,15 @@ using System.Linq;
 public class BlobInfoContextMenu : GenericGameMenu {
 
 	public Blob blob;
-	public UILabel partnerLabel;
-	public UILabel rankLabel;
+	public UILabel actionLabel;
 	public UILabel genderLabel;
 	public UILabel qualityLabel;
+	public UILabel missionsLabel;
 	public UILabel elementLabel;
 	public UILabel sigilLabel;
 	public List<UILabel> statLabels;
 	public UIGrid geneGrid;
 	public UIGrid statGrid;
-
 	public UILabel actionButton1Label;
 	public UILabel actionButton2Label;
 	public UIButton actionButton1;
@@ -28,8 +27,8 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UISprite changeFlashObject;
 	public TweenAlpha changeFlashAnim;
 	HudManager hudManager { get { return HudManager.hudManager; } }
-	GameManager2 gameManager;
-	BreedManager breedManager;
+	GameManager2 gameManager { get { return GameManager2.gameManager; } }
+	BreedManager breedManager { get { return BreedManager.breedManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 	
@@ -49,43 +48,27 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		blob = newBlob;
 		actionButton1.gameObject.SetActive(true);
 		actionButton2.gameObject.SetActive(true);
-		qualityLabel.fontSize = 24;
-		rankLabel.fontSize = 24;
-
-		if(blob.hasHatched == false)
-			DisplayEggInfo();
-		else
-			DisplayBlobInfo();
-
+		DisplayBlobInfo();
 		DisplayBlobImage();
-
 		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
 		blob.room.ShowFloatingSprites(null);
-	}
-
-
-	void DisplayEggInfo() {
-		rankLabel.text = "Unknown";
-		genderLabel.text = "Unknown";
-		qualityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(blob.quality)) + blob.quality.ToString() + "[-]";
-		genderSprite.gameObject.SetActive(false);
-		actionButton2.gameObject.SetActive(false);
-		actionButton1.isEnabled = true;
 	}
 
 
 	void DisplayBlobInfo() {
 		genderLabel.text = blob.male ? "Male" : "Female";
 		qualityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(blob.quality)) + blob.quality.ToString() + "[-]";
-		genderSprite.gameObject.SetActive(true);
+		qualityLabel.gameObject.SetActive(blob.quality != Quality.Common);
+		actionLabel.text = blob.GetActionString();
+		missionsLabel.text =  "Missions: " + blob.missionCount.ToString();
 		genderSprite.spriteName = (blob.male) ? "maleIcon" : "femaleIcon";
 		genderSprite.color = (blob.male) ? ColorDefines.maleColor : ColorDefines.femaleColor;
 		actionButton1.isEnabled = (blob.state != BlobState.Idle) ? false : true;
 		actionButton2.isEnabled = (blob.state != BlobState.Idle) ? false : true;
 		actionButton2Label.text = "Sell +1[gold]";
-
+		progressBar.value = 0f;
 		UpdateStats();
-		DestroyGeneCells();
+		geneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
 	}
@@ -104,37 +87,24 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	void UpdateStatColors() {
-		statLabels[0].color = Color.white;
-		statLabels[1].color = Color.white;
-		statLabels[2].color = Color.white;
-		statLabels[3].color = Color.white;
-		if(blob.combatStats.health > CombatStats.defaultHealth)
-			statLabels[0].color = ColorDefines.positiveTextColor;
-		if(blob.combatStats.health < CombatStats.defaultHealth)
-			statLabels[0].color = ColorDefines.negativeTextColor;
-
-		if(blob.combatStats.stamina > CombatStats.defaultStamina)
-			statLabels[1].color = ColorDefines.positiveTextColor;
-		if(blob.combatStats.stamina < CombatStats.defaultStamina)
-			statLabels[1].color = ColorDefines.negativeTextColor;
-
-		if(blob.combatStats.attack > CombatStats.defaultAttack)
-			statLabels[2].color = ColorDefines.positiveTextColor;
-		if(blob.combatStats.attack < CombatStats.defaultAttack)
-			statLabels[2].color = ColorDefines.negativeTextColor;
-
-		if(blob.combatStats.armor > CombatStats.defaultArmor)
-			statLabels[3].color = ColorDefines.positiveTextColor;
-		if(blob.combatStats.armor < CombatStats.defaultArmor)
-			statLabels[3].color = ColorDefines.negativeTextColor;
-
+		UpdateColorForStatLabel(statLabels[0], blob.combatStats.health, CombatStats.defaultHealth);
+		UpdateColorForStatLabel(statLabels[1], blob.combatStats.stamina, CombatStats.defaultStamina);
+		UpdateColorForStatLabel(statLabels[2], blob.combatStats.attack, CombatStats.defaultAttack);
+		UpdateColorForStatLabel(statLabels[3], blob.combatStats.armor, CombatStats.defaultArmor);
 		elementLabel.color = ColorDefines.ColorForElement(blob.combatStats.element);
 	}
 
-	void DestroyGeneCells() {
-		geneGrid.transform.DestroyChildren();
-	}
 
+	void UpdateColorForStatLabel(UILabel statLabel, int value, int defaultValue) {
+		statLabel.color = Color.white;
+		if(value > defaultValue)
+			statLabel.color = ColorDefines.positiveTextColor;
+		else if(value < defaultValue)
+			statLabel.color = ColorDefines.negativeTextColor;
+		else
+			statLabel.color = Color.white;
+	}
+	
 
 	void BuildEmptyGeneCells() {
 		for(int i = 0; i < blob.allowedGeneCount; i++) {
@@ -146,7 +116,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			go.transform.localPosition = new Vector3(0f,0f,0f);
 			geneCell.Deactivate();
 		}
-
 		geneGrid.Reposition();
 	}
 
@@ -155,7 +124,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			int index = blob.genes.IndexOf(g);
 			if (index >= geneGrid.transform.childCount)
 				break;
-
 			GeneCell geneCell = geneGrid.transform.GetChild(index).GetComponent<GeneCell>();
 			GameObject go = g.CreateGeneGameObject(this);
 			geneCell.socketSprite.transform.DestroyChildren();
@@ -210,13 +178,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		UIButton.current = null;
 		dismissButton.SendMessage("OnClick");
 	}
-	
-
-	// Use this for initialization
-	void Start () {
-		gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>();
-		breedManager = GameObject.Find("BreedManager").GetComponent<BreedManager>();
-	}
 
 
 	public void GeneCellPressed(GeneCell geneCell) {
@@ -232,12 +193,13 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			GenePressed(gp);
 	}
 
+
 	public void AddGeneToBlob(Gene gene) {
 		blob.genes.Add(gene);
 		//if(gene.quality == Quality.Bad)
 			gene.state = GeneState.Available;
 		gene.CheckActivationStatus();
-		DestroyGeneCells();
+		geneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
 	}
@@ -258,13 +220,10 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			return;
 
 		if(blob.actionDuration.TotalSeconds > 0) {
-			if(progressBar.gameObject.activeSelf == false)
-				progressBar.gameObject.SetActive(true);
 			System.TimeSpan ts = (blob.actionReadyTime - System.DateTime.Now);
 			float fraction = (float)(ts.TotalSeconds / blob.actionDuration.TotalSeconds);
 			progressBar.value = 1f - fraction;
+			actionLabel.text = blob.GetActionString() + "   " + GlobalDefines.TimeToString(ts);
 		}
-		else if(progressBar.gameObject.activeSelf == true)
-			progressBar.gameObject.SetActive(false);
 	}
 }

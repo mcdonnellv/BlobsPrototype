@@ -11,6 +11,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 	public UISprite spriteBG;
 	public UIWidget widget;
 	Blob blobDragged;
+	bool spritesShowing = false;
 
 
 	// Use this for initialization
@@ -77,6 +78,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 
 	public void ShowSprites() {
+		spritesShowing = true;
 		spriteBG.gameObject.SetActive(true);
 		ShowGenderSprite();
 		ShowSigilSprite();
@@ -90,6 +92,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 
 	public void HideSprites() {
+		spritesShowing = false;
 		spriteBG.gameObject.SetActive(false);
 		genderSprite.gameObject.SetActive(false);
 		sigilSprite.gameObject.SetActive(false);
@@ -98,26 +101,36 @@ public class BlobFloatingDisplay : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
 		if(progressBar == null || blob == null)
 			return;
+
+		if(spritesShowing) {
+			progressBar.gameObject.SetActive(false);
+			stateLabel.text = "";
+			return;
+		}
 
 		if(blob.actionDuration.TotalSeconds > 0 && Blob.ShouldDisplayBarForState(blob.state)) {
 			if(progressBar.gameObject.activeSelf == false ) {
 				progressBar.gameObject.SetActive(true);
 				genderSprite.gameObject.SetActive(false);
 				stateLabel.gameObject.SetActive(true);
-				stateLabel.text = blob.GetActionString().ToUpper();
 			}
 			System.TimeSpan ts = (blob.actionReadyTime - System.DateTime.Now);
 			float fraction = (float)(ts.TotalSeconds / blob.actionDuration.TotalSeconds);
 			progressBar.value = (1f - fraction);
+			stateLabel.text = blob.GetActionString() + "\n" +  GlobalDefines.TimeToString(ts);
 		}
-		else if(progressBar.gameObject.activeSelf == true) {
-			progressBar.gameObject.SetActive(false);
-			stateLabel.text = "";
-			if(Blob.ShouldDisplayHarvestSpriteForState(blob.state))
-				ShowHarvestSprite();
+		else {
+			if(blob.state == BlobState.QuestComplete) {
+				stateLabel.text = blob.GetActionString();
+			}
+			else if(progressBar.gameObject.activeSelf == true) {
+				progressBar.gameObject.SetActive(false);
+				stateLabel.text = "";
+				if(Blob.ShouldDisplayHarvestSpriteForState(blob.state))
+					ShowHarvestSprite();
+			}
 		}
 	}
 }

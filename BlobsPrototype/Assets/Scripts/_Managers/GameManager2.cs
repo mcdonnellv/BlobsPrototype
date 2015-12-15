@@ -9,6 +9,8 @@ using System.Linq;
 
 
 public class GameManager2 : MonoBehaviour {
+	private static GameManager2 _gameManager;
+	public static GameManager2 gameManager { get {if(_gameManager == null) _gameManager = GameObject.Find("GameManager2").GetComponent<GameManager2>(); return _gameManager; } }
 
 	public GameVariables gameVars;
 	public HudManager hudMan;

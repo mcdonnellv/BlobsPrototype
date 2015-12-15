@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public enum Quality {
@@ -25,7 +26,8 @@ public enum BlobState {
 	HatchReady,
 	Working,
 	WorkingReady,
-	OnQuest,
+	Questing,
+	QuestComplete,
 };
 
 
@@ -132,6 +134,7 @@ public class GlobalDefines : MonoBehaviour {
 		return 0;
 	}
 
+
 	public static string StringForSigil(Sigil sigil) {
 		switch (sigil)	{
 		case Sigil.A: return "[sigilA]";
@@ -143,6 +146,7 @@ public class GlobalDefines : MonoBehaviour {
 		return "";
 	}
 
+
 	public static string SpriteNameForSigil(Sigil sigil) {
 		switch (sigil)	{
 		case Sigil.A: return "sigil_skull";
@@ -152,6 +156,23 @@ public class GlobalDefines : MonoBehaviour {
 		case Sigil.E: return "sigil_thunder";
 		}
 		return "";
+	}
+
+
+	public static string TimeToString(TimeSpan ts) {
+		string timeString = "";
+		DateTime now = System.DateTime.Now;
+		if(ts.Days > 0)
+			timeString += ts.Days.ToString() + " day";
+		if(ts.Days == 0 && ts.Hours > 0)
+			timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + " hr";
+		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes > 0)
+			timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + " min";
+		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds > 0)
+			timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + " sec";
+		if(timeString == "")
+			timeString = "0 sec";
+		return timeString;
 	}
 }
 
