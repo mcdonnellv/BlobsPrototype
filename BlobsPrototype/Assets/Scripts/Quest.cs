@@ -116,6 +116,10 @@ public class Quest : BaseQuest {
 		// announce
 		HudManager.hudManager.Broadcast("QuestComplete", this);
 		HudManager.hudManager.ShowNotice("Quest Complete");
+
+		for(int i=0; i < blobIds.Count; i++) {
+			roomManager.GetBlobByID(blobIds[i]).actionReadyTime = System.DateTime.Now;
+		}
 	}
 
 	public void Clear() {

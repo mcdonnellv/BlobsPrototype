@@ -59,6 +59,12 @@ public class ItemManagerInspector : GenericManagerInspector {
 						if(newName == "")
 							i.itemName = item.itemName + " copy";
 						i.description = item.description;
+						i.maxStack = item.maxStack;
+						i.sellValue = item.sellValue;
+						i.quality = item.quality;
+						i.iconAtlas = item.iconAtlas;
+						i.iconName = item.iconName;
+						i.iconTintIndex = item.iconTintIndex;
 					}
 					itemManager.items.Add(i);
 					RebuildAllItems();

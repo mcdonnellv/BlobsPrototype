@@ -249,8 +249,8 @@ public class QuestDetailsMenu : GenericGameMenu {
 			rewardsContainer.transform.localPosition = GetRewardsContainerPosition();
 		}
 		else {
-			int ct = questManager.GetRewardCount(quest);
-			rewardInfoLabel.text = "YOU WILL GET " + ct.ToString() + ((ct > 1) ? " ITEMS" : " ITEM");
+			RewardRange range = questManager.GetRewardRange(quest);
+			rewardInfoLabel.text = "YOU WILL GET [00FF00]" + range.min.ToString() +  " TO " + range.max.ToString() + "[-] ITEMS";
 			Vector3 pos = GetRewardsContainerPosition();
 			pos.y += blobInfoBG.height;
 			rewardsContainer.transform.localPosition = pos;

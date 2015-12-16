@@ -58,6 +58,22 @@ public class QuestManagerInspector : GenericManagerInspector {
 						if(newName == "")
 							i.itemName = quest.itemName + " copy";
 						i.description = quest.description;
+						i.quality = quest.quality;
+						i.iconAtlas = quest.iconAtlas;
+						i.iconName = quest.iconName;
+						i.iconTintIndex = quest.iconTintIndex;
+						i.type = quest.type;
+						i.mins = quest.mins;
+						i.hrs = quest.hrs;
+						i.days = quest.days;
+						i.LootTableA = quest.LootTableA.ToList();
+						i.LootTableB = quest.LootTableB.ToList();
+						i.blobsRequired = quest.blobsRequired;
+						i.usesElements = quest.usesElements;
+						i.usesSigils = quest.usesSigils;
+						i.mixedElements = quest.mixedElements;
+						i.mixedSigils = quest.mixedSigils;
+						i.tier = quest.tier;
 					}
 					questManager.quests.Add(i);
 					mIndex = questManager.quests.Count - 1;

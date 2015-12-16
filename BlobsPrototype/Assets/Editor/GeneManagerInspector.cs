@@ -60,6 +60,10 @@ public class GeneManagerInspector : GenericManagerInspector {
 						if(newName == "")
 							g.itemName = item.itemName + " copy";
 						g.description = item.description;
+						g.sellValue = item.sellValue;
+						g.iconAtlas = item.iconAtlas;
+						g.iconName = item.iconName;
+						g.iconTintIndex = item.iconTintIndex;
 						g.quality = item.quality;
 						g.value = item.value;
 						g.modifier = item.modifier;

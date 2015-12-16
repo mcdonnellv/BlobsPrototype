@@ -76,6 +76,7 @@ public class QuestListMenu : GenericGameMenu {
 	public void QuestCellPressed(QuestCell questCell) {
 		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
 		selectedQuest.alreadySeen = true;
+		questCell.newLabel.gameObject.SetActive(false);
 		questDetailsMenu.Show(this, selectedQuest, false);
 		questDetailsMenu.PopulateWithBlobs();
 		UpdateObjectStates(selectedQuest);

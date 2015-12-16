@@ -22,15 +22,21 @@ public class LootMenu : GenericGameMenu {
 
 
 	void Setup() {
-		slotCount = questManager.GetRewardCount(quest);
+		RewardRange range = questManager.GetRewardRange(quest);
+		slotCount = UnityEngine.Random.Range(range.min, range.max + 1);
 		RebuildSlots();
-		int slotCountForTableA = slotCount / 2;
-		if(slotCount % 2 != 0) //odd number
-			if (UnityEngine.Random.Range(0f, 1f) < .5f)
-				slotCountForTableA++;
+		if(quest.LootTableB.Count == 0) {
+			PopulateSlots(quest.LootTableA, 0, slotCount);
+		}
+		else {
+			int slotCountForTableA = slotCount / 2;
+			if(slotCount % 2 != 0) //odd number
+				if (UnityEngine.Random.Range(0f, 1f) < .5f)
+					slotCountForTableA++;
 
-		PopulateSlots(quest.LootTableA, 0, slotCountForTableA);
-		PopulateSlots(quest.LootTableB, slotCountForTableA, slotCount);
+			PopulateSlots(quest.LootTableA, 0, slotCountForTableA);
+			PopulateSlots(quest.LootTableB, slotCountForTableA, slotCount);
+		}
 	}
 
 	
@@ -48,9 +54,14 @@ public class LootMenu : GenericGameMenu {
 
 	void PopulateSlots(List<LootEntry> lootList, int startingSlotIndex, int totalSlots) {
 		lootList = lootList.OrderBy(x => x.probability).ToList();
+		List<Item> rewardEntries = new List<Item>();
+		int maxRange = 0;
+		foreach(LootEntry l in lootList)
+			maxRange += l.probability; // commonly 100
+
 		for(int i = startingSlotIndex; i < totalSlots; i++) {
 			LootEntry loot = null;
-			int roll = UnityEngine.Random.Range(0, 100);
+			int roll = UnityEngine.Random.Range(0, maxRange);
 			int cumProbability = 0;
 			foreach(LootEntry lootEntry in lootList) {
 				int probabilityComp = cumProbability + lootEntry.probability;
@@ -61,8 +72,13 @@ public class LootMenu : GenericGameMenu {
 				cumProbability += lootEntry.probability;
 			}
 
-			LootCell lootCell = grid.transform.GetChild(i).GetComponent<LootCell>();
-			Item item = new Item(itemManager.GetBaseItemByID(loot.itemId));
+			rewardEntries.Add(new Item(itemManager.GetBaseItemByID(loot.itemId)));
+		}
+
+		rewardEntries = rewardEntries.OrderBy(x => x.itemName).ThenBy(x => x.quality).ToList();
+		foreach(Item item in rewardEntries) {
+			int index = rewardEntries.IndexOf(item);
+			LootCell lootCell = grid.transform.GetChild(index).GetComponent<LootCell>();
 			lootCell.AssignItem(item);
 		}
 	}

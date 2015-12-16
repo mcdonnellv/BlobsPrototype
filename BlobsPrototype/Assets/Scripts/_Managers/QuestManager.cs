@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+public class RewardRange { public int max, min; }
+
 public class QuestManager : MonoBehaviour {
 	private static QuestManager _questManager;
 	public static QuestManager questManager { get {if(_questManager == null) _questManager = GameObject.Find("QuestManager").GetComponent<QuestManager>(); return _questManager; } }
@@ -50,8 +52,7 @@ public class QuestManager : MonoBehaviour {
 
 
 	public void FirstTimeSetup() {
-		foreach(BaseQuest q in quests)
-			AddQuestToList(q);
+		AddQuestToList(GetBaseQuestByID(0));
 	}
 
 
@@ -82,9 +83,9 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
-	public int GetRewardCount(Quest quest) {
+	public RewardRange GetRewardRange(Quest quest) {
 		if(IsPartyFull(quest) == false)
-			return 0;
+			return null;
 		
 		int matchCt = 0;
 		for(int i=0; i<quest.blobsRequired; i++) {
@@ -92,9 +93,12 @@ public class QuestManager : MonoBehaviour {
 			if(DoesBlobMatchSlot(quest, blob, i))
 				matchCt++;
 		}
-		
+
 		float ct = 2f + (1f * matchCt / quest.blobsRequired) * 3f;
-		return Mathf.FloorToInt(ct);
+		RewardRange rewardRange = new RewardRange();
+		rewardRange.max = Mathf.FloorToInt(ct);
+		rewardRange.min = Mathf.Min(quest.blobsRequired, rewardRange.max);
+		return rewardRange;
 	}
 
 

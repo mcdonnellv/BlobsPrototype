@@ -41,9 +41,9 @@ public class PotentialLootMenu : UIGrid {
 		go.transform.localScale = Vector3.one;
 		go.transform.localPosition = Vector3.zero;
 		UISprite itemSprite = go.GetComponent<UISprite>();
-		UISprite socketSprite = parentSocket.GetComponentInChildren<UISprite>();
-		itemSprite.depth = socketSprite.depth + 2;
-		socketSprite.color = ColorDefines.ColorForQuality(item.quality);
+		UISprite[] socketsprites = parentSocket.GetComponentsInChildren<UISprite>();
+		itemSprite.depth = socketsprites[0].depth + 2;
+		socketsprites[1].color = ColorDefines.ColorForQuality(item.quality);
 	}
 
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class CheatMenu : GenericGameMenu {
@@ -15,6 +16,11 @@ public class CheatMenu : GenericGameMenu {
 		foreach(Blob blob in roomManager.currentRoom.blobs)
 			if(blob.hasHatched)
 				blob.ReturnFromQuest();
+	}
+
+	public void FinishQuests() { 
+		foreach(Quest quest in QuestManager.questManager.availableQuests)
+			quest.actionReadyTime = System.DateTime.Now + new TimeSpan(0,0,2);
 	}
 
 	// Update is called once per frame
