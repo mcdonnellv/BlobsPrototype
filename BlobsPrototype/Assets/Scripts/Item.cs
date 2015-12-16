@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class BaseThing {
@@ -10,6 +11,7 @@ public class BaseThing {
 	public Quality quality = Quality.Common;
 	public string iconName;
 	public UIAtlas iconAtlas;
+	public int iconTintIndex = 0;
 	public int sellValue = 0;
 }
 
@@ -33,6 +35,7 @@ public class Item : BaseItem {
 		quality = b.quality;
 		maxStack = b.maxStack;
 		sellValue = b.sellValue;
+		iconTintIndex = b.iconTintIndex;
 	}
 
 	public GameObject CreateItemGameObject(MonoBehaviour owner) {
@@ -42,7 +45,7 @@ public class Item : BaseItem {
 		UISprite s = itemGameObject.GetComponent<UISprite>();
 		s.atlas = iconAtlas;
 		s.spriteName = iconName;
-		
+		s.color = ColorDefines.IconColorFromIndex(iconTintIndex);
 		ip.item = this;
 		return itemGameObject;
 	}

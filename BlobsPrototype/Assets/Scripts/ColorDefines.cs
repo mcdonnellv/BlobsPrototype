@@ -2,11 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class ColorDefines {
 
-	static public Dictionary<string,string> blobColorSet01 = new Dictionary<string,string>();
+	static public Dictionary<string, string> blobColorSet01 = new Dictionary<string,string>();
 	static public Dictionary<Element, Dictionary<string,string>> elementColorTables = new Dictionary<Element, Dictionary<string,string>> ();
+
+	static private Dictionary<string, string> _iconColors = new Dictionary<string,string>();
+	static public Dictionary<string, string> iconColors { get { if(_iconColors.Count == 0)  BuildIconColors(); return _iconColors; } }
+
+
+
 	static public Color defaultBlobColor = new Color(0.529f, 0.506f, 0.459f, 1f);
 	public static Color maleColor { get{ return new Color(0.259f, 0.753f, 0.984f, 1f);} }
 	public static Color femaleColor { get{ return new Color(0.984f, 0.537f, 0.659f, 1f);} }
@@ -17,6 +24,28 @@ public class ColorDefines {
 	public static Color inactiveTextColor { get{ return new Color(1f, 1f, 1f, 1f);} }
 	public static Color goldenTextColor { get{ return new Color(1f, 0.773f, 0.082f, 1f);} }
 	public static Color defaultBlobSocketColor { get{ return new Color(.82f, .784f, .71f, 1f);} }
+
+
+	public static Color IconColorFromIndex(int index) {
+		string[] colorArray = ColorDefines.iconColors.Keys.ToArray();
+		string colorNameKey = colorArray[index];
+		string colorHexValue = ColorDefines.iconColors[colorNameKey];
+		return ColorDefines.HexStringToColor(colorHexValue);
+	}
+
+	public static void BuildIconColors() {
+		_iconColors.Add("White", "FFFFFF");
+		_iconColors.Add("Gray", "808080");
+		_iconColors.Add("Pastel Red", "FF6961");
+		_iconColors.Add("Pastel Orange", "FFB347");
+		_iconColors.Add("Pastel Yellow", "FDFD96");
+		_iconColors.Add("Pastel Green", "77DD77");
+		_iconColors.Add("Pastel Blue", "AEC6CF");
+		_iconColors.Add("Pastel Purple", "B39EB5");
+		_iconColors.Add("Gold", "FCC200");
+		_iconColors.Add("Silver", "C0C0C0");
+		_iconColors.Add("Copper", "B87333");
+	}
 
 	public static void BuildColorDefines() {
 		//blobColorSet01.Add("Pastel Brown", "836953");

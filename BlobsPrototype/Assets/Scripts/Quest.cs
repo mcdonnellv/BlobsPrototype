@@ -24,13 +24,14 @@ public class BaseQuest : BaseThing {
 	public bool usesSigils = false;
 	public bool mixedElements = false;
 	public bool mixedSigils = false;
-
+	public int tier = 1;
 }
 
 
 [Serializable]
 public class Quest : BaseQuest {
 	public static int maxblobsRequired = 5;
+	public static int maxTier = 10;
 	public List<int> blobIds;
 	public QuestState state;
 	public DateTime actionReadyTime;

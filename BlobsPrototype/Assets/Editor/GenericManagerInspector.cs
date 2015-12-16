@@ -9,14 +9,8 @@ public class GenericManagerInspector : Editor {
 	public bool mConfirmDelete = false;
 	public int mIndex = 0;
 	public float defaultLabelWidth = 80f;
-	ItemManager _itemManager;
-	public ItemManager itemManager { 
-		get {
-			if(_itemManager == null) 
-				_itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
-			return _itemManager;
-		}
-	}
+	public ItemManager itemManager { get { return ItemManager.itemManager; } }
+	public QuestManager questManager { get { return QuestManager.questManager; } }
 	string[] _allItems;
 	public string[] allItems { 
 		get {
@@ -68,7 +62,7 @@ public class GenericManagerInspector : Editor {
 		if (item.iconAtlas != null) {
 			BetterList<string> sprites = item.iconAtlas.GetListOfSprites();
 			sprites.Insert(0, "<None>");
-			int index = 0;
+			int spriteIndex = 0;
 			if(item.iconName == "")
 				item.iconName = sprites[0];
 			string spriteName = item.iconName;
@@ -77,15 +71,17 @@ public class GenericManagerInspector : Editor {
 			if (!string.IsNullOrEmpty(spriteName)) {
 				for (int i = 1; i < sprites.size; ++i) {
 					if (spriteName.Equals(sprites[i], System.StringComparison.OrdinalIgnoreCase)) {
-						index = i;
+						spriteIndex = i;
 						break;
 					}
 				}
 			}
 			
 			// Draw the sprite selection popup
-			index = EditorGUILayout.Popup("Icon", index, sprites.ToArray());
-			UISpriteData sprite = (index > 0) ? item.iconAtlas.GetSprite(sprites[index]) : null;
+			string[] colorList = ColorDefines.iconColors.Keys.ToArray();
+			item.iconTintIndex = EditorGUILayout.Popup("Tint", item.iconTintIndex, colorList);
+			spriteIndex = EditorGUILayout.Popup("Icon", spriteIndex, sprites.ToArray());
+			UISpriteData sprite = (spriteIndex > 0) ? item.iconAtlas.GetSprite(sprites[spriteIndex]) : null;
 			
 			if (sprite != null) {
 				iconName = sprite.name;
@@ -95,6 +91,9 @@ public class GenericManagerInspector : Editor {
 					
 					if (tex != null) {
 						drawIcon = true;
+
+						Color col = ColorDefines.HexStringToColor(ColorDefines.iconColors[colorList[item.iconTintIndex]]);
+						GUI.color = col;
 						Rect rect = new Rect(sprite.x, sprite.y, sprite.width, sprite.height);
 						rect = NGUIMath.ConvertToTexCoords(rect, tex.width, tex.height);
 						GUILayout.Space(4f);

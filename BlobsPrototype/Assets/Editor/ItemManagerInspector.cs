@@ -5,14 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 [CustomEditor(typeof(ItemManager))]
-	public class ItemManagerInspector : GenericManagerInspector {
+public class ItemManagerInspector : GenericManagerInspector {
 	bool showGenes = false;
-	
-	
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 		BaseItem item = null;
-		//itemManager.items.Clear();
+
 		if (itemManager.items == null || itemManager.items.Count == 0)
 			mIndex = 0;
 		else {

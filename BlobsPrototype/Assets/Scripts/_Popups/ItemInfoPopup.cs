@@ -118,6 +118,7 @@ public class ItemInfoPopup : GenericGameMenu {
 		upperPanelInfoLabel.text = item.description;
 		icon.atlas = item.iconAtlas;
 		icon.spriteName = item.iconName;
+		icon.color = ColorDefines.IconColorFromIndex(item.iconTintIndex);
 		deleteButtonLabel.text = "Sell for " + item.sellValue.ToString() + "[gold]";
 		ResizeWindow();
 	}

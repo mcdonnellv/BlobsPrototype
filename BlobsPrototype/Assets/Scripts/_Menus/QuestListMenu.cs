@@ -39,7 +39,6 @@ public class QuestListMenu : GenericGameMenu {
 			questCell.icon.spriteName = quest.iconName;
 			questCell.icon.atlas = quest.iconAtlas;
 			questCell.newLabel.gameObject.SetActive(!quest.alreadySeen);
-			quest.alreadySeen = true;
 
 			foreach(int blobId in quest.blobIds) 
 				if(blobId != -1)
@@ -76,6 +75,7 @@ public class QuestListMenu : GenericGameMenu {
 
 	public void QuestCellPressed(QuestCell questCell) {
 		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
+		selectedQuest.alreadySeen = true;
 		questDetailsMenu.Show(this, selectedQuest, false);
 		questDetailsMenu.PopulateWithBlobs();
 		UpdateObjectStates(selectedQuest);

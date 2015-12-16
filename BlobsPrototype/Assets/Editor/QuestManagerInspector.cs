@@ -6,13 +6,11 @@ using System.Linq;
 
 [CustomEditor(typeof(QuestManager))]
 public class QuestManagerInspector : GenericManagerInspector {
-	QuestManager questManager;
 
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
-		questManager = (QuestManager)target;
 		BaseQuest quest = null;
-		//itemManager.items.Clear();
+
 		if (questManager.quests == null || questManager.quests.Count == 0)
 			mIndex = 0;
 		else {
@@ -109,7 +107,10 @@ public class QuestManagerInspector : GenericManagerInspector {
 			GUILayout.EndHorizontal();
 
 			NGUIEditorTools.SetLabelWidth(100);
+			GUILayout.BeginHorizontal();
+			quest.tier = Mathf.Max(1, Mathf.Min(Quest.maxTier, EditorGUILayout.IntField("Tier", quest.tier, GUILayout.Width(130f))));
 			quest.blobsRequired = Mathf.Max(1, Mathf.Min(Quest.maxblobsRequired, EditorGUILayout.IntField("Blobs Allowed", quest.blobsRequired, GUILayout.Width(130f))));
+			GUILayout.EndHorizontal();
 			quest.type = (QuestType)EditorGUILayout.EnumPopup("Type",quest.type);
 			quest.quality = (Quality)EditorGUILayout.EnumPopup("Quality",quest.quality);
 
