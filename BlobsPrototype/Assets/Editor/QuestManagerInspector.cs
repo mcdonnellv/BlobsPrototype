@@ -73,7 +73,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 						i.usesSigils = quest.usesSigils;
 						i.mixedElements = quest.mixedElements;
 						i.mixedSigils = quest.mixedSigils;
-						i.tier = quest.tier;
+						i.zone = quest.zone;
 					}
 					questManager.quests.Add(i);
 					mIndex = questManager.quests.Count - 1;
@@ -124,11 +124,11 @@ public class QuestManagerInspector : GenericManagerInspector {
 
 			NGUIEditorTools.SetLabelWidth(100);
 			GUILayout.BeginHorizontal();
-			quest.tier = Mathf.Max(1, Mathf.Min(Quest.maxTier, EditorGUILayout.IntField("Tier", quest.tier, GUILayout.Width(130f))));
 			quest.blobsRequired = Mathf.Max(1, Mathf.Min(Quest.maxblobsRequired, EditorGUILayout.IntField("Blobs Allowed", quest.blobsRequired, GUILayout.Width(130f))));
 			GUILayout.EndHorizontal();
 			quest.type = (QuestType)EditorGUILayout.EnumPopup("Type",quest.type);
 			quest.quality = (Quality)EditorGUILayout.EnumPopup("Quality",quest.quality);
+			quest.zone = (MapZone)EditorGUILayout.EnumPopup("Zone",quest.zone);
 
 			quest.usesElements = EditorGUILayout.Toggle("Uses Elements", quest.usesElements);
 			if(quest.usesElements)
@@ -146,6 +146,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 			SpriteSelection(quest);
 		}
 	}
+
 
 	public void LootTable(BaseQuest quest, List<LootEntry> lootTable, string name) {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);

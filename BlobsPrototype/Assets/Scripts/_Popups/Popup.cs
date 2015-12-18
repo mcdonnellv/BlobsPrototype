@@ -1,5 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+
+public class PopupData {
+	public string header; 
+	public string body;
+	public MonoBehaviour target; 
+	public string methodName;
+}
+
 
 public class Popup : GenericGameMenu {
 
@@ -9,22 +19,56 @@ public class Popup : GenericGameMenu {
 	UIButton okButton;
 	UIButton cancelButton;
 
+	static List<PopupData> popupQueue = new List<PopupData>();
+
 
 	public void Show(string header, string body) {
-		base.Show(header);
-		bodyLabel.text = body;
-		EnableSingleContainer();
+		PopupData pData = new PopupData();
+		pData.header = header;
+		pData.body = body;
+		Popup.popupQueue.Add(pData);
+		Execute();
+	}
+	
+	public void Show(string header, string body, MonoBehaviour target, string methodName) {
+		PopupData pData = new PopupData();
+		pData.header = header;
+		pData.body = body;
+		pData.target = target;
+		pData.methodName = methodName;
+		Popup.popupQueue.Add(pData);
+		Execute();
+	}
+
+	public void Show(PopupData pData) {
+		base.Show();
+		if(pData.target == null) {
+			headerLabel.text = pData.header.ToUpper();
+			bodyLabel.text = pData.body;
+			EnableSingleContainer();
+		}
+		else {
+			headerLabel.text = pData.header.ToUpper();
+			bodyLabel.text = pData.body;
+			EnableDoubleContainer();
+			EventDelegate assignedOkEventDelegate = new EventDelegate(pData.target, pData.methodName);
+			okButton.onClick.Clear();
+			okButton.onClick.Add(assignedOkEventDelegate);
+			okButton.onClick.Add(new EventDelegate(this, "Hide"));
+		}
+	}
+
+	public void Cleanup() {
+		base.Cleanup();
+		Popup.popupQueue.Remove(Popup.popupQueue[0]);
+		Invoke("Execute", .5f);
+
 	}
 
 
-	public void Show(string header, string body, MonoBehaviour target, string methodName) {
-		base.Show(header);
-		bodyLabel.text = body;
-		EnableDoubleContainer();
-		EventDelegate assignedOkEventDelegate = new EventDelegate(target, methodName);
-		okButton.onClick.Clear();
-		okButton.onClick.Add(assignedOkEventDelegate);
-		okButton.onClick.Add(new EventDelegate(this, "Hide"));
+	public void Execute() {
+		if(Popup.popupQueue.Count > 0) 
+			Show(Popup.popupQueue[0]);
 	}
 
 

@@ -8,6 +8,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public UILabel descriptionLabel;
 	public UISprite icon;
 	public UILabel durationLabel;
+	public UILabel typeLabel;
 	public UILabel rarityLabel;
 	public UIButton departButton;
 	public UIButton cancelButton;
@@ -76,6 +77,20 @@ public class QuestDetailsMenu : GenericGameMenu {
 		durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
 		int blobsRequired = quest.blobsRequired;
 
+		switch(quest.type) {
+		case QuestType.Combat:  
+			rewardsContainer.gameObject.SetActive(true);
+			typeLabel.text = "[FFC515]Type:[-] Combat"; 
+			break;
+		case QuestType.Gathering: 
+			rewardsContainer.gameObject.SetActive(true);
+			typeLabel.text = "[FFC515]Type:[-] Gathering"; 
+			break;
+		case QuestType.Scouting: 
+			rewardsContainer.gameObject.SetActive(false);
+			typeLabel.text = "[FFC515]Type:[-] Scouting"; 
+			break;
+		}
 
 		foreach(Transform child in blobGrid.transform) {
 			bool active = (child.GetSiblingIndex() < quest.blobsRequired);

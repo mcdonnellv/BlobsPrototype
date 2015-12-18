@@ -9,7 +9,7 @@ public class GenericGameMenu : MonoBehaviour {
 	public GameObject window;
 	public GameObject BG;
 	private bool displayed = false;
-	private Vector3 oldPosition = Vector3.one;
+	public Vector3 oldPosition = Vector3.one;
 	protected UITweener animationBG;
 	protected UITweener animationWindow;
 	

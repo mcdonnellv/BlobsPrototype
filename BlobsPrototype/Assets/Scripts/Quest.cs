@@ -24,14 +24,13 @@ public class BaseQuest : BaseThing {
 	public bool usesSigils = false;
 	public bool mixedElements = false;
 	public bool mixedSigils = false;
-	public int tier = 1;
+	public MapZone zone = MapZone.None;
 }
 
 
 [Serializable]
 public class Quest : BaseQuest {
 	public static int maxblobsRequired = 5;
-	public static int maxTier = 10;
 	public List<int> blobIds;
 	public QuestState state;
 	public DateTime actionReadyTime;
@@ -39,10 +38,12 @@ public class Quest : BaseQuest {
 	public List<Sigil> sigilRequirements = new List<Sigil>();
 	public bool alreadySeen = false;
 
+
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
 
 	public Quest(BaseQuest b) {
+		id = b.id;
 		itemName = b.itemName;
 		description = b.description;
 		iconName = b.iconName;
@@ -59,6 +60,7 @@ public class Quest : BaseQuest {
 		usesSigils = b.usesSigils;
 		mixedElements = b.mixedElements;
 		mixedSigils = b.mixedSigils;
+		zone = b.zone;
 
 		Element element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
 		Sigil sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);

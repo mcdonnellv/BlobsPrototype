@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class QuestListMenu : GenericGameMenu {
 	public UIGrid grid;
 	public QuestDetailsMenu questDetailsMenu;
 	public UIButton completeButton;
+	public UIButton abandonButton;
 	public UIButton selectButton;
 	public UILabel inProgressLabel;
 	QuestManager questManager { get { return QuestManager.questManager; } }
@@ -87,16 +89,19 @@ public class QuestListMenu : GenericGameMenu {
 		switch(quest.state) {
 		case QuestState.Available:
 			selectButton.gameObject.SetActive(true);
+			abandonButton.gameObject.SetActive(true);
 			completeButton.gameObject.SetActive(false);
 			inProgressLabel.gameObject.SetActive(false);
 			break;
 		case QuestState.Embarked:
 			selectButton.gameObject.SetActive(false);
+			abandonButton.gameObject.SetActive(false);
 			completeButton.gameObject.SetActive(false);
 			inProgressLabel.gameObject.SetActive(true);
 			break;
 		case QuestState.Completed: 
 			selectButton.gameObject.SetActive(false);
+			abandonButton.gameObject.SetActive(false);
 			completeButton.gameObject.SetActive(true);
 			inProgressLabel.gameObject.SetActive(false);
 			break;
@@ -121,6 +126,18 @@ public class QuestListMenu : GenericGameMenu {
 	}
 
 
+	public void AbandonQuestPressed() {
+		HudManager.hudManager.popup.Show("Abandon Quest", "Are you sure you want to abandon this quest?", this, "AbandonQuestConfirmed");
+	}
+
+
+	public void AbandonQuestConfirmed() {
+		questManager.availableQuests.Remove(selectedQuest);
+		SetupQuestCells();
+		questDetailsMenu.Hide();
+		SelectFirstQuest();
+	}
+
 	public void CompleteQuestPressed() {
 		questManager.CollectRewardsForQuest(selectedQuest);
 	}
@@ -138,7 +155,12 @@ public class QuestListMenu : GenericGameMenu {
 		questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + "COMPLETE" + "[-]";
 		if(quest == selectedQuest)
 			UpdateObjectStates(quest);
+	}
 
+	public void QuestsAdded(List<Quest> quests) {
+		questDetailsMenu.Hide();
+		questDetailsMenu.ClearBlobs(); 
+		Invoke("SetupQuestCells", .5f);
 	}
 
 

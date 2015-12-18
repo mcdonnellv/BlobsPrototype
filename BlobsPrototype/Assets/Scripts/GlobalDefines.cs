@@ -121,6 +121,15 @@ public enum QuestType {
 	Scouting, // will add rare quests if successful
 };
 
+public enum MapZone {
+	None,
+	Meadows,
+	Mountains,
+	Swamp,
+	Forest,
+	Coast,
+};
+
 
 public class GlobalDefines : MonoBehaviour {
 
