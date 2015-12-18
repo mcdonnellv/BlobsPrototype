@@ -58,16 +58,16 @@ public class Popup : GenericGameMenu {
 		}
 	}
 
-	public void Cleanup() {
+	public override void Cleanup() {
 		base.Cleanup();
 		Popup.popupQueue.Remove(Popup.popupQueue[0]);
-		Invoke("Execute", .5f);
+		Execute();
 
 	}
 
 
 	public void Execute() {
-		if(Popup.popupQueue.Count > 0) 
+		if(Popup.popupQueue.Count == 1) 
 			Show(Popup.popupQueue[0]);
 	}
 

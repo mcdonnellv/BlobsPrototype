@@ -82,8 +82,8 @@ public class GenericGameMenu : MonoBehaviour {
 		animationWindow.PlayReverse();
 
 		if(animationBG != null) {
-			animationWindow.onFinished.Add(new EventDelegate(animationBG, "PlayReverse"));
-			animationBG.onFinished.Add(new EventDelegate(this, "Cleanup"));
+			animationBG.Invoke("PlayReverse", animationWindow.duration);
+			Invoke("Cleanup", animationWindow.duration + animationBG.duration);
 		}
 
 		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
@@ -100,14 +100,18 @@ public class GenericGameMenu : MonoBehaviour {
 		animationWindow.onFinished.Clear();
 		window.SetActive(false);
 		HudManager.hudManager.DecrementPopupRefCount();
-		if(defaultStartPosition != PopupPosition.DontSet && oldPosition != Vector3.one)
-			transform.localPosition = oldPosition;
 
 		if(animationBG == null)
 			Cleanup();
 	}
 
+	public void ReturnToOldPosition() {
+		if(defaultStartPosition != PopupPosition.DontSet && oldPosition != Vector3.one)
+			transform.localPosition = oldPosition;
+	}
+
 	public virtual void Cleanup() {
+		ReturnToOldPosition();
 		animationWindow.enabled = false;
 		if(animationBG != null) {
 			animationBG.enabled = false;
