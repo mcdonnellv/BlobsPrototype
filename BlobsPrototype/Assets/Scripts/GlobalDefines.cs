@@ -170,7 +170,6 @@ public class GlobalDefines : MonoBehaviour {
 
 	public static string TimeToString(TimeSpan ts) {
 		string timeString = "";
-		DateTime now = System.DateTime.Now;
 		if(ts.Days > 0)
 			timeString += ts.Days.ToString() + " day";
 		if(ts.Days == 0 && ts.Hours > 0)

@@ -15,9 +15,7 @@ public class CombatStats {
 	public static int defaultStamina = 100;
 	public static Element defaultElement = Element.None;
 
-	public CombatStats() {
-		SetDefaultValues();
-	}
+	public CombatStats() { SetDefaultValues(); }
 
 	public void SetDefaultValues() {
 		attack = defaultAttack;
@@ -28,7 +26,6 @@ public class CombatStats {
 	}
 
 	public void CalculateOtherStats(TraitType t, float v) {
-		int value = (int)v;
 		switch (t) {
 		case TraitType.SetElement: element = (Element)v; break;
 		}

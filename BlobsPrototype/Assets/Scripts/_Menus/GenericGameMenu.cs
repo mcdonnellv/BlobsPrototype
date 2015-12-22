@@ -33,7 +33,7 @@ public class GenericGameMenu : MonoBehaviour {
 	}
 
 
-	public void Show() {
+	public virtual void Show() {
 		gameObject.SetActive(true);
 		HudManager.hudManager.IncrementPopupRefCount();
 		if(oldPosition == Vector3.one)
@@ -56,25 +56,25 @@ public class GenericGameMenu : MonoBehaviour {
 		}
 	}
 
-	public void ChangePosition(PopupPosition positionID) {
+	public virtual void ChangePosition(PopupPosition positionID) {
 		transform.localPosition = popupPositions[(int)positionID];
 	}
 
 
-	public void SetDisplayed() {
+	public virtual void SetDisplayed() {
 		displayed = true;
 		animationWindow.onFinished.Clear();
 		BroadcastMessage("GameMenuDisplayed", this);
 	}
 
 
-	public void Show(string header) {
+	public virtual void Show(string header) {
 		Show();
 		headerLabel.text = header.ToUpper();
 	}
 	
 
-	public void Hide() {
+	public virtual void Hide() {
 		if(!displayed)
 			return;
 		animationWindow.onFinished.Clear();
@@ -90,13 +90,13 @@ public class GenericGameMenu : MonoBehaviour {
 	}
 
 
-	public void HideInstant() {
+	public virtual void HideInstant() {
 		animationWindow.ResetToBeginning();
 		DisableWindow();
 	}
 
 	
-	public void DisableWindow() {
+	public virtual void DisableWindow() {
 		animationWindow.onFinished.Clear();
 		window.SetActive(false);
 		HudManager.hudManager.DecrementPopupRefCount();
@@ -105,7 +105,7 @@ public class GenericGameMenu : MonoBehaviour {
 			Cleanup();
 	}
 
-	public void ReturnToOldPosition() {
+	public virtual void ReturnToOldPosition() {
 		if(defaultStartPosition != PopupPosition.DontSet && oldPosition != Vector3.one)
 			transform.localPosition = oldPosition;
 	}
@@ -120,7 +120,7 @@ public class GenericGameMenu : MonoBehaviour {
 		gameObject.SetActive(false);
 	}
 
-	public void FlashChangeAnim() {
+	public virtual void FlashChangeAnim() {
 		ChangePosition(defaultStartPosition);
 		animationWindow.ResetToBeginning();
 		animationWindow.PlayForward();

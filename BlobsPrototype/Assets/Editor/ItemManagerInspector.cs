@@ -6,7 +6,7 @@ using System.Linq;
 
 [CustomEditor(typeof(ItemManager))]
 public class ItemManagerInspector : GenericManagerInspector {
-	bool showGenes = false;
+
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 		BaseItem item = null;

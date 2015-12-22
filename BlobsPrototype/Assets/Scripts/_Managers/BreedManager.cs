@@ -47,10 +47,8 @@ public class BreedManager : MonoBehaviour {
 		male.spouseId = female.id;
 		female.spouseId = male.id;
 		gameManager.AddGold(-cost);
-		male.state = BlobState.Breeding;
-		female.state = BlobState.Breeding;
-		male.StartActionWithDuration(male.breedReadyDelay);
-		female.StartActionWithDuration(female.breedReadyDelay);
+		male.gameObject.StartActionWithDuration(BlobState.Breeding, male.breedReadyDelay);
+		female.gameObject.StartActionWithDuration(BlobState.Breeding, female.breedReadyDelay);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
 			hudManager.blobInfoContextMenu.Show(blob1.id);
 	}
@@ -59,20 +57,15 @@ public class BreedManager : MonoBehaviour {
 	public void BreedBlobs(Blob male, Blob female) {
 		Blob newBlob = CreateBlobFromParents(male, female, BlobInteractAction.Breed);
 		female.room.AddBlob(newBlob);
-		newBlob.state = BlobState.Hatching;
-		newBlob.StartActionWithDuration(newBlob.blobHatchDelay);
+		newBlob.gameObject.StartActionWithDuration(BlobState.Hatching, newBlob.blobHatchDelay);
 	}
 
 
 	public Blob CreateBlobFromParents(Blob dad, Blob mom, BlobInteractAction blobInteractAction) {
-		GameObject blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
-		Blob blob = blobGameObject.AddComponent<Blob>();
-
-		// figure gender
-		blob.gender = (UnityEngine.Random.Range(0, 2) == 0) ? Gender.Male : Gender.Female;
-
-		// figure out quality
-		blob.quality = Blob.GetRandomQuality();
+		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("BlobGameObject"));
+		BlobGameObject blobGameObject = go.GetComponent<BlobGameObject>();
+		blobGameObject.Setup();
+		Blob blob = blobGameObject.blob;
 
 		// passed on genes
 		List<BaseGene> dadBaseGenes = geneManager.GetBaseGeneListFromGeneList(dad.genes);
@@ -92,16 +85,15 @@ public class BreedManager : MonoBehaviour {
 		// give random element and sigil
 		switch(blobInteractAction) {
 		case BlobInteractAction.Breed:
-			blob.nativeElement = GetOffSpringElement(dad.element, mom.element);
+			blob.SetNativeElement(GetOffSpringElement(dad.element, mom.element));
 			blob.sigil = GetOffSpringSigil(dad.sigil, mom.sigil);
 			break;
 		case BlobInteractAction.Merge:
-			blob.nativeElement = (UnityEngine.Random.Range(0, 2) == 0) ? dad.element : mom.element;
+			blob.SetNativeElement((UnityEngine.Random.Range(0, 2) == 0) ? dad.element : mom.element);
 			blob.sigil = (UnityEngine.Random.Range(0, 2) == 0) ? dad.sigil : mom.sigil;
 			break;
 		}
 
-		blob.Setup();
 		return blob;
 	}
 
@@ -113,7 +105,6 @@ public class BreedManager : MonoBehaviour {
 	Element GetOffSpringElement(Element e1, Element e2) {
 		Element[] possibleElements = new Element[12];
 		int max = (int)Element.ElementCt;
-		int test = -1 % 5;
 		possibleElements[0] = (Element)WrapIndex((int)(e1 - 1) ,max);
 		possibleElements[1] = e1;
 		possibleElements[2] = e1;
@@ -194,8 +185,7 @@ public class BreedManager : MonoBehaviour {
 		gameManager.AddGold(-cost);
 		Room room = blob1.room;
 		Blob newBlob = CreateBlobFromParents(blob1, blob2, BlobInteractAction.Merge);
-		newBlob.state = BlobState.Hatching;
-		newBlob.StartActionWithDuration(newBlob.blobHatchDelay);
+		newBlob.gameObject.StartActionWithDuration(BlobState.Hatching, newBlob.blobHatchDelay);
 		blob1.tilePosX = -1;
 		blob1.tilePosY = -1;
 		blob2.tilePosX = -1;

@@ -39,7 +39,7 @@ public class ItemManager : MonoBehaviour {
 	public int GetNextAvailableID() {
 		int lowestIdVal = 0;
 		List<BaseItem> sortedByID = items.OrderBy(x => x.id).ToList();
-		foreach(BaseItem i in items)
+		foreach(BaseItem i in sortedByID)
 			if (i.id == lowestIdVal)
 				lowestIdVal++;
 		return lowestIdVal;

@@ -36,7 +36,7 @@ public class InventoryMenu : GenericGameMenu {
 
 	public void Pressed() {	Show(); }
 
-	public void Show() { Show(Mode.Inventory); }
+	public override void Show() { Show(Mode.Inventory); }
 
 	public void Show(Mode modeParam) {
 		if(IsDisplayed()) {
@@ -87,7 +87,7 @@ public class InventoryMenu : GenericGameMenu {
 	}
 
 
-	public void Hide() {
+	public override void Hide() {
 		if(!IsDisplayed())
 			return;
 

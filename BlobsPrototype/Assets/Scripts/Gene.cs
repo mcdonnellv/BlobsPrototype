@@ -4,14 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 [Serializable]
-public class BaseGene : BaseThing {
-	public TraitType traitType = TraitType.None;
-	public int value = 0;
-	public AbilityModifier modifier = AbilityModifier.NA;
-	public List<GeneActivationRequirement> activationRequirements = new List<GeneActivationRequirement>();
-}
-
-[Serializable]
 public class Gene : BaseGene {
 
 	public GeneState state;

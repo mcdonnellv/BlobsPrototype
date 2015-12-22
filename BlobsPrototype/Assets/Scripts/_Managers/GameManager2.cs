@@ -47,24 +47,25 @@ public class GameManager2 : MonoBehaviour {
 		hudMan.UpdateChocolate(gameVars.chocolate);
 		Room room = roomMan.CreateRoom(roomMan.minSize, Room.RoomType.Field);
 
-		Blob blob;
+		Blob blob = null;
 
 		for(int i=0; i<2; i++) {
 			if(room.IsRoomFull())
 				break;
 
-			GameObject blobGameObject = (GameObject)GameObject.Instantiate(Resources.Load("BlobSprites"));
-			blob = blobGameObject.AddComponent<Blob>();
+			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("BlobGameObject"));
+			BlobGameObject blobGameObject = go.GetComponent<BlobGameObject>();
+			blobGameObject.Setup();
+			blob = blobGameObject.blob;
 			blob.gender = (i % 2 == 0 ? Gender.Male : Gender.Female);
-			blob.nativeElement = Element.Black;//(Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
+			blob.SetNativeElement(Element.Black);//(Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
 			blob.sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
-			blob.Setup();
-			blob.Hatch(false);
+			blob.Hatch();
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
 			blob.actionDuration = new TimeSpan(0);
 			blob.state = BlobState.Idle;
 			blob.missionCount = 3;
-			blob.UpdateGrowth();
+			blob.gameObject.UpdateGrowth();
 			room.AddBlob(blob);
 
 			blob.genes.Add(new Gene(geneManager.genes[0]));

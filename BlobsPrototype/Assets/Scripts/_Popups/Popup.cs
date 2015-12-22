@@ -17,7 +17,6 @@ public class Popup : GenericGameMenu {
 	public UIWidget singleChoiceContainer;
 	public UIWidget doubleChoiceContainer;
 	UIButton okButton;
-	UIButton cancelButton;
 
 	static List<PopupData> popupQueue = new List<PopupData>();
 
@@ -87,7 +86,6 @@ public class Popup : GenericGameMenu {
 		UIButton[] buttons = doubleChoiceContainer.GetComponentsInChildren<UIButton>(true);
 		UILabel[] labels = doubleChoiceContainer.GetComponentsInChildren<UILabel>(true);
 		okButton = buttons[0];
-		cancelButton = buttons[1];
 		UILabel okLabel = labels[0];
 		UILabel cancelLabel = labels[1];
 		okLabel.text = "Confirm";

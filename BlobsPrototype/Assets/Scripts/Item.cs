@@ -1,29 +1,8 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-
-[Serializable]
-public class BaseThing {
-	public int id;
-	public string itemName = "";
-	public string description = "";
-	public Quality quality = Quality.Common;
-	public string iconName;
-	public UIAtlas iconAtlas;
-	public int iconTintIndex = 0;
-	public int sellValue = 0;
-}
-
-[Serializable]
-public class BaseItem : BaseThing {
-	public int maxStack = 99;
-}
-
 
 [Serializable]
 public class Item : BaseItem {
-
 	public int count = 1;
 
 	public Item(BaseItem b) {

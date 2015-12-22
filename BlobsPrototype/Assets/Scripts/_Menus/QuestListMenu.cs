@@ -18,7 +18,7 @@ public class QuestListMenu : GenericGameMenu {
 	public void Pressed() {	Show(); }
 
 
-	public void Show() { 
+	public override void Show() { 
 		base.Show(); 
 		//window.transform.localScale = new Vector3(1,1,1); 
 		SetupQuestCells(); 
@@ -28,10 +28,31 @@ public class QuestListMenu : GenericGameMenu {
 
 
 	void SetupQuestCells() {
-		grid.transform.DestroyChildren();
+		bool reposition = false;
+
+		for (int i = 0; i < grid.transform.childCount; i++) {
+			QuestCell questCell = grid.transform.GetChild(i).GetComponent<QuestCell>();
+			if(questCell!= null && questCell.questId == -1) {
+				i--;
+				DestroyImmediate(questCell.gameObject);
+			}
+		}
+
 		foreach(Quest quest in questManager.availableQuests) {
+			QuestCell questCell = GetQuestCellFromQuest(quest);
+
+			if(questCell != null) {
+				if(questCell.questId == quest.id) {
+					SetBlobImages(quest, questCell);
+					continue;
+				}
+				else
+					DestroyImmediate(questCell.gameObject);
+			}
+
+			reposition = true;
 			GameObject cellGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Quest Cell"));
-			QuestCell questCell = cellGameObject.GetComponent<QuestCell>();
+			questCell = cellGameObject.GetComponent<QuestCell>();
 			questCell.transform.parent = grid.transform;
 			questCell.transform.localScale = Vector3.one;
 			questCell.transform.localPosition = Vector3.zero;
@@ -41,27 +62,31 @@ public class QuestListMenu : GenericGameMenu {
 			questCell.icon.spriteName = quest.iconName;
 			questCell.icon.atlas = quest.iconAtlas;
 			questCell.newLabel.gameObject.SetActive(!quest.alreadySeen);
-
-			foreach(int blobId in quest.blobIds) 
-				if(blobId != -1)
-					questCell.DisplayBlobImage(roomManager.GetBlobByID(blobId), quest.blobIds.IndexOf(blobId));
+			questCell.questId = quest.id;
+			SetBlobImages(quest, questCell);
 
 			string timeString = "0 sec";
 			switch(quest.state) {
-			case QuestState.Embarked : 
-				break;
-			case QuestState.Available :
-				timeString = GlobalDefines.TimeToString(quest.GetActionReadyDuration());
-				break;
+			case QuestState.Embarked : break;
+			case QuestState.Available : timeString = GlobalDefines.TimeToString(quest.GetActionReadyDuration()); break;
 			}
 
 			questCell.durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
 		}
-		grid.Reposition();
+
+		if(reposition)
+			grid.Reposition();
 	}
 
 
-	public void SetDisplayed() {
+	void SetBlobImages(Quest quest, QuestCell questCell) {
+		foreach(int blobId in quest.blobIds) 
+			if(blobId != -1)
+				questCell.DisplayBlobImage(roomManager.GetBlobByID(blobId), quest.blobIds.IndexOf(blobId));
+	}
+
+
+	public override void SetDisplayed() {
 		base.SetDisplayed();
 		SelectFirstQuest();
 	}
@@ -139,6 +164,7 @@ public class QuestListMenu : GenericGameMenu {
 	}
 
 	public void CompleteQuestPressed() {
+		completeButton.gameObject.SetActive(false);
 		questManager.CollectRewardsForQuest(selectedQuest);
 	}
 
@@ -166,9 +192,12 @@ public class QuestListMenu : GenericGameMenu {
 
 	QuestCell GetQuestCellFromQuest(Quest quest) {
 		int index = questManager.availableQuests.IndexOf(quest);
-		Transform cellTransform = grid.transform.GetChild(index);
-		QuestCell questCell = cellTransform.GetComponent<QuestCell>();
-		return questCell;
+		if(index < grid.transform.childCount) {
+			Transform cellTransform = grid.transform.GetChild(index);
+			QuestCell questCell = cellTransform.GetComponent<QuestCell>();
+			return questCell;
+		}
+		return null;
 	}
 
 

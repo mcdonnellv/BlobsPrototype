@@ -33,7 +33,7 @@ public class BlobDragDropItem : UIDragDropItem {
 		SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
 		coc.enabled = false;
 		sp.enabled = false;
-		Blob blob = gameObject.GetComponent<Blob>();
+		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
 		blob.room.ShowFloatingSprites(blob);
 		animator.SetBool("dragging", true);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
@@ -51,7 +51,7 @@ public class BlobDragDropItem : UIDragDropItem {
 	
 
 	protected override void OnDragDropRelease (GameObject surface) {
-		Blob blob = gameObject.GetComponent<Blob>();
+		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
 		blob.room.HideFloatingSprites();
 		roomManager.scrollVector = new Vector2(0f,0f);
 		animator.SetBool("dragging", false);
@@ -80,7 +80,7 @@ public class BlobDragDropItem : UIDragDropItem {
 
 
 	void OnDragDropReleaseForClone (GameObject surface) {
-		Blob blob = gameObject.GetComponent<Blob>();
+		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
 		transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
 		if(surface == null) {
 			GameObject.Destroy(gameObject);
@@ -163,9 +163,10 @@ public class BlobDragDropItem : UIDragDropItem {
 	}
 
 
-	void Update() {
+	protected override void Update() {
 		if(mDragging)
 			mTrans.localPosition += (Vector3)(-roomManager.scrollVector * roomManager.scrollSpeed * Time.deltaTime);
+		base.Update();
 	}
 	
 }

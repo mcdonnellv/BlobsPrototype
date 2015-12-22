@@ -49,7 +49,7 @@ public class GeneManager : MonoBehaviour {
 		blob.genes.Remove(gene);
 		storedGenes.Add(gene);
 		blob.CalculateStats();
-		blob.UpdateBlobInfoIfDisplayed();
+		blob.gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 
@@ -57,7 +57,7 @@ public class GeneManager : MonoBehaviour {
 		blob.genes.Add(gene);
 		storedGenes.Remove(gene);
 		blob.CalculateStats();
-		blob.UpdateBlobInfoIfDisplayed();
+		blob.gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 

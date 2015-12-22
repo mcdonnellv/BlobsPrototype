@@ -22,6 +22,19 @@ public class GenericManagerInspector : Editor {
 			return _allItems;
 		}
 	}
+
+	string[] _allQuests;
+	public string[] allQuests { 
+		get {
+			if(_allQuests == null) {
+				_allQuests =  new string[questManager.quests.Count];
+				foreach(BaseQuest i in questManager.quests)
+					allQuests[questManager.quests.IndexOf(i)] = i.itemName;
+			}
+			return _allQuests;
+		}
+	}
+
 	public void RebuildAllItems() { _allItems = null;}
 	
 	public Rect DrawSprite (Texture2D tex, Rect sprite, Material mat) { return DrawSprite(tex, sprite, mat, true, 0); }

@@ -10,10 +10,7 @@ public class BlobDragDropContainer : UIDragDropContainer {
 
 	public bool uiContainer = true;
 	public bool hasBlob {
-		get {
-			Blob blob = gameObject.GetComponentInChildren<Blob>();
-			return (blob != null);
-		}
+		get { return (gameObject.GetComponentInChildren<BlobGameObject>() != null);}
 	}
 
 	public void BlobAdded(Blob blob) {

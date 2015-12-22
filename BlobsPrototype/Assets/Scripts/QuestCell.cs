@@ -9,6 +9,7 @@ public class QuestCell : MonoBehaviour {
 	public UIGrid blobSlotGrid;
 	public UISprite foreGround;
 	public UILabel newLabel;
+	public int questId = -1;
 
 	public void SetupBlobCells(int count) {
 		foreach(Transform child in blobSlotGrid.transform) {
@@ -41,8 +42,8 @@ public class QuestCell : MonoBehaviour {
 
 	public void DisplayBlobImage(Blob blob, int index) {
 		Transform slot = blobSlotGrid.transform.GetChild(index);
-		GameObject blobGameObject = blob.CreateDuplicateForUi(slot, false);
+		GameObject blobGameObject = blob.gameObject.CreateDuplicateForUi(slot, false);
 		blobGameObject.transform.localPosition = new Vector3(0f, -4f, 0f);
-		blobGameObject.transform.localScale = blob.transform.localScale / 4f;
+		blobGameObject.transform.localScale = blob.gameObject.transform.localScale / 4f;
 	}
 }

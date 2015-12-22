@@ -19,12 +19,8 @@ public class ItemInfoPopup : GenericGameMenu {
 
 
 	public void GameMenuClosing(GenericGameMenu menu) { if(menu == owner) Hide();}
-	public void Cleanup() { base.Cleanup(); owner = null; }
-
-
-	public void DeleteButtonPressed() {
-		owner.SendMessage("DeleteButtonPressed");
-	}
+	public override void Cleanup() { base.Cleanup(); owner = null; }
+	public void DeleteButtonPressed() { owner.SendMessage("DeleteButtonPressed"); }
 
 
 	public void Show(GenericGameMenu caller, Item i) {

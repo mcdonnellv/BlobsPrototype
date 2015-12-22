@@ -61,7 +61,7 @@ public class Room : MonoBehaviour {
 		if (IsRoomFull())
 			return;
 		
-		Transform blobTransform = blob.transform;
+		Transform blobTransform = blob.gameObject.transform;
 		blobTransform.SetParent(transform);
 		blobTransform.localScale = new Vector3(1f, 1f, 1f);
 		blob.room = this;
@@ -74,9 +74,9 @@ public class Room : MonoBehaviour {
 
 
 	public void DeleteBlob(Blob blob) {
-		blob.PrepareForDelete();
+		blob.CleanUp();
 		blobs.Remove(blob);
-		UnityEngine.Object.DestroyImmediate(blob.gameObject);
+		DestroyImmediate(blob.gameObject);
 	}
 
 
@@ -90,7 +90,7 @@ public class Room : MonoBehaviour {
 		blob.tilePosX = xPos;
 		blob.tilePosY = yPos;
 		Tile tile = GetTile(xPos, yPos);
-		blob.transform.parent = tile.transform;
+		blob.gameObject.transform.parent = tile.transform;
 		tile.GetComponent<UIGrid>().Reposition();
 		return true;
 	}

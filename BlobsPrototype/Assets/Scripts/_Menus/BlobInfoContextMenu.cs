@@ -50,7 +50,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		actionButton2.gameObject.SetActive(true);
 		DisplayBlobInfo();
 		DisplayBlobImage();
-		roomManager.MoveScrollViewToBlob(blob.transform, blob.room);
+		roomManager.MoveScrollViewToBlob(blob.gameObject.transform, blob.room);
 		blob.room.ShowFloatingSprites(null);
 	}
 
@@ -142,18 +142,18 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	void DisplayBlobImage() {
 		blobSpritesContainer.transform.DestroyChildren();
-		blob.CreateDuplicateForUi(blobSpritesContainer.transform, false);
+		blob.gameObject.CreateDuplicateForUi(blobSpritesContainer.transform, false);
 	}
 
 
-	public void Hide() {
+	public override void Hide() {
 		blob.room.HideFloatingSprites();
 		base.Hide();
 	}
 
-	public void FlashChangeAnim() {
+	public override void FlashChangeAnim() {
 		changeFlashObject.gameObject.SetActive(true);
-		changeFlashAnim.Play();
+		changeFlashAnim.PlayForward();
 		changeFlashAnim.enabled = true;
 	} 
 

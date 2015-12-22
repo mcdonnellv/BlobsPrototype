@@ -15,13 +15,21 @@ public class QuestManager : MonoBehaviour {
 	public List<BaseQuest> quests = new List<BaseQuest>(); // All quests
 	public List<Quest> availableQuests = new List<Quest>(); //current quests
 	public Dictionary<int, int> completedQuestIds = new Dictionary<int, int>();
-	public Dictionary<MapZone, int> completedQuestInZone = new Dictionary<MapZone, int>();
+	public Dictionary<int, int> completedQuestInZone = new Dictionary<int, int>();
 	public UIAtlas iconAtlas;
 	public static int maxAvailableQuests = 10;
 
 	public bool DoesNameExistInList(string nameParam){return (GetBaseQuestWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseQuestByID(idParam) != null); }
-	public Quest AddQuestToList(BaseQuest bq) { Quest q = new Quest(bq); availableQuests.Add(q); return q; }
+	public Quest AddQuestToList(BaseQuest bq) { 
+		Quest q = new Quest(bq); availableQuests.Add(q);
+		if(q.type == QuestType.Scouting) {
+			Zone zone = ZoneManager.zoneManager.GetZonewithQuestID(q.id);
+			if(zone != null)
+				q.zoneId = zone.id;
+		}
+		return q; 
+	}
 
 
 	public BaseQuest GetBaseQuestWithName(string nameParam) {
@@ -68,24 +76,26 @@ public class QuestManager : MonoBehaviour {
 		else
 			completedQuestIds.Add(quest.id, 1);
 
-		if(completedQuestInZone.ContainsKey(quest.zone))
-			completedQuestInZone[quest.zone]++;
+		if(completedQuestInZone.ContainsKey(quest.zoneId))
+			completedQuestInZone[quest.zoneId]++;
 		else
-			completedQuestInZone.Add(quest.zone, 1);
+			completedQuestInZone.Add(quest.zoneId, 1);
 	}
 
 
 	void CollectRewardsForScout(Quest quest) {
+		Zone zone = ZoneManager.zoneManager.GetZoneByID(quest.zoneId);
 		List<Quest> questsToAdd = new List<Quest>();
 		RewardRange range = GetRewardRange(quest);
 		int questCt = UnityEngine.Random.Range(range.min, range.max + 1);
 		for(int i = 0; i < questCt; i++) {
-			Quest q = new Quest(GetRandomQuestFromZone(quest.zone));
+			Quest q = new Quest(GetRandomQuestFromZone(zone));
+			q.zoneId = zone.id;
 			questsToAdd.Add(q);
 			availableQuests.Add(q);
 		}
 
-		hudManager.ShowNotice(questCt.ToString() + " new quest" + (questCt > 1 ? "s" : "") + "added");
+		hudManager.ShowNotice(questCt.ToString() + " new quest" + (questCt > 1 ? "s" : "") + " scouted");
 		hudManager.Broadcast("QuestsAdded", questsToAdd);
 	}
 
@@ -95,17 +105,15 @@ public class QuestManager : MonoBehaviour {
 			if(blobId == -1)
 				continue;
 			Blob blob = roomManager.GetBlobByID(blobId);
-			blob.CompleteQuest();
+			blob.gameObject.ReturnFromQuest();
 		}
 	}
 
 
-	public List<BaseQuest> GetQuestListForZone(MapZone zone) {
+	public List<BaseQuest> GetQuestListForZone(Zone zone) {
 		List<BaseQuest> zoneBaseQuests = new List<BaseQuest>();
-		foreach(BaseQuest baseQuest in quests) {
-			if(baseQuest.zone == zone && baseQuest.type != QuestType.Scouting)
-				zoneBaseQuests.Add(baseQuest);
-		}
+		foreach(int zoneQuestId in zone.questIds) 
+			zoneBaseQuests.Add(GetBaseQuestByID(zoneQuestId));
 		return zoneBaseQuests;
 	}
 
@@ -153,7 +161,7 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
-	BaseQuest GetRandomQuestFromZone(MapZone zone) {
+	BaseQuest GetRandomQuestFromZone(Zone zone) {
 		List<BaseQuest> zoneBaseQuests = GetQuestListForZone(zone);
 		if(zoneBaseQuests.Count <= 0)
 			return null;

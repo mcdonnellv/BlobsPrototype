@@ -73,7 +73,6 @@ public class QuestManagerInspector : GenericManagerInspector {
 						i.usesSigils = quest.usesSigils;
 						i.mixedElements = quest.mixedElements;
 						i.mixedSigils = quest.mixedSigils;
-						i.zone = quest.zone;
 					}
 					questManager.quests.Add(i);
 					mIndex = questManager.quests.Count - 1;
@@ -128,7 +127,18 @@ public class QuestManagerInspector : GenericManagerInspector {
 			GUILayout.EndHorizontal();
 			quest.type = (QuestType)EditorGUILayout.EnumPopup("Type",quest.type);
 			quest.quality = (Quality)EditorGUILayout.EnumPopup("Quality",quest.quality);
-			quest.zone = (MapZone)EditorGUILayout.EnumPopup("Zone",quest.zone);
+
+
+			List<string> zones = new List<string>();
+			foreach(Zone zone in ZoneManager.zoneManager.zones)
+				foreach(int questId in zone.questIds) 
+					if(questId == quest.id)
+						zones.Add(zone.itemName);
+				
+			string zoneStr = "Zones: ";
+			foreach(string s in zones)
+				zoneStr += s + ", ";
+			EditorGUILayout.LabelField(zoneStr);
 
 			quest.usesElements = EditorGUILayout.Toggle("Uses Elements", quest.usesElements);
 			if(quest.usesElements)
@@ -181,7 +191,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 			GUI.backgroundColor = Color.white;
 			GUILayout.EndHorizontal();
 		}
-		Color oldColor = GUI.contentColor;
+
 		if(pointsleft != 0)
 			EditorGUILayout.LabelField(pointsleft.ToString() + " points left to distribute");
 		GUILayout.BeginHorizontal();

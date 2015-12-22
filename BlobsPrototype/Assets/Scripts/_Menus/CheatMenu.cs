@@ -15,7 +15,7 @@ public class CheatMenu : GenericGameMenu {
 	public void IncrementMissionCount() { 
 		foreach(Blob blob in roomManager.currentRoom.blobs)
 			if(blob.hasHatched)
-				blob.ReturnFromQuest();
+				blob.gameObject.ReturnFromQuest();
 	}
 
 	public void FinishQuests() { 

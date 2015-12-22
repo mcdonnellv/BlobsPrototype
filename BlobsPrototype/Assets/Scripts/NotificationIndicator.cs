@@ -35,14 +35,34 @@ public class NotificationIndicator : MonoBehaviour {
 
 
 	void DisplayError(string text) {
+		if(IsInvoking("HideError"))
+			CancelInvoke("HideError");
+
+		if(IsInvoking("PlayErrorEndAnim"))
+			CancelInvoke("PlayErrorEndAnim");
+
 		errorLabel.gameObject.SetActive(true);
 		errorLabel.text = text.ToUpper();
 		UITweener animation = errorLabel.GetComponent<UITweener>();
 		animation.PlayForward();
-		animation.Invoke("PlayReverse", animation.duration + 1f);
+		animation.ResetToBeginning();
+		animation.PlayForward();
+		Invoke("PlayErrorEndAnim", animation.duration + 1f);
 	}
-	
+
+
 	void HideError() { errorLabel.gameObject.SetActive(false); }
+
+
+	void PlayErrorEndAnim() { 
+		if (IsErrorDisplayed() == false)
+			return;
+		UITweener animation = errorLabel.GetComponent<UITweener>();
+		Invoke("HideError", animation.duration);
+		animation.PlayReverse();
+	}
+
+
 	bool IsErrorDisplayed() { return errorLabel.gameObject.activeSelf; }
 
 
@@ -71,7 +91,5 @@ public class NotificationIndicator : MonoBehaviour {
 			DisplayError(errorQueue[0]);
 			errorQueue.RemoveAt(0);
 		}
-		else if(IsErrorDisplayed())
-			HideError();
 	}
 }

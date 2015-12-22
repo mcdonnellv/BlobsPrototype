@@ -11,13 +11,13 @@ public class GeneAddCell : MonoBehaviour
 
 	public void Pressed()
 	{
-		int index = transform.GetSiblingIndex();
+		//int index = transform.GetSiblingIndex();
 		//geneAddPopup.Pressed(index);
 	}
 
 	public void PressedCell()
 	{
-		int index = transform.GetSiblingIndex();
+		//int index = transform.GetSiblingIndex();
 		//geneAddPopup.PressedCell(index);
 	}
 }

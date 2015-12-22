@@ -220,7 +220,7 @@ public class RoomManager : MonoBehaviour {
 
 	public void CreateRoomWithType(Room.RoomType type) {
 		gameManager.AddGold(-NewRoomCost());
-		Room room = CreateRoom(minSize, type);
+		CreateRoom(minSize, type);
 		hudManager.buildRoomMenu.Hide();
 	}
 

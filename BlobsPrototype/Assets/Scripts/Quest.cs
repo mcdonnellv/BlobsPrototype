@@ -24,7 +24,6 @@ public class BaseQuest : BaseThing {
 	public bool usesSigils = false;
 	public bool mixedElements = false;
 	public bool mixedSigils = false;
-	public MapZone zone = MapZone.None;
 }
 
 
@@ -37,6 +36,7 @@ public class Quest : BaseQuest {
 	public List<Element> elementRequirements = new List<Element>();
 	public List<Sigil> sigilRequirements = new List<Sigil>();
 	public bool alreadySeen = false;
+	public int zoneId = -1;
 
 
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
@@ -60,7 +60,6 @@ public class Quest : BaseQuest {
 		usesSigils = b.usesSigils;
 		mixedElements = b.mixedElements;
 		mixedSigils = b.mixedSigils;
-		zone = b.zone;
 
 		Element element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
 		Sigil sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
@@ -92,7 +91,7 @@ public class Quest : BaseQuest {
 		blobIds = blobListParam.ToList();
 		foreach(int blobID in blobIds) {
 			Blob blob = roomManager.GetBlobByID(blobID);
-			blob.DepartForQuest(this);
+			blob.gameObject.DepartForQuest(this);
 		}
 		actionReadyTime = GetActionReadyTime();
 		state = QuestState.Embarked;
@@ -143,21 +142,5 @@ public class Quest : BaseQuest {
 		for(int i = 0; i < blobIds.Count; i++)
 			if(id == blobIds[i])
 				blobIds[i] = -1;
-	}
-
-	public bool IsHighYield() {
-		if(blobIds == null || blobsRequired == 0)
-			return false;
-
-		int totalStam = 0;
-		int index = 0;
-		foreach(int blobID in blobIds) {
-			Blob blob = roomManager.GetBlobByID(blobID);
-			if(blob.combatStats.element != elementRequirements[index]) //  order matters
-				return false;
-			index++;
-		}
-
-		return true;
 	}
 }

@@ -75,7 +75,6 @@ public class QuestDetailsMenu : GenericGameMenu {
 		if(quest.mins > 0)
 			timeString += quest.mins.ToString() + " min";
 		durationLabel.text = ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
-		int blobsRequired = quest.blobsRequired;
 
 		switch(quest.type) {
 		case QuestType.Combat:  
@@ -175,7 +174,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 			BlobQuestSlot blobSlot = child.GetComponent<BlobQuestSlot>();
 			blobSlot.socket.transform.DestroyChildren();
 
-			GameObject blobGameObject = blob.CreateDuplicateForUi(blobSlot.socket.transform, true);
+			GameObject blobGameObject = blob.gameObject.CreateDuplicateForUi(blobSlot.socket.transform, true);
 			blobGameObject.transform.localPosition = new Vector3(0f, -18f, 1f);
 			blobGameObject.transform.localScale = new Vector3(.6f, .6f, .6f);
 
@@ -197,10 +196,10 @@ public class QuestDetailsMenu : GenericGameMenu {
 		foreach(Transform child in blobGrid.transform) {
 			if(child.GetComponentInChildren<BlobDragDropContainer>() == blobDragDropContainer || !child.gameObject.activeSelf)
 				continue;
-			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null && blob.id == blobToAdd.id) {
-				BlobRemovedFromContainer(blob.id);
-				GameObject.Destroy(blob.gameObject);
+			BlobGameObject blobObj = child.GetComponentInChildren<BlobGameObject>();
+			if(blobObj != null && blobObj.blob.id == blobToAdd.id) {
+				BlobRemovedFromContainer(blobObj.blob.id);
+				GameObject.Destroy(blobObj);
 			}
 		}
 		quest.AddBlob(blobToAdd.id, containerIndex);
@@ -280,9 +279,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 	List<int> GetChosenBlobs() {
 		List<int> blobs = new List<int>();
 		foreach(Transform child in blobGrid.transform) {
-			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null)
-				blobs.Add(blob.id);
+			BlobGameObject blobObj = child.GetComponentInChildren<BlobGameObject>();
+			if(blobObj != null)
+				blobs.Add(blobObj.blob.id);
 		}
 		return blobs;
 	}
@@ -291,9 +290,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void ClearBlobs() {
 		//quest.RemoveAllBlobs();
 		foreach(Transform child in blobGrid.transform) {
-			Blob blob = child.GetComponentInChildren<Blob>();
-			if(blob != null)
-				GameObject.Destroy(blob.gameObject);
+			BlobGameObject blobGameObject = child.GetComponentInChildren<BlobGameObject>();
+			if(blobGameObject != null)
+				GameObject.Destroy(blobGameObject);
 		}
 	}
 
@@ -309,7 +308,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 	}
 
 
-	public void FlashChangeAnim() {
+	public override void FlashChangeAnim() {
 		transform.parent.parent.BroadcastMessage("GameMenuClosing", this);
 		base.FlashChangeAnim();
 	}

@@ -1,0 +1,250 @@
+-debug
+-target:library
+-nowarn:0169
+-out:Temp/Assembly-CSharp.dll
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll"
+-r:"Assets/Rotorz/Tile System/TileSystem.Runtime.dll"
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll"
+-r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll"
+-define:UNITY_5_1_1
+-define:UNITY_5_1
+-define:UNITY_5
+-define:ENABLE_NEW_BUGREPORTER
+-define:ENABLE_2D_PHYSICS
+-define:ENABLE_4_6_FEATURES
+-define:ENABLE_AUDIO
+-define:ENABLE_CACHING
+-define:ENABLE_CLOTH
+-define:ENABLE_FRAME_DEBUGGER
+-define:ENABLE_GENERICS
+-define:ENABLE_HOME_SCREEN
+-define:ENABLE_IMAGEEFFECTS
+-define:ENABLE_LIGHT_PROBES_LEGACY
+-define:ENABLE_MICROPHONE
+-define:ENABLE_MULTIPLE_DISPLAYS
+-define:ENABLE_PHYSICS
+-define:ENABLE_PHYSICS_PHYSX3
+-define:ENABLE_PLUGIN_INSPECTOR
+-define:ENABLE_SHADOWS
+-define:ENABLE_SINGLE_INSTANCE_BUILD_SETTING
+-define:ENABLE_SPRITES
+-define:ENABLE_TERRAIN
+-define:ENABLE_UNET
+-define:ENABLE_UNITYEVENTS
+-define:ENABLE_VR
+-define:ENABLE_WEBCAM
+-define:ENABLE_WWW
+-define:ENABLE_CLOUD_SERVICES
+-define:ENABLE_CLOUD_SERVICES_ANALYTICS
+-define:ENABLE_CLOUD_SERVICES_UNET
+-define:ENABLE_CLOUD_LICENSE
+-define:ENABLE_AUDIOMIXER_SUSPEND
+-define:ENABLE_EDITOR_METRICS
+-define:INCLUDE_DYNAMIC_GI
+-define:INCLUDE_GI
+-define:INCLUDE_IL2CPP
+-define:INCLUDE_DIRECTX12
+-define:PLATFORM_SUPPORTS_MONO
+-define:ENABLE_LOCALIZATION
+-define:UNITY_IPHONE
+-define:ENABLE_RUNTIME_GI
+-define:ENABLE_SUBSTANCE
+-define:ENABLE_GAMECENTER
+-define:ENABLE_NETWORK
+-define:UNITY_IPHONE_API
+-define:UNITY_IOS
+-define:ENABLE_TEXTUREID_MAP
+-define:PLAYERCONNECTION_LISTENS_FIXED_PORT
+-define:DEBUGGER_LISTENS_FIXED_PORT
+-define:ENABLE_IL2CPP
+-define:ENABLE_PROFILER
+-define:DEBUG
+-define:TRACE
+-define:UNITY_ASSERTIONS
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_64
+-define:UNITY_EDITOR_WIN
+"Assets/3rd Party/Fantasy Gui Pack/Demo/Scripts/CoolDown.cs"
+"Assets/3rd Party/Fantasy Gui Pack/Demo/Scripts/SelectDifficulty.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/LanguageSelection.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/TypewriterEffect.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButton.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonActivate.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonColor.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonKeys.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonMessage.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonOffset.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonRotation.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIButtonScale.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UICenterOnChild.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UICenterOnClick.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragCamera.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragDropContainer.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragDropItem.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragDropRoot.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragObject.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragResize.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDragScrollView.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIDraggableCamera.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIEventTrigger.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIForwardEvents.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIGrid.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIImageButton.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIKeyBinding.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIKeyNavigation.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIPlayAnimation.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIPlaySound.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIPlayTween.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIPopupList.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIProgressBar.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UISavedOption.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIScrollBar.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIScrollView.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIShowControlScheme.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UISlider.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UISoundVolume.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UITable.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIToggle.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIToggledComponents.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIToggledObjects.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIWidgetContainer.cs"
+"Assets/3rd Party/NGUI/Scripts/Interaction/UIWrapContent.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/ActiveAnimation.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/AnimationOrTween.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/BMFont.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/BMGlyph.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/BMSymbol.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/BetterList.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/ByteReader.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/EventDelegate.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/Localization.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/NGUIDebug.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/NGUIMath.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/NGUIText.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/NGUITools.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/PropertyBinding.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/PropertyReference.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/RealTime.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/SpringPanel.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIBasicSprite.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIDrawCall.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIEventListener.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIGeometry.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIRect.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UISnapshotPoint.cs"
+"Assets/3rd Party/NGUI/Scripts/Internal/UIWidget.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/AnimatedAlpha.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/AnimatedColor.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/AnimatedWidget.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/SpringPosition.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenAlpha.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenColor.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenFOV.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenHeight.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenOrthoSize.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenPosition.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenRotation.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenScale.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenTransform.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenVolume.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/TweenWidth.cs"
+"Assets/3rd Party/NGUI/Scripts/Tweening/UITweener.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UI2DSprite.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UI2DSpriteAnimation.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIAnchor.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIAtlas.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UICamera.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIColorPicker.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIFont.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIInput.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIInputOnGUI.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UILabel.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UILocalize.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIOrthoCamera.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIPanel.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIRoot.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UISprite.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UISpriteAnimation.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UISpriteData.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIStretch.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UITextList.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UITexture.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UITooltip.cs"
+"Assets/3rd Party/NGUI/Scripts/UI/UIViewport.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyCameraFollow.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyCharacterController.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyDiamond.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyInGameLevelDesigner.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyJoystick.cs"
+"Assets/Rotorz/Tile System/Demo/Hat Guy/Scripts/HatGuyTouchButton.cs"
+Assets/Scripts/Blob.cs
+Assets/Scripts/BlobCell.cs
+Assets/Scripts/BlobDragDropContainer.cs
+Assets/Scripts/BlobDragDropItem.cs
+Assets/Scripts/BlobFloatingDisplay.cs
+Assets/Scripts/BlobPanel.cs
+Assets/Scripts/BlobQuestSlot.cs
+Assets/Scripts/BuildRoomMenu.cs
+Assets/Scripts/ColorDefines.cs
+Assets/Scripts/CombatStats.cs
+Assets/Scripts/Enemy.cs
+Assets/Scripts/GameVars.cs
+Assets/Scripts/Gene.cs
+Assets/Scripts/GeneActivationRequirement.cs
+Assets/Scripts/GeneAddCell.cs
+Assets/Scripts/GeneCell.cs
+Assets/Scripts/GeneDragDropContainer.cs
+Assets/Scripts/GeneDragDropItem.cs
+Assets/Scripts/GenePointer.cs
+Assets/Scripts/GlobalDefines.cs
+Assets/Scripts/InfoPanel.cs
+Assets/Scripts/InventoryContainer.cs
+Assets/Scripts/Item.cs
+Assets/Scripts/ItemDragDropContainer.cs
+Assets/Scripts/ItemDragDropItem.cs
+Assets/Scripts/ItemPointer.cs
+Assets/Scripts/LootCell.cs
+Assets/Scripts/Mission.cs
+Assets/Scripts/MissionCell.cs
+Assets/Scripts/NotificationIndicator.cs
+Assets/Scripts/Quest.cs
+Assets/Scripts/QuestCell.cs
+Assets/Scripts/Room.cs
+Assets/Scripts/Tile.cs
+Assets/Scripts/UIWordScrollView.cs
+Assets/Scripts/_Managers/BodyPartManager.cs
+Assets/Scripts/_Managers/BreedManager.cs
+Assets/Scripts/_Managers/CastleManager.cs
+Assets/Scripts/_Managers/GameManager.cs
+Assets/Scripts/_Managers/GameManager2.cs
+Assets/Scripts/_Managers/GeneManager.cs
+Assets/Scripts/_Managers/HudManager.cs
+Assets/Scripts/_Managers/ItemManager.cs
+Assets/Scripts/_Managers/MissionManager.cs
+Assets/Scripts/_Managers/NurseryManager.cs
+Assets/Scripts/_Managers/QuestManager.cs
+Assets/Scripts/_Managers/RoomManager.cs
+Assets/Scripts/_Managers/VillageManager.cs
+Assets/Scripts/_Managers/VisitorManager.cs
+Assets/Scripts/_Menus/BlobInfoContextMenu.cs
+Assets/Scripts/_Menus/CheatMenu.cs
+Assets/Scripts/_Menus/GenericGameMenu.cs
+Assets/Scripts/_Menus/LootMenu.cs
+Assets/Scripts/_Menus/MapMenu.cs
+Assets/Scripts/_Menus/PotentialLootMenu.cs
+Assets/Scripts/_Menus/QuestDetailsMenu.cs
+Assets/Scripts/_Menus/QuestListMenu.cs
+Assets/Scripts/_Popups/BlobInteractPopup.cs
+Assets/Scripts/_Popups/Inventory/BaseThingMenu.cs
+Assets/Scripts/_Popups/Inventory/GenesMenu.cs
+Assets/Scripts/_Popups/Inventory/InventoryMenu.cs
+Assets/Scripts/_Popups/Inventory/ItemsMenu.cs
+Assets/Scripts/_Popups/ItemInfoPopup.cs
+Assets/Scripts/_Popups/Popup.cs
+Assets/Scripts/_Popups/RoomOptionsContextMenu.cs
+Assets/box.cs
+-r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Runtime.Serialization.dll"
+-r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Xml.Linq.dll"

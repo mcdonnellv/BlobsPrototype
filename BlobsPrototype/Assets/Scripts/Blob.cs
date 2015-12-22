@@ -6,18 +6,16 @@ using System.Linq;
 
 
 [Serializable]
-public class Blob : MonoBehaviour {
+public class Blob : BaseThing {
 
 	// internal
 	public BlobState state = BlobState.Idle;
-	public int id;
 	public int spouseId;
 	public int missionId;
 	public int missionCount;
 	public int tilePosX;
 	public int tilePosY;
 	public Gender gender;
-	public Quality quality;
 	public DateTime birthday;
 	public List<Gene> genes;
 	public CombatStats combatStats;
@@ -29,12 +27,8 @@ public class Blob : MonoBehaviour {
 	public DateTime actionReadyTime;
 	public TimeSpan actionDuration;
 	public Dictionary<string,string> blobColor;
+	public BlobGameObject gameObject;
 
-	// visual
-	public Color color;
-	public Dictionary<string, Texture> bodyPartSprites;
-	public GameObject blobSpriteContainer;
-	
 	// helpers
 	public bool male { get {return gender == Gender.Male;} }
 	public bool female { get {return gender == Gender.Female;} }
@@ -48,8 +42,6 @@ public class Blob : MonoBehaviour {
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
-	Animator animator { get { return GetComponentInChildren<Animator>(); } }
-	BlobDragDropItem blobDragDropItem { get { return GetComponent<BlobDragDropItem>(); } }
 	public BlobFloatingDisplay floatingDisplay;
 
 	// managers
@@ -64,66 +56,27 @@ public class Blob : MonoBehaviour {
 	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
 	TimeSpan breedReadyStandard = new TimeSpan(0,0,3);
 
-	
+	public void OrderGenes() {	genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();	}
 
-	public void DisplayBlobInfo() { 
-		if(hasHatched == false)
-			return;
-		hudManager.blobInfoContextMenu.Show(id); 
-	}
 
 	public Blob () {
 		combatStats = new CombatStats();
 		genes = new List<Gene>();
 		itemsConsumed = new Dictionary<string, int>();
-		quality = Quality.Common;
 		birthday = DateTime.MinValue;
 		actionReadyTime  = new DateTime(0); 
 		actionDuration = new TimeSpan(0);
-		bodyPartSprites = new Dictionary<string, Texture>();
 		spouseId = -1;
-		color = ColorDefines.defaultBlobColor;
 		tilePosX = 0;
 		tilePosY = 0;
 		missionCount = 0;
 	}
 
 
-	public void Setup() {
-		id = gameManager.gameVars.blobsSpawned++;
-		SetBodyTexture();
-		SetEyeTexture();
-
-		blobSpriteContainer = gameObject.GetComponentInChildren<UIWidget>().gameObject;
-		List<UISprite> blobsprites = blobSpriteContainer.GetComponentsInChildren<UISprite>(true).ToList();
-		Texture tex = bodyPartSprites["Body"];
-		blobsprites[1].spriteName = tex.name;
-		tex = bodyPartSprites["Eyes"];
-		blobsprites[2].spriteName = tex.name;
-		blobsprites[0].gameObject.SetActive(true);
-		blobsprites[1].gameObject.SetActive(false);
-		blobsprites[2].gameObject.SetActive(false);
-		UIButton button = gameObject.GetComponent<UIButton>();
-		button.onClick.Add(new EventDelegate(this, "BlobPressed"));
-		floatingDisplay = gameObject.GetComponentInChildren<BlobFloatingDisplay>();
-		floatingDisplay.blob = this;
+	public void SetNativeElement(Element e) {
+		nativeElement = e;
 		combatStats.element = nativeElement;
-		SetColorFromElement(nativeElement);
-	}
-
-	public void SetColorFromElement(Element e) {
-		if(ColorDefines.elementColorTables.Count == 0)
-			ColorDefines.BuildColorDefines();
-		Dictionary<string,string> elementColors = ColorDefines.elementColorTables[e];
-		int randIndex = UnityEngine.Random.Range(0, elementColors.Keys.Count);
-		string key = elementColors.Keys.ElementAt(randIndex);
-		string colorHexStr = elementColors[key];
-		ChangeColor(key, ColorDefines.HexStringToColor(colorHexStr));
-	}
-
-	public void UpdateBlobInfoIfDisplayed() {
-		if(hudManager.blobInfoContextMenu.IsDisplayed() && hudManager.blobInfoContextMenu.DisplayedBlob() == this)
-			hudManager.blobInfoContextMenu.Show(id);
+		gameObject.SetColorFromElement(nativeElement);
 	}
 
 	
@@ -132,87 +85,19 @@ public class Blob : MonoBehaviour {
 		foreach(Blob b in blobs)
 			if(spouseId == b.id)
 				return b;
-		
 		return null;
 	}
+	
 
-
-	void BlobPressed() {
-		if(!hasHatched && state == BlobState.HatchReady) {
-			Hatch(true);
-			if(hudManager.blobInfoContextMenu.IsDisplayed())
-				hudManager.blobInfoContextMenu.Hide();
-			return;
-		}
-
-		if(state == BlobState.WorkingReady) {
-			CollectWork();
-			return;
-		}
-
-		DisplayBlobInfo();
-	}
-
-
-	public void Hatch(bool displayInfo) {
+	public void Hatch() {
 		if(hasHatched)
 			return;
-		List<UISprite> blobsprites = blobSpriteContainer.GetComponentsInChildren<UISprite>(true).ToList();
-		blobsprites[0].gameObject.SetActive(false);
-		blobsprites[1].gameObject.SetActive(true);
-		blobsprites[2].gameObject.SetActive(true);
-		blobSpriteContainer.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
 		birthday = DateTime.Now;
 		state = BlobState.Idle;
-
-		floatingDisplay.HideHarvestSprite();
-		if(displayInfo)
-			DisplayBlobInfo();
-	}
-
-	
-	public void OrderGenes() {
-		genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();
+		gameObject.Hatch();
 	}
 	
-	
-	public void SetRandomTextures() {
-		SetBodyTexture();
-		SetEyeTexture();
-	}
-	
-	
-	public void SetBodyTexture() {
-		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
-		bodyPartSprites.Add("Body", bpm.bodyTextures[UnityEngine.Random.Range(0, bpm.bodyTextures.Count)]);
-	}
 
-	
-	public void SetEyeTexture() {
-		BodyPartManager bpm = (BodyPartManager)(GameObject.Find("BodyPartDatabase")).GetComponent<BodyPartManager>();
-		bodyPartSprites.Add("Eyes", bpm.eyeTextures[UnityEngine.Random.Range(0, bpm.eyeTextures.Count)]);
-	}
-
-
-	public void ChangeColor(string colorStr, Color c) {
-		UISprite body = GetBodySprite();
-		TweenColor tc = body.gameObject.GetComponent<TweenColor>();
-		if (tc == null)
-			tc = body.gameObject.AddComponent<TweenColor>();
-		tc.duration = 1f;
-		tc.from = color;
-		tc.to = c;
-		tc.PlayForward();
-		color = c;
-	}
-
-
-	public UISprite GetBodySprite() {
-		List<UISprite> blobsprites = gameObject.GetComponentsInChildren<UISprite>(true).ToList();
-		return blobsprites[1];
-	}
-	
-	
 	static public int GetGeneCountFromQuality(Quality q) {
 		switch (q) {
 		case Quality.Common: return 2;
@@ -229,42 +114,11 @@ public class Blob : MonoBehaviour {
 		float r = UnityEngine.Random.Range(0f,1f);
 		if(r <= 0.02140f)
 			q = Quality.Rare;
-		
 		if(r <= 0.00428f)
 			q = Quality.Epic;
-		
 		if(r <= 0.00108f)
 			q = Quality.Legendary;
-		
 		return q;
-	}
-
-
-	static public bool ShouldDisplayBarForState(BlobState blobState) {
-		switch(blobState) {
-		case BlobState.Breeding:
-		case BlobState.Hatching: 
-		case BlobState.Working: 	
-		case BlobState.Questing:
-		case BlobState.QuestComplete:
-			return true;
-		}
-		return false;
-	}
-
-
-	static public bool ShouldDisplayHarvestSpriteForState(BlobState blobState) {
-		switch(blobState) {
-		case BlobState.WorkingReady:
-		case BlobState.HatchReady: return true;
-		}
-		return false;
-	}
-
-
-	public void AddRandomGene(Quality q) {
-		BaseGene g = geneManager.genes[UnityEngine.Random.Range(0, geneManager.genes.Count)];
-		genes.Add(new Gene(g));
 	}
 
 
@@ -276,70 +130,41 @@ public class Blob : MonoBehaviour {
 		case BlobState.Hatching: retString = "Hatching"; break;
 		case BlobState.HatchReady: retString = "Hatch"; break;
 		case BlobState.Working: retString = "Working"; break;
-		case BlobState.Questing: retString = "Questing"; break;
+		case BlobState.Questing: 
+			if(QuestManager.questManager.GetBaseQuestByID(missionId).type == QuestType.Scouting)
+				retString = "Scouting";
+			else
+				retString = "Questing"; 
+			break;
 		case BlobState.QuestComplete: retString = "Complete"; break;
 		}
 		return retString.ToUpper();
 	}
 
 
-	void CollectWork() {
-		gameManager.AddGold(1);
-		floatingDisplay.HideHarvestSprite();
-		state = BlobState.Idle;
-	}
-
-
-	public void StartActionWithDuration(TimeSpan ts) {
-		actionDuration = ts;
-		actionReadyTime = System.DateTime.Now + actionDuration;
-		UpdateBlobInfoIfDisplayed();
-	}
-
-
 	public void ActionDone() {
 		actionDuration = new TimeSpan(0);
 		switch (state) {
-		case BlobState.Breeding: BreedingDone(); break;
-		case BlobState.Hatching: HatchingDone(); break;
-		case BlobState.Working: WorkingDone(); break;
-		case BlobState.Questing: QuestDone(); break;
+		case BlobState.Breeding: 
+			if(female)
+				breedManager.BreedBlobs(GetSpouse(), this);
+			state = BlobState.Idle;
+			break;
+		case BlobState.Hatching: 
+			state = BlobState.HatchReady;
+			break;
+		case BlobState.Questing: 
+			state = BlobState.QuestComplete;
+			break;
 		}
-		UpdateBlobInfoIfDisplayed();
-	}
-	
-
-	public void WorkingDone() {
-		state = BlobState.WorkingReady;
-	}
-
-	
-	public void BreedingDone() {
-		if(female)
-			breedManager.BreedBlobs(GetSpouse(), this);
-		state = BlobState.Idle;
+		gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 
-	public void HatchingDone() {
-		state = BlobState.HatchReady;
-	}
-
-	public void QuestDone() {
-		state = BlobState.QuestComplete;
-	}
-
-	public void CompleteQuest() {
-		ReturnFromQuest();
-		state = BlobState.Idle;
-	}
-
-	public void PrepareForDelete() {
+	public void CleanUp() {
 		Blob spouse = GetSpouse();
-		if(spouse) {
+		if(spouse != null)
 			spouse.spouseId = -1;
-			spouse.ChangeColor("Default", ColorDefines.defaultBlobColor);
-		}
 	}
 
 
@@ -363,7 +188,7 @@ public class Blob : MonoBehaviour {
 			combatStats.element = nativeElement;
 
 		if(preCalcElement != element)
-			SetColorFromElement(combatStats.element);
+			gameObject.SetColorFromElement(combatStats.element);
 	}
 
 	
@@ -390,63 +215,8 @@ public class Blob : MonoBehaviour {
 		}
 
 		if (updateDisplay)
-			UpdateBlobInfoIfDisplayed();
+			gameObject.UpdateBlobInfoIfDisplayed();
 	}
-
-
-	public void ReturnFromQuest() {
-		missionCount++;
-		missionId = -1;
-		UpdateGrowth();
-		floatingDisplay.stateLabel.gameObject.SetActive(false);
-		animator.SetBool("away", false);
-		blobDragDropItem.interactable = true;
-	}
-
-	public void UpdateGrowth() {
-		if(isAdult)
-			blobSpriteContainer.transform.localScale = new Vector3(1f, 1f, 1f);
-	}
-
-
-	public void DepartForQuest(Quest quest) {
-		missionId = quest.id;
-		floatingDisplay.stateLabel.gameObject.SetActive(true);
-		floatingDisplay.stateLabel.text = "AWAY";
-		state = BlobState.Questing;
-		StartActionWithDuration(quest.GetActionReadyDuration());
-		animator.SetBool("away", true);
-		blobDragDropItem.interactable = false;
-	}
-
-
-	public GameObject CreateDuplicateForUi(Transform newParent, bool canInteract) {
-		GameObject newBlobGameObject = (GameObject)GameObject.Instantiate(gameObject);
-		newBlobGameObject.transform.parent = newParent;
-		newBlobGameObject.transform.localPosition = new Vector3(0f, -18f, 0f);
-		newBlobGameObject.transform.localScale = transform.localScale;
-		BlobFloatingDisplay floatingDisplay = newBlobGameObject.GetComponentInChildren<BlobFloatingDisplay>();
-		GameObject.Destroy(floatingDisplay.gameObject);
-
-		if(canInteract == false) {
-			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<Blob>());
-			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<BoxCollider>());
-			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<BlobDragDropItem>());
-			GameObject.Destroy(newBlobGameObject.GetComponentInChildren<UIButton>());
-		}
-		return newBlobGameObject;
-	}
-
-	void Update() {
-		if(actionDuration.TotalSeconds > 0 && actionReadyTime <= System.DateTime.Now)
-			ActionDone();
-
-		if(room != null && room.type == Room.RoomType.Workshop && state == BlobState.Idle) {
-			state = BlobState.Working;
-			StartActionWithDuration(new TimeSpan(workingDelay.Ticks));
-		}
-	}
-
 
 }
 

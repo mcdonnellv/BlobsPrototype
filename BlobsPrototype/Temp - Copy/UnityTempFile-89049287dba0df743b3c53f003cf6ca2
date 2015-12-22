@@ -1,0 +1,175 @@
+-debug
+-target:library
+-nowarn:0169
+-out:Temp/Assembly-CSharp-Editor.dll
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll"
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll"
+-r:Library/ScriptAssemblies/Assembly-CSharp.dll
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/Editor/UnityEditor.UI.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/Editor/UnityEditor.Networking.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll"
+-r:"Assets/Rotorz/Tile System/TileSystem.Runtime.dll"
+-r:"Assets/Rotorz/Tile System/Editor/TileSystem.Editor.dll"
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\androidplayer/UnityEditor.Android.Extensions.dll"
+-r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\wp8support/UnityEditor.WP8.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\metrosupport/UnityEditor.Metro.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\blackberryplayer/UnityEditor.BB10.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\stvplayer\STVPlayer/UnityEditor.SamsungTV.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\webglsupport/UnityEditor.WebGL.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\linuxstandalonesupport/UnityEditor.LinuxStandalone.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll"
+-r:"C:\Program Files\Unity\Editor\Data\PlaybackEngines\macstandalonesupport/UnityEditor.OSXStandalone.Extensions.dll"
+-r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll"
+-define:UNITY_5_1_1
+-define:UNITY_5_1
+-define:UNITY_5
+-define:ENABLE_NEW_BUGREPORTER
+-define:ENABLE_2D_PHYSICS
+-define:ENABLE_4_6_FEATURES
+-define:ENABLE_AUDIO
+-define:ENABLE_CACHING
+-define:ENABLE_CLOTH
+-define:ENABLE_FRAME_DEBUGGER
+-define:ENABLE_GENERICS
+-define:ENABLE_HOME_SCREEN
+-define:ENABLE_IMAGEEFFECTS
+-define:ENABLE_LIGHT_PROBES_LEGACY
+-define:ENABLE_MICROPHONE
+-define:ENABLE_MULTIPLE_DISPLAYS
+-define:ENABLE_PHYSICS
+-define:ENABLE_PHYSICS_PHYSX3
+-define:ENABLE_PLUGIN_INSPECTOR
+-define:ENABLE_SHADOWS
+-define:ENABLE_SINGLE_INSTANCE_BUILD_SETTING
+-define:ENABLE_SPRITES
+-define:ENABLE_TERRAIN
+-define:ENABLE_UNET
+-define:ENABLE_UNITYEVENTS
+-define:ENABLE_VR
+-define:ENABLE_WEBCAM
+-define:ENABLE_WWW
+-define:ENABLE_CLOUD_SERVICES
+-define:ENABLE_CLOUD_SERVICES_ANALYTICS
+-define:ENABLE_CLOUD_SERVICES_UNET
+-define:ENABLE_CLOUD_LICENSE
+-define:ENABLE_AUDIOMIXER_SUSPEND
+-define:ENABLE_EDITOR_METRICS
+-define:INCLUDE_DYNAMIC_GI
+-define:INCLUDE_GI
+-define:INCLUDE_IL2CPP
+-define:INCLUDE_DIRECTX12
+-define:PLATFORM_SUPPORTS_MONO
+-define:ENABLE_LOCALIZATION
+-define:UNITY_IPHONE
+-define:ENABLE_RUNTIME_GI
+-define:ENABLE_SUBSTANCE
+-define:ENABLE_GAMECENTER
+-define:ENABLE_NETWORK
+-define:UNITY_IPHONE_API
+-define:UNITY_IOS
+-define:ENABLE_TEXTUREID_MAP
+-define:PLAYERCONNECTION_LISTENS_FIXED_PORT
+-define:DEBUGGER_LISTENS_FIXED_PORT
+-define:ENABLE_IL2CPP
+-define:ENABLE_PROFILER
+-define:DEBUG
+-define:TRACE
+-define:UNITY_ASSERTIONS
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_64
+-define:UNITY_EDITOR_WIN
+-define:ENABLE_DUCK_TYPING
+"Assets/3rd Party/NGUI/Scripts/Editor/ActiveAnimationEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/BMFontReader.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/ComponentSelector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/EventDelegateDrawer.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/EventDelegateEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/FreeType.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIContextMenu.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIEditorExtensions.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIEditorTools.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIHandles.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIHelp.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIJson.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUIMenu.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUISelectionTools.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUISettings.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUISnap.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/NGUITransformInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/PropertyBindingEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/PropertyReferenceDrawer.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/SpriteSelector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenAlphaEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenColorEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenFOVEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenHeightEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenOrthoSizeEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenPositionEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenRotationEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenScaleEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenTransformEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenVolumeEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TweenWidthEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/TypewriterEffectEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UI2DSpriteEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIAnchorEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIAtlasInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIAtlasMaker.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIBasicSpriteEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIButtonColorEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIButtonEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIButtonKeysEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIButtonMessageEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UICameraEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UICameraTool.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIColorPickerEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UICreateNewUIWizard.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UICreateWidgetWizard.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIDragObjectEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIDrawCallInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIDrawCallViewer.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIEventTriggerEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIFontInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIFontMaker.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIForwardEventsEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIGridEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIImageButtonInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIInputEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIKeyNavigationEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UILabelInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UILocalizeEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPanelInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPanelTool.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPlayAnimationEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPlayTweenEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPopupListInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIPrefabTool.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIProgressBarEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIRectEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIRootEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIScrollBarEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIScrollViewEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UISliderEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UISnapshotPointEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UISpriteAnimationInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UISpriteInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIStretchEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UITableEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UITextureInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UITexturePacker.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIToggleInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UITweenerEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIWidgetContainerEditor.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIWidgetInspector.cs"
+"Assets/3rd Party/NGUI/Scripts/Editor/UIWrapContentEditor.cs"
+Assets/Editor/GeneManagerInspector.cs
+Assets/Editor/GenericManagerInspector.cs
+Assets/Editor/ItemManagerInspector.cs
+Assets/Editor/QuestManagerInspector.cs
+"Assets/Rotorz/Tile System/Editor/UnityIntegration.cs"
+-r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\2.0\System.Runtime.Serialization.dll"
+-r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\2.0\System.Xml.Linq.dll"

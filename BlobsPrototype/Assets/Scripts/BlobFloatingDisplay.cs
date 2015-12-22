@@ -99,6 +99,27 @@ public class BlobFloatingDisplay : MonoBehaviour {
 	}
 
 
+	bool ShouldDisplayBarForState(BlobState blobState) {
+		switch(blobState) {
+		case BlobState.Breeding:
+		case BlobState.Hatching: 
+		case BlobState.Working: 	
+		case BlobState.Questing:
+		case BlobState.QuestComplete:
+			return true;
+		}
+		return false;
+	}
+
+	bool ShouldDisplayHarvestSpriteForState(BlobState blobState) {
+		switch(blobState) {
+		case BlobState.WorkingReady:
+		case BlobState.HatchReady: return true;
+		}
+		return false;
+	}
+
+
 	// Update is called once per frame
 	void Update () {
 		if(progressBar == null || blob == null)
@@ -110,7 +131,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 			return;
 		}
 
-		if(blob.actionDuration.TotalSeconds > 0 && Blob.ShouldDisplayBarForState(blob.state)) {
+		if(blob.actionDuration.TotalSeconds > 0 && ShouldDisplayBarForState(blob.state)) {
 			if(progressBar.gameObject.activeSelf == false ) {
 				progressBar.gameObject.SetActive(true);
 				genderSprite.gameObject.SetActive(false);
@@ -128,7 +149,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 			else if(progressBar.gameObject.activeSelf == true) {
 				progressBar.gameObject.SetActive(false);
 				stateLabel.text = "";
-				if(Blob.ShouldDisplayHarvestSpriteForState(blob.state))
+				if(ShouldDisplayHarvestSpriteForState(blob.state))
 					ShowHarvestSprite();
 			}
 		}

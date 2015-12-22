@@ -10,7 +10,6 @@ public class LootMenu : GenericGameMenu {
 	private ItemManager _im;
 	ItemManager itemManager { get { return ItemManager.itemManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
-	int defaultWindowHeight = 180;
 	int slotCount = 1;
 	
 	
