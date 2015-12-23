@@ -124,11 +124,8 @@ public class GeneManagerInspector : GenericManagerInspector {
 			
 			//item.activationReq.Clear();
 			GUILayout.BeginHorizontal(); {
-				GUI.backgroundColor = Color.green;
-				if (GUILayout.Button("Add")) {
+				if(AddButtonPressed())
 					item.activationRequirements.Add(new GeneActivationRequirement());
-				}
-				GUI.backgroundColor = Color.white;
 			}
 			GUILayout.EndHorizontal();
 

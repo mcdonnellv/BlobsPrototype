@@ -10,6 +10,45 @@ public class ZoneManagerInspector : GenericManagerInspector {
 
 	public ZoneManager zoneManager { get { return ZoneManager.zoneManager; } }
 
+	string[] _allScoutingQuests;
+	public string[] allScoutingQuests { 
+		get {
+			if(_allScoutingQuests == null) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Scouting);
+				_allScoutingQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allScoutingQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
+			}
+			return _allScoutingQuests;
+		}
+	}
+
+	string[] _allGatheringQuests;
+	public string[] allGatheringQuests { 
+		get {
+			if(_allGatheringQuests == null) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Gathering);
+				_allGatheringQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allGatheringQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
+			}
+			return _allGatheringQuests;
+		}
+	}
+
+	string[] _allCombatQuests;
+	public string[] allCombatQuests { 
+		get {
+			if(_allCombatQuests == null) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Combat);
+				_allCombatQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allCombatQuests[list.IndexOf(i)] =  i.id.ToString() + " : " + i.itemName;
+			}
+			return _allCombatQuests;
+		}
+	}
+
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 		Zone zone = null;
@@ -92,38 +131,64 @@ public class ZoneManagerInspector : GenericManagerInspector {
 			}
 			GUILayout.EndHorizontal();
 
+
+			// UNLOCKING QUEST
 			NGUIEditorTools.DrawSeparator();
-			EditorGUILayout.LabelField("Zone Quests");
-			EditorGUI.indentLevel++;
-			NGUIEditorTools.SetLabelWidth(60f);
-			List <int> toDelete = new List<int>();
-			int i = 0;
-			foreach(int questID in zone.questIds) {
-				GUILayout.BeginHorizontal();
-				BaseQuest bq = questManager.GetBaseQuestByID(questID);
-				int indexOfQuest = questManager.quests.IndexOf(bq);
-				int newIndexOfQuest = EditorGUILayout.Popup("Quest", indexOfQuest, allQuests, GUILayout.Width(250f));
+			NGUIEditorTools.SetLabelWidth(100f);
+			GUILayout.BeginHorizontal();
+			int indexOfQuest = GetIndexOfSelectedQuest(allCombatQuests, zone.unlockingQuestId);
+			int newIndexOfQuest = EditorGUILayout.Popup("Unlocked by", indexOfQuest, allCombatQuests, GUILayout.Width(250f));
+			if(indexOfQuest != newIndexOfQuest) 
+				zone.unlockingQuestId = GetIdFromString(allCombatQuests[newIndexOfQuest]);
+			if(DeleteButtonPressed())
+				zone.unlockingQuestId = -1;
+			GUILayout.EndHorizontal();
 
-				if(indexOfQuest != newIndexOfQuest) 
-					zone.questIds[i] = newIndexOfQuest;
-				GUI.backgroundColor = Color.red;
-				if (GUILayout.Button("Del", GUILayout.Width(35f)))
-					toDelete.Add(i);
-				GUI.backgroundColor = Color.white;
-				GUILayout.EndHorizontal();
-				i++;
-			}
-
-			GUI.backgroundColor = Color.green;
-			if (GUILayout.Button("Add", GUILayout.Width(35f))) 
-				zone.questIds.Add(0);
-			GUI.backgroundColor = Color.white;
-			EditorGUI.indentLevel--;
+			// SCOUTING QUEST
 			NGUIEditorTools.DrawSeparator();
-			EditorGUILayout.LabelField("Zone Monsters");
-
-			foreach(int d in toDelete)
-				zone.questIds.RemoveAt(d);
+			indexOfQuest = GetIndexOfSelectedQuest(allScoutingQuests, zone.scoutingQuestId);
+			newIndexOfQuest = EditorGUILayout.Popup("Scouting Quest", indexOfQuest, allScoutingQuests, GUILayout.Width(250f));
+			if(indexOfQuest != newIndexOfQuest) 
+				zone.scoutingQuestId = GetIdFromString(allScoutingQuests[newIndexOfQuest]);
+			// GATHERING QUESTS
+			QuestListInput(zone, "Gathering Quests", QuestType.Gathering, allGatheringQuests);
+			// COMBAT QUESTS
+			QuestListInput(zone, "Combat Quests", QuestType.Combat, allCombatQuests);
 		}
+	}
+
+
+	void QuestListInput(Zone zone, string labelString, QuestType qt, string[] questStringList) {
+		NGUIEditorTools.DrawSeparator();
+		EditorGUILayout.LabelField(labelString);
+		EditorGUI.indentLevel++;
+		NGUIEditorTools.SetLabelWidth(80f);
+		
+		List<int> questIds = zone.GetQuestIdsWithType(qt);
+		foreach(int questId in questIds) {
+			GUILayout.BeginHorizontal();
+			int indexOfQuest = GetIndexOfSelectedQuest(questStringList, questId);
+			int newIndexOfQuest = EditorGUILayout.Popup("Quest", indexOfQuest, questStringList, GUILayout.Width(250f));
+			if(indexOfQuest != newIndexOfQuest) {
+				int newQuestId = GetIdFromString(questStringList[newIndexOfQuest]);
+				zone.questIds.Remove(questId);
+				zone.questIds.Add(newQuestId);
+			}
+			if(DeleteButtonPressed())
+				zone.questIds.Remove(questId);
+			GUILayout.EndHorizontal();
+		}
+
+		if(AddButtonPressed())
+			zone.questIds.Add(GetIdFromString(questStringList[0]));
+		EditorGUI.indentLevel--;
+	}
+	
+
+	int GetIndexOfSelectedQuest(string[] questStringList, int questId) {
+		for(int i = 0; i < questStringList.Length; i++) 
+			if(GetIdFromString(questStringList[i]) == questId)
+				return i;
+		return -1;
 	}
 }

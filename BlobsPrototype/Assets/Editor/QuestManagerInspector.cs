@@ -73,6 +73,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 						i.usesSigils = quest.usesSigils;
 						i.mixedElements = quest.mixedElements;
 						i.mixedSigils = quest.mixedSigils;
+						i.monsters = quest.monsters;
 					}
 					questManager.quests.Add(i);
 					mIndex = questManager.quests.Count - 1;
@@ -146,10 +147,58 @@ public class QuestManagerInspector : GenericManagerInspector {
 			quest.usesSigils = EditorGUILayout.Toggle("Uses Sigils", quest.usesSigils);
 			if(quest.usesSigils)
 				quest.mixedSigils = EditorGUILayout.Toggle("Mixed Sigils", quest.mixedSigils);
+
+			// MONSTER
+			if(quest.type == QuestType.Combat) {
+				NGUIEditorTools.DrawSeparator();
+				EditorGUILayout.LabelField("Monsters");
+				EditorGUI.indentLevel++;
+				NGUIEditorTools.SetLabelWidth(30f);
+				List<BaseMonster> monsterlist = new List<BaseMonster>();
+				string[] monsterlistStrings =  new string[monsterManager.monsters.Count];
+				for(int i=0; i < monsterlistStrings.Length; i++)
+					monsterlistStrings[i] = monsterManager.monsters[i].id.ToString() + " : " + monsterManager.monsters[i].itemName;
+
+				List<QuestMonster> monstersToAdd = new List<QuestMonster>();
+				List<QuestMonster> monstersToDelete = new List<QuestMonster>();
+				foreach(QuestMonster questMonster in quest.monsters) {
+					GUILayout.BeginHorizontal();
+					BaseMonster bm = monsterManager.GetBaseMonsterByID(questMonster.id);
+					int index = monsterManager.monsters.IndexOf(bm);
+					int newMonsterIndex = EditorGUILayout.Popup(index, monsterlistStrings, GUILayout.Width(150f));
+					questMonster.level = EditorGUILayout.IntField("lv", questMonster.level, GUILayout.Width(70f));
+
+					if(index != newMonsterIndex) {
+						int newMonsterId = GetIdFromString(monsterlistStrings[newMonsterIndex]);
+						monstersToDelete.Add(questMonster);
+						monstersToAdd.Add(new QuestMonster(newMonsterId, 1));
+					}
+
+					if(DeleteButtonPressed())
+						monstersToDelete.Add(questMonster);
+					GUILayout.EndHorizontal();
+				}
+
+				foreach(QuestMonster bm in monstersToDelete)
+					quest.monsters.Remove(bm);
+
+				foreach(QuestMonster bm in monstersToAdd)
+					quest.monsters.Add(bm);
+				
+				if(AddButtonPressed())
+					quest.monsters.Add(new QuestMonster(GetIdFromString(monsterlistStrings[0]), 1));
+				EditorGUI.indentLevel--;
+			}
+
+
+
+			// LOOT TABLES
 			NGUIEditorTools.DrawSeparator();
 			LootTable(quest, quest.LootTableA, "Loot Table A");
 			NGUIEditorTools.DrawSeparator();
 			LootTable(quest, quest.LootTableB, "Loot Table B");
+
+			// SPRITE
 			NGUIEditorTools.DrawSeparator();
 			NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 			if(atlas != null && quest.iconAtlas == null) quest.iconAtlas = atlas;
@@ -174,7 +223,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 			
 			NGUIEditorTools.SetLabelWidth(30f);
 			lootEntry.probability = EditorGUILayout.IntField("%", lootEntry.probability, GUILayout.Width(60f));
-			lootEntry.probability = Mathf.Max(0, Mathf.Min(100, lootEntry.probability));
+			lootEntry.probability = Mathf.Max(1, Mathf.Min(100, lootEntry.probability));
 			pointsleft -= lootEntry.probability;
 			NGUIEditorTools.SetLabelWidth(35f);
 			int newIndex = EditorGUILayout.Popup("ID", index, allItems, GUILayout.Width(100f));
@@ -195,10 +244,8 @@ public class QuestManagerInspector : GenericManagerInspector {
 		if(pointsleft != 0)
 			EditorGUILayout.LabelField(pointsleft.ToString() + " points left to distribute");
 		GUILayout.BeginHorizontal();
-		GUI.backgroundColor = Color.green;
-		if (GUILayout.Button("Add", GUILayout.Width(35f))) 
+		if(AddButtonPressed())
 			lootTable.Add(new LootEntry());
-		GUI.backgroundColor = Color.white;
 		GUILayout.EndHorizontal();
 		foreach(LootEntry lootEntry in toDelete)
 			lootTable.Remove(lootEntry);

@@ -32,7 +32,7 @@ public class QuestListMenu : GenericGameMenu {
 
 		for (int i = 0; i < grid.transform.childCount; i++) {
 			QuestCell questCell = grid.transform.GetChild(i).GetComponent<QuestCell>();
-			if(questCell!= null && questCell.questId == -1) {
+			if(questCell != null && questCell.questId == -1) {
 				i--;
 				DestroyImmediate(questCell.gameObject);
 			}
@@ -170,6 +170,9 @@ public class QuestListMenu : GenericGameMenu {
 
 
 	public void RewardsCollected() {
+		QuestCell questCell = GetQuestCellFromQuest(selectedQuest);
+		questManager.availableQuests.Remove(selectedQuest);
+		questCell.questId = -1;
 		questDetailsMenu.ClearBlobs(); 
 		SetupQuestCells();
 		SelectFirstQuest();
@@ -205,6 +208,10 @@ public class QuestListMenu : GenericGameMenu {
 		foreach(Transform cellTransform in grid.transform) {
 			int index = cellTransform.GetSiblingIndex();
 			QuestCell questCell = cellTransform.GetComponent<QuestCell>();
+			if(index >= questManager.availableQuests.Count) {
+				DestroyImmediate(questCell.gameObject);
+				break;
+			}
 			Quest quest = questManager.availableQuests[index];
 			if(quest.state == QuestState.Embarked) {
 				string timeString = "";

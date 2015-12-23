@@ -11,6 +11,15 @@ public class LootEntry {
 	public int probability;
 }
 
+
+[Serializable]
+public class QuestMonster {
+	public int id;
+	public int level;
+	public QuestMonster(int idParam, int levelParam) {id = idParam; level = levelParam; }
+}
+
+
 [Serializable]
 public class BaseQuest : BaseThing {
 	public QuestType type;
@@ -24,6 +33,7 @@ public class BaseQuest : BaseThing {
 	public bool usesSigils = false;
 	public bool mixedElements = false;
 	public bool mixedSigils = false;
+	public List<QuestMonster> monsters = new List<QuestMonster>();
 }
 
 
@@ -60,6 +70,7 @@ public class Quest : BaseQuest {
 		usesSigils = b.usesSigils;
 		mixedElements = b.mixedElements;
 		mixedSigils = b.mixedSigils;
+		monsters = b.monsters.ToList();
 
 		Element element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
 		Sigil sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);

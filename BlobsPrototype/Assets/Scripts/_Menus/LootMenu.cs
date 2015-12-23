@@ -32,7 +32,6 @@ public class LootMenu : GenericGameMenu {
 			if(slotCount % 2 != 0) //odd number
 				if (UnityEngine.Random.Range(0f, 1f) < .5f)
 					slotCountForTableA++;
-
 			PopulateSlots(quest.LootTableA, 0, slotCountForTableA);
 			PopulateSlots(quest.LootTableB, slotCountForTableA, slotCount);
 		}
@@ -71,7 +70,8 @@ public class LootMenu : GenericGameMenu {
 				cumProbability += lootEntry.probability;
 			}
 
-			rewardEntries.Add(new Item(itemManager.GetBaseItemByID(loot.itemId)));
+			if(loot != null)
+				rewardEntries.Add(new Item(itemManager.GetBaseItemByID(loot.itemId)));
 		}
 
 		rewardEntries = rewardEntries.OrderBy(x => x.itemName).ThenBy(x => x.quality).ToList();

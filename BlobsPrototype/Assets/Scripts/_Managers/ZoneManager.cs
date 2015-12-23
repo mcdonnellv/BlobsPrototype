@@ -36,7 +36,7 @@ public class ZoneManager : MonoBehaviour {
 		return null;
 	}
 
-	public Zone GetZonewithQuestID(int questId) {
+	public Zone GetZoneWithQuestID(int questId) {
 		foreach(Zone zone in zones)
 			foreach(int qId in zone.questIds)
 				if (qId == questId)

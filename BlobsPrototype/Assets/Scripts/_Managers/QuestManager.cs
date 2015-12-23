@@ -21,10 +21,13 @@ public class QuestManager : MonoBehaviour {
 
 	public bool DoesNameExistInList(string nameParam){return (GetBaseQuestWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseQuestByID(idParam) != null); }
-	public Quest AddQuestToList(BaseQuest bq) { 
-		Quest q = new Quest(bq); availableQuests.Add(q);
+
+	public Quest AddQuestToList(BaseQuest bq) {
+		if(bq == null) return null;
+		Quest q = new Quest(bq); 
+		availableQuests.Add(q);
 		if(q.type == QuestType.Scouting) {
-			Zone zone = ZoneManager.zoneManager.GetZonewithQuestID(q.id);
+			Zone zone = ZoneManager.zoneManager.GetZoneWithQuestID(q.id);
 			if(zone != null)
 				q.zoneId = zone.id;
 		}
@@ -41,6 +44,7 @@ public class QuestManager : MonoBehaviour {
 
 	
 	public BaseQuest GetBaseQuestByID(int idParam) {
+		if (idParam == -1) return null;
 		foreach(BaseQuest i in quests)
 			if (i.id == idParam)
 				return i;
@@ -58,19 +62,37 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
+	public List<BaseQuest> GetQuestsOfType(QuestType qType) {
+		List<BaseQuest> ret = new List<BaseQuest>();
+		foreach(BaseQuest bq in quests)
+			if(bq.type == qType)
+				ret.Add(bq);
+		return ret;
+	}
+
+
 	public void FirstTimeSetup() {
-		AddQuestToList(GetBaseQuestByID(5));
+		//AddQuestToList(GetBaseQuestByID(100));
 	}
 
 
 	public void CollectRewardsForQuest(Quest quest) {
+
+		foreach(Zone zone in ZoneManager.zoneManager.zones)
+			if(zone.unlockingQuestId == quest.id && !zone.IsUnlocked())
+				hudManager.popup.Show("New Zone", "Congratulations! The " + zone.itemName + " zone is now available");
+		
 		CompleteQuestsForBlobs(quest);
-		availableQuests.Remove(quest);
 		if(quest.type == QuestType.Scouting) {
 			CollectRewardsForScout(quest);
 			return;
 		}
-		hudManager.lootMenu.Show(quest);
+		if(quest.LootTableA.Count > 0 || quest.LootTableB.Count > 0)
+			hudManager.lootMenu.Show(quest);
+		else
+			hudManager.questListMenu.RewardsCollected();
+
+
 		if(completedQuestIds.ContainsKey(quest.id))
 			completedQuestIds[quest.id]++;
 		else
@@ -107,14 +129,6 @@ public class QuestManager : MonoBehaviour {
 			Blob blob = roomManager.GetBlobByID(blobId);
 			blob.gameObject.ReturnFromQuest();
 		}
-	}
-
-
-	public List<BaseQuest> GetQuestListForZone(Zone zone) {
-		List<BaseQuest> zoneBaseQuests = new List<BaseQuest>();
-		foreach(int zoneQuestId in zone.questIds) 
-			zoneBaseQuests.Add(GetBaseQuestByID(zoneQuestId));
-		return zoneBaseQuests;
 	}
 
 
@@ -162,7 +176,7 @@ public class QuestManager : MonoBehaviour {
 
 
 	BaseQuest GetRandomQuestFromZone(Zone zone) {
-		List<BaseQuest> zoneBaseQuests = GetQuestListForZone(zone);
+		List<BaseQuest> zoneBaseQuests = zone.QuestsForZone();
 		if(zoneBaseQuests.Count <= 0)
 			return null;
 		return zoneBaseQuests[UnityEngine.Random.Range(0, zoneBaseQuests.Count)];

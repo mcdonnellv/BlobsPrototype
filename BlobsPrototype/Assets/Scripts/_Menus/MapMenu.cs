@@ -14,6 +14,16 @@ public class MapMenu : GenericGameMenu {
 	public override void Show() { 
 		base.Show(); 
 		//hudManager.ShowPersistentNotice("Select a Zone to Scout");
+		foreach(Transform zoneGameObjectTransform in mapContainer.transform) {
+			ZoneMapItem zoneMapItem = zoneGameObjectTransform.GetComponent<ZoneMapItem>();
+			Zone zone = zoneManager.GetZoneByID(zoneMapItem.zoneId);
+			if(zone == null)
+				continue;
+			UIButton zoneButton = zoneGameObjectTransform.GetComponent<UIButton>();
+			zoneButton.isEnabled = true;
+			if(zone.unlockingQuestId != -1 && questManager.completedQuestIds.ContainsKey(zone.unlockingQuestId) == false)
+				zoneButton.isEnabled = false;
+		}
 	}
 
 	public void ZonePressed(GameObject zoneButton) {
@@ -33,26 +43,16 @@ public class MapMenu : GenericGameMenu {
 			return;
 		}
 
-		Quest q = null;
-		foreach(int zoneQuestId in selectedZone.questIds) {
-			BaseQuest bq = questManager.GetBaseQuestByID(zoneQuestId);
-			if(bq.type == QuestType.Scouting) {
-				q = questManager.AddQuestToList(bq);
-				break;
-			}
-		}
-
+		BaseQuest bq = questManager.GetBaseQuestByID(selectedZone.scoutingQuestId);
+		Quest q = questManager.AddQuestToList(bq);
 		if(q == null) {
 			hudManager.ShowError("Error: Scouting quest is missing for this zone");
 			return;
 		}
 
-		List<Quest> quests = new List<Quest>();
-		quests.Add(q);
-
 		hudManager.ShowNotice("Scouting Quest Added");
 		if(hudManager.questListMenu.IsDisplayed())
-			hudManager.Broadcast("QuestsAdded", quests);
+			hudManager.Broadcast("QuestsAdded", new List<Quest>{q});
 		else
 			hudManager.questListMenu.Show();
 		Hide();

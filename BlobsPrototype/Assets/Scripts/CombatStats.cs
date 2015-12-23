@@ -16,6 +16,13 @@ public class CombatStats {
 	public static Element defaultElement = Element.None;
 
 	public CombatStats() { SetDefaultValues(); }
+	public CombatStats(CombatStats c) { 
+		attack = c.attack;
+		armor = c.armor;
+		health = c.health;
+		stamina = c.stamina;
+		element = c.element;
+	}
 
 	public void SetDefaultValues() {
 		attack = defaultAttack;

@@ -11,13 +11,14 @@ public class GenericManagerInspector : Editor {
 	public float defaultLabelWidth = 80f;
 	public ItemManager itemManager { get { return ItemManager.itemManager; } }
 	public QuestManager questManager { get { return QuestManager.questManager; } }
+	public MonsterManager monsterManager { get { return MonsterManager.monsterManager; } }
 	string[] _allItems;
 	public string[] allItems { 
 		get {
 			if(_allItems == null) {
 				_allItems =  new string[itemManager.items.Count];
 				foreach(BaseItem i in itemManager.items)
-					allItems[itemManager.items.IndexOf(i)] = i.itemName;
+					_allItems[itemManager.items.IndexOf(i)] = i.itemName;
 			}
 			return _allItems;
 		}
@@ -29,9 +30,21 @@ public class GenericManagerInspector : Editor {
 			if(_allQuests == null) {
 				_allQuests =  new string[questManager.quests.Count];
 				foreach(BaseQuest i in questManager.quests)
-					allQuests[questManager.quests.IndexOf(i)] = i.itemName;
+					_allQuests[questManager.quests.IndexOf(i)] = i.itemName;
 			}
 			return _allQuests;
+		}
+	}
+
+	string[] _allMonsters;
+	public string[] allMonsters { 
+		get {
+			if(_allMonsters == null) {
+				_allMonsters =  new string[monsterManager.monsters.Count];
+				foreach(BaseMonster i in monsterManager.monsters)
+					_allMonsters[monsterManager.monsters.IndexOf(i)] = i.itemName;
+			}
+			return _allMonsters;
 		}
 	}
 
@@ -145,6 +158,31 @@ public class GenericManagerInspector : Editor {
 		GUI.color = Color.white;
 		GUILayout.EndHorizontal();
 		NGUIEditorTools.DrawSeparator();
+	}
+
+
+	public int GetIdFromString(string str) {
+		char[] delimiterChars = { ' ', ':' };
+		string[] words = str.Split(delimiterChars);
+		return int.Parse(words[0]);
+	}
+
+	public bool AddButtonPressed() {
+		GUI.backgroundColor = Color.green;
+		if (GUILayout.Button("Add", GUILayout.Width(35f))) 
+			return true;
+		GUI.backgroundColor = Color.white;
+		return false;
+		
+	}
+	
+	
+	public bool DeleteButtonPressed() {
+		GUI.backgroundColor = Color.red;
+		if (GUILayout.Button("Del", GUILayout.Width(35f)))
+			return true;
+		GUI.backgroundColor = Color.white;
+		return false;
 	}
 }
 
