@@ -30,6 +30,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 				
 				if (GUILayout.Button("Delete")){
 					questManager.quests.RemoveAt(mIndex);
+					GenericManagerInspector.refreshQuests = true;
 					mConfirmDelete = false;
 				}
 				GUI.backgroundColor = Color.white;
@@ -73,9 +74,11 @@ public class QuestManagerInspector : GenericManagerInspector {
 						i.usesSigils = quest.usesSigils;
 						i.mixedElements = quest.mixedElements;
 						i.mixedSigils = quest.mixedSigils;
-						i.monsters = quest.monsters;
+						i.monsters = quest.monsters.ToList();
+						i.prerequisiteQuestIds = quest.prerequisiteQuestIds.ToList();
 					}
 					questManager.quests.Add(i);
+					GenericManagerInspector.refreshQuests = true;
 					mIndex = questManager.quests.Count - 1;
 					newName = "";
 					quest = i;
@@ -154,7 +157,6 @@ public class QuestManagerInspector : GenericManagerInspector {
 				EditorGUILayout.LabelField("Monsters");
 				EditorGUI.indentLevel++;
 				NGUIEditorTools.SetLabelWidth(30f);
-				List<BaseMonster> monsterlist = new List<BaseMonster>();
 				string[] monsterlistStrings =  new string[monsterManager.monsters.Count];
 				for(int i=0; i < monsterlistStrings.Length; i++)
 					monsterlistStrings[i] = monsterManager.monsters[i].id.ToString() + " : " + monsterManager.monsters[i].itemName;
@@ -198,12 +200,53 @@ public class QuestManagerInspector : GenericManagerInspector {
 			NGUIEditorTools.DrawSeparator();
 			LootTable(quest, quest.LootTableB, "Loot Table B");
 
+
+			// PREREQUISITES
+			if(quest.type == QuestType.Combat)
+				QuestListInput(quest, "Prerequisites", QuestType.Combat, allCombatQuests);
+
 			// SPRITE
 			NGUIEditorTools.DrawSeparator();
 			NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 			if(atlas != null && quest.iconAtlas == null) quest.iconAtlas = atlas;
 			SpriteSelection(quest);
 		}
+	}
+
+
+	void QuestListInput(BaseQuest quest, string labelString, QuestType qt, string[] questStringArray) {
+		NGUIEditorTools.DrawSeparator();
+		EditorGUILayout.LabelField(labelString);
+		EditorGUI.indentLevel++;
+		NGUIEditorTools.SetLabelWidth(80f);
+		
+		List<int> questIds = quest.prerequisiteQuestIds.ToList();
+		List<string> newStringList = questStringArray.ToList();
+		for(int i = 0; i < questStringArray.Length; i++) {
+			if(GetIdFromString(questStringArray[i]) == quest.id) {
+				newStringList.RemoveAt(i);
+				break;
+			}
+		}
+		string[] newStringArray = newStringList.ToArray();
+
+		foreach(int questId in questIds) {
+			GUILayout.BeginHorizontal();
+			int indexOfQuest = GetIndexOfItemInStringList(newStringArray, questId);
+			int newIndexOfQuest = EditorGUILayout.Popup("Quest", indexOfQuest, newStringArray, GUILayout.Width(250f));
+			if(indexOfQuest != newIndexOfQuest) {
+				int newQuestId = GetIdFromString(newStringArray[newIndexOfQuest]);
+				quest.prerequisiteQuestIds.Remove(questId);
+				quest.prerequisiteQuestIds.Add(newQuestId);
+			}
+			if(DeleteButtonPressed())
+				quest.prerequisiteQuestIds.Remove(questId);
+			GUILayout.EndHorizontal();
+		}
+		
+		if(AddButtonPressed())
+			quest.prerequisiteQuestIds.Add(GetIdFromString(newStringArray[0]));
+		EditorGUI.indentLevel--;
 	}
 
 
@@ -243,10 +286,8 @@ public class QuestManagerInspector : GenericManagerInspector {
 
 		if(pointsleft != 0)
 			EditorGUILayout.LabelField(pointsleft.ToString() + " points left to distribute");
-		GUILayout.BeginHorizontal();
 		if(AddButtonPressed())
 			lootTable.Add(new LootEntry());
-		GUILayout.EndHorizontal();
 		foreach(LootEntry lootEntry in toDelete)
 			lootTable.Remove(lootEntry);
 		EditorGUI.indentLevel--;

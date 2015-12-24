@@ -5,39 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 [Serializable]
-public class LootEntry {
-	public int quantity = 1;
-	public int itemId = -1;
-	public int probability;
-}
-
-
-[Serializable]
-public class QuestMonster {
-	public int id;
-	public int level;
-	public QuestMonster(int idParam, int levelParam) {id = idParam; level = levelParam; }
-}
-
-
-[Serializable]
-public class BaseQuest : BaseThing {
-	public QuestType type;
-	public int mins = 0;
-	public int hrs = 0;
-	public int days = 0;
-	public List<LootEntry> LootTableA = new List<LootEntry>(); // moster specific loot
-	public List<LootEntry> LootTableB = new List<LootEntry>(); // more generic loot common across all quests
-	public int blobsRequired = 1;
-	public bool usesElements = false;
-	public bool usesSigils = false;
-	public bool mixedElements = false;
-	public bool mixedSigils = false;
-	public List<QuestMonster> monsters = new List<QuestMonster>();
-}
-
-
-[Serializable]
 public class Quest : BaseQuest {
 	public static int maxblobsRequired = 5;
 	public List<int> blobIds;
@@ -71,6 +38,7 @@ public class Quest : BaseQuest {
 		mixedElements = b.mixedElements;
 		mixedSigils = b.mixedSigils;
 		monsters = b.monsters.ToList();
+		prerequisiteQuestIds = b.prerequisiteQuestIds.ToList();
 
 		Element element = (Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
 		Sigil sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);

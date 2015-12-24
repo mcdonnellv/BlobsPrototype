@@ -83,6 +83,8 @@ public class QuestManager : MonoBehaviour {
 				hudManager.popup.Show("New Zone", "Congratulations! The " + zone.itemName + " zone is now available");
 		
 		CompleteQuestsForBlobs(quest);
+		hudManager.questListMenu.QuestRemoved(availableQuests.IndexOf(quest));
+		availableQuests.Remove(quest);
 		if(quest.type == QuestType.Scouting) {
 			CollectRewardsForScout(quest);
 			return;
@@ -177,9 +179,24 @@ public class QuestManager : MonoBehaviour {
 
 	BaseQuest GetRandomQuestFromZone(Zone zone) {
 		List<BaseQuest> zoneBaseQuests = zone.QuestsForZone();
+		List<BaseQuest> zoneBaseQuestsToDelete = new List<BaseQuest>();
+		foreach(BaseQuest bq in zoneBaseQuests)
+			if(IsPreReqCompleteForQuest(bq) == false)
+				zoneBaseQuestsToDelete.Add(bq);
+		foreach(BaseQuest bq in zoneBaseQuestsToDelete)
+			zoneBaseQuests.Remove(bq);
+
 		if(zoneBaseQuests.Count <= 0)
 			return null;
 		return zoneBaseQuests[UnityEngine.Random.Range(0, zoneBaseQuests.Count)];
+	}
+
+
+	public bool IsPreReqCompleteForQuest(BaseQuest bq) {
+		foreach(int reqId in bq.prerequisiteQuestIds)
+			if(completedQuestIds.ContainsKey(reqId) == false)
+				return false;
+		return true;
 	}
 
 

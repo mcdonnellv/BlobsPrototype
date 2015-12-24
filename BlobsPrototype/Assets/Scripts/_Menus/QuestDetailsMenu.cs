@@ -290,9 +290,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public void ClearBlobs() {
 		//quest.RemoveAllBlobs();
 		foreach(Transform child in blobGrid.transform) {
-			BlobGameObject blobGameObject = child.GetComponentInChildren<BlobGameObject>();
-			if(blobGameObject != null)
-				GameObject.Destroy(blobGameObject);
+			BlobDragDropItem blobDragDropItem = child.GetComponentInChildren<BlobDragDropItem>();
+			if(blobDragDropItem != null)
+				GameObject.Destroy(blobDragDropItem.gameObject);
 		}
 	}
 

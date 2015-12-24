@@ -21,6 +21,10 @@ public class QuestListMenu : GenericGameMenu {
 	public override void Show() { 
 		base.Show(); 
 		//window.transform.localScale = new Vector3(1,1,1); 
+		selectButton.gameObject.SetActive(false);
+		abandonButton.gameObject.SetActive(false);
+		completeButton.gameObject.SetActive(false);
+		inProgressLabel.gameObject.SetActive(false);
 		SetupQuestCells(); 
 		if(questDetailsMenu.IsDisplayed())
 			questDetailsMenu.UnSelectQuest();
@@ -76,6 +80,13 @@ public class QuestListMenu : GenericGameMenu {
 
 		if(reposition)
 			grid.Reposition();
+	}
+
+
+	public void QuestRemoved(int index) {
+		QuestCell questCell = GetQuestCellFromIndex(index);
+		DestroyImmediate(questCell.gameObject);
+		grid.Reposition();
 	}
 
 
@@ -170,9 +181,6 @@ public class QuestListMenu : GenericGameMenu {
 
 
 	public void RewardsCollected() {
-		QuestCell questCell = GetQuestCellFromQuest(selectedQuest);
-		questManager.availableQuests.Remove(selectedQuest);
-		questCell.questId = -1;
 		questDetailsMenu.ClearBlobs(); 
 		SetupQuestCells();
 		SelectFirstQuest();
@@ -195,6 +203,10 @@ public class QuestListMenu : GenericGameMenu {
 
 	QuestCell GetQuestCellFromQuest(Quest quest) {
 		int index = questManager.availableQuests.IndexOf(quest);
+		return GetQuestCellFromIndex(index);
+	}
+
+	QuestCell GetQuestCellFromIndex(int index) {
 		if(index < grid.transform.childCount) {
 			Transform cellTransform = grid.transform.GetChild(index);
 			QuestCell questCell = cellTransform.GetComponent<QuestCell>();

@@ -12,6 +12,7 @@ public class GenericManagerInspector : Editor {
 	public ItemManager itemManager { get { return ItemManager.itemManager; } }
 	public QuestManager questManager { get { return QuestManager.questManager; } }
 	public MonsterManager monsterManager { get { return MonsterManager.monsterManager; } }
+
 	string[] _allItems;
 	public string[] allItems { 
 		get {
@@ -24,10 +25,11 @@ public class GenericManagerInspector : Editor {
 		}
 	}
 
+	public static bool refreshQuests = false;
 	string[] _allQuests;
 	public string[] allQuests { 
 		get {
-			if(_allQuests == null) {
+			if(_allQuests == null || GenericManagerInspector.refreshQuests) {
 				_allQuests =  new string[questManager.quests.Count];
 				foreach(BaseQuest i in questManager.quests)
 					_allQuests[questManager.quests.IndexOf(i)] = i.itemName;
@@ -45,6 +47,45 @@ public class GenericManagerInspector : Editor {
 					_allMonsters[monsterManager.monsters.IndexOf(i)] = i.itemName;
 			}
 			return _allMonsters;
+		}
+	}
+
+	string[] _allScoutingQuests;
+	public string[] allScoutingQuests { 
+		get {
+			if(_allScoutingQuests == null || GenericManagerInspector.refreshQuests) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Scouting);
+				_allScoutingQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allScoutingQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
+			}
+			return _allScoutingQuests;
+		}
+	}
+	
+	string[] _allGatheringQuests;
+	public string[] allGatheringQuests { 
+		get {
+			if(_allGatheringQuests == null || GenericManagerInspector.refreshQuests) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Gathering);
+				_allGatheringQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allGatheringQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
+			}
+			return _allGatheringQuests;
+		}
+	}
+	
+	string[] _allCombatQuests;
+	public string[] allCombatQuests { 
+		get {
+			if(_allCombatQuests == null || GenericManagerInspector.refreshQuests) {
+				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Combat);
+				_allCombatQuests =  new string[list.Count];
+				foreach(BaseQuest i in list)
+					_allCombatQuests[list.IndexOf(i)] =  i.id.ToString() + " : " + i.itemName;
+			}
+			return _allCombatQuests;
 		}
 	}
 
@@ -183,6 +224,14 @@ public class GenericManagerInspector : Editor {
 			return true;
 		GUI.backgroundColor = Color.white;
 		return false;
+	}
+
+
+	public int GetIndexOfItemInStringList(string[] stringList, int id) {
+		for(int i = 0; i < stringList.Length; i++) 
+			if(GetIdFromString(stringList[i]) == id)
+				return i;
+		return -1;
 	}
 }
 

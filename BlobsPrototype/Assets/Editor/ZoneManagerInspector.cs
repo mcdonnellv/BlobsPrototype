@@ -10,45 +10,6 @@ public class ZoneManagerInspector : GenericManagerInspector {
 
 	public ZoneManager zoneManager { get { return ZoneManager.zoneManager; } }
 
-	string[] _allScoutingQuests;
-	public string[] allScoutingQuests { 
-		get {
-			if(_allScoutingQuests == null) {
-				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Scouting);
-				_allScoutingQuests =  new string[list.Count];
-				foreach(BaseQuest i in list)
-					_allScoutingQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
-			}
-			return _allScoutingQuests;
-		}
-	}
-
-	string[] _allGatheringQuests;
-	public string[] allGatheringQuests { 
-		get {
-			if(_allGatheringQuests == null) {
-				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Gathering);
-				_allGatheringQuests =  new string[list.Count];
-				foreach(BaseQuest i in list)
-					_allGatheringQuests[list.IndexOf(i)] = i.id.ToString() + " : " + i.itemName;
-			}
-			return _allGatheringQuests;
-		}
-	}
-
-	string[] _allCombatQuests;
-	public string[] allCombatQuests { 
-		get {
-			if(_allCombatQuests == null) {
-				List<BaseQuest> list = questManager.GetQuestsOfType(QuestType.Combat);
-				_allCombatQuests =  new string[list.Count];
-				foreach(BaseQuest i in list)
-					_allCombatQuests[list.IndexOf(i)] =  i.id.ToString() + " : " + i.itemName;
-			}
-			return _allCombatQuests;
-		}
-	}
-
 	public override void OnInspectorGUI() {
 		NGUIEditorTools.SetLabelWidth(defaultLabelWidth);
 		Zone zone = null;
@@ -136,7 +97,7 @@ public class ZoneManagerInspector : GenericManagerInspector {
 			NGUIEditorTools.DrawSeparator();
 			NGUIEditorTools.SetLabelWidth(100f);
 			GUILayout.BeginHorizontal();
-			int indexOfQuest = GetIndexOfSelectedQuest(allCombatQuests, zone.unlockingQuestId);
+			int indexOfQuest = GetIndexOfItemInStringList(allCombatQuests, zone.unlockingQuestId);
 			int newIndexOfQuest = EditorGUILayout.Popup("Unlocked by", indexOfQuest, allCombatQuests, GUILayout.Width(250f));
 			if(indexOfQuest != newIndexOfQuest) 
 				zone.unlockingQuestId = GetIdFromString(allCombatQuests[newIndexOfQuest]);
@@ -146,7 +107,7 @@ public class ZoneManagerInspector : GenericManagerInspector {
 
 			// SCOUTING QUEST
 			NGUIEditorTools.DrawSeparator();
-			indexOfQuest = GetIndexOfSelectedQuest(allScoutingQuests, zone.scoutingQuestId);
+			indexOfQuest = GetIndexOfItemInStringList(allScoutingQuests, zone.scoutingQuestId);
 			newIndexOfQuest = EditorGUILayout.Popup("Scouting Quest", indexOfQuest, allScoutingQuests, GUILayout.Width(250f));
 			if(indexOfQuest != newIndexOfQuest) 
 				zone.scoutingQuestId = GetIdFromString(allScoutingQuests[newIndexOfQuest]);
@@ -167,7 +128,7 @@ public class ZoneManagerInspector : GenericManagerInspector {
 		List<int> questIds = zone.GetQuestIdsWithType(qt);
 		foreach(int questId in questIds) {
 			GUILayout.BeginHorizontal();
-			int indexOfQuest = GetIndexOfSelectedQuest(questStringList, questId);
+			int indexOfQuest = GetIndexOfItemInStringList(questStringList, questId);
 			int newIndexOfQuest = EditorGUILayout.Popup("Quest", indexOfQuest, questStringList, GUILayout.Width(250f));
 			if(indexOfQuest != newIndexOfQuest) {
 				int newQuestId = GetIdFromString(questStringList[newIndexOfQuest]);
@@ -183,12 +144,5 @@ public class ZoneManagerInspector : GenericManagerInspector {
 			zone.questIds.Add(GetIdFromString(questStringList[0]));
 		EditorGUI.indentLevel--;
 	}
-	
 
-	int GetIndexOfSelectedQuest(string[] questStringList, int questId) {
-		for(int i = 0; i < questStringList.Length; i++) 
-			if(GetIdFromString(questStringList[i]) == questId)
-				return i;
-		return -1;
-	}
 }
