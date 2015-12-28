@@ -104,7 +104,7 @@ public class ItemManagerInspector : GenericManagerInspector {
 					item.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
-			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(100f));
+			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(50f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality",item.quality);
 			item.sellValue = EditorGUILayout.IntField("Value", item.sellValue);
 			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;

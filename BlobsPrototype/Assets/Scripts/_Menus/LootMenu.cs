@@ -76,7 +76,7 @@ public class LootMenu : GenericGameMenu {
 
 		rewardEntries = rewardEntries.OrderBy(x => x.itemName).ThenBy(x => x.quality).ToList();
 		foreach(Item item in rewardEntries) {
-			int index = rewardEntries.IndexOf(item);
+			int index = startingSlotIndex + rewardEntries.IndexOf(item);
 			LootCell lootCell = grid.transform.GetChild(index).GetComponent<LootCell>();
 			lootCell.AssignItem(item);
 		}

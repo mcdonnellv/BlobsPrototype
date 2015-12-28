@@ -106,7 +106,7 @@ public class GeneManagerInspector : GenericManagerInspector {
 					item.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
-			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(100f));
+			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(50f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality: ", item.quality);
 			GUILayout.BeginHorizontal();{
 				item.traitType = (TraitType)EditorGUILayout.EnumPopup("Trait: ", item.traitType, GUILayout.Width(200f));

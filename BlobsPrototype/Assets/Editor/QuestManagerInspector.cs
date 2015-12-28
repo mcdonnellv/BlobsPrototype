@@ -115,7 +115,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 					quest.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
-			quest.description = GUILayout.TextArea(quest.description, 200, GUILayout.Height(100f));
+			quest.description = GUILayout.TextArea(quest.description, 200, GUILayout.Height(50f));
 			EditorGUILayout.Space();
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Duration", GUILayout.Width(60f));
@@ -167,7 +167,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 					GUILayout.BeginHorizontal();
 					BaseMonster bm = monsterManager.GetBaseMonsterByID(questMonster.id);
 					int index = monsterManager.monsters.IndexOf(bm);
-					int newMonsterIndex = EditorGUILayout.Popup(index, monsterlistStrings, GUILayout.Width(150f));
+					int newMonsterIndex = EditorGUILayout.Popup(index, monsterlistStrings, GUILayout.Width(140f));
 					questMonster.level = EditorGUILayout.IntField("lv", questMonster.level, GUILayout.Width(70f));
 
 					if(index != newMonsterIndex) {
@@ -276,11 +276,9 @@ public class QuestManagerInspector : GenericManagerInspector {
 			NGUIEditorTools.SetLabelWidth(30f);
 			lootEntry.quantity = EditorGUILayout.IntField("x", lootEntry.quantity, GUILayout.Width(50f));
 			lootEntry.quantity = Mathf.Max(1, Mathf.Min(99, lootEntry.quantity));
-			
-			GUI.backgroundColor = Color.red;
-			if (GUILayout.Button("Del", GUILayout.Width(35f)))
+
+			if(DeleteButtonPressed())
 				toDelete.Add(lootEntry);
-			GUI.backgroundColor = Color.white;
 			GUILayout.EndHorizontal();
 		}
 

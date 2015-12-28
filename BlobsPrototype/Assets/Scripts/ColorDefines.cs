@@ -42,6 +42,7 @@ public class ColorDefines {
 		_iconColors.Add("Pastel Green", "77DD77");
 		_iconColors.Add("Pastel Blue", "AEC6CF");
 		_iconColors.Add("Pastel Purple", "B39EB5");
+		_iconColors.Add("Brown", "c3834c");
 		_iconColors.Add("Gold", "FCC200");
 		_iconColors.Add("Silver", "C0C0C0");
 		_iconColors.Add("Copper", "B87333");
