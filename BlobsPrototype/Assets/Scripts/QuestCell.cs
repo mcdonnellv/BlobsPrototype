@@ -22,6 +22,8 @@ public class QuestCell : MonoBehaviour {
 
 	public void Pressed() {
 		QuestListMenu questListMenu = gameObject.GetComponentInParent<QuestListMenu>();
+		if(!questListMenu)
+			return;
 		questListMenu.QuestCellPressed(this);
 		Undim();
 		foreach(Transform child in transform.parent) {

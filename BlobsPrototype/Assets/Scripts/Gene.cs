@@ -21,6 +21,7 @@ public class Gene : BaseGene {
 		state = GeneState.Passive;
 	}
 
+
 	public Gene(BaseGene b) {
 		id = b.id;
 		itemName = b.itemName;
@@ -29,14 +30,17 @@ public class Gene : BaseGene {
 		iconAtlas = b.iconAtlas;
 		quality = b.quality;
 		traitType = b.traitType;
+		traitCondition = b.traitCondition;
 		value = b.value;
 		modifier = b.modifier;
+		showInStore = b.showInStore;
 		activationRequirements = new List<GeneActivationRequirement>();
 		foreach (GeneActivationRequirement req in b.activationRequirements)
 			activationRequirements.Add(new GeneActivationRequirement(req));
 	
 		state = GeneState.Passive;
 	}
+
 
 	public GameObject CreateGeneGameObject(MonoBehaviour owner) {
 		GameObject geneGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Gene"));
@@ -49,6 +53,7 @@ public class Gene : BaseGene {
 		return geneGameObject;
 	}
 
+
 	public void CheckActivationStatus() {
 		if (state != GeneState.Available)
 			return;
@@ -60,10 +65,11 @@ public class Gene : BaseGene {
 
 	}
 
+
 	void Activate() {
 		HudManager hudManager = HudManager.hudManager;
 		state = GeneState.Active;
-		hudManager.popup.Show("Gene", "The " + itemName + " gene has been activated!");
+		hudManager.ShowNotice("The " + itemName + " gene is now active");
 		if(hudManager.inventoryMenu.IsDisplayed())
 			hudManager.inventoryMenu.Hide();
 		hudManager.blobInfoContextMenu.Show(hudManager.blobInfoContextMenu.blob.id);

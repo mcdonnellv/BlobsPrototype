@@ -23,6 +23,8 @@ public class HudManager : MonoBehaviour {
 	public GameObject hudRoot;
 	public GameObject mainHudObject;
 	public NotificationIndicator notificationIndicator;
+	public CombatMenu combatMenu;
+	public StoreMenu storeMenu;
 
 	public bool dragToUi = false;
 	public GameObject dragObjectHelper;

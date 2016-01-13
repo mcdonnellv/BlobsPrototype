@@ -151,8 +151,12 @@ public class QuestListMenu : GenericGameMenu {
 	
 
 	public void Dismiss() {
-		questDetailsMenu.Hide();
-		Invoke("Hide", questDetailsMenu.GetAnimationDelay() * .4f);
+		if(questDetailsMenu.IsDisplayed()) {
+			questDetailsMenu.Hide();
+			Invoke("Hide", questDetailsMenu.GetAnimationDelay() * .4f);
+		}
+		else
+			Hide();
 	}
 
 
@@ -207,7 +211,7 @@ public class QuestListMenu : GenericGameMenu {
 	}
 
 	QuestCell GetQuestCellFromIndex(int index) {
-		if(index < grid.transform.childCount) {
+		if(index >= 0 && index < grid.transform.childCount) {
 			Transform cellTransform = grid.transform.GetChild(index);
 			QuestCell questCell = cellTransform.GetComponent<QuestCell>();
 			return questCell;

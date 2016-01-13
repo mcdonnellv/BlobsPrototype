@@ -39,29 +39,29 @@ public class GeneManager : MonoBehaviour {
 	}
 
 	public void FirstTimeSetup() {
-		foreach(BaseGene bg in genes) {
-			storedGenes.Add(new Gene(bg)); //temorarily add all possibble genes to your inventory
-		}
+		//foreach(BaseGene bg in genes) {
+			//storedGenes.Add(new Gene(bg)); //temorarily add all possibble genes to your inventory
+		//}
 	}
 
 
 	public void GeneTransferFromBlobToGenePool (Blob blob, Gene gene) {
 		blob.genes.Remove(gene);
 		storedGenes.Add(gene);
-		blob.CalculateStats();
+		blob.CalculateStatsFromGenes();
 		blob.gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 
-	public void GeneTransferFromGenePoolToBlob (Blob blob, Gene gene) {
+	public void GeneTransferFromGenePoolToBlob(Blob blob, Gene gene) {
 		blob.genes.Add(gene);
 		storedGenes.Remove(gene);
-		blob.CalculateStats();
+		blob.CalculateStatsFromGenes();
 		blob.gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 
-	public List<BaseGene> GetBaseGeneListFromGeneList (List<Gene> geneListParam) {
+	public List<BaseGene> GetBaseGeneListFromGeneList(List<Gene> geneListParam) {
 		List<BaseGene> baseGenes = new List<BaseGene>();
 		foreach(Gene gene in geneListParam) {
 			BaseGene baseGene = GetBaseGeneWithName(gene.itemName);
@@ -70,10 +70,19 @@ public class GeneManager : MonoBehaviour {
 		return baseGenes;
 	}
 
-	public List<Gene> CreateGeneListFromBaseGeneList (List<BaseGene> baseGeneListParam) {
+	public List<Gene> CreateGeneListFromBaseGeneList(List<BaseGene> baseGeneListParam) {
 		List<Gene> geneList = new List<Gene>();
 		foreach(BaseGene baseGene in baseGeneListParam) {
 			geneList.Add(new Gene(baseGene));
+		}
+		return geneList;
+	}
+
+	public List<BaseGene> GetBaseGenesWithKeyItem(int keyItemId) {
+		List<BaseGene> geneList = new List<BaseGene>();
+		foreach(BaseGene baseGene in genes) {
+			if(baseGene.activationRequirements.Count > 0 && baseGene.activationRequirements[0].itemId == keyItemId)
+				geneList.Add(baseGene);
 		}
 		return geneList;
 	}

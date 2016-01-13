@@ -12,17 +12,21 @@ public class QuestManager : MonoBehaviour {
 
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
+	CombatManager combatManager { get { return CombatManager.combatManager; } }
+	MonsterManager monsterManager { get { return MonsterManager.monsterManager; } }
 	public List<BaseQuest> quests = new List<BaseQuest>(); // All quests
 	public List<Quest> availableQuests = new List<Quest>(); //current quests
 	public Dictionary<int, int> completedQuestIds = new Dictionary<int, int>();
 	public Dictionary<int, int> completedQuestInZone = new Dictionary<int, int>();
 	public UIAtlas iconAtlas;
-	public static int maxAvailableQuests = 10;
+	public static int maxAvailableQuests = 6;
 
 	public bool DoesNameExistInList(string nameParam){return (GetBaseQuestWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseQuestByID(idParam) != null); }
 
 	public Quest AddQuestToList(BaseQuest bq) {
+		if(availableQuests.Count >= maxAvailableQuests)
+			return null;
 		if(bq == null) return null;
 		Quest q = new Quest(bq); 
 		availableQuests.Add(q);
@@ -72,23 +76,23 @@ public class QuestManager : MonoBehaviour {
 
 
 	public void FirstTimeSetup() {
-		//AddQuestToList(GetBaseQuestByID(100));
+		this.AddQuestToList(this.GetBaseQuestByID(50));
 	}
 
 
 	public void CollectRewardsForQuest(Quest quest) {
+		QuestFinishedCleanup(quest);
 
 		foreach(Zone zone in ZoneManager.zoneManager.zones)
 			if(zone.unlockingQuestId == quest.id && !zone.IsUnlocked())
 				hudManager.popup.Show("New Zone", "Congratulations! The " + zone.itemName + " zone is now available");
-		
-		CompleteQuestsForBlobs(quest);
-		hudManager.questListMenu.QuestRemoved(availableQuests.IndexOf(quest));
-		availableQuests.Remove(quest);
+
+
 		if(quest.type == QuestType.Scouting) {
 			CollectRewardsForScout(quest);
 			return;
 		}
+
 		if(quest.LootTableA.Count > 0 || quest.LootTableB.Count > 0)
 			hudManager.lootMenu.Show(quest);
 		else
@@ -107,10 +111,20 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
+	public void QuestFinishedCleanup(Quest quest) {
+		CompleteQuestsForBlobs(quest);
+		hudManager.questListMenu.QuestRemoved(availableQuests.IndexOf(quest));
+		availableQuests.Remove(quest);
+	}
+
+
 	void CollectRewardsForScout(Quest quest) {
 		Zone zone = ZoneManager.zoneManager.GetZoneByID(quest.zoneId);
 		List<Quest> questsToAdd = new List<Quest>();
 		RewardRange range = GetRewardRange(quest);
+		int questSlotsLeft = maxAvailableQuests - availableQuests.Count;
+		range.min = Mathf.Min(range.min, questSlotsLeft);
+		range.max = Mathf.Min(range.max, questSlotsLeft);
 		int questCt = UnityEngine.Random.Range(range.min, range.max + 1);
 		for(int i = 0; i < questCt; i++) {
 			Quest q = new Quest(GetRandomQuestFromZone(zone));
@@ -197,6 +211,51 @@ public class QuestManager : MonoBehaviour {
 			if(completedQuestIds.ContainsKey(reqId) == false)
 				return false;
 		return true;
+	}
+
+
+	public void StartQuest(Quest quest, List<int> blobListParam) {
+		quest.blobIds = blobListParam.ToList();
+		foreach(int blobId in quest.blobIds) {
+			Blob blob = roomManager.GetBlobByID(blobId);
+			blob.gameObject.DepartForQuest(quest);
+		}
+		quest.actionReadyTime = quest.GetActionReadyTime();
+		quest.state = QuestState.Embarked;
+		
+		if(quest.type == QuestType.Combat) {
+			foreach(int blobId in quest.blobIds) {
+				Blob blob = roomManager.GetBlobByID(blobId);
+				combatManager.AddCombatant(blob);
+			}
+
+			foreach(QuestMonster monster in quest.monsters) {
+				BaseMonster bm = monsterManager.GetBaseMonsterByID(monster.id);
+				combatManager.AddCombatant(bm);
+			}
+			combatManager.quest = quest;
+			hudManager.combatMenu.Show();
+		}
+	}
+
+
+	public List<BaseQuest> GetQuestsWithPreReqComplete() {
+		List<BaseQuest> retList = new List<BaseQuest>();
+		foreach(BaseQuest b in quests)
+			if(IsPreReqCompleteForQuest(b))
+				retList.Add(b);
+		return retList;
+	}
+
+
+	public bool IsItemIdPartOfQuestLoot(int itemId, BaseQuest bq) {
+		foreach(LootEntry l in bq.LootTableA) 
+			if(l.itemId == itemId)
+				return true;
+		foreach(LootEntry l in bq.LootTableB) 
+			if(l.itemId == itemId)
+				return true;
+		return false;
 	}
 
 

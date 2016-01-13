@@ -105,7 +105,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 				int newId = EditorGUILayout.IntField("ID", quest.id, GUILayout.Width(60f));
 				if(newId != quest.id)
 					quest.id = (questManager.DoesIdExistInList(newId)) ? questManager.GetNextAvailableID() : quest.id = newId;
-				NGUIEditorTools.SetLabelWidth(40);
+				NGUIEditorTools.SetLabelWidth(40f);
 				string itemName = EditorGUILayout.TextField("Name", quest.itemName);
 				GUI.backgroundColor = Color.red;
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))

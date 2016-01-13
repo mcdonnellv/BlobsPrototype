@@ -68,7 +68,11 @@ public class GeneManagerInspector : GenericManagerInspector {
 						g.value = item.value;
 						g.modifier = item.modifier;
 						g.traitType = item.traitType;
+						g.traitCondition = item.traitCondition;
+						g.showInStore = item.showInStore;
 						g.id = geneManager.GetNextAvailableID();
+						foreach(GeneActivationRequirement req in item.activationRequirements)
+							g.activationRequirements.Add(new GeneActivationRequirement(req));
 					}
 					geneManager.genes.Add(g);
 					mIndex = geneManager.genes.Count - 1;
@@ -92,12 +96,14 @@ public class GeneManagerInspector : GenericManagerInspector {
 			NavigationSection(geneManager.genes.Count);
 
 			// Item name and delete item button
-			GUILayout.BeginHorizontal();{
+			GUILayout.BeginHorizontal();
+			{
+				NGUIEditorTools.SetLabelWidth(20f);
 				int newId = EditorGUILayout.IntField("ID", item.id, GUILayout.Width(60f));
 				if(newId != item.id)
 					item.id = (geneManager.DoesIdExistInList(newId)) ? geneManager.GetNextAvailableID() : item.id = newId;
-				NGUIEditorTools.SetLabelWidth(40f);
-				string itemName = EditorGUILayout.TextField("Gene Name", item.itemName);
+				NGUIEditorTools.SetLabelWidth(50f);
+				string itemName = EditorGUILayout.TextField("Name", item.itemName);
 				GUI.backgroundColor = Color.red;
 				if (GUILayout.Button("Delete", GUILayout.Width(55f)))
 					mConfirmDelete = true;
@@ -109,28 +115,29 @@ public class GeneManagerInspector : GenericManagerInspector {
 			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(50f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality: ", item.quality);
 			GUILayout.BeginHorizontal();{
+				NGUIEditorTools.SetLabelWidth(40f);
 				item.traitType = (TraitType)EditorGUILayout.EnumPopup("Trait: ", item.traitType, GUILayout.Width(200f));
 				item.value = EditorGUILayout.IntField(item.value, GUILayout.Width(40f));
 				item.modifier = (AbilityModifier)EditorGUILayout.EnumPopup(item.modifier);
 			}
 			GUILayout.EndHorizontal();
-
-			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;
-			SpriteSelection(item);
-
+			NGUIEditorTools.SetLabelWidth(70f);
+			item.traitCondition = (TraitCondition)EditorGUILayout.EnumPopup("Condition: ", item.traitCondition, GUILayout.Width(200f));
+			item.sellValue = EditorGUILayout.IntField("Sell Value", item.sellValue, GUILayout.Width(160f));
+			NGUIEditorTools.SetLabelWidth(100f);
+			item.showInStore = EditorGUILayout.Toggle("Show In Store", item.showInStore, GUILayout.Width(160f));
+			NGUIEditorTools.SetLabelWidth(70f);
 			EditorGUILayout.Space();
+			GUILayout.BeginHorizontal(); 
 			EditorGUILayout.LabelField("Activation Requirements");
+			if(AddButtonPressed())
+				item.activationRequirements.Add(new GeneActivationRequirement());
+			GUILayout.EndHorizontal();
 			EditorGUI.indentLevel++;
+			NGUIEditorTools.SetLabelWidth(70f);
 			
 			//item.activationReq.Clear();
-			GUILayout.BeginHorizontal(); {
-				if(AddButtonPressed())
-					item.activationRequirements.Add(new GeneActivationRequirement());
-			}
-			GUILayout.EndHorizontal();
-
 			List <GeneActivationRequirement> toDelete = new List<GeneActivationRequirement>();
-
 
 			foreach(GeneActivationRequirement req in item.activationRequirements) {
 				GUILayout.BeginHorizontal(); 
@@ -140,24 +147,27 @@ public class GeneManagerInspector : GenericManagerInspector {
 					index = itemManager.items.IndexOf(itm);
 				}
 					
+				NGUIEditorTools.SetLabelWidth(70f);
 				int newIndex = EditorGUILayout.Popup("Item", index, allItems, GUILayout.Width(180f));
 				if(newIndex != index || req.itemId < 0) 
 					req.itemId = itemManager.items[newIndex].id;
-				req.amountNeeded = EditorGUILayout.IntField("Amount", req.amountNeeded, GUILayout.Width(140f));
+				NGUIEditorTools.SetLabelWidth(30f);
+				req.amountNeeded = EditorGUILayout.IntField("x", req.amountNeeded, GUILayout.Width(60f));
 				req.amountNeeded = Mathf.Max(1, req.amountNeeded);
 
-				GUI.backgroundColor = Color.red;
-				if (GUILayout.Button("Del", GUILayout.Width(35f)))
+				if (DeleteButtonPressed())
 					toDelete.Add(req);
-				GUI.backgroundColor = Color.white;
 				GUILayout.EndHorizontal();
 			}
-			
+
+			NGUIEditorTools.SetLabelWidth(70f);
 			foreach(GeneActivationRequirement gr in toDelete)
 				item.activationRequirements.Remove(gr);
 
-
 			NGUIEditorTools.DrawSeparator();
+
+			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;
+			SpriteSelection(item);
 		}
 	}
 }

@@ -103,10 +103,9 @@ public class MonsterManagerInspector : GenericManagerInspector {
 			EditorGUILayout.LabelField("Combat Stats");
 			EditorGUI.indentLevel++;
 			CombatStats cs = monster.combatStats;
-			cs.armor = EditorGUILayout.IntField("Armor", cs.armor, GUILayout.Width(200f));
-			cs.attack = EditorGUILayout.IntField("Attack", cs.attack, GUILayout.Width(200f));
-			cs.health = EditorGUILayout.IntField("Health", cs.health, GUILayout.Width(200f));
-			cs.stamina = EditorGUILayout.IntField("Stamina", cs.stamina, GUILayout.Width(200f));
+			cs.armor = new Stat(CombatStatType.Armor, EditorGUILayout.IntField("Armor", cs.armor.defaultValue, GUILayout.Width(200f)));
+			cs.attack = new Stat(CombatStatType.Attack, EditorGUILayout.IntField("Attack", cs.attack.defaultValue, GUILayout.Width(200f)));
+			cs.speed = new Stat(CombatStatType.Speed, EditorGUILayout.IntField("Speed", cs.speed.defaultValue, GUILayout.Width(200f)));
 			EditorGUI.indentLevel--;
 
 			//SPRITE

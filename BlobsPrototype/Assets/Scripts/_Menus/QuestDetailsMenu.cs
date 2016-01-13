@@ -253,6 +253,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 		return pos;
 	}
 
+
 	void UpdateRewardInfoLabel() {
 		if(IsSelected() ==  false)
 			return;
@@ -303,7 +304,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 			hudManager.popup.Show("Quest", "Add more blobs to start this quest");
 			return;
 		}
-		quest.Start(GetChosenBlobs());
+		questManager.StartQuest(quest, GetChosenBlobs());
 		Hide();
 	}
 

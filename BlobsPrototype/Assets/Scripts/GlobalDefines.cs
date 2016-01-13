@@ -36,6 +36,7 @@ public enum CombatStatType {
 	Armor,
 	Health,
 	Stamina,
+	Speed,
 	Element,
 };
 
@@ -53,8 +54,20 @@ public enum TraitType {
 	ArmorMod,
 	HealthMod,
 	StaminaMod,
+	SpeedMod,
 	SetElement,
 	TraitTypeCt,
+};
+
+public enum TraitCondition {
+	None,
+	Alone,
+	ForEachOtherBlob,
+	ColorBlack,
+	ColorBlue,
+	ColorWhite,
+	ColorGreen,
+	ColorRed,
 };
 
 
@@ -182,6 +195,9 @@ public class GlobalDefines : MonoBehaviour {
 			timeString = "0 sec";
 		return timeString;
 	}
+
+
+
 }
 
 

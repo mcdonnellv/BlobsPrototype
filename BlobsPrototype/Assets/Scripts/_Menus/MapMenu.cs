@@ -34,6 +34,11 @@ public class MapMenu : GenericGameMenu {
 
 
 	public void AddScoutingQuestConfirmed() {
+		if(questManager.availableQuests.Count >= QuestManager.maxAvailableQuests) {
+			hudManager.ShowError("Quest Log Full");
+			return;
+		}
+
 		bool found = false;
 		foreach(Quest quest in questManager.availableQuests)
 			if(quest.zoneId == selectedZone.id && quest.type == QuestType.Scouting)

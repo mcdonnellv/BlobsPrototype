@@ -17,7 +17,8 @@ public class Quest : BaseQuest {
 
 
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
-
+	public DateTime GetActionReadyTime() { return System.DateTime.Now + GetActionReadyDuration(); }
+	public void MakeAvailable() { state = QuestState.Available; }
 
 	public Quest(BaseQuest b) {
 		id = b.id;
@@ -66,16 +67,6 @@ public class Quest : BaseQuest {
 		state = QuestState.Available;
 	}
 
-	public void Start(List<int> blobListParam) {
-		blobIds = blobListParam.ToList();
-		foreach(int blobID in blobIds) {
-			Blob blob = roomManager.GetBlobByID(blobID);
-			blob.gameObject.DepartForQuest(this);
-		}
-		actionReadyTime = GetActionReadyTime();
-		state = QuestState.Embarked;
-	}
-
 
 	public TimeSpan GetActionReadyDuration() { 
 		TimeSpan actionDuration = new TimeSpan(days, hrs, mins, 0); 
@@ -83,13 +74,7 @@ public class Quest : BaseQuest {
 			actionDuration = new TimeSpan(0, 0, 0, 5);
 		return actionDuration;
 	}
-
-	public DateTime GetActionReadyTime() { return System.DateTime.Now + GetActionReadyDuration(); }
-
-
-	public void MakeAvailable() {
-		state = QuestState.Available;
-	}
+	
 
 	public void Complete() {
 		state = QuestState.Completed;

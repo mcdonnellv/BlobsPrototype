@@ -181,14 +181,14 @@ public class InventoryMenu : GenericGameMenu {
 		case Mode.Feed:
 			Item item = itemsMenu.GetSelectedItem();
 			if(item == null)
-				gameManager.hudMan.popup.Show("Feed Blob", "No item selected");
+				gameManager.hudMan.ShowError("No item selected");
 			else
 				gameManager.hudMan.popup.Show("Feed Blob", "Feed [EEBE63]" + item.itemName + "[-] to the blob?", this, "FeedConfirmed");
 			break;
 		case Mode.AddGene:
 			Gene gene = genesMenu.GetSelectedGene();
 			if(gene == null)
-				gameManager.hudMan.popup.Show("Add Gene", "No gene selected");
+				gameManager.hudMan.ShowError("No gene selected");
 			else
 				gameManager.hudMan.popup.Show("Add Gene", "Add [EEBE63]" + gene.itemName + "[-] to the blob?", this, "GeneAddConfirmed");
 			break;

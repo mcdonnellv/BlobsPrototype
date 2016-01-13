@@ -34,6 +34,7 @@ public class BlobGameObject : MonoBehaviour {
 		blob.gameObject = this;
 		blob.id = gameManager.gameVars.blobsSpawned++;
 		blob.quality = Blob.GetRandomQuality();
+		blob.geneSlots = Blob.GetGeneCountFromQuality(blob.quality);
 		blob.gender = (UnityEngine.Random.Range(0, 2) == 0) ? Gender.Male : Gender.Female;
 		bodyPartSprites.Add("Body", bodyPartManager.bodyTextures[UnityEngine.Random.Range(0, bodyPartManager.bodyTextures.Count)]);
 		bodyPartSprites.Add("Eyes", bodyPartManager.eyeTextures[UnityEngine.Random.Range(0, bodyPartManager.eyeTextures.Count)]);
@@ -89,10 +90,16 @@ public class BlobGameObject : MonoBehaviour {
 		eggSprite.gameObject.SetActive(false);
 		bodySprite.gameObject.SetActive(true);
 		eyesSprite.gameObject.SetActive(true);
-		transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+		SetSpriteScale(.5f);
 		floatingDisplay.HideHarvestSprite();
 	}
 
+
+
+	public void SetSpriteScale (float s) {
+		eyesSprite.parent.transform.localScale = new Vector3(s, s, 1f);
+		//bodySprite.transform.localScale = new Vector3(s, s, 1f);
+	}
 
 	public void DepartForQuest(Quest quest) {
 		floatingDisplay.stateLabel.gameObject.SetActive(true);
@@ -118,7 +125,7 @@ public class BlobGameObject : MonoBehaviour {
 
 	public void UpdateGrowth() {
 		if(blob.isAdult)
-			transform.localScale = new Vector3(1f, 1f, 1f);
+			SetSpriteScale(1f);
 	}
 
 

@@ -70,14 +70,17 @@ public class ItemInfoPopup : GenericGameMenu {
 	public void PopulateInfoFromGene(Gene g) {
 		gene = g;
 
-		headerLabel.text = gene.itemName;
+		headerLabel.text = gene.itemName.ToUpper();
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
 		lowerPanelGrid.transform.DestroyChildren();
 		icon.spriteName = g.iconName;
 		icon.atlas = g.iconAtlas;
-		upperPanelInfoLabel.text = gene.description;
+
 		if(gene.state != GeneState.Active && gene.activationRequirements.Count > 0)
-			upperPanelInfoLabel.text += " when activated";
+			upperPanelInfoLabel.text = "(NEEDS ACTIVATION)\n" + gene.description;
+		else
+			upperPanelInfoLabel.text = gene.description;
+
 
 		if(gene.activationRequirements.Count > 0) {
 			lowerPanel.gameObject.SetActive(true);
@@ -91,11 +94,12 @@ public class ItemInfoPopup : GenericGameMenu {
 				BaseItem item = itemManager.GetBaseItemByID(req.itemId);
 				sprites[0].atlas = item.iconAtlas;
 				sprites[0].spriteName = item.iconName;
+				sprites[0].color = ColorDefines.IconColorFromIndex(item.iconTintIndex);
 				UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
-				labels[0].text = "Feed " + req.amountNeeded.ToString() + " " + item.itemName;
+				labels[0].text = item.itemName;
 				labels[1].text = req.amountConsumed.ToString() + " / " + req.amountNeeded.ToString();
-				labels[0].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
-				labels[1].color = (req.fulfilled) ? ColorDefines.positiveTextColor : ColorDefines.inactiveTextColor;
+				labels[0].color = (req.fulfilled) ? ColorDefines.positiveTextColor : Color.white;
+				labels[1].color = (req.fulfilled) ? ColorDefines.positiveTextColor : Color.white;
 			}
 		}
 		else

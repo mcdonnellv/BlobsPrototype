@@ -45,11 +45,11 @@ public class GameManager2 : MonoBehaviour {
 		roomMan.minSize = 2;
 		hudMan.UpdateGold(gameVars.gold);
 		hudMan.UpdateChocolate(gameVars.chocolate);
-		Room room = roomMan.CreateRoom(roomMan.minSize, Room.RoomType.Field);
+		Room room = roomMan.CreateRoom(roomMan.minSize + 1, Room.RoomType.Field);
 
 		Blob blob = null;
 
-		for(int i=0; i<2; i++) {
+		for(int i=0; i<5; i++) {
 			if(room.IsRoomFull())
 				break;
 
@@ -58,8 +58,8 @@ public class GameManager2 : MonoBehaviour {
 			blobGameObject.Setup();
 			blob = blobGameObject.blob;
 			blob.gender = (i % 2 == 0 ? Gender.Male : Gender.Female);
-			blob.SetNativeElement(Element.Black);//(Element)UnityEngine.Random.Range(0, (int)Element.ElementCt);
-			blob.sigil = (Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
+			blob.SetNativeElement(Element.White);//((Element)UnityEngine.Random.Range(0, (int)Element.ElementCt));
+			blob.sigil = Sigil.C;//(Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
 			blob.Hatch();
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
 			blob.actionDuration = new TimeSpan(0);
@@ -68,8 +68,8 @@ public class GameManager2 : MonoBehaviour {
 			blob.gameObject.UpdateGrowth();
 			room.AddBlob(blob);
 
-			blob.genes.Add(new Gene(geneManager.genes[0]));
-			blob.genes[0].state = GeneState.Available;
+			//blob.genes.Add(new Gene(geneManager.genes[0]));
+			//blob.genes[0].state = GeneState.Available;
 		}
 	}
 

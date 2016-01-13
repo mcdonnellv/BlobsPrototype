@@ -13,12 +13,16 @@ public class ItemManager : MonoBehaviour {
 
 	public List<BaseItem> items = new List<BaseItem>(); // All items
 	public List<Item> storedItems = new List<Item>();
+	public List<int> seenItems = new List<int>();
 	public UIAtlas iconAtlas;
 
 	public void AddItemToStorage(BaseItem b) { AddItemToStorage(b, 1); }
+	public void RemoveItemFromStorage(int itemId, int ct) { RemoveItemFromStorage(GetBaseItemByID(itemId), ct); }
 	public void RemoveItemFromStorage(BaseItem b) { RemoveItemFromStorage(b, 1); }
 	public bool DoesNameExistInList(string nameParam){return (GetBaseItemWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseItemByID(idParam) != null); }
+
+
 
 
 	public BaseItem GetBaseItemWithName(string nameParam) {
@@ -49,6 +53,9 @@ public class ItemManager : MonoBehaviour {
 	public void FirstTimeSetup() {
 		//foreach(BaseItem b in items)
 		//	AddItemToStorage(b, 3);
+
+		AddItemToStorage(GetBaseItemByID(21), 20);
+		AddItemToStorage(GetBaseItemByID(24), 20);
 	}
 
 	public void AddItemToStorage(BaseItem b, int count) {
@@ -59,6 +66,16 @@ public class ItemManager : MonoBehaviour {
 		}
 		
 		i.count+=count;
+		if(seenItems.Contains(b.id) == false) {
+			seenItems.Add(b.id);
+			List<BaseGene> genes = GeneManager.geneManager.GetBaseGenesWithKeyItem(b.id);
+			if(genes != null && genes.Count > 0) {
+				if(genes.Count == 1)
+					HudManager.hudManager.ShowNotice("A new Gene is now available in the Store");
+				else
+					HudManager.hudManager.ShowNotice(genes.Count.ToString() + " Genes are now available in the Store");
+			}
+		}
 	}
 
 	public void RemoveItemFromStorage(BaseItem b, int count) {
@@ -78,5 +95,15 @@ public class ItemManager : MonoBehaviour {
 		return null;
 	}
 
+
+	public bool DoesItemExistInStorage(int itemId) { return (GetItemCountById(itemId) > 0); }
+
+	public int GetItemCountById(int itemId) {
+		int ct = 0;
+		foreach(Item i in storedItems)
+			if(itemId == i.id)
+				ct += i.count;
+		return ct;
+	}
 
 }

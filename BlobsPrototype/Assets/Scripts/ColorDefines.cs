@@ -21,7 +21,7 @@ public class ColorDefines {
 	public static Color inactiveCellColor { get{ return new Color(0.5f, 0.5f, 0.5f, 1f);} }
 	public static Color positiveTextColor { get{ return new Color(.33f, 1f, .33f, 1f);} }
 	public static Color negativeTextColor { get{ return new Color(1f, .33f, .33f, 1f);} }
-	public static Color inactiveTextColor { get{ return new Color(1f, 1f, 1f, 1f);} }
+	public static Color inactiveTextColor { get{ return new Color(.5f, .5f, .5f, 1f);} }
 	public static Color goldenTextColor { get{ return new Color(1f, 0.773f, 0.082f, 1f);} }
 	public static Color defaultBlobSocketColor { get{ return new Color(.82f, .784f, .71f, 1f);} }
 
@@ -68,28 +68,18 @@ public class ColorDefines {
 		blobColorSet01.Add("Dark Pastel Blue", "779ECB");
 
 		Dictionary<string,string> colorSet = new Dictionary<string,string>();
-		colorSet.Add("Pastel Violet", "CB99C9");
 		colorSet.Add("Pastel Purple", "B39EB5");
-		colorSet.Add("Light Pastel Purple", "B19CD9");
 		elementColorTables.Add (Element.Black, colorSet);
 		colorSet = new Dictionary<string,string>();
-		colorSet.Add("Pastel Blue", "AEC6CF");
 		colorSet.Add("Dark Pastel Blue", "779ECB");
 		elementColorTables.Add (Element.Blue, colorSet);
 		colorSet = new Dictionary<string,string>();
-		colorSet.Add("Pastel Yellow", "FDFD96");
-		colorSet.Add("Pastel Orange", "FFB347");
-		colorSet.Add("Pastel Gray", "CFCFC4");
+		colorSet.Add("Blanched Almond", "ffebcd");
 		elementColorTables.Add (Element.White, colorSet);
 		colorSet = new Dictionary<string,string>();
 		colorSet.Add("Pastel Red", "FF6961");
-		colorSet.Add("Pastel Pink 2", "FFD1DC");
-		colorSet.Add("Pastel Pink", "DEA5A4");
-		colorSet.Add("Dark Pastel Red", "C23B22");
-		colorSet.Add("Pastel Magenta", "F49AC2");
 		elementColorTables.Add (Element.Red, colorSet);
 		colorSet = new Dictionary<string,string>();
-		colorSet.Add("Pastel Green", "77DD77");
 		colorSet.Add("Dark Pastel Green", "03C03C");
 		elementColorTables.Add (Element.Green, colorSet);
 	}

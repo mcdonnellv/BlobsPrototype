@@ -12,28 +12,39 @@ public class BreedManager : MonoBehaviour {
 	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	GeneManager geneManager  { get { return GeneManager.geneManager; } }
-
+	ItemManager itemManager  { get { return ItemManager.itemManager; } }
 	Blob potentialPairBlob1;
 	Blob potentialPairBlob2;
-
-	public int GetBreedCost() { return 0; }
+	public int GetBreedCost() { return 5; }
 	public int GetMergeCost() { return 0; }
 
-	public void AskBlobsInteract(Blob blob1, Blob blob2, BlobInteractAction blobInteractAction) {
 
+	public void AttemptBreedNoParam() { AttemptBreed(potentialPairBlob1, potentialPairBlob2); }
+
+
+	public void AskBlobsInteract(Blob blob1, Blob blob2, BlobInteractAction blobInteractAction) {
 		if(!blob2.hasHatched || !blob1.hasHatched)
 			return;
-
 		if(blob1.actionDuration.TotalSeconds > 0 || blob2.actionDuration.TotalSeconds > 0)
 			return;
-
-		if(blobInteractAction == BlobInteractAction.Breed)
-			AttemptBreed(blob1, blob2);
-
+		if(blobInteractAction == BlobInteractAction.Breed) {
+			potentialPairBlob1 = blob1;
+			potentialPairBlob2 = blob2;
+			AskConfirmBreed();
+		}
 		if(blobInteractAction == BlobInteractAction.Merge)
 			AttemptMerge(blob1, blob2);
 	}
 
+
+	public void AskConfirmBreed() {
+		int cost = GetBreedCost();
+		int flowerItemId = 21;
+		if(itemManager.GetItemCountById(flowerItemId) >= cost)
+			hudManager.popup.Show("Breed", "Breed these blobs for " + cost.ToString() + " [flower]?", this, "AttemptBreedNoParam");
+		else
+			hudManager.ShowError("Not enough [flower]");
+	}
 
 
 	public void AttemptBreed(Blob blob1, Blob blob2) {
@@ -41,6 +52,9 @@ public class BreedManager : MonoBehaviour {
 
 		if(CheckBreedBlobErrors(blob1, blob2))
 			return;
+
+		int flowerItemId = 21;
+		itemManager.RemoveItemFromStorage(flowerItemId, cost);
 
 		Blob male = blob1.male ? blob1 : blob2;
 		Blob female = blob1.female ? blob1 : blob2;
@@ -67,6 +81,15 @@ public class BreedManager : MonoBehaviour {
 		blobGameObject.Setup();
 		Blob blob = blobGameObject.blob;
 
+		// Roll for combat stats
+		List<StatBias> statBias = dad.combatStats.statBias.Union(mom.combatStats.statBias).ToList();
+		switch(blob.quality) {
+		case Quality.Common: blob.combatStats.RandomizeBirthStats(1, 1, 5, statBias); break;
+		case Quality.Rare: blob.combatStats.RandomizeBirthStats(1, 0, 5, statBias); break;
+		case Quality.Epic: blob.combatStats.RandomizeBirthStats(2, 0, 5, statBias); break;
+		case Quality.Legendary: blob.combatStats.RandomizeBirthStats(3, 0, 10, statBias); break;
+		}
+
 		// passed on genes
 		List<BaseGene> dadBaseGenes = geneManager.GetBaseGeneListFromGeneList(dad.genes);
 		List<BaseGene> momBaseGenes = geneManager.GetBaseGeneListFromGeneList(mom.genes);
@@ -78,9 +101,12 @@ public class BreedManager : MonoBehaviour {
 		blob.genes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
 
 		// activate/deactivate genes
-		foreach(Gene g in blob.genes) 
-			g.state = GeneState.Passive;
-		blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
+		if(blob.genes.Count > 0) {
+			foreach(Gene g in blob.genes) 
+				g.state = GeneState.Passive;
+			blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
+		}
+
 
 		// give random element and sigil
 		switch(blobInteractAction) {
@@ -157,10 +183,10 @@ public class BreedManager : MonoBehaviour {
 			return true;
 		}
 
-		if(gameManager.gameVars.gold < cost) {
-			hudManager.popup.Show("Cannot Breed", "You do not have enough gold.");
-			return true;
-		}
+		//if(gameManager.gameVars.gold < cost) {
+		//	hudManager.popup.Show("Cannot Breed", "You do not have enough gold.");
+		//	return true;
+		//}
 		
 		return false;
 	}

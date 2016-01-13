@@ -76,7 +76,7 @@ public class Room : MonoBehaviour {
 	public void DeleteBlob(Blob blob) {
 		blob.CleanUp();
 		blobs.Remove(blob);
-		DestroyImmediate(blob.gameObject);
+		DestroyImmediate(blob.gameObject.gameObject);
 	}
 
 

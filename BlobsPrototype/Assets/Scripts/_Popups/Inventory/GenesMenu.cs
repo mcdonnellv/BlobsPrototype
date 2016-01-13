@@ -32,7 +32,7 @@ public class GenesMenu : BaseThingMenu {
 
 
 	public Gene GetGeneFromIndex(int index) {
-		if(index < 0 && index >= grid.transform.childCount)
+		if(index < 0 || index >= grid.transform.childCount)
 			return null;
 		Transform socket = grid.transform.GetChild(index);
 		GenePointer gp = socket.GetComponentInChildren<GenePointer>();

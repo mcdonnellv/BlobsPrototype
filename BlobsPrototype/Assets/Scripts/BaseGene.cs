@@ -5,7 +5,9 @@ using System.Collections.Generic;
 [Serializable]
 public class BaseGene : BaseThing {
 	public TraitType traitType = TraitType.None;
+	public TraitCondition traitCondition = TraitCondition.None;
 	public int value = 0;
 	public AbilityModifier modifier = AbilityModifier.NA;
 	public List<GeneActivationRequirement> activationRequirements = new List<GeneActivationRequirement>();
+	public bool showInStore = false;
 }

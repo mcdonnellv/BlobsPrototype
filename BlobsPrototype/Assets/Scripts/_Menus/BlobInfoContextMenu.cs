@@ -75,11 +75,11 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	void UpdateStats() {
-		blob.CalculateStats();
-		statLabels[0].text = blob.combatStats.health.ToString();
-		statLabels[1].text = blob.combatStats.stamina.ToString();
-		statLabels[2].text = blob.combatStats.attack.ToString();
-		statLabels[3].text = blob.combatStats.armor.ToString();
+		blob.CalculateStatsFromGenes();
+		for(int i=0; i < statLabels.Count; i++) {
+			Stat stat = blob.combatStats.StatFromType((CombatStatType)i);
+			statLabels[i].text = stat.geneModdedValue.ToString();
+		}
 		elementLabel.text = blob.element.ToString();
 		sigilLabel.text = GlobalDefines.StringForSigil(blob.sigil);
 		UpdateStatColors();
@@ -87,10 +87,10 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	void UpdateStatColors() {
-		UpdateColorForStatLabel(statLabels[0], blob.combatStats.health, CombatStats.defaultHealth);
-		UpdateColorForStatLabel(statLabels[1], blob.combatStats.stamina, CombatStats.defaultStamina);
-		UpdateColorForStatLabel(statLabels[2], blob.combatStats.attack, CombatStats.defaultAttack);
-		UpdateColorForStatLabel(statLabels[3], blob.combatStats.armor, CombatStats.defaultArmor);
+		for(int i=0; i < statLabels.Count; i++) {
+			Stat stat = blob.combatStats.StatFromType((CombatStatType)i);
+			UpdateColorForStatLabel(statLabels[i], stat.geneModdedValue, stat.birthValue);
+		}
 		elementLabel.color = ColorDefines.ColorForElement(blob.combatStats.element);
 	}
 
@@ -107,7 +107,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	
 
 	void BuildEmptyGeneCells() {
-		for(int i = 0; i < blob.allowedGeneCount; i++) {
+		for(int i = 0; i < blob.geneSlots; i++) {
 			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("Gene Cell"));
 			GeneCell geneCell = go.GetComponent<GeneCell>();
 			geneCell.nameLabel.text = "Empty";
@@ -196,12 +196,20 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	public void AddGeneToBlob(Gene gene) {
 		blob.genes.Add(gene);
-		//if(gene.quality == Quality.Bad)
-			gene.state = GeneState.Available;
+		gene.state = GeneState.Available;
 		gene.CheckActivationStatus();
 		geneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
+	}
+
+	public void RemoveGeneFromBlob() {
+		Gene gene = hudManager.itemInfoPopup.gene;
+		blob.genes.Remove(gene);
+		geneGrid.transform.DestroyChildren();
+		BuildEmptyGeneCells();
+		FillGeneCells();
+		hudManager.itemInfoPopup.Hide();
 	}
 
 
@@ -211,6 +219,14 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			return;
 		itemInfoPopup.defaultStartPosition = PopupPosition.Left1;
 		itemInfoPopup.Show(this, genePointer.gene);
+		itemInfoPopup.ShowDeleteButton(true);
+		itemInfoPopup.deleteButtonLabel.text = "REMOVE";
+	}
+
+
+	void DeleteButtonPressed() {
+		Gene gene = hudManager.itemInfoPopup.gene;
+		gameManager.hudMan.popup.Show("Remove", "Are you sure you want to remove the [EEBE63]" + gene.itemName + "[-] gene?", this, "RemoveGeneFromBlob");
 	}
 
 

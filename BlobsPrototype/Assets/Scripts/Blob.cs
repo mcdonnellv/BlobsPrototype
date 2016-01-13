@@ -18,7 +18,9 @@ public class Blob : BaseThing {
 	public Gender gender;
 	public DateTime birthday;
 	public List<Gene> genes;
+	public int geneSlots;
 	public CombatStats combatStats;
+	public CombatStats curCombatStats;
 	public Element nativeElement;
 	public Sigil sigil;
 	public Element element { get { return combatStats.element; } }
@@ -38,7 +40,6 @@ public class Blob : BaseThing {
 	public bool canBreed { get {return isAdult && state == BlobState.Idle;} }
 	public bool canMerge { get {return hasHatched && state == BlobState.Idle;} }
 	public TimeSpan age {get {return DateTime.Now - birthday;} }
-	public int allowedGeneCount { get {return GetGeneCountFromQuality(quality);} }
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
@@ -70,6 +71,7 @@ public class Blob : BaseThing {
 		tilePosX = 0;
 		tilePosY = 0;
 		missionCount = 0;
+		geneSlots = 1;
 	}
 
 
@@ -100,12 +102,14 @@ public class Blob : BaseThing {
 
 	static public int GetGeneCountFromQuality(Quality q) {
 		switch (q) {
-		case Quality.Common: return 2;
+		case Quality.Common: 
+			float roll = UnityEngine.Random.Range(0f, 1f);
+			return (roll < .7f) ? 1 : 2;
 		case Quality.Rare: return 3;
 		case Quality.Epic: return 4;
 		case Quality.Legendary: return 5;
 		}
-		return 2;
+		return 1;
 	}
 	
 	
@@ -168,24 +172,29 @@ public class Blob : BaseThing {
 	}
 
 
-	public void CalculateStats() {
-		Element preCalcElement = (element == Element.None) ? nativeElement : element;
-		combatStats.SetDefaultValues();
+	public void CalculateStatsFromGenes() {
+		combatStats.attack.ResetGeneModdedValue();
+		combatStats.armor.ResetGeneModdedValue();
+		combatStats.health.ResetGeneModdedValue();
+		combatStats.stamina.ResetGeneModdedValue();
+		combatStats.speed.ResetGeneModdedValue();
 
-		foreach(Gene g in genes)
-			if(g.active && g.modifier == AbilityModifier.NA)
+		if(genes.Count == 0)
+			return;
+
+		Element preCalcElement = (element == Element.None) ? nativeElement : element;
+		combatStats.element = preCalcElement;
+
+		foreach(Gene g in genes) {
+			if(!g.active || !Trait.IsPersistentTrait(g.traitCondition))
+				continue;
+
+			if(g.modifier == AbilityModifier.NA)
 				combatStats.CalculateOtherStats(g.traitType, g.value);
 
-		foreach(Gene g in genes)
-			if(g.active && g.modifier == AbilityModifier.Added)
-				combatStats.CalculateAddedStats(g.traitType, g.value);
-
-		foreach(Gene g in genes) 
-			if(g.active && g.modifier == AbilityModifier.Percent)
-				combatStats.CalculatePercentStats(g.traitType, g.value);
-	
-		if(combatStats.element == Element.None)
-			combatStats.element = nativeElement;
+			else if(Trait.IsPersistentTraitConditionMet(g.traitCondition, this))
+				Trait.ProcessPeristentTrait(g.traitType, g.value, g.modifier, combatStats);
+		}
 
 		if(preCalcElement != element)
 			gameObject.SetColorFromElement(combatStats.element);
