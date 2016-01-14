@@ -39,7 +39,7 @@ public class CombatManager : MonoBehaviour {
 		Combatant combatant = new Combatant();
 		combatant.monster = monster;
 		combatant.id = curId++;
-		combatant.combatStats = monster.curCombatStats;
+		combatant.combatStats = monster.combatStats;
 		combatant.name = combatant.monster.itemName + (++monsterCt).ToString();
 		combatant.SetInitialRandomCombatSpeed();
 		combatants.Add(combatant);
@@ -47,11 +47,11 @@ public class CombatManager : MonoBehaviour {
 
 
 	public void AddCombatant(Blob blob) {
-		blob.curCombatStats = new CombatStats(blob.combatStats);
 		Combatant combatant = new Combatant();
 		combatant.blob = blob;
 		combatant.id = curId++;
-		combatant.combatStats = blob.curCombatStats;
+		combatant.combatStats = blob.combatStats;
+		combatant.combatStats.ResetForCombat();
 		combatant.name = "Blob" + (++blobCt).ToString();
 		combatant.SetInitialRandomCombatSpeed();
 		combatants.Add(combatant);
@@ -62,7 +62,7 @@ public class CombatManager : MonoBehaviour {
 	List<Combatant> GetAliveMonsters() {
 		List<Combatant> ret = new List<Combatant>();
 		foreach(Combatant combatant in combatants) 
-			if(combatant.monster != null && combatant.combatStats.health.combatValue > 0) 
+			if(combatant.monster != null && !combatant.IsZeroHalth()) 
 				ret.Add(combatant);
 		return ret;
 	}
@@ -71,7 +71,7 @@ public class CombatManager : MonoBehaviour {
 	List<Combatant> GetAliveBlobs() {
 		List<Combatant> ret = new List<Combatant>();
 		foreach(Combatant combatant in combatants) 
-			if(combatant.isBlob && combatant.combatStats.health.combatValue > 0) 
+			if(combatant.isBlob && !combatant.IsZeroHalth()) 
 				ret.Add(combatant);
 		return ret;
 	}
@@ -144,14 +144,14 @@ public class CombatManager : MonoBehaviour {
 
 	void PerformTurn(Combatant combatant) {
 		combatant.turnTime = DateTime.MaxValue;
-		if(combatant.target == null || combatant.target.combatStats.health.combatValue <= 0) {
+		if(combatant.target == null || combatant.target.IsZeroHalth()) {
 			AcquireTarget(combatant);
 			SetTurnDelayQuick(combatant);
 			return;
 		}
 
 		int baseAtk = Mathf.FloorToInt(combatant.combatStats.attack.combatValue / 10f);
-		float variance = UnityEngine.Random.Range(-0.2f ,0.2f);
+		float variance = 0;//UnityEngine.Random.Range(-0.2f ,0.2f);
 		int damage = baseAtk + Mathf.FloorToInt(baseAtk * variance);
 		damage = Mathf.Max(damage, 1);
 		AttackCombatant(combatant, combatant.target, damage);
@@ -192,11 +192,11 @@ public class CombatManager : MonoBehaviour {
 		receiver.combatStats.health.ModCombatValue(AbilityModifier.Added, -damage);
 		combatMenu.PushMessage(colorstr + attacker.name + " attacks " + receiver.name + " for " + damage.ToString() + " damage[-]");
 
-		if(receiver.combatStats.health.combatValue <= 0) 
+		if(receiver.IsZeroHalth()) 
 			combatMenu.PushMessage( receiver.name + (blobTakingDamage ? " has fainted" : " has died"));
 
 
-		float healthTotal = (blobTakingDamage ? receiver.blob.combatStats.health.combatValue : receiver.monster.combatStats.health.combatValue);
+		float healthTotal = (blobTakingDamage ? receiver.blob.combatStats.health.geneModdedValue : receiver.monster.combatStats.health.geneModdedValue);
 		float healthPercentF = receiver.combatStats.health.combatValue / healthTotal;
 		int healthPercent = Mathf.FloorToInt(healthPercentF * 100);
 		combatMenu.UpdateCombatantHealth(receiver.name, healthPercent);
@@ -221,6 +221,7 @@ public class CombatManager : MonoBehaviour {
 		Cleanup();
 	}
 
+
 	void Cleanup() {
 		combatants.Clear();
 		curId = 0;
@@ -241,7 +242,7 @@ public class CombatManager : MonoBehaviour {
 		}
 
 		foreach(Combatant combatant in combatants) {
-			if(combatant.combatStats.health.combatValue <= 0)
+			if(combatant.IsZeroHalth())
 				continue;
 
 			if(combatant.turnTime == DateTime.MaxValue)

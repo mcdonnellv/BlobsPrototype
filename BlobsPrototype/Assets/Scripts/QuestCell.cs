@@ -35,10 +35,12 @@ public class QuestCell : MonoBehaviour {
 
 	public void Dim() {
 		foreGround.alpha = .25f;
+		transform.localPosition = new Vector3(0, transform.localPosition.y, transform.localPosition.z);
 	}
 
 	public void Undim() {
 		foreGround.alpha = 0f;
+		transform.localPosition = new Vector3(-30, transform.localPosition.y, transform.localPosition.z);
 	}
 		                               
 

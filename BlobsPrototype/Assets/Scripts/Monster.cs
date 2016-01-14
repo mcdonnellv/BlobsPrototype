@@ -9,7 +9,6 @@ public class BaseMonster : BaseThing {
 
 [Serializable]
 public class Monster : BaseMonster {
-	public CombatStats curCombatStats = new CombatStats(); 
 
 	public Monster(BaseMonster b) {
 		id = b.id;
@@ -19,7 +18,6 @@ public class Monster : BaseMonster {
 		iconAtlas = b.iconAtlas;
 		iconTintIndex = b.iconTintIndex;
 		quality = b.quality;
-		curCombatStats = new CombatStats(b.combatStats);
 	}
 
 }

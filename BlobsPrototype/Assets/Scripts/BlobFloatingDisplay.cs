@@ -106,6 +106,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		case BlobState.Working: 	
 		case BlobState.Questing:
 		case BlobState.QuestComplete:
+		case BlobState.Recovering:
 			return true;
 		}
 		return false;

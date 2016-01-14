@@ -28,6 +28,7 @@ public enum BlobState {
 	WorkingReady,
 	Questing,
 	QuestComplete,
+	Recovering,
 };
 
 
@@ -37,6 +38,7 @@ public enum CombatStatType {
 	Health,
 	Stamina,
 	Speed,
+	CombatStatTypeCt,
 	Element,
 };
 

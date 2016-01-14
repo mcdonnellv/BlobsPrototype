@@ -56,11 +56,17 @@ public class MapMenu : GenericGameMenu {
 		}
 
 		hudManager.ShowNotice("Scouting Quest Added");
-		if(hudManager.questListMenu.IsDisplayed())
+		if(hudManager.questListMenu.IsDisplayed()){
 			hudManager.Broadcast("QuestsAdded", new List<Quest>{q});
-		else
-			hudManager.questListMenu.Show();
+		}
+		else {
+			hudManager.questListMenu.questDetailsMenu.Show(null, q, true);
+			hudManager.questListMenu.questDetailsMenu.SelectQuest();
+		}
 		Hide();
+
+		//TODO: automatically select quest
+
 	}
 
 

@@ -14,7 +14,7 @@ public class BlobGameObject : MonoBehaviour {
 	public BlobFloatingDisplay floatingDisplay;
 	public Color color;
 
-	Animator animator { get { return GetComponentInChildren<Animator>(); } }
+	public Animator animator { get { return GetComponentInChildren<Animator>(); } }
 	BlobDragDropItem blobDragDropItem { get { return GetComponent<BlobDragDropItem>(); } }
 
 	// managers
@@ -120,6 +120,14 @@ public class BlobGameObject : MonoBehaviour {
 		animator.SetBool("away", false);
 		blobDragDropItem.interactable = true;
 		UpdateGrowth();
+
+		// add debuff those those that fainted
+		if(blob.combatStats.health.combatValue <= 0) {
+			animator.SetBool("recovering", true);
+			floatingDisplay.stateLabel.gameObject.SetActive(true);
+			//blobDragDropItem.interactable = false;
+			blob.gameObject.StartActionWithDuration(BlobState.Recovering, blob.recoveryDelay);
+		}
 	}
 
 

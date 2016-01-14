@@ -35,4 +35,7 @@ public class Combatant {
 			}
 		}
 	}
+
+
+	public bool IsZeroHalth() { return (combatStats.health.combatValue <= 0); }
 }

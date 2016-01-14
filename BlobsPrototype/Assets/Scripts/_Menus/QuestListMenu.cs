@@ -10,6 +10,7 @@ public class QuestListMenu : GenericGameMenu {
 	public UIButton abandonButton;
 	public UIButton selectButton;
 	public UILabel inProgressLabel;
+	public UIWidget detailsReferencePoint;
 	QuestManager questManager { get { return QuestManager.questManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	Quest selectedQuest;
@@ -80,6 +81,9 @@ public class QuestListMenu : GenericGameMenu {
 
 		if(reposition)
 			grid.Reposition();
+
+		if(base.IsDisplayed())
+			SelectSelectedQuest();
 	}
 
 
@@ -110,12 +114,27 @@ public class QuestListMenu : GenericGameMenu {
 		}
 	}
 
+	void SelectSelectedQuest() {
+		if(selectedQuest == null)
+			return;
+		if(grid.transform.childCount > 0){
+			QuestCell questCell = this.GetQuestCellFromQuest(selectedQuest);
+			questCell.Pressed();
+		}
+	}
 
-	public void QuestCellPressed(QuestCell questCell) {
-		selectedQuest = questManager.availableQuests[questCell.transform.GetSiblingIndex()];
-		selectedQuest.alreadySeen = true;
+
+	public void QuestCellPressed(QuestCell questCell) { 
+		SelectQuestByIndex(questCell.transform.GetSiblingIndex());
 		questCell.newLabel.gameObject.SetActive(false);
+	}
+
+
+	public void SelectQuestByIndex(int index) {
+		selectedQuest = questManager.availableQuests[index];
+		selectedQuest.alreadySeen = true;
 		questDetailsMenu.Show(this, selectedQuest, false);
+		questDetailsMenu.transform.localPosition = detailsReferencePoint.transform.localPosition;
 		questDetailsMenu.PopulateWithBlobs();
 		UpdateObjectStates(selectedQuest);
 	}
@@ -198,14 +217,18 @@ public class QuestListMenu : GenericGameMenu {
 			UpdateObjectStates(quest);
 	}
 
+
 	public void QuestsAdded(List<Quest> quests) {
 		questDetailsMenu.Hide();
 		questDetailsMenu.ClearBlobs(); 
 		Invoke("SetupQuestCells", .5f);
+		selectedQuest = quests[0];
+		if(selectedQuest.type == QuestType.Scouting)
+			Invoke("SelectQuestPressed", .6f);
 	}
 
 
-	QuestCell GetQuestCellFromQuest(Quest quest) {
+	public QuestCell GetQuestCellFromQuest(Quest quest) {
 		int index = questManager.availableQuests.IndexOf(quest);
 		return GetQuestCellFromIndex(index);
 	}

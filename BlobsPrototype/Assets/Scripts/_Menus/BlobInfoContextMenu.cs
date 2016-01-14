@@ -77,7 +77,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	void UpdateStats() {
 		blob.CalculateStatsFromGenes();
 		for(int i=0; i < statLabels.Count; i++) {
-			Stat stat = blob.combatStats.StatFromType((CombatStatType)i);
+			Stat stat = blob.combatStats.allStats[i];
 			statLabels[i].text = stat.geneModdedValue.ToString();
 		}
 		elementLabel.text = blob.element.ToString();
@@ -88,7 +88,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	void UpdateStatColors() {
 		for(int i=0; i < statLabels.Count; i++) {
-			Stat stat = blob.combatStats.StatFromType((CombatStatType)i);
+			Stat stat = blob.combatStats.allStats[i];
 			UpdateColorForStatLabel(statLabels[i], stat.geneModdedValue, stat.birthValue);
 		}
 		elementLabel.color = ColorDefines.ColorForElement(blob.combatStats.element);

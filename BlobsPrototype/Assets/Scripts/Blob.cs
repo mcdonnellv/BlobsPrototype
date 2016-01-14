@@ -20,7 +20,6 @@ public class Blob : BaseThing {
 	public List<Gene> genes;
 	public int geneSlots;
 	public CombatStats combatStats;
-	public CombatStats curCombatStats;
 	public Element nativeElement;
 	public Sigil sigil;
 	public Element element { get { return combatStats.element; } }
@@ -43,6 +42,7 @@ public class Blob : BaseThing {
 	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
+	public TimeSpan recoveryDelay {get {return TimeSpan.FromTicks(recoveryDelayStandard.Ticks);} }
 	public BlobFloatingDisplay floatingDisplay;
 
 	// managers
@@ -56,6 +56,7 @@ public class Blob : BaseThing {
 	TimeSpan blobHatchDelayStandard = new TimeSpan(0,0,1);
 	TimeSpan workingDelayStandard = new TimeSpan(0,0,10);
 	TimeSpan breedReadyStandard = new TimeSpan(0,0,3);
+	TimeSpan recoveryDelayStandard = new TimeSpan(0,1,0);
 
 	public void OrderGenes() {	genes = genes.OrderByDescending( x => x.quality).ThenBy(x => x.itemName).ToList();	}
 
@@ -134,6 +135,7 @@ public class Blob : BaseThing {
 		case BlobState.Hatching: retString = "Hatching"; break;
 		case BlobState.HatchReady: retString = "Hatch"; break;
 		case BlobState.Working: retString = "Working"; break;
+		case BlobState.Recovering: retString = "Recovering"; break;
 		case BlobState.Questing: 
 			if(QuestManager.questManager.GetBaseQuestByID(missionId).type == QuestType.Scouting)
 				retString = "Scouting";
@@ -159,6 +161,10 @@ public class Blob : BaseThing {
 			break;
 		case BlobState.Questing: 
 			state = BlobState.QuestComplete;
+			break;
+		case BlobState.Recovering:
+			gameObject.animator.SetBool("recovering", false);
+			state = BlobState.Idle;
 			break;
 		}
 		gameObject.UpdateBlobInfoIfDisplayed();

@@ -51,7 +51,7 @@ public class Trait {
 		case TraitType.SpeedMod: statType = CombatStatType.Speed; break;
 		}
 		
-		Stat stat = c.StatFromType(statType);
+		Stat stat = c.allStats[(int)statType];
 		stat.ModGeneModdedValue(m, val);
 	}
 
@@ -65,7 +65,7 @@ public class Trait {
 		case TraitType.SpeedMod: statType = CombatStatType.Speed; break;
 		}
 
-		Stat stat = c.StatFromType(statType);
+		Stat stat = c.allStats[(int)statType];
 		stat.ModCombatValue(m, val);
 	}
 }

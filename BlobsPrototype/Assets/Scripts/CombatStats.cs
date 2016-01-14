@@ -14,6 +14,7 @@ public class Stat {
 	public int birthValue { get { return _birthValue; } }
 	public int geneModdedValue { get { return _geneModdedValue; } }
 	public int combatValue { get { return _combatValue; } }
+	public static int defaultStartingValue = 100;
 
 	public Stat(CombatStatType t, Stat s) {
 		type = t;
@@ -22,7 +23,7 @@ public class Stat {
 		_geneModdedValue = s.geneModdedValue;
 		_combatValue = s.combatValue;
 	}
-
+	
 	public Stat(CombatStatType t, int v) {
 		type = t;
 		_defaultValue = v;
@@ -50,42 +51,35 @@ public class StatBias {
 
 [System.Serializable]
 public class CombatStats {
-	public Stat attack;
-	public Stat armor;
-	public Stat health;
-	public Stat stamina;
-	public Stat speed;
+	public List<Stat> allStats;
+	public Stat attack { get { return allStats[(int)CombatStatType.Attack]; } set { allStats[(int)CombatStatType.Attack] = value; } } 
+	public Stat armor { get { return allStats[(int)CombatStatType.Armor]; } set { allStats[(int)CombatStatType.Armor] = value; } } 
+	public Stat health { get { return allStats[(int)CombatStatType.Health]; } set { allStats[(int)CombatStatType.Health] = value; } } 
+	public Stat stamina { get { return allStats[(int)CombatStatType.Stamina]; } set { allStats[(int)CombatStatType.Stamina] = value; } } 
+	public Stat speed { get { return allStats[(int)CombatStatType.Speed]; } set { allStats[(int)CombatStatType.Speed] = value; } } 
 	public Element element;
 	public List<StatBias> statBias = new List<StatBias>();
-
-
-	public static int defaultAttack = 100;
-	public static int defaultArmor = 100;
-	public static int defaultHealth = 100;
-	public static int defaultStamina = 100;
-	public static int defaultSpeed = 100;
 	public static Element defaultElement = Element.None;
 
-	public CombatStats() { SetDefaultValues(); }
+
+	public CombatStats() {
+		allStats = new List<Stat>();
+		for(int i=0; i < (int)CombatStatType.CombatStatTypeCt; i++)
+			allStats.Add(new Stat((CombatStatType)i, Stat.defaultStartingValue));
+	}
+
 	public CombatStats(CombatStats c) { 
-		attack = new Stat(CombatStatType.Attack, c.attack);
-		armor = new Stat(CombatStatType.Armor, c.armor);
-		health = new Stat(CombatStatType.Health, c.health);
-		stamina = new Stat(CombatStatType.Stamina, c.stamina);
-		speed = new Stat(CombatStatType.Speed, c.speed);
+		allStats = new List<Stat>();
+		for(int i=0; i < (int)CombatStatType.CombatStatTypeCt; i++)
+			allStats.Add(new Stat((CombatStatType)i, c.allStats[i]));
 		element = c.element;
 	}
+	
 
-
-	public void SetDefaultValues() {
-		attack = new Stat(CombatStatType.Attack, defaultAttack);
-		armor = new Stat(CombatStatType.Armor, defaultArmor);
-		health = new Stat(CombatStatType.Health, defaultHealth);
-		stamina = new Stat(CombatStatType.Stamina, defaultStamina);
-		speed = new Stat(CombatStatType.Speed, defaultSpeed);
-		element = defaultElement;
+	public void ResetForCombat() {
+		for(int i=0; i < (int)CombatStatType.CombatStatTypeCt; i++)
+			allStats[i].ResetCombatValue();
 	}
-
 
 	public void CalculateOtherStats(TraitType t, float v) {
 		switch (t) {
@@ -136,19 +130,7 @@ public class CombatStats {
 
 		int statTypeRoll = UnityEngine.Random.Range(0, possibleStats.Length);
 		CombatStatType resultStatType = possibleStats[statTypeRoll];
-		return StatFromType(resultStatType);
-	}
-
-
-	public Stat StatFromType(CombatStatType t) {
-		switch(t) {
-		case CombatStatType.Attack: return attack;
-		case CombatStatType.Armor: return armor;
-		case CombatStatType.Health: return health;
-		case CombatStatType.Stamina: return stamina;
-		case CombatStatType.Speed: return speed;
-		}
-		return attack;
+		return allStats[(int)resultStatType];
 	}
 
 }
