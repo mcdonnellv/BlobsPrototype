@@ -39,11 +39,10 @@ public class BreedManager : MonoBehaviour {
 
 	public void AskConfirmBreed() {
 		int cost = GetBreedCost();
-		int flowerItemId = 21;
-		if(itemManager.GetItemCountById(flowerItemId) >= cost)
-			hudManager.popup.Show("Breed", "Breed these blobs for " + cost.ToString() + " [flower]?", this, "AttemptBreedNoParam");
+		if(gameManager.gameVars.chocolate  >= cost)
+			hudManager.popup.Show("Breed", "Breed these blobs for " + cost.ToString() + " [token]?", this, "AttemptBreedNoParam");
 		else
-			hudManager.ShowError("Not enough [flower]");
+			hudManager.ShowError("Not enough [token]");
 	}
 
 
@@ -53,14 +52,12 @@ public class BreedManager : MonoBehaviour {
 		if(CheckBreedBlobErrors(blob1, blob2))
 			return;
 
-		int flowerItemId = 21;
-		itemManager.RemoveItemFromStorage(flowerItemId, cost);
+		gameManager.AddChocolate(-cost);
 
 		Blob male = blob1.male ? blob1 : blob2;
 		Blob female = blob1.female ? blob1 : blob2;
 		male.spouseId = female.id;
 		female.spouseId = male.id;
-		gameManager.AddGold(-cost);
 		male.gameObject.StartActionWithDuration(BlobState.Breeding, male.breedReadyDelay);
 		female.gameObject.StartActionWithDuration(BlobState.Breeding, female.breedReadyDelay);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())

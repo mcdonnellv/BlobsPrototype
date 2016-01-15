@@ -9,6 +9,7 @@ public class QuestCell : MonoBehaviour {
 	public UIGrid blobSlotGrid;
 	public UISprite foreGround;
 	public UILabel newLabel;
+	public GameObject handle;
 	public int questId = -1;
 
 	public void SetupBlobCells(int count) {
@@ -35,12 +36,12 @@ public class QuestCell : MonoBehaviour {
 
 	public void Dim() {
 		foreGround.alpha = .25f;
-		transform.localPosition = new Vector3(0, transform.localPosition.y, transform.localPosition.z);
+		handle.transform.localPosition = new Vector3(0, handle.transform.localPosition.y, handle.transform.localPosition.z);
 	}
 
 	public void Undim() {
 		foreGround.alpha = 0f;
-		transform.localPosition = new Vector3(-30, transform.localPosition.y, transform.localPosition.z);
+		handle.transform.localPosition = new Vector3(-30, handle.transform.localPosition.y, handle.transform.localPosition.z);
 	}
 		                               
 

@@ -65,7 +65,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		genderSprite.color = (blob.male) ? ColorDefines.maleColor : ColorDefines.femaleColor;
 		actionButton1.isEnabled = (blob.state != BlobState.Idle) ? false : true;
 		actionButton2.isEnabled = (blob.state != BlobState.Idle) ? false : true;
-		actionButton2Label.text = "Sell +1[gold]";
+		actionButton2Label.text = "SCRAP   +" + BreedManager.breedManager.GetBreedCost().ToString() + "[token]";
 		progressBar.value = 0f;
 		UpdateStats();
 		geneGrid.transform.DestroyChildren();
@@ -166,14 +166,14 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	public void ActionButton2Pressed() {
-		hudManager.popup.Show("Sell Blob", 
-		                      "Are you sure you want to sell this blob for 1[gold]?", 
+		hudManager.popup.Show("Scrap Blob", 
+		                      "Scrap this blob to redeem " + BreedManager.breedManager.GetBreedCost().ToString() + "[token]?", 
 		                      this, "SellBlobConfirmed");
 	}
 
 
 	void SellBlobConfirmed() {
-		gameManager.AddGold(1);
+		gameManager.AddChocolate(BreedManager.breedManager.GetBreedCost());
 		blob.room.DeleteBlob(blob);
 		UIButton.current = null;
 		dismissButton.SendMessage("OnClick");

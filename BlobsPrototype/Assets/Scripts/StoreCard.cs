@@ -25,7 +25,6 @@ public class StoreCard : MonoBehaviour {
 		costLabel.text = (g.sellValue * 10f).ToString() + "[gold]";
 		lowerPanelGrid.transform.DestroyChildren();
 		foreach(GeneActivationRequirement req in gene.activationRequirements) {
-			int index = gene.activationRequirements.IndexOf(req);
 			GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Requirement Container Store"));
 			statGameObject.transform.SetParent(lowerPanelGrid.transform);
 			statGameObject.transform.localScale = Vector3.one;

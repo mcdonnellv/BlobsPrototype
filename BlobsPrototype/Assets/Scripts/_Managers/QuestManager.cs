@@ -76,10 +76,8 @@ public class QuestManager : MonoBehaviour {
 
 
 	public void FirstTimeSetup() {
-		this.AddQuestToList(this.GetBaseQuestByID(100));
-		this.AddQuestToList(this.GetBaseQuestByID(101));
-		this.AddQuestToList(this.GetBaseQuestByID(102));
-		this.AddQuestToList(this.GetBaseQuestByID(103));
+		AddQuestToList(this.GetBaseQuestByID(0));
+		AddQuestToList(this.GetBaseQuestByID(50));
 	}
 
 

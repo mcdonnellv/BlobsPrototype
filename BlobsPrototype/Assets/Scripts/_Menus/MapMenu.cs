@@ -60,8 +60,7 @@ public class MapMenu : GenericGameMenu {
 			hudManager.Broadcast("QuestsAdded", new List<Quest>{q});
 		}
 		else {
-			hudManager.questListMenu.questDetailsMenu.Show(null, q, true);
-			hudManager.questListMenu.questDetailsMenu.SelectQuest();
+			hudManager.questDetailsMenu.Show(q);
 		}
 		Hide();
 

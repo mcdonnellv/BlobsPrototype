@@ -52,8 +52,7 @@ public class PotentialLootMenu : UIGrid {
 		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
 		if(itemPointer == null) 
 			return;
-		QuestDetailsMenu questMenu = gameObject.GetComponentInParent<QuestDetailsMenu>();
-		itemInfoPopup.defaultStartPosition = questMenu.IsSelected() ? PopupPosition.Popup2 : PopupPosition.Popup1;
-		itemInfoPopup.Show(questMenu, itemPointer.item);
+		itemInfoPopup.defaultStartPosition = PopupPosition.Popup1;
+		itemInfoPopup.Show(hudManager.questListMenu, itemPointer.item);
 	}
 }

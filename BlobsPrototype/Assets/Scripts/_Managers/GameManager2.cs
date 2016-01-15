@@ -30,7 +30,7 @@ public class GameManager2 : MonoBehaviour {
 			gameVars.castleBlobs = new List<Blob>();
 			gameVars.year = 0;
 			gameVars.gold = 80;
-			gameVars.chocolate = 5;
+			gameVars.chocolate = 20;
 			gameVars.inventoryItemSlots = 20;
 			gameVars.inventoryGeneSlots = 20;
 			geneManager.FirstTimeSetup();
