@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class RewardRange { public int max, min; }
+public class GenericRange { 
+	public int max, min; 
+	public int GetRandom() { return UnityEngine.Random.Range(min, max); }
+}
 
 public class QuestManager : MonoBehaviour {
 	private static QuestManager _questManager;
@@ -16,6 +19,9 @@ public class QuestManager : MonoBehaviour {
 	MonsterManager monsterManager { get { return MonsterManager.monsterManager; } }
 	public List<BaseQuest> quests = new List<BaseQuest>(); // All quests
 	public List<Quest> availableQuests = new List<Quest>(); //current quests
+	public List<QuestBonus> combatBonuses = new List<QuestBonus>();
+	public List<QuestBonus> gatheringBonuses = new List<QuestBonus>();
+	public List<QuestBonus> scoutingBonuses = new List<QuestBonus>();
 	public Dictionary<int, int> completedQuestIds = new Dictionary<int, int>();
 	public Dictionary<int, int> completedQuestInZone = new Dictionary<int, int>();
 	public UIAtlas iconAtlas;
@@ -76,6 +82,7 @@ public class QuestManager : MonoBehaviour {
 
 
 	public void FirstTimeSetup() {
+		BuildQuestBonuses();
 		AddQuestToList(this.GetBaseQuestByID(0));
 		AddQuestToList(this.GetBaseQuestByID(50));
 	}
@@ -122,7 +129,7 @@ public class QuestManager : MonoBehaviour {
 	void CollectRewardsForScout(Quest quest) {
 		Zone zone = ZoneManager.zoneManager.GetZoneByID(quest.zoneId);
 		List<Quest> questsToAdd = new List<Quest>();
-		RewardRange range = GetRewardRange(quest);
+		GenericRange range = GetRewardRange(quest);
 		int questSlotsLeft = maxAvailableQuests - availableQuests.Count;
 		range.min = Mathf.Min(range.min, questSlotsLeft);
 		range.max = Mathf.Min(range.max, questSlotsLeft);
@@ -149,32 +156,24 @@ public class QuestManager : MonoBehaviour {
 	}
 
 
-	public RewardRange GetRewardRange(Quest quest) {
-		if(IsPartyFull(quest) == false)
-			return null;
-		
-		int matchCt = 0;
-		for(int i=0; i<quest.blobsRequired; i++) {
-			Blob blob = roomManager.GetBlobByID(quest.blobIds[i]);
-			if(DoesBlobMatchSlot(quest, blob, i))
-				matchCt++;
-		}
+	public GenericRange GetRewardRange(Quest quest) {
+		GenericRange rewardRange = new GenericRange();
 
-		RewardRange rewardRange = new RewardRange();
 		if(quest.type == QuestType.Scouting) {
-			rewardRange.min = 1;
-			rewardRange.max = rewardRange.min + matchCt;
+			rewardRange.min = 1 + quest.GetIncreasedRewardsBonusLevel();
+			rewardRange.max = rewardRange.min;
 		}
 		else {
-			float ct = 2f + (1f * matchCt / quest.blobsRequired) * 3f;
-			rewardRange.max = Mathf.FloorToInt(ct);
-			rewardRange.min = Mathf.Min(quest.blobsRequired, rewardRange.max);
+			rewardRange.min = 2 + quest.GetIncreasedRewardsBonusLevel();
+			rewardRange.max = rewardRange.min + 5;
 		}
 		return rewardRange;
 	}
 
 
 	public bool DoesBlobMatchSlot(Quest quest, Blob blob, int index) {
+		if(blob == null) 
+			return false;
 		bool match = true;
 		if(quest.usesSigils && blob.sigil != quest.sigilRequirements[index])
 			match = false;
@@ -258,7 +257,72 @@ public class QuestManager : MonoBehaviour {
 				return true;
 		return false;
 	}
+	
 
+	public void BuildQuestBonuses() {
+		BuildCombatBonuses();
+		BuildGatheringBonuses();
+		BuildScoutingBonuses();
+	}
+
+
+	public void BuildCombatBonuses() {
+		combatBonuses = new List<QuestBonus>();
+		combatBonuses.Add(new QuestBonus(.10f, QuestBonusType.Attack, 60));
+		combatBonuses.Add(new QuestBonus(.15f, QuestBonusType.Attack, 30));
+		combatBonuses.Add(new QuestBonus(.20f, QuestBonusType.Attack, 10));
+		combatBonuses.Add(new QuestBonus(.10f, QuestBonusType.Health, 60));
+		combatBonuses.Add(new QuestBonus(.15f, QuestBonusType.Health, 30));
+		combatBonuses.Add(new QuestBonus(.20f, QuestBonusType.Health, 10));
+		combatBonuses.Add(new QuestBonus(.20f, QuestBonusType.IncreasedRewards, 100));
+		combatBonuses = combatBonuses.OrderBy(x => x.weight).ToList();
+	}
+
+
+	public void BuildGatheringBonuses() {
+		gatheringBonuses = new List<QuestBonus>();
+		gatheringBonuses.Add(new QuestBonus(0, QuestBonusType.IncreasedRewards, 60));
+		gatheringBonuses.Add(new QuestBonus(1, QuestBonusType.IncreasedRewards, 25));
+		gatheringBonuses.Add(new QuestBonus(2, QuestBonusType.IncreasedRewards, 10));
+		gatheringBonuses.Add(new QuestBonus(3, QuestBonusType.IncreasedRewards, 5));
+		gatheringBonuses = gatheringBonuses.OrderBy(x => x.weight).ToList();
+	}
+
+
+	public void BuildScoutingBonuses() {
+		scoutingBonuses = new List<QuestBonus>();
+		scoutingBonuses.Add(new QuestBonus(0, QuestBonusType.IncreasedRewardsScouting, 60));
+		scoutingBonuses.Add(new QuestBonus(1, QuestBonusType.IncreasedRewardsScouting, 25));
+		scoutingBonuses.Add(new QuestBonus(2, QuestBonusType.IncreasedRewardsScouting, 10));
+		scoutingBonuses.Add(new QuestBonus(3, QuestBonusType.IncreasedRewardsScouting, 5));
+		scoutingBonuses = scoutingBonuses.OrderBy(x => x.weight).ToList();
+	}
+
+
+	public QuestBonus RollQuestBonus(Quest quest) {
+		List<QuestBonus> possibleBonuses = GetAppropriateBonusList(quest);
+		int totalWeight = 0;
+		int cummulativeWeight = 0;
+
+		foreach(QuestBonus qb in possibleBonuses) totalWeight += qb.weight;
+		int roll = UnityEngine.Random.Range(0, totalWeight);
+		foreach(QuestBonus qb in possibleBonuses) {
+			cummulativeWeight += qb.weight;
+			if(roll < cummulativeWeight)
+				return qb;
+		}
+		return null;
+	}
+
+
+	public List<QuestBonus> GetAppropriateBonusList(Quest quest) {
+		switch(quest.type) {
+		case QuestType.Combat: return combatBonuses;
+		case QuestType.Gathering: return gatheringBonuses;
+		case QuestType.Scouting: return scoutingBonuses;
+		}
+		return null;
+	}
 
 	void Update() {
 		foreach(Quest quest in availableQuests) {

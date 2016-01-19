@@ -70,6 +70,7 @@ public class BlobFloatingDisplay : MonoBehaviour {
 		}
 	}
 
+
 	public void ShowBlobInfo() {
 		if(!blob.hasHatched) 
 			return;

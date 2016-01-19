@@ -16,7 +16,7 @@ public class HudManager : MonoBehaviour {
 	public CheatMenu cheatMenu;
 	public BuildRoomMenu buildRoomMenu;
 	public QuestListMenu questListMenu;
-	public QuestDetailsMenu questDetailsMenu;
+	public QuestPrepMenu questPrepMenu;
 	public Popup popup;
 	public ItemInfoPopup itemInfoPopup;
 	public BlobInteractPopup blobInteractPopup;

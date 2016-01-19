@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class QuestDetailsMenu : GenericGameMenu {
-	public QuestListMenu questListMenu;
+public class QuestPrepMenu : GenericGameMenu {
 	public UISprite icon;
 	public UILabel durationLabel;
 	public UILabel rarityLabel;
@@ -13,6 +12,8 @@ public class QuestDetailsMenu : GenericGameMenu {
 	public UILabel blobInfoLabel;
 	public UISprite blobInfoBG;
 	public UIWidget requirementsContainer;
+	public UILabel bonusLabel;
+	public UILabel bonusCountLabel;
 	
 	[HideInInspector] public Quest quest;
 	[HideInInspector] public GenericGameMenu owner = null;
@@ -30,8 +31,10 @@ public class QuestDetailsMenu : GenericGameMenu {
 		hudManager.ShowPersistentNotice("Drag Blobs to the quest");
 		EnableBlobBoxes();
 		PopulateWithBlobs();
-		hudManager.ShowHud(false);
+		UpdateBonuses();
+		hudManager.ShowHud(false); 
 		hudManager.dragToUi = true;
+		roomManager.ToggleAllFloatingSprites(true);
 	}
 
 
@@ -132,8 +135,9 @@ public class QuestDetailsMenu : GenericGameMenu {
 		blobSlot.socketSprite.alpha = 1f;
 		blobSlot.sigilSprite.alpha = .15f;
 		departButton.isEnabled = questManager.IsPartyFull(quest);
+		UpdateBonuses();
 	}
-	
+
 
 	public void BlobRemovedFromContainer(int blobId) {
 		int index = quest.blobIds.IndexOf(blobId);
@@ -144,6 +148,60 @@ public class QuestDetailsMenu : GenericGameMenu {
 		blobSlot.sigilSprite.alpha = .5f;
 		quest.RemoveBlob(blobId);
 		departButton.isEnabled = questManager.IsPartyFull(quest);
+		UpdateBonuses();
+	}
+
+
+	public int GetMatchCt() {
+		int i=0;
+		int matchCt = 0;
+		foreach(int blobId in quest.blobIds) {
+			Blob blob = roomManager.GetBlobByID(blobId);
+			if(questManager.DoesBlobMatchSlot(quest, blob, i))
+				matchCt++;
+			i++;
+		}
+		return matchCt;
+	}
+
+
+	void UpdateBonuses() {
+		List<QuestBonus> bonusList = quest.GetAppropriateBonusList();
+		int bonusTotalCt = bonusList.Count;
+		string inactiveColorStr = ColorDefines.ColorToHexString(ColorDefines.inactiveTextColor);
+		bonusLabel.alignment = bonusTotalCt > 1 ? NGUIText.Alignment.Left : NGUIText.Alignment.Center;
+		if(bonusTotalCt == 0) {
+			bonusCountLabel.text = "Bonuses";
+			bonusLabel.text = "None";
+			return;
+		}
+
+		int activeBonusCt = GetActiveBonusCount();
+		bonusCountLabel.text = "BONUSES   (" + activeBonusCt.ToString() + "/" + bonusTotalCt.ToString() + ")" ;
+		bonusLabel.text = "";
+		for(int i=0; i < bonusTotalCt; i++) {
+			bool active = (i < activeBonusCt);
+			if(active)
+				bonusLabel.text += "[FFFFFF]Bonus: " + bonusList[i].description + "[-]";
+			else {
+				int reqMatches = quest.GetNumMatchesRequiredForBonus(bonusList[i]);
+				bonusLabel.text += inactiveColorStr + reqMatches.ToString() + " Match: " + bonusList[i].description + "[-]";
+			}
+			bonusLabel.text += ((i < (bonusTotalCt - 1)) ? "\n" : "");
+		}
+	}
+
+
+	int GetActiveBonusCount() {
+		List<QuestBonus> bonusList = quest.GetAppropriateBonusList();
+		int matchCt = GetMatchCt();
+		int retVal = 0;
+		foreach(QuestBonus qb in bonusList) {
+			int reqMatch = quest.GetNumMatchesRequiredForBonus(qb);
+			if(matchCt >= reqMatch)
+				retVal++;
+		}
+		return retVal;
 	}
 
 
@@ -191,6 +249,7 @@ public class QuestDetailsMenu : GenericGameMenu {
 
 
 	public override void Cleanup() {
+		roomManager.ToggleAllFloatingSprites(false);
 		hudManager.ShowHud(true);
 		hudManager.dragToUi = false;
 		hudManager.HidePersistentNotice();

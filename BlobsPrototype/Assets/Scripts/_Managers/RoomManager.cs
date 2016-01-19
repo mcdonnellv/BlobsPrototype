@@ -225,6 +225,16 @@ public class RoomManager : MonoBehaviour {
 	}
 
 
+	public void ToggleAllFloatingSprites(bool show) {
+		foreach(Room room in rooms) {
+			if(show)
+				room.ShowFloatingSprites(null);
+			else
+				room.HideFloatingSprites();
+		}
+	}
+
+
 	// Use this for initialization
 	void Start () {
 		worldTransform = scrollView.transform;

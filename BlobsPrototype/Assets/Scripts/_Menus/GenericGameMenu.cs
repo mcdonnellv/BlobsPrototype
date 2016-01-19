@@ -9,7 +9,7 @@ public class GenericGameMenu : MonoBehaviour {
 	public GameObject window;
 	public GameObject BG;
 	private bool displayed = false;
-	public Vector3 oldPosition = Vector3.one;
+	[HideInInspector] public Vector3 oldPosition = Vector3.one;
 	protected UITweener animationBG;
 	protected UITweener animationWindow;
 	
@@ -28,7 +28,7 @@ public class GenericGameMenu : MonoBehaviour {
 			popupPositions[(int)PopupPosition.Left2] = new Vector3(-356, 0f, 0f);
 			popupPositions[(int)PopupPosition.Popup1] = new Vector3(-470, -150f, 0f);
 			popupPositions[(int)PopupPosition.Popup2] = new Vector3(140, -150f, 0f);
-			popupPositions[(int)PopupPosition.QuestDetails1] = new Vector3(352, 0F, 0f);
+			popupPositions[(int)PopupPosition.QuestDetails1] = new Vector3(452, 0f, 0f);
 		}
 	}
 

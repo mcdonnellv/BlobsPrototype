@@ -21,7 +21,7 @@ public class LootMenu : GenericGameMenu {
 
 
 	void Setup() {
-		RewardRange range = questManager.GetRewardRange(quest);
+		GenericRange range = questManager.GetRewardRange(quest);
 		slotCount = UnityEngine.Random.Range(range.min, range.max + 1);
 		RebuildSlots();
 		if(quest.LootTableB.Count == 0) {

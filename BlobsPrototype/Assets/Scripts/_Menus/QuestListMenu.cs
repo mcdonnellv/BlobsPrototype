@@ -54,9 +54,9 @@ public class QuestListMenu : GenericGameMenu {
 		//now display quest details
 		questDetails.SetQuest(selectedQuest); 
 
-		//questDetailsMenu.Show(this, selectedQuest, false);
-		//questDetailsMenu.transform.localPosition = detailsReferencePoint.transform.localPosition;
-		//questDetailsMenu.PopulateWithBlobs();
+		//questPrepMenu.Show(this, selectedQuest, false);
+		//questPrepMenu.transform.localPosition = detailsReferencePoint.transform.localPosition;
+		//questPrepMenu.PopulateWithBlobs();
 		UpdateButtonsFromQuestState(selectedQuest.state);
 	}
 
@@ -85,7 +85,7 @@ public class QuestListMenu : GenericGameMenu {
 
 
 	public void SelectButtonPressed() {
-		hudManager.questDetailsMenu.Show(selectedQuest);
+		hudManager.questPrepMenu.Show(selectedQuest);
 		Hide();
 	}
 

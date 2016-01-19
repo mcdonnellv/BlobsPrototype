@@ -12,6 +12,7 @@ public class QuestListDetails : MonoBehaviour {
 	public UILabel descriptionLabel;
 	public UILabel rarityLabel;
 	public UILabel numBlobsNeededLabel;
+	public UILabel bonusLabel;
 	public UISprite icon;
 	public UIGrid blobGrid;
 	public PotentialLootMenu potentialLootMenu;
@@ -21,6 +22,7 @@ public class QuestListDetails : MonoBehaviour {
 	public void SetQuest(Quest q) { 
 		quest = q;
 		Populate();
+		UpdateBonuses();
 	}
 
 
@@ -28,7 +30,7 @@ public class QuestListDetails : MonoBehaviour {
 		titleLabel.text = quest.itemName.ToUpper();
 		descriptionLabel.text = quest.description;
 		durationLabel.text = GetTimeString();
-		numBlobsNeededLabel.text = "NEED " + quest.blobsRequired.ToString() + " BLOBS";
+	//	numBlobsNeededLabel.text = "NEED " + quest.blobsRequired.ToString() + " BLOBS";
 		if(quest.monsters != null & quest.monsters.Count > 0) 
 			monsterLabel.text = monsterManager.GetBaseMonsterByID(quest.monsters[0].id).itemName.ToUpper();
 
@@ -82,5 +84,22 @@ public class QuestListDetails : MonoBehaviour {
 		if(quest.mins > 0)
 			timeString += quest.mins.ToString() + " min";
 		return ColorDefines.ColorToHexString(ColorDefines.goldenTextColor) + timeString + "[-]";
+	}
+
+
+	void UpdateBonuses() {
+		List<QuestBonus> bonusList = quest.GetAppropriateBonusList();
+		if(bonusList == null) return;
+		int bonusTotalCt = bonusList.Count;
+		bonusLabel.alignment = bonusTotalCt > 1 ? NGUIText.Alignment.Left : NGUIText.Alignment.Center;
+		if(bonusTotalCt == 0) {
+			bonusLabel.text = "No Bonus";
+			return;
+		}
+		bonusLabel.text = "";
+		for(int i=0; i < bonusTotalCt; i++) {
+			int reqMatches = quest.GetNumMatchesRequiredForBonus(bonusList[i]);
+			bonusLabel.text += "[FFFFFF]" + reqMatches.ToString() + " Match: " + bonusList[i].description + "[-]" + ((i < (bonusTotalCt - 1)) ? "\n" : "");
+		}
 	}
 }

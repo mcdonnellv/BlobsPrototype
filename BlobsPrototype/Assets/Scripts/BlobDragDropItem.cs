@@ -7,6 +7,7 @@ public class BlobDragDropItem : UIDragDropItem {
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	public bool uiClone = false;
+	Blob blob { get { return gameObject.GetComponent<BlobGameObject>().blob;} }
 
 
 
@@ -22,6 +23,7 @@ public class BlobDragDropItem : UIDragDropItem {
 
 	protected override void OnDragStart () {
 		cloneOnDrag = hudManager.dragToUi && !uiClone;
+		blob.room.ShowFloatingSprites(blob);
 		base.OnDragStart();
 	}
 
@@ -33,8 +35,6 @@ public class BlobDragDropItem : UIDragDropItem {
 		SpringPanel sp = roomManager.scrollView.GetComponent<SpringPanel>();
 		coc.enabled = false;
 		sp.enabled = false;
-		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
-		blob.room.ShowFloatingSprites(blob);
 		animator.SetBool("dragging", true);
 		if(hudManager.blobInfoContextMenu.IsDisplayed())
 			hudManager.blobInfoContextMenu.Hide();
@@ -51,7 +51,6 @@ public class BlobDragDropItem : UIDragDropItem {
 	
 
 	protected override void OnDragDropRelease (GameObject surface) {
-		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
 		blob.room.HideFloatingSprites();
 		roomManager.scrollVector = new Vector2(0f,0f);
 		animator.SetBool("dragging", false);
@@ -80,7 +79,6 @@ public class BlobDragDropItem : UIDragDropItem {
 
 
 	void OnDragDropReleaseForClone (GameObject surface) {
-		Blob blob = gameObject.GetComponent<BlobGameObject>().blob;
 		transform.SendMessageUpwards("BlobRemovedFromContainer", blob.id);
 		if(surface == null) {
 			GameObject.Destroy(gameObject);

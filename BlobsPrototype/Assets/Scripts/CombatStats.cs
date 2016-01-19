@@ -34,10 +34,10 @@ public class Stat {
 
 	public void ResetCombatValue() { _combatValue = _geneModdedValue; }
 	public void ResetGeneModdedValue() { _geneModdedValue = _birthValue; }
-	public void ModBirthValue(int v) { _birthValue = _defaultValue + v; }
-	public void ModGeneModdedValue(int v) { _geneModdedValue = _birthValue + v; }
-	public void ModGeneModdedValue(AbilityModifier m, int v) { _geneModdedValue = (m == AbilityModifier.Added) ? _birthValue + v : _birthValue * v; }
-	public void ModCombatValue(AbilityModifier m, int v) { _combatValue = (m == AbilityModifier.Added) ? _combatValue + v : _combatValue * v; }
+	public void ModBirthValue(float v) { _birthValue = _defaultValue + (int)v; }
+	public void ModGeneModdedValue(float v) { _geneModdedValue = _birthValue + (int)v; }
+	public void ModGeneModdedValue(AbilityModifier m, float v) { _geneModdedValue = (m == AbilityModifier.Added) ? _birthValue + (int)v : Mathf.FloorToInt(_birthValue * v); }
+	public void ModCombatValue(AbilityModifier m, float v) { _combatValue = (m == AbilityModifier.Added) ? _combatValue + (int)v :  Mathf.FloorToInt(_combatValue * v); }
 }
 
 

@@ -17,6 +17,7 @@ public class Room : MonoBehaviour {
 	public List<Blob> blobs;
 	public List<Tile> tiles;
 	public RoomType type;
+	int showFloatingSpritesRefCt = 0;
 
 	
 	public void Setup() {
@@ -48,6 +49,8 @@ public class Room : MonoBehaviour {
 				sprite.color = ((x+y) % 2 == 0) ? new Color(.8f,.8f,.8f,1f) : new Color(.65f,.65f,.65f,1f);
 			}
 		}
+
+		showFloatingSpritesRefCt = 0;
 	}
 
 
@@ -133,6 +136,10 @@ public class Room : MonoBehaviour {
 
 
 	public void ShowFloatingSprites(Blob blobDragged) {
+		showFloatingSpritesRefCt++;
+		if(showFloatingSpritesRefCt > 1)
+			return;
+
 		foreach(Blob b in blobs)
 			if(blobDragged == null)
 				b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().ShowBlobInfo();
@@ -142,6 +149,10 @@ public class Room : MonoBehaviour {
 
 
 	public void HideFloatingSprites() {
+		showFloatingSpritesRefCt--;
+		if(showFloatingSpritesRefCt > 0)
+			return;
+
 		foreach(Blob b in blobs)
 			b.gameObject.GetComponentInChildren<BlobFloatingDisplay>().HideBlobInfo();
 	}

@@ -23,7 +23,7 @@ public class ColorDefines {
 	public static Color negativeTextColor { get{ return new Color(1f, .33f, .33f, 1f);} }
 	public static Color inactiveTextColor { get{ return new Color(.5f, .5f, .5f, 1f);} }
 	public static Color goldenTextColor { get{ return new Color(1f, 0.773f, 0.082f, 1f);} }
-	public static Color defaultBlobSocketColor { get{ return new Color(.82f, .784f, .71f, 1f);} }
+	public static Color defaultBlobSocketColor { get{ return new Color(.82f, .82f, .82f, 1f);} }
 
 
 	public static Color IconColorFromIndex(int index) {

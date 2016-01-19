@@ -106,8 +106,10 @@ public class CombatManager : MonoBehaviour {
 			combatMenu.AddCombatant(combatant.name);
 
 		// TODO: Activate buffs or trigger gene abilities that activate on combat start
-		foreach(Combatant combatant in combatants)
-			combatant.CalculatePreCombatStats();
+		foreach(Combatant combatant in combatants) {
+			combatant.CalculatePreCombatStats(); //genes
+			combatant.CalculatePreCombatStats(quest.combatBonuses); //quest bonus
+		}
 
 		// fastest combatants act first
 		combatants = combatants.OrderByDescending(x => x.combatStats.speed.combatValue).ToList();

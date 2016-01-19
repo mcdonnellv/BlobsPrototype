@@ -36,6 +36,20 @@ public class Combatant {
 		}
 	}
 
+	public void CalculatePreCombatStats(List<QuestBonus> combatBonus) {
+		if(combatBonus.Count == 0)
+			return;
+		foreach(QuestBonus qb in combatBonus) {
+			float val = 1f + qb.value;
+			switch(qb.type) {
+			case QuestBonusType.Armor: combatStats.armor.ModCombatValue(AbilityModifier.Percent, val); break;
+			case QuestBonusType.Attack: combatStats.attack.ModCombatValue(AbilityModifier.Percent, val); break;
+			case QuestBonusType.Health: combatStats.health.ModCombatValue(AbilityModifier.Percent, val); break;
+			case QuestBonusType.Speed: combatStats.speed.ModCombatValue(AbilityModifier.Percent, val); break;
+			}
+		}
+	}
+
 
 	public bool IsZeroHalth() { return (combatStats.health.combatValue <= 0); }
 }
