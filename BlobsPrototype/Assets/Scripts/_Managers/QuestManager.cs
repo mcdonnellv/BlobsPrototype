@@ -84,7 +84,7 @@ public class QuestManager : MonoBehaviour {
 	public void FirstTimeSetup() {
 		BuildQuestBonuses();
 		AddQuestToList(this.GetBaseQuestByID(0));
-		AddQuestToList(this.GetBaseQuestByID(50));
+		AddQuestToList(this.GetBaseQuestByID(100));
 	}
 
 
@@ -231,7 +231,9 @@ public class QuestManager : MonoBehaviour {
 
 			foreach(QuestMonster monster in quest.monsters) {
 				BaseMonster bm = monsterManager.GetBaseMonsterByID(monster.id);
-				combatManager.AddCombatant(bm);
+				Monster m = new Monster(bm);
+				m.level = monster.level;
+				combatManager.AddCombatant(m);
 			}
 			combatManager.quest = quest;
 			hudManager.combatMenu.Show();

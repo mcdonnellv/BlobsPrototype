@@ -34,12 +34,14 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	public void AddCombatant(BaseMonster bm) {
-		Monster monster = new Monster(bm);
+	public void AddCombatant(Monster monster) {
 		Combatant combatant = new Combatant();
 		combatant.monster = monster;
 		combatant.id = curId++;
 		combatant.combatStats = monster.combatStats;
+		combatant.combatStats.attack.ModCombatValue(AbilityModifier.Percent, monster.level);
+		combatant.combatStats.armor.ModCombatValue(AbilityModifier.Percent, monster.level);
+		combatant.combatStats.speed.ModCombatValue(AbilityModifier.Percent, monster.level);
 		combatant.name = combatant.monster.itemName + (++monsterCt).ToString();
 		combatant.SetInitialRandomCombatSpeed();
 		combatants.Add(combatant);

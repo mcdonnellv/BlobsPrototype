@@ -9,6 +9,7 @@ public class BaseMonster : BaseThing {
 
 [Serializable]
 public class Monster : BaseMonster {
+	public int level = 1;
 
 	public Monster(BaseMonster b) {
 		id = b.id;

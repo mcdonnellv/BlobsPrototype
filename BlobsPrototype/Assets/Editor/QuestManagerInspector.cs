@@ -145,11 +145,7 @@ public class QuestManagerInspector : GenericManagerInspector {
 			EditorGUILayout.LabelField(zoneStr);
 
 			quest.usesElements = EditorGUILayout.Toggle("Uses Elements", quest.usesElements);
-			if(quest.usesElements)
-				quest.mixedElements = EditorGUILayout.Toggle("Mixed Elements", quest.mixedElements);
 			quest.usesSigils = EditorGUILayout.Toggle("Uses Sigils", quest.usesSigils);
-			if(quest.usesSigils)
-				quest.mixedSigils = EditorGUILayout.Toggle("Mixed Sigils", quest.mixedSigils);
 
 			// MONSTER
 			if(quest.type == QuestType.Combat) {
