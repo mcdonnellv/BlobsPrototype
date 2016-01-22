@@ -18,6 +18,7 @@ public class Blob : BaseThing {
 	public Gender gender;
 	public DateTime birthday;
 	public List<Gene> genes;
+	public List<Gene> hiddenGenes;
 	public int geneSlots;
 	public CombatStats combatStats;
 	public Element nativeElement;
@@ -64,6 +65,7 @@ public class Blob : BaseThing {
 	public Blob () {
 		combatStats = new CombatStats();
 		genes = new List<Gene>();
+		hiddenGenes = new List<Gene>();
 		itemsConsumed = new Dictionary<string, int>();
 		birthday = DateTime.MinValue;
 		actionReadyTime  = new DateTime(0); 
@@ -173,7 +175,7 @@ public class Blob : BaseThing {
 
 	public void CleanUp() {
 		Blob spouse = GetSpouse();
-		if(spouse != null)
+		if(spouse != null && spouse.spouseId == id)
 			spouse.spouseId = -1;
 	}
 
@@ -233,6 +235,12 @@ public class Blob : BaseThing {
 			gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
+	public void OnBirth() {
+		foreach(Gene g in genes)
+			g.functionality.OnBirth(this, g);
+		foreach(Gene g in hiddenGenes) 
+			g.functionality.OnBirth(this, g);
+	}
 }
 
 

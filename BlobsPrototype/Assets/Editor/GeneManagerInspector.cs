@@ -59,6 +59,7 @@ public class GeneManagerInspector : GenericManagerInspector {
 					if(item != null) {
 						if(newName == "")
 							g.itemName = item.itemName + " copy";
+						g.id = geneManager.GetNextAvailableID();
 						g.description = item.description;
 						g.sellValue = item.sellValue;
 						g.iconAtlas = item.iconAtlas;
@@ -70,7 +71,10 @@ public class GeneManagerInspector : GenericManagerInspector {
 						g.traitType = item.traitType;
 						g.traitCondition = item.traitCondition;
 						g.showInStore = item.showInStore;
-						g.id = geneManager.GetNextAvailableID();
+						g.hiddenGene = item.hiddenGene;
+						g.morphChance = item.morphChance;
+						foreach (GeneMorph m in item.morphList)
+							g.morphList.Add(new GeneMorph(m));
 						foreach(GeneActivationRequirement req in item.activationRequirements)
 							g.activationRequirements.Add(new GeneActivationRequirement(req));
 					}
@@ -99,6 +103,7 @@ public class GeneManagerInspector : GenericManagerInspector {
 			GUILayout.BeginHorizontal();
 			{
 				NGUIEditorTools.SetLabelWidth(20f);
+				EditorStyles.textField.wordWrap = true;
 				int newId = EditorGUILayout.IntField("ID", item.id, GUILayout.Width(60f));
 				if(newId != item.id)
 					item.id = (geneManager.DoesIdExistInList(newId)) ? geneManager.GetNextAvailableID() : item.id = newId;
@@ -112,7 +117,7 @@ public class GeneManagerInspector : GenericManagerInspector {
 					item.itemName = itemName;
 			}
 			GUILayout.EndHorizontal();
-			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(50f));
+			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(20f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality: ", item.quality);
 			GUILayout.BeginHorizontal();{
 				NGUIEditorTools.SetLabelWidth(40f);
@@ -126,6 +131,52 @@ public class GeneManagerInspector : GenericManagerInspector {
 			item.sellValue = EditorGUILayout.IntField("Sell Value", item.sellValue, GUILayout.Width(160f));
 			NGUIEditorTools.SetLabelWidth(100f);
 			item.showInStore = EditorGUILayout.Toggle("Show In Store", item.showInStore, GUILayout.Width(160f));
+			item.hiddenGene = EditorGUILayout.Toggle("Hidden Gene", item.hiddenGene, GUILayout.Width(160f));
+
+
+			// Morphing
+			bool showMorphing = item.morphList.Count > 0;
+			bool newShowMorphing = EditorGUILayout.Toggle("Morphing", showMorphing, GUILayout.Width(160f));
+			if(showMorphing != newShowMorphing) {
+				showMorphing = newShowMorphing;
+				if(!newShowMorphing)
+					item.morphList.Clear();
+				else
+					item.morphList.Add(new GeneMorph());
+			}
+
+			if(showMorphing) {
+				List <GeneMorph> toDelete2 = new List<GeneMorph>();
+				EditorGUI.indentLevel++;
+				GUILayout.BeginHorizontal(); 
+				item.morphChance = Mathf.PingPong(EditorGUILayout.FloatField("Morph Chance", item.morphChance, GUILayout.Width(160f)), 1f);
+				if(AddButtonPressed())
+					item.morphList.Add(new GeneMorph());
+				GUILayout.EndHorizontal();
+				EditorGUI.indentLevel++;
+				foreach(GeneMorph morph in item.morphList) {
+					GUILayout.BeginHorizontal(); 
+					BaseGene bGene = geneManager.GetBaseGeneByID(morph.geneId);
+					//EditorGUILayout.LabelField(bGene.itemName, GUILayout.Width(120f));
+					NGUIEditorTools.SetLabelWidth(120f);
+					int newMorphId = EditorGUILayout.IntField(bGene.itemName, morph.geneId, GUILayout.Width(200f));
+					if( morph.geneId != newMorphId && geneManager.GetBaseGeneByID(newMorphId) != null)
+						morph.geneId = newMorphId;
+					NGUIEditorTools.SetLabelWidth(70f);
+					morph.morphWeight = EditorGUILayout.IntField("weight", morph.morphWeight, GUILayout.Width(100f));
+					
+					if (DeleteButtonPressed())
+						toDelete2.Add(morph);
+					GUILayout.EndHorizontal();
+				}
+				
+				foreach(GeneMorph gr in toDelete2)
+					item.morphList.Remove(gr);
+				EditorGUI.indentLevel--;
+				EditorGUI.indentLevel--;
+			}
+
+
 			NGUIEditorTools.SetLabelWidth(70f);
 			EditorGUILayout.Space();
 			GUILayout.BeginHorizontal(); 

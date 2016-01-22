@@ -58,18 +58,17 @@ public class GameManager2 : MonoBehaviour {
 			blobGameObject.Setup();
 			blob = blobGameObject.blob;
 			blob.gender = (i % 2 == 0 ? Gender.Male : Gender.Female);
-			blob.SetNativeElement(Element.White);//((Element)UnityEngine.Random.Range(0, (int)Element.ElementCt));
-			blob.sigil = Sigil.C;//(Sigil)UnityEngine.Random.Range(0, (int)Sigil.SigilCt);
 			blob.Hatch();
 			blob.birthday = DateTime.Now - new TimeSpan(1,0,0);
 			blob.actionDuration = new TimeSpan(0);
 			blob.state = BlobState.Idle;
 			blob.missionCount = 3;
 			blob.gameObject.UpdateGrowth();
+			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(2))); //white
+			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(5))); //sigilA
+			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(10))); //Attack Bias I
+			blob.OnBirth();
 			room.AddBlob(blob);
-
-			//blob.genes.Add(new Gene(geneManager.genes[0]));
-			//blob.genes[0].state = GeneState.Available;
 		}
 	}
 
