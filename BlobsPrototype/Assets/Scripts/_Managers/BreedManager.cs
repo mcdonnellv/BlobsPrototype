@@ -99,42 +99,33 @@ public class BreedManager : MonoBehaviour {
 
 	List<Gene> PassGenes(List<BaseGene> dadBaseGenes, List<BaseGene> momBaseGenes, BlobInteractAction blobInteractAction) {
 		List<BaseGene> childBaseGenes = dadBaseGenes.Union(momBaseGenes).ToList();
-		List<BaseGene> exclusiveGenes = new List<BaseGene>();
+		List<Gene> childGenes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
+		List<Gene> prunedGenes = childGenes.ToList();
 		List<TraitType> traitTypesProcessed = new List<TraitType>();
 
-		// prune genes marked as exclusive
-		foreach(BaseGene b in childBaseGenes)
-			if(Trait.IsExclusive(b.traitType))
-				exclusiveGenes.Add(b);
-
-		foreach(BaseGene b in exclusiveGenes) {
-			TraitType t = b.traitType;
-			if(traitTypesProcessed.Contains(t))
-				continue;
-			List<BaseGene> genesOfTrait = new List<BaseGene>();
-			foreach(BaseGene b1 in exclusiveGenes)
-				if(t == b1.traitType)
-					genesOfTrait.Add(b1);
-			BaseGene keep = genesOfTrait[UnityEngine.Random.Range(0, genesOfTrait.Count)];
-			foreach(BaseGene b1 in genesOfTrait)
-				if(b1 != keep)
-					childBaseGenes.Remove(b1);
-			traitTypesProcessed.Add(t);
-		}
-
-
-		List<Gene> childGenes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
-
-		//TODO: Prune genes that cannot exist with each other
+		// Prune genes that cannot exist with each other
 		foreach(Gene g in childGenes) {
 			TraitType t = g.traitType;
 			if(traitTypesProcessed.Contains(t))
 				continue;
 			traitTypesProcessed.Add(t);
+
+			List<Gene> toChooseFrom = new List<Gene>();
+			toChooseFrom.Add(g);
 			foreach(Gene g1 in childGenes)
-				if(g != g1 && !g.functionality.CanExistWithWith(t))
-					;
+				if(g != g1 && g.functionality.CanExistWithWith(g1.traitType, g) == false)
+					toChooseFrom.Add(g1);
+			if(toChooseFrom.Count > 1) {
+				Gene keep = toChooseFrom[UnityEngine.Random.Range(0,toChooseFrom.Count)];
+				toChooseFrom.Remove(keep);
+
+				foreach(Gene toRemove in toChooseFrom)
+					if(prunedGenes.Contains(toRemove))
+						prunedGenes.Remove(toRemove);
+			}
 		}
+
+		childGenes = prunedGenes;
 			
 		// morph genes if needed
 		for(int i = 0; i < childGenes.Count; i++) {

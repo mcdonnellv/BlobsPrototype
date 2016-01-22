@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public interface IGeneFunctionality {
-	bool CanExistWithWith(TraitType t Gene g);
+	bool CanExistWithWith(TraitType t, Gene g);
 	void OnBirth(Blob blob, Gene g);
 	void OnCombatStart();
 }
