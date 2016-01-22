@@ -6,11 +6,11 @@ public class StatBiasFunctionality {
 
 	public bool CanExistWithWithBias(TraitType t) { 
 		switch(t) {
-		case TraitType.AttackMod:
-		case TraitType.ArmorMod:
-		case TraitType.HealthMod:
-		case TraitType.SpeedMod:
-		case TraitType.StaminaMod:
+		case TraitType.StatBiasAttack:
+		case TraitType.StatBiasArmor:
+		case TraitType.StatBiasHealth:
+		case TraitType.StatBiasStamina:
+		case TraitType.StatBiasSpeed:
 			return false;
 		}
 		return true;
