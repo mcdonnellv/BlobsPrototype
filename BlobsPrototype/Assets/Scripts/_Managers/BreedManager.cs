@@ -78,92 +78,57 @@ public class BreedManager : MonoBehaviour {
 		blobGameObject.Setup();
 		Blob blob = blobGameObject.blob;
 
-		// Roll for combat stats
-		List<StatBias> statBias = dad.combatStats.statBias.Union(mom.combatStats.statBias).ToList();
-		switch(blob.quality) {
-		case Quality.Common: blob.combatStats.RandomizeBirthStats(1, 1, 5, statBias); break;
-		case Quality.Rare: blob.combatStats.RandomizeBirthStats(1, 0, 5, statBias); break;
-		case Quality.Epic: blob.combatStats.RandomizeBirthStats(2, 0, 5, statBias); break;
-		case Quality.Legendary: blob.combatStats.RandomizeBirthStats(3, 0, 10, statBias); break;
-		}
+		// pass on genes
+		blob.genes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.genes), geneManager.GetBaseGeneListFromGeneList(mom.genes), blobInteractAction);
+		blob.hiddenGenes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.hiddenGenes), geneManager.GetBaseGeneListFromGeneList(mom.hiddenGenes), blobInteractAction);
 
-		// passed on genes
-		List<BaseGene> dadBaseGenes = geneManager.GetBaseGeneListFromGeneList(dad.genes);
-		List<BaseGene> momBaseGenes = geneManager.GetBaseGeneListFromGeneList(mom.genes);
-		List<BaseGene> childBaseGenes = null;
-		if(blobInteractAction == BlobInteractAction.Breed)
-			childBaseGenes = dadBaseGenes.Intersect(momBaseGenes).ToList();
-		if(blobInteractAction == BlobInteractAction.Merge)
-			childBaseGenes = dadBaseGenes.Union(momBaseGenes).ToList();
-		blob.genes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
-
-		// activate/deactivate genes
-		if(blob.genes.Count > 0) {
-			foreach(Gene g in blob.genes) 
-				g.state = GeneState.Passive;
-			blob.genes[UnityEngine.Random.Range(0, blob.genes.Count)].state = GeneState.Available;
-		}
-
-
-		// give random element and sigil
-		switch(blobInteractAction) {
-		case BlobInteractAction.Breed:
-			blob.SetNativeElement(GetOffSpringElement(dad.element, mom.element));
-			blob.sigil = GetOffSpringSigil(dad.sigil, mom.sigil);
-			break;
-		case BlobInteractAction.Merge:
-			blob.SetNativeElement((UnityEngine.Random.Range(0, 2) == 0) ? dad.element : mom.element);
-			blob.sigil = (UnityEngine.Random.Range(0, 2) == 0) ? dad.sigil : mom.sigil;
-			break;
-		}
+		//trigger any OnBirth gene logic
+		blob.OnBirth();
 
 		return blob;
 	}
 
 
-	int WrapIndex(int i, int i_max) {
-		return ((i % i_max) + i_max) % i_max;
-	}
+	List<Gene> PassGenes(List<BaseGene> dadBaseGenes, List<BaseGene> momBaseGenes, BlobInteractAction blobInteractAction) {
+		List<BaseGene> childBaseGenes = dadBaseGenes.Union(momBaseGenes).ToList();
+		List<Gene> childGenes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
 
-	Element GetOffSpringElement(Element e1, Element e2) {
-		Element[] possibleElements = new Element[12];
-		int max = (int)Element.ElementCt;
-		possibleElements[0] = (Element)WrapIndex((int)(e1 - 1) ,max);
-		possibleElements[1] = e1;
-		possibleElements[2] = e1;
-		possibleElements[3] = e1;
-		possibleElements[4] = e1;
-		possibleElements[5] = (Element)WrapIndex((int)(e1 + 1) ,max);
-		possibleElements[6] = (Element)WrapIndex((int)(e2 - 1) ,max);
-		possibleElements[7] = e2;
-		possibleElements[8] = e2;
-		possibleElements[9] = e2;
-		possibleElements[10] = e2;
-		possibleElements[11] = (Element)WrapIndex((int)(e2 + 1) ,max);
-		int roll = UnityEngine.Random.Range(0, 12);
-		Element retVal = possibleElements[roll];
-		if(retVal == Element.None)
-			return Element.Black;
-		return retVal;
+		// Prune genes that cannot exist with each other
+		childGenes = PruneGeneListOfExclusiveGenes(childGenes);
+		
+		// morph genes if needed
+		for(int i = 0; i < childGenes.Count; i++) {
+			Gene g = childGenes[i];
+			childGenes[i] = g.MorphIfNeeded();
+		}
+
+		return childGenes;
 	}
 
 
-	Sigil GetOffSpringSigil(Sigil s1, Sigil s2) {
-		Sigil[] possibleSigils = new Sigil[12];
-		int max = (int)Sigil.SigilCt;
-		possibleSigils[0] = (Sigil)WrapIndex((int)(s1 - 1) ,max);
-		possibleSigils[1] = s1;
-		possibleSigils[2] = s1;
-		possibleSigils[3] = s1;
-		possibleSigils[4] = s1;
-		possibleSigils[5] = (Sigil)WrapIndex((int)(s1 + 1) ,max);
-		possibleSigils[6] = (Sigil)WrapIndex((int)(s2 - 1) ,max);
-		possibleSigils[7] = s2;
-		possibleSigils[8] = s2;
-		possibleSigils[9] = s2;
-		possibleSigils[10] = s2;
-		possibleSigils[11] = (Sigil)WrapIndex((int)(s2 + 1) ,max);
-		return possibleSigils[UnityEngine.Random.Range(0, 12)];
+	List<Gene> PruneGeneListOfExclusiveGenes(List<Gene> childGenes) {
+		List<Gene> prunedGenes = childGenes.ToList();
+		List<TraitType> traitTypesProcessed = new List<TraitType>();
+
+		foreach(Gene g in childGenes) {
+			TraitType t = g.traitType;
+			if(traitTypesProcessed.Contains(t))
+				continue;
+			traitTypesProcessed.Add(t);
+			List<Gene> toChooseFrom = new List<Gene>();
+			toChooseFrom.Add(g);
+			foreach(Gene g1 in childGenes)
+				if(g != g1 && g.functionality.CanExistWithWith(g1.traitType, g) == false)
+					toChooseFrom.Add(g1);
+			if(toChooseFrom.Count > 1) {
+				Gene keep = toChooseFrom[UnityEngine.Random.Range(0,toChooseFrom.Count)];
+				toChooseFrom.Remove(keep);
+				foreach(Gene toRemove in toChooseFrom)
+					if(prunedGenes.Contains(toRemove))
+						prunedGenes.Remove(toRemove);
+			}
+		}
+		return prunedGenes;
 	}
 
 
@@ -179,12 +144,6 @@ public class BreedManager : MonoBehaviour {
 			hudManager.popup.Show("Cannot Breed", "Room is full. Sell or move a blob to free space");
 			return true;
 		}
-
-		//if(gameManager.gameVars.gold < cost) {
-		//	hudManager.popup.Show("Cannot Breed", "You do not have enough gold.");
-		//	return true;
-		//}
-		
 		return false;
 	}
 

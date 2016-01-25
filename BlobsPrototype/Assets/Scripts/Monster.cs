@@ -19,6 +19,7 @@ public class Monster : BaseMonster {
 		iconAtlas = b.iconAtlas;
 		iconTintIndex = b.iconTintIndex;
 		quality = b.quality;
+		combatStats = new CombatStats(b.combatStats);
 	}
 
 }

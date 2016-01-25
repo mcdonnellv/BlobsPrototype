@@ -15,6 +15,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UILabel sigilLabel;
 	public List<UILabel> statLabels;
 	public UIGrid geneGrid;
+	public UIGrid hiddenGeneGrid;
 	public UIGrid statGrid;
 	public UILabel actionButton1Label;
 	public UILabel actionButton2Label;
@@ -26,12 +27,17 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public UIWidget blobSpritesContainer;
 	public UISprite changeFlashObject;
 	public TweenAlpha changeFlashAnim;
+	public GameObject hiddenGenePanel;
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	BreedManager breedManager { get { return BreedManager.breedManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
-	
+
+	public void ShowHiddenGenes() {
+		hiddenGenePanel.SetActive(!hiddenGenePanel.activeSelf);
+
+	}
 
 	public Blob DisplayedBlob() { return blob; }
 
@@ -69,6 +75,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		progressBar.value = 0f;
 		UpdateStats();
 		geneGrid.transform.DestroyChildren();
+		hiddenGeneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
 	}
@@ -112,11 +119,19 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			GeneCell geneCell = go.GetComponent<GeneCell>();
 			geneCell.nameLabel.text = "Empty";
 			go.transform.parent = geneGrid.transform;
-			go.transform.localScale = new Vector3(1f,1f,1f);
-			go.transform.localPosition = new Vector3(0f,0f,0f);
+			go.transform.localScale = Vector3.one;
+			go.transform.localPosition = Vector3.zero;
 			geneCell.Deactivate();
 		}
 		geneGrid.Reposition();
+
+		for(int i = 0; i < blob.hiddenGenes.Count; i++) {
+			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("Gene Cell"));
+			go.transform.parent = hiddenGeneGrid.transform;
+			go.transform.localScale = Vector3.one;
+			go.transform.localPosition = Vector3.zero;
+		}
+		hiddenGeneGrid.Reposition();
 	}
 
 	void FillGeneCells() {
@@ -128,14 +143,28 @@ public class BlobInfoContextMenu : GenericGameMenu {
 			GameObject go = g.CreateGeneGameObject(this);
 			geneCell.socketSprite.transform.DestroyChildren();
 			go.transform.parent = geneCell.socketSprite.transform;
-			go.transform.localScale = new Vector3(1f,1f,1f);
-			go.transform.localPosition = new Vector3(0f,0f,0f);
+			go.transform.localScale = Vector3.one;
+			go.transform.localPosition = Vector3.zero;
 			geneCell.nameLabel.text = g.itemName;
 			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
 			if(g.active)
 				geneCell.Activate();
 			else
 				geneCell.Deactivate();
+		}
+
+		foreach(Gene g in blob.hiddenGenes) {
+			int index = blob.hiddenGenes.IndexOf(g);
+			if (index >= hiddenGeneGrid.transform.childCount)
+				break;
+			GeneCell geneCell = hiddenGeneGrid.transform.GetChild(index).GetComponent<GeneCell>();
+			GameObject go = g.CreateGeneGameObject(this);
+			geneCell.socketSprite.transform.DestroyChildren();
+			go.transform.parent = geneCell.socketSprite.transform;
+			go.transform.localScale = Vector3.one;
+			go.transform.localPosition = Vector3.zero;
+			geneCell.nameLabel.text = g.itemName;
+			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
 		}
 	}
 
@@ -199,6 +228,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		gene.state = GeneState.Available;
 		gene.CheckActivationStatus();
 		geneGrid.transform.DestroyChildren();
+		hiddenGeneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
 	}
@@ -207,6 +237,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		Gene gene = hudManager.itemInfoPopup.gene;
 		blob.genes.Remove(gene);
 		geneGrid.transform.DestroyChildren();
+		hiddenGeneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
 		FillGeneCells();
 		hudManager.itemInfoPopup.Hide();

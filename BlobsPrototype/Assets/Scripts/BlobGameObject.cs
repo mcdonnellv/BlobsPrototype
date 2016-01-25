@@ -33,8 +33,6 @@ public class BlobGameObject : MonoBehaviour {
 		blob = new Blob();
 		blob.gameObject = this;
 		blob.id = gameManager.gameVars.blobsSpawned++;
-		blob.quality = Blob.GetRandomQuality();
-		blob.geneSlots = Blob.GetGeneCountFromQuality(blob.quality);
 		blob.gender = (UnityEngine.Random.Range(0, 2) == 0) ? Gender.Male : Gender.Female;
 		bodyPartSprites.Add("Body", bodyPartManager.bodyTextures[UnityEngine.Random.Range(0, bodyPartManager.bodyTextures.Count)]);
 		bodyPartSprites.Add("Eyes", bodyPartManager.eyeTextures[UnityEngine.Random.Range(0, bodyPartManager.eyeTextures.Count)]);

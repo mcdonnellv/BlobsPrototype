@@ -58,6 +58,13 @@ public enum TraitType {
 	StaminaMod,
 	SpeedMod,
 	SetElement,
+	SetSigil,
+	StatBiasAttack,
+	StatBiasArmor,
+	StatBiasHealth,
+	StatBiasStamina,
+	StatBiasSpeed,
+	SetGeneSlots,
 	TraitTypeCt,
 };
 
