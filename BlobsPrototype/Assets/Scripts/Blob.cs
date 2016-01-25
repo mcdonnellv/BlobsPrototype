@@ -19,6 +19,7 @@ public class Blob : BaseThing {
 	public DateTime birthday;
 	public List<Gene> genes;
 	public List<Gene> hiddenGenes;
+	public List<Gene> dormantGenes;
 	public int geneSlots;
 	public CombatStats combatStats;
 	public Element nativeElement;
@@ -30,6 +31,9 @@ public class Blob : BaseThing {
 	public TimeSpan actionDuration;
 	public Dictionary<string,string> blobColor;
 	public BlobGameObject gameObject;
+
+	public static int maxDormantGenes = 2;
+	public static float dormantSurfaceChance = .1f;
 
 	// helpers
 	public bool male { get {return gender == Gender.Male;} }
@@ -66,6 +70,7 @@ public class Blob : BaseThing {
 		combatStats = new CombatStats();
 		genes = new List<Gene>();
 		hiddenGenes = new List<Gene>();
+		dormantGenes = new List<Gene>(); 
 		itemsConsumed = new Dictionary<string, int>();
 		birthday = DateTime.MinValue;
 		actionReadyTime  = new DateTime(0); 
@@ -211,9 +216,21 @@ public class Blob : BaseThing {
 
 	public void OnBirth() {
 		foreach(Gene g in genes)
-			g.functionality.OnBirth(this, g);
-		foreach(Gene g in hiddenGenes) 
-			g.functionality.OnBirth(this, g);
+			if(g.functionality != null)
+				g.functionality.OnBirth(this, g);
+		foreach(Gene g in hiddenGenes)
+			if(g.functionality != null)
+				g.functionality.OnBirth(this, g);
+	}
+
+
+	public void AddGene(Gene g) {
+		genes.Add(g);
+		g.state = GeneState.Available;
+		g.CheckActivationStatus();
+		Gene newGene = new Gene(geneManager.GetBaseGeneByID(g.id));
+		dormantGenes.Add(newGene);
+		dormantGenes = GeneManager.LimitGenes(dormantGenes, Blob.maxDormantGenes);
 	}
 }
 

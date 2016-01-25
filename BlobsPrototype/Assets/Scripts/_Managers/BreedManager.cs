@@ -79,8 +79,23 @@ public class BreedManager : MonoBehaviour {
 		Blob blob = blobGameObject.blob;
 
 		// pass on genes
-		blob.genes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.genes), geneManager.GetBaseGeneListFromGeneList(mom.genes), blobInteractAction);
-		blob.hiddenGenes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.hiddenGenes), geneManager.GetBaseGeneListFromGeneList(mom.hiddenGenes), blobInteractAction);
+		blob.genes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.genes), geneManager.GetBaseGeneListFromGeneList(mom.genes), false);
+		blob.hiddenGenes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.hiddenGenes), geneManager.GetBaseGeneListFromGeneList(mom.hiddenGenes), true);
+		blob.dormantGenes = PassGenes(geneManager.GetBaseGeneListFromGeneList(dad.dormantGenes), geneManager.GetBaseGeneListFromGeneList(mom.dormantGenes), true);
+		blob.dormantGenes = GeneManager.LimitGenes(blob.dormantGenes, Blob.maxDormantGenes);
+
+		// dormant Gene surfacing
+		foreach(Gene g in blob.dormantGenes) {
+			if(blob.genes.Count >= blob.geneSlots)
+				break; // too many active genes
+			foreach(Gene g1 in blob.genes)
+				if(g.id == g1.id)
+					continue; // gene is already active
+			if(UnityEngine.Random.Range(0f,1f) < Blob.dormantSurfaceChance)
+				blob.genes.Add(new Gene(geneManager.GetBaseGeneByID(g.id)));
+		}
+
+		blob.genes = GeneManager.LimitGenes(blob.genes, blob.geneSlots);
 
 		//trigger any OnBirth gene logic
 		blob.OnBirth();
@@ -89,8 +104,8 @@ public class BreedManager : MonoBehaviour {
 	}
 
 
-	List<Gene> PassGenes(List<BaseGene> dadBaseGenes, List<BaseGene> momBaseGenes, BlobInteractAction blobInteractAction) {
-		List<BaseGene> childBaseGenes = dadBaseGenes.Union(momBaseGenes).ToList();
+	List<Gene> PassGenes(List<BaseGene> dadBaseGenes, List<BaseGene> momBaseGenes, bool union) {
+		List<BaseGene> childBaseGenes = union ? dadBaseGenes.Union(momBaseGenes).ToList() : dadBaseGenes.Intersect(momBaseGenes).ToList();
 		List<Gene> childGenes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
 
 		// Prune genes that cannot exist with each other
@@ -102,7 +117,7 @@ public class BreedManager : MonoBehaviour {
 			childGenes[i] = g.MorphIfNeeded();
 		}
 
-		return childGenes;
+		return childGenes.OrderBy(x => x.itemName).ToList();;
 	}
 
 
@@ -112,7 +127,7 @@ public class BreedManager : MonoBehaviour {
 
 		foreach(Gene g in childGenes) {
 			TraitType t = g.traitType;
-			if(traitTypesProcessed.Contains(t))
+			if(g.functionality == null || traitTypesProcessed.Contains(t))
 				continue;
 			traitTypesProcessed.Add(t);
 			List<Gene> toChooseFrom = new List<Gene>();

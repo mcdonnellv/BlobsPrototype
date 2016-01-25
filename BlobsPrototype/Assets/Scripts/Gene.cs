@@ -20,7 +20,12 @@ public static class GeneFunctionalityFactory {
 		{TraitType.StatBiasStamina, () => { return new StatBiasStaminaFunctionality(); }},
 		{TraitType.StatBiasSpeed, () => { return new StatBiasSpeedFunctionality(); }}
 	};
-	public static IGeneFunctionality GeneFunctionalityFromTraitType(TraitType t) { return map[t](); }
+	public static IGeneFunctionality GeneFunctionalityFromTraitType(TraitType t) { 
+		Func<IGeneFunctionality> v;
+		if(map.TryGetValue(t, out v))
+			return v();
+		else return null;
+	}
 }
 
 

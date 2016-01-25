@@ -80,6 +80,7 @@ public class GeneManager : MonoBehaviour {
 		return geneList;
 	}
 
+
 	public List<BaseGene> GetBaseGenesWithKeyItem(int keyItemId) {
 		List<BaseGene> geneList = new List<BaseGene>();
 		foreach(BaseGene baseGene in genes) {
@@ -87,5 +88,22 @@ public class GeneManager : MonoBehaviour {
 				geneList.Add(baseGene);
 		}
 		return geneList;
+	}
+
+
+	static public List<Gene> LimitGenes(List<Gene> list, int limit) {
+		if(list.Count < limit)
+			return list;
+		//shuffle
+		int n = list.Count;  
+		while (n > 1) {  
+			n--;  
+			int k = UnityEngine.Random.Range(0, n + 1) ;
+			Gene g = list[k];  
+			list[k] = list[n];  
+			list[n] = g;  
+		}
+		list.RemoveRange(limit -1, list.Count - limit);
+		return list.OrderBy(x => x.itemName).ToList();
 	}
 }

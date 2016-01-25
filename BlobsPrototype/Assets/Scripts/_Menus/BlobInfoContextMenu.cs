@@ -36,7 +36,9 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	public void ShowHiddenGenes() {
 		hiddenGenePanel.SetActive(!hiddenGenePanel.activeSelf);
-
+	}
+	public void ShowDormantGenes() {
+		hiddenGenePanel.SetActive(!hiddenGenePanel.activeSelf);
 	}
 
 	public Blob DisplayedBlob() { return blob; }
@@ -125,7 +127,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		}
 		geneGrid.Reposition();
 
-		for(int i = 0; i < blob.hiddenGenes.Count; i++) {
+		for(int i = 0; i < blob.hiddenGenes.Count + blob.dormantGenes.Count; i++) {
 			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("Gene Cell"));
 			go.transform.parent = hiddenGeneGrid.transform;
 			go.transform.localScale = Vector3.one;
@@ -137,35 +139,37 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	void FillGeneCells() {
 		foreach(Gene g in blob.genes) {
 			int index = blob.genes.IndexOf(g);
-			if (index >= geneGrid.transform.childCount)
-				break;
-			GeneCell geneCell = geneGrid.transform.GetChild(index).GetComponent<GeneCell>();
-			GameObject go = g.CreateGeneGameObject(this);
-			geneCell.socketSprite.transform.DestroyChildren();
-			go.transform.parent = geneCell.socketSprite.transform;
-			go.transform.localScale = Vector3.one;
-			go.transform.localPosition = Vector3.zero;
-			geneCell.nameLabel.text = g.itemName;
-			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
-			if(g.active)
-				geneCell.Activate();
-			else
-				geneCell.Deactivate();
+			GeneCell r = FillGeneCell(g, index, geneGrid);
+			if(!r) continue;
 		}
 
 		foreach(Gene g in blob.hiddenGenes) {
 			int index = blob.hiddenGenes.IndexOf(g);
-			if (index >= hiddenGeneGrid.transform.childCount)
-				break;
-			GeneCell geneCell = hiddenGeneGrid.transform.GetChild(index).GetComponent<GeneCell>();
-			GameObject go = g.CreateGeneGameObject(this);
-			geneCell.socketSprite.transform.DestroyChildren();
-			go.transform.parent = geneCell.socketSprite.transform;
-			go.transform.localScale = Vector3.one;
-			go.transform.localPosition = Vector3.zero;
-			geneCell.nameLabel.text = g.itemName;
-			geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
+			GeneCell r = FillGeneCell(g, index, hiddenGeneGrid);
+			if(!r) continue;
 		}
+
+		foreach(Gene g in blob.dormantGenes) {
+			int index = blob.dormantGenes.IndexOf(g);
+			GeneCell r = FillGeneCell(g, index + blob.hiddenGenes.Count, hiddenGeneGrid);
+			if(!r) continue;
+			r.Deactivate();
+		}
+	}
+
+
+	GeneCell FillGeneCell(Gene g, int index, UIGrid geneGridParam) {
+		if (index < 0 || index >= geneGridParam.transform.childCount)
+			return null;
+		GeneCell geneCell = geneGridParam.transform.GetChild(index).GetComponent<GeneCell>();
+		GameObject go = g.CreateGeneGameObject(this);
+		geneCell.socketSprite.transform.DestroyChildren();
+		go.transform.parent = geneCell.socketSprite.transform;
+		go.transform.localScale = Vector3.one;
+		go.transform.localPosition = Vector3.zero;
+		geneCell.nameLabel.text = g.itemName;
+		geneCell.nameLabel.color = ColorDefines.ColorForQuality(g.quality);
+		return geneCell;
 	}
 
 
@@ -224,9 +228,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	public void AddGeneToBlob(Gene gene) {
-		blob.genes.Add(gene);
-		gene.state = GeneState.Available;
-		gene.CheckActivationStatus();
+		blob.AddGene (gene);
 		geneGrid.transform.DestroyChildren();
 		hiddenGeneGrid.transform.DestroyChildren();
 		BuildEmptyGeneCells();
