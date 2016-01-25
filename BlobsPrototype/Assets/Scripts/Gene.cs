@@ -13,6 +13,7 @@ public static class GeneFunctionalityFactory {
 	private static Dictionary<TraitType, Func<IGeneFunctionality>> map = new Dictionary<TraitType, Func<IGeneFunctionality>>() {
 		{TraitType.SetElement, () => { return new ElementGeneFunctionality(); }},
 		{TraitType.SetSigil, () => { return new SigilGeneFunctionality(); }},
+		{TraitType.SetGeneSlots, () => { return new GeneSlotsFunctionality(); }},
 		{TraitType.StatBiasAttack, () => { return new StatBiasAttackFunctionality(); }},
 		{TraitType.StatBiasArmor, () => { return new StatBiasArmorFunctionality(); }},
 		{TraitType.StatBiasHealth, () => { return new StatBiasHealthFunctionality(); }},

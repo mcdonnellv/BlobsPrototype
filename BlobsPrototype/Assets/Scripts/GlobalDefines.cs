@@ -64,6 +64,7 @@ public enum TraitType {
 	StatBiasHealth,
 	StatBiasStamina,
 	StatBiasSpeed,
+	SetGeneSlots,
 	TraitTypeCt,
 };
 

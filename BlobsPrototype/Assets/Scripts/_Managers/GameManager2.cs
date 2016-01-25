@@ -67,6 +67,7 @@ public class GameManager2 : MonoBehaviour {
 			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(2))); //white
 			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(5))); //sigilA
 			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(10))); //Attack Bias I
+			blob.hiddenGenes.Add(new Gene(geneManager.GetBaseGeneByID(30))); //2 Gene Slots
 			blob.OnBirth();
 			room.AddBlob(blob);
 		}

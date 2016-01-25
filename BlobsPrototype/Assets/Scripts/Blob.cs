@@ -40,7 +40,7 @@ public class Blob : BaseThing {
 	public bool canBreed { get {return isAdult && state == BlobState.Idle;} }
 	public bool canMerge { get {return hasHatched && state == BlobState.Idle;} }
 	public TimeSpan age {get {return DateTime.Now - birthday;} }
-	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks * (1L + (long)quality + (long)genes.Count));} }
+	public TimeSpan blobHatchDelay {get {return TimeSpan.FromTicks(blobHatchDelayStandard.Ticks);} }
 	public TimeSpan breedReadyDelay {get {return TimeSpan.FromTicks(breedReadyStandard.Ticks);} }
 	public TimeSpan workingDelay {get {return TimeSpan.FromTicks(workingDelayStandard.Ticks);} }
 	public TimeSpan recoveryDelay {get {return TimeSpan.FromTicks(recoveryDelayStandard.Ticks);} }
@@ -102,32 +102,6 @@ public class Blob : BaseThing {
 		gameObject.Hatch();
 	}
 	
-
-	static public int GetGeneCountFromQuality(Quality q) {
-		switch (q) {
-		case Quality.Common: 
-			float roll = UnityEngine.Random.Range(0f, 1f);
-			return (roll < .7f) ? 1 : 2;
-		case Quality.Rare: return 3;
-		case Quality.Epic: return 4;
-		case Quality.Legendary: return 5;
-		}
-		return 1;
-	}
-	
-	
-	static public Quality GetRandomQuality()	{	
-		Quality q = Quality.Common;
-		float r = UnityEngine.Random.Range(0f,1f);
-		if(r <= 0.02140f)
-			q = Quality.Rare;
-		if(r <= 0.00428f)
-			q = Quality.Epic;
-		if(r <= 0.00108f)
-			q = Quality.Legendary;
-		return q;
-	}
-
 
 	public string GetActionString() {
 		string retString = "";

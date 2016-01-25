@@ -85,14 +85,6 @@ public class BreedManager : MonoBehaviour {
 		//trigger any OnBirth gene logic
 		blob.OnBirth();
 
-		// give random element and sigil
-		switch(blobInteractAction) {
-		case BlobInteractAction.Merge:
-			blob.SetNativeElement((UnityEngine.Random.Range(0, 2) == 0) ? dad.element : mom.element);
-			blob.sigil = (UnityEngine.Random.Range(0, 2) == 0) ? dad.sigil : mom.sigil;
-			break;
-		}
-
 		return blob;
 	}
 
@@ -100,16 +92,29 @@ public class BreedManager : MonoBehaviour {
 	List<Gene> PassGenes(List<BaseGene> dadBaseGenes, List<BaseGene> momBaseGenes, BlobInteractAction blobInteractAction) {
 		List<BaseGene> childBaseGenes = dadBaseGenes.Union(momBaseGenes).ToList();
 		List<Gene> childGenes = geneManager.CreateGeneListFromBaseGeneList(childBaseGenes);
+
+		// Prune genes that cannot exist with each other
+		childGenes = PruneGeneListOfExclusiveGenes(childGenes);
+		
+		// morph genes if needed
+		for(int i = 0; i < childGenes.Count; i++) {
+			Gene g = childGenes[i];
+			childGenes[i] = g.MorphIfNeeded();
+		}
+
+		return childGenes;
+	}
+
+
+	List<Gene> PruneGeneListOfExclusiveGenes(List<Gene> childGenes) {
 		List<Gene> prunedGenes = childGenes.ToList();
 		List<TraitType> traitTypesProcessed = new List<TraitType>();
 
-		// Prune genes that cannot exist with each other
 		foreach(Gene g in childGenes) {
 			TraitType t = g.traitType;
 			if(traitTypesProcessed.Contains(t))
 				continue;
 			traitTypesProcessed.Add(t);
-
 			List<Gene> toChooseFrom = new List<Gene>();
 			toChooseFrom.Add(g);
 			foreach(Gene g1 in childGenes)
@@ -118,22 +123,12 @@ public class BreedManager : MonoBehaviour {
 			if(toChooseFrom.Count > 1) {
 				Gene keep = toChooseFrom[UnityEngine.Random.Range(0,toChooseFrom.Count)];
 				toChooseFrom.Remove(keep);
-
 				foreach(Gene toRemove in toChooseFrom)
 					if(prunedGenes.Contains(toRemove))
 						prunedGenes.Remove(toRemove);
 			}
 		}
-
-		childGenes = prunedGenes;
-			
-		// morph genes if needed
-		for(int i = 0; i < childGenes.Count; i++) {
-			Gene g = childGenes[i];
-			childGenes[i] = g.MorphIfNeeded();
-		}
-
-		return childGenes;
+		return prunedGenes;
 	}
 
 
@@ -149,12 +144,6 @@ public class BreedManager : MonoBehaviour {
 			hudManager.popup.Show("Cannot Breed", "Room is full. Sell or move a blob to free space");
 			return true;
 		}
-
-		//if(gameManager.gameVars.gold < cost) {
-		//	hudManager.popup.Show("Cannot Breed", "You do not have enough gold.");
-		//	return true;
-		//}
-		
 		return false;
 	}
 
