@@ -6,11 +6,8 @@ public class ItemInfoPopup : GenericGameMenu {
 	public UIButton deleteButton;
 	public UILabel deleteButtonLabel;
 	public UILabel rarityLabel;
-	public UILabel upperPanelInfoLabel;
+	public UILabel infoLabel;
 	public UISprite icon;
-	public UIGrid lowerPanelGrid;
-	public UIWidget upperPanel;
-	public UIWidget lowerPanel;
 	ItemManager itemManager { get { return ItemManager.itemManager; } }
 	[HideInInspector] public Gene gene = null;
 	[HideInInspector] public Item item = null;
@@ -48,8 +45,7 @@ public class ItemInfoPopup : GenericGameMenu {
 		int height = defaultWindowHeight;
 		if(!deleteButton.gameObject.activeInHierarchy)
 			height -= 40;
-		if(!lowerPanel.gameObject.activeInHierarchy)
-			height -= 120;
+		height -= 120;
 		window.GetComponent<UISprite>().height = height;
 	}
 
@@ -63,55 +59,26 @@ public class ItemInfoPopup : GenericGameMenu {
 	public void ClearFields() {
 		headerLabel.text = "";
 		rarityLabel.text = "";
-		upperPanelInfoLabel.text = "";
+		infoLabel.text = "";
 	}
 
 
 	public void PopulateInfoFromGene(Gene g) {
 		gene = g;
-
 		headerLabel.text = gene.itemName.ToUpper();
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(gene.quality)) + gene.quality.ToString() + " Gene[-]";
-		lowerPanelGrid.transform.DestroyChildren();
 		icon.spriteName = g.iconName;
 		icon.atlas = g.iconAtlas;
-		upperPanelInfoLabel.text = gene.description;
-
-
-		if(gene.activationRequirements.Count > 0) {
-			lowerPanel.gameObject.SetActive(true);
-			foreach(GeneActivationRequirement req in gene.activationRequirements) {
-				int index = gene.activationRequirements.IndexOf(req);
-				GameObject statGameObject = (GameObject)GameObject.Instantiate(Resources.Load("Requirement Container"));
-				statGameObject.transform.SetParent(lowerPanelGrid.transform);
-				statGameObject.transform.localScale = new Vector3(1f,1f,1f);
-				statGameObject.transform.localPosition = new Vector3(0f, -14f + index * -26f, 0f);
-				UISprite[] sprites = statGameObject.GetComponentsInChildren<UISprite>();
-				BaseItem item = itemManager.GetBaseItemByID(req.itemId);
-				sprites[0].atlas = item.iconAtlas;
-				sprites[0].spriteName = item.iconName;
-				sprites[0].color = ColorDefines.IconColorFromIndex(item.iconTintIndex);
-				UILabel[] labels = statGameObject.GetComponentsInChildren<UILabel>();
-				labels[0].text = item.itemName;
-				labels[1].text = req.amountConsumed.ToString() + " / " + req.amountNeeded.ToString();
-				labels[0].color = (req.fulfilled) ? ColorDefines.positiveTextColor : Color.white;
-				labels[1].color = (req.fulfilled) ? ColorDefines.positiveTextColor : Color.white;
-			}
-		}
-		else
-			lowerPanel.gameObject.SetActive(false);
-
+		infoLabel.text = gene.description;
 		deleteButtonLabel.text = "Delete";
-		lowerPanelGrid.Reposition();
 		ResizeWindow();
 	}
 
 	public void PopulateInfoFromItem(Item i) {
 		item = i;
-		lowerPanel.gameObject.SetActive(false);
 		headerLabel.text = item.itemName;
 		rarityLabel.text = ColorDefines.ColorToHexString(ColorDefines.ColorForQuality(item.quality)) + item.quality.ToString() + " Item[-]";
-		upperPanelInfoLabel.text = item.description;
+		infoLabel.text = item.description;
 		icon.atlas = item.iconAtlas;
 		icon.spriteName = item.iconName;
 		icon.color = ColorDefines.IconColorFromIndex(item.iconTintIndex);

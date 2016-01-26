@@ -214,10 +214,11 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	public void GeneCellPressed(GeneCell geneCell) {
 		GenePointer gp = geneCell.GetGenePointer();
-		if(gp == null)
+		if(gp == null){
 			//pressed a gene cell that is empty, intention is to add a gene
 			hudManager.storeMenu.Show();
-		else
+			hudManager.itemInfoPopup.Hide();
+		}else
 			GenePressed(gp);
 	}
 
