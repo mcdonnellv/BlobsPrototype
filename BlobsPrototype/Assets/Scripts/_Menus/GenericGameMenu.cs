@@ -49,10 +49,11 @@ public class GenericGameMenu : MonoBehaviour {
 		animationWindow.onFinished.Add(new EventDelegate(this, "SetDisplayed"));
 
 		if(BG != null) {
+			BG.gameObject.SetActive(true);
 			animationBG = BG.GetComponent<UITweener>();
 			animationBG.onFinished.Clear();
 			animationBG.PlayForward();
-			BG.transform.localPosition = transform.localPosition;
+			BG.transform.localPosition = transform.localPosition * -1;
 		}
 	}
 
@@ -113,8 +114,9 @@ public class GenericGameMenu : MonoBehaviour {
 	public virtual void Cleanup() {
 		ReturnToOldPosition();
 		animationWindow.enabled = false;
-		if(animationBG != null) {
+		if(BG != null && animationBG != null) {
 			animationBG.enabled = false;
+			BG.gameObject.SetActive(false);
 		}
 		displayed = false;
 		gameObject.SetActive(false);

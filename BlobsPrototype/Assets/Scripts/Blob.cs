@@ -158,35 +158,6 @@ public class Blob : BaseThing {
 			spouse.spouseId = -1;
 	}
 
-
-	public void CalculateStatsFromGenes() {
-		combatStats.attack.ResetGeneModdedValue();
-		combatStats.armor.ResetGeneModdedValue();
-		combatStats.health.ResetGeneModdedValue();
-		combatStats.stamina.ResetGeneModdedValue();
-		combatStats.speed.ResetGeneModdedValue();
-
-		if(genes.Count == 0)
-			return;
-
-		Element preCalcElement = (element == Element.None) ? nativeElement : element;
-		combatStats.element = preCalcElement;
-
-		foreach(Gene g in genes) {
-			if(!g.active || !Trait.IsPersistentTrait(g.traitCondition))
-				continue;
-
-			if(g.modifier == AbilityModifier.NA)
-				combatStats.CalculateOtherStats(g.traitType, g.value);
-
-			else if(Trait.IsPersistentTraitConditionMet(g.traitCondition, this))
-				Trait.ProcessPeristentTrait(g.traitType, g.value, g.modifier, combatStats);
-		}
-
-		if(preCalcElement != element)
-			gameObject.SetColorFromElement(combatStats.element);
-	}
-
 	
 	public void EatItem(Item item) {
 		// assume the item has been deleted already from inventory
@@ -194,43 +165,48 @@ public class Blob : BaseThing {
 			itemsConsumed.Add(item.itemName, 1);
 		else 
 			itemsConsumed[item.itemName]++;
-
-		bool updateDisplay = false;
-		//check all genes. see if item consumed was a requirement for activation.
-		foreach(Gene gene in genes) {
-			if(gene.active)
-				continue;
-			foreach(GeneActivationRequirement req in gene.activationRequirements) {
-				if(req.itemId == item.id) {
-					Mathf.Clamp(++req.amountConsumed, 0, req.amountNeeded);
-					gene.CheckActivationStatus();
-					if(gene.active)
-						updateDisplay = true;
-				}
-			}
-		}
-
-		if (updateDisplay)
-			gameObject.UpdateBlobInfoIfDisplayed();
+		// TODO: Do Stuff
 	}
 
+
 	public void OnBirth() {
-		foreach(Gene g in genes)
-			if(g.functionality != null)
-				g.functionality.OnBirth(this, g);
 		foreach(Gene g in hiddenGenes)
 			if(g.functionality != null)
 				g.functionality.OnBirth(this, g);
+
+		foreach(Gene g in genes)
+			if(g.functionality != null)
+				g.functionality.OnBirth(this, g);
+
+		combatStats.BirthDone();
+		OnAdd(); //run only once whne born
 	}
 
 
-	public void AddGene(Gene g) {
+	public void OnAdd() {
+		foreach(Gene g in hiddenGenes)
+			if(g.functionality != null)
+				g.functionality.OnAdd(this, g);
+		
+		foreach(Gene g in genes)
+			if(g.functionality != null)
+				g.functionality.OnAdd(this, g);
+	}
+
+
+	public void AddGene(Gene g, bool trigger) {
 		genes.Add(g);
-		g.state = GeneState.Available;
-		g.CheckActivationStatus();
+		if(trigger && g.functionality != null)
+			g.functionality.OnAdd(this, g);
 		Gene newGene = new Gene(geneManager.GetBaseGeneByID(g.id));
 		dormantGenes.Add(newGene);
 		dormantGenes = GeneManager.LimitGenes(dormantGenes, Blob.maxDormantGenes);
+	}
+
+	public void RemoveGene(Gene g) {
+		if(g.functionality != null)
+			g.functionality.OnRemove(this, g);
+		genes.Remove(g);
 	}
 }
 

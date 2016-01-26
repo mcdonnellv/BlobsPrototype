@@ -28,13 +28,18 @@ public class CombatStats {
 	
 
 	public void ResetForCombat() {
-		for(int i=0; i < (int)CombatStatType.CombatStatTypeCt; i++)
-			allStats[i].ResetCombatValue();
+		foreach(Stat s in allStats)
+			s.ResetCombatValue();
 	}
 
 	public void CalculateOtherStats(TraitType t, float v) {
 		switch (t) {
 		case TraitType.SetElement: element = (Element)v; break;
 		}
+	}
+
+	public void BirthDone() {
+		foreach(Stat s in allStats)
+			s.BirthDone();
 	}
 }

@@ -84,7 +84,6 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 
 	void UpdateStats() {
-		blob.CalculateStatsFromGenes();
 		for(int i=0; i < statLabels.Count; i++) {
 			Stat stat = blob.combatStats.allStats[i];
 			statLabels[i].text = stat.geneModdedValue.ToString();
@@ -215,33 +214,22 @@ public class BlobInfoContextMenu : GenericGameMenu {
 
 	public void GeneCellPressed(GeneCell geneCell) {
 		GenePointer gp = geneCell.GetGenePointer();
-		if(gp == null) {
+		if(gp == null)
 			//pressed a gene cell that is empty, intention is to add a gene
-			if(hudManager.inventoryMenu.mode != InventoryMenu.Mode.AddGene) {
-				hudManager.itemInfoPopup.Hide();
-				hudManager.inventoryMenu.Show(InventoryMenu.Mode.AddGene);
-			}
-		}
+			hudManager.storeMenu.Show();
 		else
 			GenePressed(gp);
 	}
 
 
 	public void AddGeneToBlob(Gene gene) {
-		blob.AddGene (gene);
-		geneGrid.transform.DestroyChildren();
-		hiddenGeneGrid.transform.DestroyChildren();
-		BuildEmptyGeneCells();
-		FillGeneCells();
+		blob.AddGene(gene, true);
+		DisplayBlobInfo();
 	}
 
 	public void RemoveGeneFromBlob() {
-		Gene gene = hudManager.itemInfoPopup.gene;
-		blob.genes.Remove(gene);
-		geneGrid.transform.DestroyChildren();
-		hiddenGeneGrid.transform.DestroyChildren();
-		BuildEmptyGeneCells();
-		FillGeneCells();
+		blob.RemoveGene(hudManager.itemInfoPopup.gene);
+		DisplayBlobInfo();
 		hudManager.itemInfoPopup.Hide();
 	}
 

@@ -8,16 +8,19 @@ public class QuestListGrid : UIGrid {
 	QuestManager questManager { get { return QuestManager.questManager; } }
 	RoomManager roomManager  { get { return RoomManager.roomManager; } }
 
-	public void SetupQuestCells() {
-		bool reposition = false;
-		
+	void DestroySampleCells() {
 		for (int i = 0; i < transform.childCount; i++) {
-			QuestCell questCell = transform.GetChild(i).GetComponent<QuestCell>();
-			if(questCell != null && questCell.questId == -1) {
+			QuestCell cell = transform.GetChild(i).GetComponent<QuestCell>();
+			if(cell != null && cell.questId == -1) {
 				i--;
-				DestroyImmediate(questCell.gameObject);
+				DestroyImmediate(cell.gameObject);
 			}
 		}
+	}
+
+	public void SetupQuestCells() {
+		bool reposition = false;
+		DestroySampleCells();
 		
 		foreach(Quest quest in questManager.availableQuests) {
 			QuestCell questCell = GetQuestCellFromQuest(quest);

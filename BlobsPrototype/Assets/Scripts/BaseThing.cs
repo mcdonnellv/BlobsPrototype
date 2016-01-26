@@ -11,4 +11,5 @@ public class BaseThing {
 	public UIAtlas iconAtlas;
 	public int iconTintIndex = 0;
 	public int sellValue = 0;
+	public string name { get{return itemName;} }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 
@@ -102,13 +102,6 @@ public enum Sigil {
 };
 
 
-public enum GeneState {
-	Passive,
-	Available,
-	Active,
-};
-
-
 public enum BlobInteractAction {
 	Breed,
 	Merge,
@@ -190,18 +183,20 @@ public class GlobalDefines : MonoBehaviour {
 	}
 
 
-	public static string TimeToString(TimeSpan ts) {
+	public static string TimeToString(TimeSpan ts) { return GlobalDefines.TimeToString(ts, true); }
+
+	public static string TimeToString(TimeSpan ts, bool verbose) {
 		string timeString = "";
 		if(ts.Days > 0)
 			timeString += ts.Days.ToString() + " day";
 		if(ts.Days == 0 && ts.Hours > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + " hr";
+			timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + (verbose ? " hr" : "h");
 		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + " min";
+			timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + (verbose ? " min" : "m");
 		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + " sec";
+			timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + (verbose ? " sec" : "s");
 		if(timeString == "")
-			timeString = "0 sec";
+			timeString = (verbose ? "0 sec" : "0s");
 		return timeString;
 	}
 

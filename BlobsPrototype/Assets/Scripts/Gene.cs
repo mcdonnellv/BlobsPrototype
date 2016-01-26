@@ -3,40 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public interface IGeneFunctionality {
-	bool CanExistWithWith(TraitType t, Gene g);
-	void OnBirth(Blob blob, Gene g);
-	void OnCombatStart();
-}
-
-public static class GeneFunctionalityFactory {
-	private static Dictionary<TraitType, Func<IGeneFunctionality>> map = new Dictionary<TraitType, Func<IGeneFunctionality>>() {
-		{TraitType.SetElement, () => { return new ElementGeneFunctionality(); }},
-		{TraitType.SetSigil, () => { return new SigilGeneFunctionality(); }},
-		{TraitType.SetGeneSlots, () => { return new GeneSlotsFunctionality(); }},
-		{TraitType.StatBiasAttack, () => { return new StatBiasAttackFunctionality(); }},
-		{TraitType.StatBiasArmor, () => { return new StatBiasArmorFunctionality(); }},
-		{TraitType.StatBiasHealth, () => { return new StatBiasHealthFunctionality(); }},
-		{TraitType.StatBiasStamina, () => { return new StatBiasStaminaFunctionality(); }},
-		{TraitType.StatBiasSpeed, () => { return new StatBiasSpeedFunctionality(); }}
-	};
-	public static IGeneFunctionality GeneFunctionalityFromTraitType(TraitType t) { 
-		Func<IGeneFunctionality> v;
-		if(map.TryGetValue(t, out v))
-			return v();
-		else return null;
-	}
-}
-
-
 [Serializable]
 public class Gene : BaseGene {
-
-	public GeneState state;
-	public string name { get{return itemName;} }
-	public bool active { get{return state == GeneState.Active;} }
 	public IGeneFunctionality functionality;
-
 
 	public Gene() {
 		itemName = "";
@@ -45,7 +14,6 @@ public class Gene : BaseGene {
 		traitType = TraitType.None;
 		value = 0;
 		activationRequirements = new List<GeneActivationRequirement>();
-		state = GeneState.Passive;
 	}
 
 
@@ -69,7 +37,6 @@ public class Gene : BaseGene {
 		activationRequirements = new List<GeneActivationRequirement>();
 		foreach (GeneActivationRequirement req in b.activationRequirements)
 			activationRequirements.Add(new GeneActivationRequirement(req));
-		state = GeneState.Passive;
 		functionality = GeneFunctionalityFactory.GeneFunctionalityFromTraitType(traitType);
 	}
 
@@ -85,28 +52,6 @@ public class Gene : BaseGene {
 		return geneGameObject;
 	}
 
-
-	public void CheckActivationStatus() {
-		if (state != GeneState.Available)
-			return;
-
-		foreach(GeneActivationRequirement req in activationRequirements)
-			if (req.fulfilled == false)
-				return;
-		Activate();
-
-	}
-
-
-	void Activate() {
-		HudManager hudManager = HudManager.hudManager;
-		state = GeneState.Active;
-		hudManager.ShowNotice("The " + itemName + " gene is now active");
-		if(hudManager.inventoryMenu.IsDisplayed())
-			hudManager.inventoryMenu.Hide();
-		hudManager.blobInfoContextMenu.Show(hudManager.blobInfoContextMenu.blob.id);
-	}
-	
 
 	public Gene MorphIfNeeded() {
 		if(morphChance <= 0f || morphList == null || morphList.Count == 0)

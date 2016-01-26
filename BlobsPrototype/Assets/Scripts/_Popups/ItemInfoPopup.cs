@@ -75,11 +75,7 @@ public class ItemInfoPopup : GenericGameMenu {
 		lowerPanelGrid.transform.DestroyChildren();
 		icon.spriteName = g.iconName;
 		icon.atlas = g.iconAtlas;
-
-		if(gene.state != GeneState.Active && gene.activationRequirements.Count > 0)
-			upperPanelInfoLabel.text = "(NEEDS ACTIVATION)\n" + gene.description;
-		else
-			upperPanelInfoLabel.text = gene.description;
+		upperPanelInfoLabel.text = gene.description;
 
 
 		if(gene.activationRequirements.Count > 0) {

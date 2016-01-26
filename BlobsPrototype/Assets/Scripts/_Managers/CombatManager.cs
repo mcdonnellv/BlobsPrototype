@@ -16,7 +16,6 @@ public class CombatManager : MonoBehaviour {
 	int curId = 0;
 	int blobCt = 0;
 	int monsterCt = 0;
-	int curTurn = 0;
 
 	List<Combatant> combatants = new List<Combatant>();
 	CombatMenu combatMenu;
@@ -39,9 +38,9 @@ public class CombatManager : MonoBehaviour {
 		combatant.monster = monster;
 		combatant.id = curId++;
 		combatant.combatStats = monster.combatStats;
-		combatant.combatStats.attack.ModCombatValue(AbilityModifier.Percent, monster.level);
-		combatant.combatStats.armor.ModCombatValue(AbilityModifier.Percent, monster.level);
-		combatant.combatStats.speed.ModCombatValue(AbilityModifier.Percent, monster.level);
+		combatant.combatStats.attack.combatValue *= monster.level;
+		combatant.combatStats.armor.combatValue *= monster.level;
+		combatant.combatStats.speed.combatValue *= monster.level;
 		combatant.name = combatant.monster.itemName + (++monsterCt).ToString();
 		combatant.SetInitialRandomCombatSpeed();
 		combatants.Add(combatant);
@@ -193,7 +192,7 @@ public class CombatManager : MonoBehaviour {
 		string colorstr = ColorDefines.ColorToHexString( blobTakingDamage ? Color.red : Color.green );
 		float defense = 100f / receiver.combatStats.armor.combatValue;
 		damage = Mathf.FloorToInt(damage * defense);
-		receiver.combatStats.health.ModCombatValue(AbilityModifier.Added, -damage);
+		receiver.combatStats.health.combatValue -= damage;
 		combatMenu.PushMessage(colorstr + attacker.name + " attacks " + receiver.name + " for " + damage.ToString() + " damage[-]");
 
 		if(receiver.IsZeroHalth()) 
@@ -231,7 +230,6 @@ public class CombatManager : MonoBehaviour {
 		curId = 0;
 		blobCt = 0;
 		monsterCt = 0;
-		curTurn = 0;
 	}
 
 

@@ -20,7 +20,7 @@ public class Combatant {
 		combatStats.speed.ResetCombatValue();
 		int variance = Mathf.FloorToInt(combatStats.speed.combatValue * .2f);
 		int modAmount = UnityEngine.Random.Range(-variance, variance + 1);
-		combatStats.speed.ModCombatValue(AbilityModifier.Added, modAmount);
+		combatStats.speed.combatValue += modAmount;
 	}
 
 
@@ -29,7 +29,7 @@ public class Combatant {
 			return;
 
 		foreach(Gene g in blob.genes) {
-			if(g.active && Trait.IsPreCombatTrait(g.traitCondition) && Trait.IsCombatTraitConditionMet(g.traitCondition)) {
+			if(Trait.IsPreCombatTrait(g.traitCondition) && Trait.IsCombatTraitConditionMet(g.traitCondition)) {
 				Trait.ProcessCombatTrait(g.traitType, g.value, g.modifier, combatStats);
 				HudManager.hudManager.combatMenu.PushMessage(name + "'s " + g.itemName + " gene activates");
 			}
@@ -42,10 +42,10 @@ public class Combatant {
 		foreach(QuestBonus qb in combatBonus) {
 			float val = 1f + qb.value;
 			switch(qb.type) {
-			case QuestBonusType.Armor: combatStats.armor.ModCombatValue(AbilityModifier.Percent, val); break;
-			case QuestBonusType.Attack: combatStats.attack.ModCombatValue(AbilityModifier.Percent, val); break;
-			case QuestBonusType.Health: combatStats.health.ModCombatValue(AbilityModifier.Percent, val); break;
-			case QuestBonusType.Speed: combatStats.speed.ModCombatValue(AbilityModifier.Percent, val); break;
+			case QuestBonusType.Armor:  combatStats.armor.combatValue = Mathf.FloorToInt(combatStats.armor.combatValue * val); break;
+			case QuestBonusType.Attack: combatStats.attack.combatValue = Mathf.FloorToInt(combatStats.attack.combatValue * val); break;
+			case QuestBonusType.Health: combatStats.health.combatValue = Mathf.FloorToInt(combatStats.health.combatValue * val); break;
+			case QuestBonusType.Speed:  combatStats.speed.combatValue = Mathf.FloorToInt(combatStats.speed.combatValue * val); break;
 			}
 		}
 	}

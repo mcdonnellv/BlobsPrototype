@@ -16,7 +16,8 @@ public class GeneManager : MonoBehaviour {
 
 	public bool DoesNameExistInList(string nameParam){return (GetBaseGeneWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseGeneByID(idParam) != null); }
-	
+
+
 	public BaseGene GetBaseGeneWithName(string nameParam) {
 		foreach(BaseGene g in genes)
 			if (g.itemName == nameParam)
@@ -24,12 +25,14 @@ public class GeneManager : MonoBehaviour {
 		return null;
 	}
 
+
 	public BaseGene GetBaseGeneByID(int idParam) {
 		foreach(BaseGene i in genes)
 			if (i.id == idParam)
 				return i;
 		return null;
 	}
+
 
 	public int GetNextAvailableID() {
 		int lowestIdVal = 0;
@@ -40,26 +43,11 @@ public class GeneManager : MonoBehaviour {
 		return lowestIdVal;
 	}
 
+
 	public void FirstTimeSetup() {
 		//foreach(BaseGene bg in genes) {
 			//storedGenes.Add(new Gene(bg)); //temorarily add all possibble genes to your inventory
 		//}
-	}
-
-
-	public void GeneTransferFromBlobToGenePool (Blob blob, Gene gene) {
-		blob.genes.Remove(gene);
-		storedGenes.Add(gene);
-		blob.CalculateStatsFromGenes();
-		blob.gameObject.UpdateBlobInfoIfDisplayed();
-	}
-
-
-	public void GeneTransferFromGenePoolToBlob(Blob blob, Gene gene) {
-		blob.genes.Add(gene);
-		storedGenes.Remove(gene);
-		blob.CalculateStatsFromGenes();
-		blob.gameObject.UpdateBlobInfoIfDisplayed();
 	}
 
 
@@ -71,6 +59,7 @@ public class GeneManager : MonoBehaviour {
 		}
 		return baseGenes;
 	}
+
 
 	public List<Gene> CreateGeneListFromBaseGeneList(List<BaseGene> baseGeneListParam) {
 		List<Gene> geneList = new List<Gene>();

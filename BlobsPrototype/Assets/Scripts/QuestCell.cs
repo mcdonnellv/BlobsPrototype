@@ -10,7 +10,7 @@ public class QuestCell : MonoBehaviour {
 	public UISprite foreGround;
 	public UILabel newLabel;
 	public GameObject handle;
-	public int questId = -1;
+	[HideInInspector] public int questId = -1;
 
 	public void SetupBlobCells(int count) {
 		foreach(Transform child in blobSlotGrid.transform) {

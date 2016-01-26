@@ -20,6 +20,6 @@ public class StatBiasFunctionality {
 		int lowRange = Mathf.Max (1, deviation - 7);
 		int highRange = deviation;
 		int deviationRoll = UnityEngine.Random.Range(lowRange, highRange + 1);
-		s.ModBirthValue(deviationRoll);
+		s.birthValue += deviationRoll;
 	}
 }

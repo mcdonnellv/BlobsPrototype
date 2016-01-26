@@ -21,9 +21,8 @@ public class ItemManager : MonoBehaviour {
 	public void RemoveItemFromStorage(BaseItem b) { RemoveItemFromStorage(b, 1); }
 	public bool DoesNameExistInList(string nameParam){return (GetBaseItemWithName(nameParam) != null); }
 	public bool DoesIdExistInList(int idParam) {return (GetBaseItemByID(idParam) != null); }
-
-
-
+	public bool DoesItemExistInStorage(int itemId) { return (GetItemCountById(itemId) > 0); }
+	
 
 	public BaseItem GetBaseItemWithName(string nameParam) {
 		foreach(BaseItem i in items)
@@ -55,8 +54,9 @@ public class ItemManager : MonoBehaviour {
 		//	AddItemToStorage(b, 3);
 
 		AddItemToStorage(GetBaseItemByID(21), 20);
-		AddItemToStorage(GetBaseItemByID(24), 20);
+		AddItemToStorage(GetBaseItemByID(26), 20);
 	}
+
 
 	public void AddItemToStorage(BaseItem b, int count) {
 		Item i = GetItemFromStorageByName(b.itemName);
@@ -95,15 +95,20 @@ public class ItemManager : MonoBehaviour {
 		return null;
 	}
 
-
-	public bool DoesItemExistInStorage(int itemId) { return (GetItemCountById(itemId) > 0); }
-
+	
 	public int GetItemCountById(int itemId) {
 		int ct = 0;
 		foreach(Item i in storedItems)
 			if(itemId == i.id)
 				ct += i.count;
 		return ct;
+	}
+
+	public bool HaveRequiredMaterialsForGene(BaseGene gene) {
+		foreach(GeneActivationRequirement req in gene.activationRequirements)
+			if(GetItemCountById(req.itemId) < req.amountNeeded)
+				return false;
+			return true;
 	}
 
 }
