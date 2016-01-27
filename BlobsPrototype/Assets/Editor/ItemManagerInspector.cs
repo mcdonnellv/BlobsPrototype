@@ -65,6 +65,7 @@ public class ItemManagerInspector : GenericManagerInspector {
 						i.iconAtlas = item.iconAtlas;
 						i.iconName = item.iconName;
 						i.iconTintIndex = item.iconTintIndex;
+						i.consumable = item.consumable;
 					}
 					itemManager.items.Add(i);
 					RebuildAllItems();
@@ -107,6 +108,7 @@ public class ItemManagerInspector : GenericManagerInspector {
 			item.description = GUILayout.TextArea(item.description, 200, GUILayout.Height(50f));
 			item.quality = (Quality)EditorGUILayout.EnumPopup("Quality",item.quality);
 			item.sellValue = EditorGUILayout.IntField("Value", item.sellValue);
+			item.consumable = EditorGUILayout.Toggle("Consumable", item.consumable);
 			if(atlas != null && item.iconAtlas == null) item.iconAtlas = atlas;
 			SpriteSelection(item);
 		}

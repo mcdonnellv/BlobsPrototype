@@ -4,30 +4,19 @@ using System.Collections.Generic;
 
 public class InventoryMenu : GenericGameMenu {
 
-	public enum Tab {
-		None = -1,
-		GenesTab,
-		ItemsTab,
-	};
-
 	public enum Mode {
 		None = -1,
 		Inventory,
 		Feed,
-		AddGene,
 	};
-	
+
 	public UILabel storageCapacityLabel;
-	public UILabel instructionalLabel;
-	public UISprite genesTab;
-	public UISprite itemsTab;
 	public GameObject grid;
 	public GameObject storageContainer;
 	public GameObject actionContainer;
-	public GenesMenu genesMenu;
 	public ItemsMenu itemsMenu;
 	public ItemInfoPopup itemInfoPopup;
-	Tab activeTab;
+	ItemManager itemManager { get { return ItemManager.itemManager; } }
 	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	public Mode mode = Mode.None;
 	public Mode reopenMode = Mode.None;
@@ -35,8 +24,10 @@ public class InventoryMenu : GenericGameMenu {
 	
 
 	public void Pressed() {	Show(); }
+	public override void Show() { Show(Mode.Inventory); }	
+	void DeleteSelectedItem() { itemsMenu.DeleteSelectedThing(); }
+	void DeleteButtonPressed() { DeleteSelectedItemAsk(); }
 
-	public override void Show() { Show(Mode.Inventory); }
 
 	public void Show(Mode modeParam) {
 		if(IsDisplayed()) {
@@ -50,40 +41,51 @@ public class InventoryMenu : GenericGameMenu {
 		mode = modeParam;
 		base.Show();
 
+		RebuildSlots(gameManager.gameVars.inventoryItemSlots);
+		itemInfoPopup.ClearFields();
+		itemsMenu.Show();
+		storageCapacityLabel.text = gameManager.itemManager.storedItems.Count.ToString() + " / " + gameManager.gameVars.inventoryItemSlots.ToString();
+
 		switch(mode) {
 		case Mode.None:	
-		case Mode.Inventory:	
-			ActivateGenesTab();
-			instructionalLabel.text = "";
+		case Mode.Inventory:
 			headerLabel.text = "INVENTORY";
-			genesTab.gameObject.SetActive(true);
-			itemsTab.gameObject.SetActive(true);
 			actionContainer.gameObject.SetActive(false);
 			storageContainer.gameObject.SetActive(true);
 			break;
 
 		case Mode.Feed:
-			ActivateItemsTab();
-			genesTab.gameObject.SetActive(false);
-			itemsTab.gameObject.SetActive(false);
-			instructionalLabel.text = "Select an item";
 			headerLabel.text = "FEED BLOB";
 			actionContainer.gameObject.SetActive(true);
 			storageContainer.gameObject.SetActive(false);
 			actionContainer.GetComponentInChildren<UILabel>().text = "FEED";
-			break;
-
-		case Mode.AddGene:
-			ActivateGenesTab();
-			instructionalLabel.text = "Chose a gene to add";
-			headerLabel.text = "ADD GENE";
-			genesTab.gameObject.SetActive(false);
-			itemsTab.gameObject.SetActive(false);
-			actionContainer.gameObject.SetActive(true);
-			storageContainer.gameObject.SetActive(false);
-			actionContainer.GetComponentInChildren<UILabel>().text = "ADD";
+			DisableNonConsumables();
 			break;
 		}
+	}
+
+
+	void DisableNonConsumables() {
+
+		int selIndex = -1;
+		foreach(Item item in itemManager.storedItems) {
+			if(item == null) continue;
+			int index = itemManager.storedItems.IndexOf(item);
+			if(item.consumable) {
+				if(selIndex == -1)
+					selIndex = index;
+				continue;
+			}
+			Transform parentSocket = grid.transform.GetChild(index);
+			BoxCollider collider = parentSocket.GetComponentInChildren<BoxCollider>();
+			if(collider != null) {
+				GameObject itemObject = collider.gameObject;
+				UIButton button = itemObject.GetComponent<UIButton>();
+				button.isEnabled = false;
+			}
+		}
+		if(selIndex > 0)
+			itemsMenu.SetSelectedThing(selIndex);
 	}
 
 
@@ -115,37 +117,6 @@ public class InventoryMenu : GenericGameMenu {
 		reopenMode = Mode.None;
 	}
 
-	public void GenesTabPressed() { 
-		ActivateGenesTab();
-		genesMenu.ShowInfo();
-
-	}
-
-	public void ItemsTabPressed() { 
-		ActivateItemsTab();
-		itemsMenu.ShowInfo();
-	}
-
-
-	public void ActivateGenesTab() {
-		activeTab = Tab.GenesTab;
-		genesTab.alpha = 1f;
-		itemsTab.alpha = .5f;
-		RebuildSlots(gameManager.gameVars.inventoryGeneSlots);
-		ClearContextText();
-		genesMenu.Show();
-		storageCapacityLabel.text = gameManager.geneManager.storedGenes.Count.ToString() + " / " + gameManager.gameVars.inventoryGeneSlots.ToString();
-	}
-
-	public void ActivateItemsTab() {
-		activeTab = Tab.ItemsTab;
-		genesTab.alpha = .5f;
-		itemsTab.alpha = 1f;
-		RebuildSlots(gameManager.gameVars.inventoryItemSlots);
-		ClearContextText();
-		itemsMenu.Show();
-		storageCapacityLabel.text = gameManager.itemManager.storedItems.Count.ToString() + " / " + gameManager.gameVars.inventoryItemSlots.ToString();
-	}
 
 	void ClearGrid() {
 		foreach(Transform c in grid.transform) {
@@ -153,9 +124,7 @@ public class InventoryMenu : GenericGameMenu {
 		}
 	}
 
-	void ClearContextText() {
-		itemInfoPopup.ClearFields();
-	}
+
 
 	void RebuildSlots(int slotCount) {
 		grid.transform.DestroyChildren();
@@ -169,12 +138,16 @@ public class InventoryMenu : GenericGameMenu {
 		gridComponent.Reposition();
 	}
 
+
 	public void IncreaseCapacityButtonPressed() {
-		switch (activeTab) {
-		case Tab.GenesTab: gameManager.gameVars.inventoryGeneSlots +=5; GenesTabPressed(); break;
-		case Tab.ItemsTab: gameManager.gameVars.inventoryItemSlots +=5; ItemsTabPressed(); break;
-		}
+		gameManager.gameVars.inventoryItemSlots +=5; 
+		RebuildSlots(gameManager.gameVars.inventoryItemSlots);
+		itemInfoPopup.ClearFields();
+		itemsMenu.Show();
+		storageCapacityLabel.text = gameManager.itemManager.storedItems.Count.ToString() + " / " + gameManager.gameVars.inventoryItemSlots.ToString();;
+		itemsMenu.ShowInfo();
 	}
+
 
 	public void ActionButtonPressed() {
 		switch(mode) {
@@ -185,15 +158,9 @@ public class InventoryMenu : GenericGameMenu {
 			else
 				gameManager.hudMan.popup.Show("Feed Blob", "Feed [EEBE63]" + item.itemName + "[-] to the blob?", this, "FeedConfirmed");
 			break;
-		case Mode.AddGene:
-			Gene gene = genesMenu.GetSelectedGene();
-			if(gene == null)
-				gameManager.hudMan.ShowError("No gene selected");
-			else
-				gameManager.hudMan.popup.Show("Add Gene", "Add [EEBE63]" + gene.itemName + "[-] to the blob?", this, "GeneAddConfirmed");
-			break;
 		}
 	}
+
 
 	public void FeedConfirmed() {
 		Item item = itemsMenu.GetSelectedItem();
@@ -202,15 +169,8 @@ public class InventoryMenu : GenericGameMenu {
 	}
 
 
-	public void GeneAddConfirmed() {
-		Gene gene = genesMenu.GetSelectedGene();
-		gameManager.hudMan.blobInfoContextMenu.AddGeneToBlob(gene);
-		genesMenu.DeleteSelectedThing();
-		Hide();
-	}
-
 	void DeleteSelectedItemAsk() {
-		BaseThing thing = GetSelectedItem();
+		BaseThing thing = (BaseThing)itemsMenu.GetSelectedItem();
 		if(thing.sellValue > 0)
 			gameManager.hudMan.popup.Show("Sell", "Are you sure you want to sell [EEBE63]" + thing.itemName + "[-]?", this, "SellSelectedItem");
 		else
@@ -218,30 +178,13 @@ public class InventoryMenu : GenericGameMenu {
 	}
 
 
-	BaseThing GetSelectedItem() {
-		BaseThing thing = null;
-		switch(activeTab) {
-		case Tab.GenesTab: thing = (BaseThing)genesMenu.GetSelectedGene();break; 
-		case Tab.ItemsTab: thing = (BaseThing)itemsMenu.GetSelectedItem(); break;
-		}
-		return thing;
-	}
-
-	void DeleteSelectedItem() {
-		switch(activeTab) {
-		case Tab.GenesTab: genesMenu.DeleteSelectedThing(); break; 
-		case Tab.ItemsTab: itemsMenu.DeleteSelectedThing(); break;
-		}
-	}
-
 	void SellSelectedItem() {
-		BaseThing thing = GetSelectedItem();
+		BaseThing thing = (BaseThing)itemsMenu.GetSelectedItem();
 		gameManager.AddGold(thing.sellValue);
 		DeleteSelectedItem();
 	}
 
-	void DeleteButtonPressed() {
-		DeleteSelectedItemAsk();
-	}
+
+
 
 }

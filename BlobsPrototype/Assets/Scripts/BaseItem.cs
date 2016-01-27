@@ -4,4 +4,5 @@ using System;
 [Serializable]
 public class BaseItem : BaseThing {
 	public int maxStack = 99;
+	public bool consumable = false;
 }

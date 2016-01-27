@@ -25,7 +25,6 @@ public class Blob : BaseThing {
 	public Element nativeElement;
 	public Sigil sigil;
 	public Element element { get { return combatStats.element; } }
-	public Dictionary<string, int> itemsConsumed;
 	public Room room;
 	public DateTime actionReadyTime;
 	public TimeSpan actionDuration;
@@ -71,7 +70,6 @@ public class Blob : BaseThing {
 		genes = new List<Gene>();
 		hiddenGenes = new List<Gene>();
 		dormantGenes = new List<Gene>(); 
-		itemsConsumed = new Dictionary<string, int>();
 		birthday = DateTime.MinValue;
 		actionReadyTime  = new DateTime(0); 
 		actionDuration = new TimeSpan(0);
@@ -161,10 +159,6 @@ public class Blob : BaseThing {
 	
 	public void EatItem(Item item) {
 		// assume the item has been deleted already from inventory
-		if(itemsConsumed.ContainsKey(item.itemName) ==  false)
-			itemsConsumed.Add(item.itemName, 1);
-		else 
-			itemsConsumed[item.itemName]++;
 		// TODO: Do Stuff
 	}
 

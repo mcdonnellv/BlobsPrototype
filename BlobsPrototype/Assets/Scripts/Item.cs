@@ -15,6 +15,7 @@ public class Item : BaseItem {
 		maxStack = b.maxStack;
 		sellValue = b.sellValue;
 		iconTintIndex = b.iconTintIndex;
+		consumable = b.consumable;
 	}
 
 	public GameObject CreateItemGameObject(MonoBehaviour owner) {

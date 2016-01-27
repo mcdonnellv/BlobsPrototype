@@ -35,7 +35,7 @@ public class ItemsMenu : BaseThingMenu {
 		foreach(Transform socket in grid.transform) {
 			ItemPointer ip = socket.GetComponentInChildren<ItemPointer>();
 			if(ip != null && ip.item == item)
-				return ip;
+				return ip; 
 		}
 		return null;
 	}
@@ -66,7 +66,7 @@ public class ItemsMenu : BaseThingMenu {
 		ItemInfoPopup itemInfoPopup = hudManager.itemInfoPopup;
 		if(itemPointer == null) 
 			return;
-		itemInfoPopup.defaultStartPosition = PopupPosition.Right2;
+		itemInfoPopup.defaultStartPosition = PopupPosition.Right1;
 		itemInfoPopup.Show(hudManager.inventoryMenu, itemPointer.item);
 		itemInfoPopup.ShowDeleteButton(hudManager.inventoryMenu.mode == InventoryMenu.Mode.Inventory);
 		CreateSlotHighlight(itemPointer.transform.parent);
