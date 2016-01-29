@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [Serializable]
 public class BaseMonster : BaseThing {
 	public CombatStats combatStats = new CombatStats();
+	public string battlePrefabName = "Wolf"; //fixme
 }
 
 [Serializable]
@@ -19,6 +20,7 @@ public class Monster : BaseMonster {
 		iconAtlas = b.iconAtlas;
 		iconTintIndex = b.iconTintIndex;
 		quality = b.quality;
+		battlePrefabName = b.battlePrefabName;
 		combatStats = new CombatStats(b.combatStats);
 	}
 

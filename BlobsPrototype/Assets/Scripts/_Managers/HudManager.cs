@@ -29,6 +29,7 @@ public class HudManager : MonoBehaviour {
 
 	public bool dragToUi = false;
 	public GameObject dragObjectHelper;
+	public GameObject worldObject;
 
 	public Camera popupCamera;
 	static int popupRefCount = 0;

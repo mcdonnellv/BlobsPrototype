@@ -16,8 +16,8 @@ public class Trait {
 
 	public static bool IsCombatTraitConditionMet(TraitCondition tc) {
 		switch(tc) {
-		case TraitCondition.Alone: return (CombatManager.combatManager.GetBlobCount() == 1);
-		case TraitCondition.ForEachOtherBlob: return (CombatManager.combatManager.GetBlobCount() > 1);
+		case TraitCondition.Alone: return (CombatManager.combatManager.GetFactionCount(Faction.blob, false) == 1);
+		case TraitCondition.ForEachOtherBlob: return (CombatManager.combatManager.GetFactionCount(Faction.blob, false) > 1);
 		}
 		return false;
 	}

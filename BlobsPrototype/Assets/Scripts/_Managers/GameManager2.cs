@@ -18,6 +18,7 @@ public class GameManager2 : MonoBehaviour {
 	public GeneManager geneManager;
 	public ItemManager itemManager;
 	public QuestManager questManager;
+	public Camera roomCamera;
 
 	// Use this for initialization
 	void Start () {

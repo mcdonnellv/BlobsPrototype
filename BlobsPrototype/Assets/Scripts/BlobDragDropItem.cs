@@ -14,10 +14,9 @@ public class BlobDragDropItem : UIDragDropItem {
 	protected override void OnClone (GameObject original) {
 		uiClone = true;
 		cloneOnDrag = false;
-		Vector3 worldPos = transform.position;
+		Vector3 deltaPos = hudManager.dragObjectHelper.transform.position - hudManager.worldObject.transform.position;
 		transform.parent = hudManager.dragObjectHelper.transform;
-		transform.localPosition = Vector3.zero;
-		transform.position += worldPos;
+		transform.position += deltaPos;
 	}
 
 
@@ -145,15 +144,22 @@ public class BlobDragDropItem : UIDragDropItem {
 			mTrans.localPosition += (Vector3)delta;
 			return;
 		}
-		Vector2 dir = new Vector2(0f, 0f); 
-		if(mTrans.position.x > 1.5f)
+
+		Camera cam = GameManager2.gameManager.roomCamera;
+		Vector3 pos = cam.WorldToScreenPoint(mTrans.position); //0,0 is lower left
+		float threshL= Screen.width * .2f;
+		float threshR = Screen.width * .8f;
+		float threshT = Screen.height * .8f;
+		float threshB = Screen.height * .2f;
+		Vector2 dir = new Vector2(0f, 0f);
+		if(pos.x > threshR)
 			dir.x += -1;
-		else if(mTrans.position.x < -1.5f)
+		else if(pos.x < threshL)
 			dir.x += 1;
 		
-		if(mTrans.position.y > .7f)
+		if(pos.y > threshT)
 			dir.y += -1;
-		else if(mTrans.position.y < -.7f)
+		else if(pos.y < threshB)
 			dir.y += 1;
 		dir.Normalize();
 		roomManager.scrollVector = dir;
