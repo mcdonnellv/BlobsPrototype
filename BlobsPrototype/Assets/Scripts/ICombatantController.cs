@@ -7,6 +7,8 @@ using System.Linq;
 
 // this is the brain of a combatant, things he does
 public interface ICombatantController {
+	public int moveSpeed = 6;
+	public bool moving = false;
 	void LookForTarget();
 	void ChargeIn();
 	void MeleeAttack();

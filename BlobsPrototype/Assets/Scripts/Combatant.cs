@@ -17,9 +17,6 @@ public class Combatant : MonoBehaviour {
 	public Faction faction;
 	public ICombatantController controller;
 
-	public Combatant target;
-	public float perception = 10f;
-
 	public Vector3 targetMovePos;
 
 	public bool IsAlive() { return gameObject.GetComponent<CombatantHealth>().health > 0; }
