@@ -28,18 +28,6 @@ public class Combatant : MonoBehaviour {
 		r.velocity = new Vector2(transform.localScale.x * moveSpeed, r.velocity.y);
 	}
 
-	void Update() {
-		if(controller.moving) {
-			bool movingRight = (GetComponent<Rigidbody2D>().velocity.x > 0);
-			if(movingRight && transform.localPosition.x > targetMovePos.x)
-				transform.localPosition = targetMovePos;
-			else if(!movingRight && transform.localPosition.x < targetMovePos.x)
-				transform.localPosition = targetMovePos;
-			if(transform.localPosition == targetMovePos)
-				controller.DestinationReached();
-		}
-	}
-
 
 
 
