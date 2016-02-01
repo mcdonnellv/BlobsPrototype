@@ -14,5 +14,11 @@ public abstract class Composite : Behavior {
 
 	public IBehavior GetChild(int index) { return Children[index]; }
 	public int ChildCount { get { return Children.Count;} }
+	public void Add(Composite composite) { Children.Add(composite); }
+	public T Add<T>() where T : class, IBehavior, new() {
+		var t = new T {Parent = this;};
+		Children.Add(t);
+		return t;
+	}
 }
 

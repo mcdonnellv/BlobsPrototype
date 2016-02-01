@@ -5,6 +5,7 @@ using System.Collections;
 public class Behavior : IBehavior {
 	public Status Status { get; set; }
 	public Action Initialize { protected get; set; }
+	public IBehavior Parent { protected get; set; }
 	public Func<Status> Update { protected get; set; }
 	public Action<Status> Terminate { protected get; set; }
 
