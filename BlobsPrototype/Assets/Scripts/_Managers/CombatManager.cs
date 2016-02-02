@@ -10,91 +10,69 @@ public class CombatManager : MonoBehaviour {
 	RoomManager roomManager { get { return RoomManager.roomManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
 
+	public List<Actor> actors = new List<Actor>();
 	public Transform root;
 	public List <Transform> blobSpawner;
 	public Transform enemySpawner;
 	public Camera battleCam;
+
 	static int spawnerIndex = 0;
 	bool fighting = false;
-
-
 	float fightSpeed = 1f;
-
-	public List<Combatant> combatants = new List<Combatant>();
-	CombatMenu combatMenu;
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
 
 
-	public Combatant AddCombatant(string prefabName, CombatStats cs) {
-		Object o = Resources.Load(prefabName);
-		GameObject go = (GameObject)GameObject.Instantiate(o);
+	public Actor AddActor(string prefabName, CombatStats cs, Vector2 spawnPos) {
+		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
 		go.transform.parent = root;
-		Combatant combatant = go.GetComponent<Combatant>();
-		combatant.controller = go.GetComponent<ICombatantController>();
-		combatant.combatStats = cs;
-		combatants.Add(combatant);
-		return combatant;
+		go.transform.position = (Vector3)spawnPos;
+		Actor actor = go.GetComponent<Actor>();
+		actor.Initialize(cs);
+		actors.Add(actor);
+		return actor;
 	}
 
 
-	public Combatant AddCombatant(Monster monster) {
-		Combatant c = AddCombatant("BattleBlob", monster.combatStats); //temp
-		//Combatant c = AddCombatant(monster.battlePrefabName, monster.combatStats);
-		c.faction = Faction.enemy;
-		c.transform.localPosition = enemySpawner.position;
-		return c;
+	public Actor AddActor(Monster monster) {
+		return AddActor("Wolf", monster.combatStats, enemySpawner.position);
 	}
 
-	public Combatant AddCombatant(Blob blob) {
-		Combatant c = AddCombatant("BattleBlob", blob.combatStats);
-		c.faction = Faction.blob;
-		c.transform.position = blobSpawner[spawnerIndex].position;
-		c.transform.parent = root;
+
+	public Actor AddActor(Blob blob) {
 		spawnerIndex = (spawnerIndex + 1) % blobSpawner.Count;
-		return c;
+		return AddActor("BlobActor", blob.combatStats, blobSpawner[spawnerIndex].position);
 	}
 
 	
 	public void StartFight() {
-		combatMenu = hudManager.combatMenu;
-		ShowWorld();
 		fighting = true;
+		battleCam.gameObject.SetActive(true);
 	}
 
 
 	public void EndFight() {
 		fighting = false;
-		HideWorld();
-		combatMenu.CombatDone();
-	}
-
-
-	public void ShowWorld() {
-		battleCam.gameObject.SetActive(true);
-	}
-
-	
-	public void HideWorld() {
 		battleCam.gameObject.SetActive(false);
+		hudManager.combatMenu.CombatDone();
 	}
 
 
 	public int GetFactionCount(Faction f, bool livingOnly) {
-		return GetCombatantsByFaction(f,livingOnly).Count;
+		return GetActorsOfFaction(f,livingOnly).Count;
 	}
 
 
-	public List<Combatant> GetCombatantsByFaction(Faction f, bool livingOnly) {
-		List<Combatant> ret = new List<Combatant>();
-		foreach(Combatant combatant in combatants) {
-			if(combatant.faction == f) {
+	public List<Actor> GetActorsOfFaction(Faction f, bool livingOnly) {
+		List<Actor> ret = new List<Actor>();
+		foreach(Actor actor in actors) {
+			if(actor.faction == f) {
 				if(livingOnly) {
-					if(combatant.IsAlive())
-						ret.Add(combatant);;
+					if(actor.health > 0)
+						ret.Add(actor);
 				}
 				else
-					ret.Add(combatant);;
+					ret.Add(actor);
 			}
 		}
 		return ret;

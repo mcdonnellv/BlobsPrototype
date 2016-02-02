@@ -226,14 +226,14 @@ public class QuestManager : MonoBehaviour {
 		if(quest.type == QuestType.Combat) {
 			foreach(int blobId in quest.blobIds) {
 				Blob blob = roomManager.GetBlobByID(blobId);
-				combatManager.AddCombatant(blob);
+				combatManager.AddActor(blob);
 			}
 
 			foreach(QuestMonster monster in quest.monsters) {
 				BaseMonster bm = monsterManager.GetBaseMonsterByID(monster.id);
 				Monster m = new Monster(bm);
 				m.level = monster.level;
-				combatManager.AddCombatant(m);
+				combatManager.AddActor(m);
 			}
 			combatManager.quest = quest;
 			hudManager.combatMenu.Show();
