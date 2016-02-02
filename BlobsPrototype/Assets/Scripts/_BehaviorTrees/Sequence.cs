@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Sequence : Composite {
 
-	private int _sequence;
+	protected int _sequence;
 
 	public Sequence() {
 		Update = () => {
@@ -24,7 +24,15 @@ public class Sequence : Composite {
 			}
 		};
 
-		Initialize = () => { _sequence = 0; };
+		Initialize = () => { 
+			_sequence = 0; 
+			Status = Status.BhInvalid;
+		};
+	}
+
+
+	public override void Reset() {
+		Initialize();
 	}
 }
 
