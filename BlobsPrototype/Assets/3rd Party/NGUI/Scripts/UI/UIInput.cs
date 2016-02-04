@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2015 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 #if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_WP_8_1 || UNITY_BLACKBERRY || UNITY_WINRT || UNITY_METRO)
@@ -190,7 +190,7 @@ public class UIInput : MonoBehaviour
 	[System.NonSerialized] protected Color mDefaultColor = Color.white;
 	[System.NonSerialized] protected float mPosition = 0f;
 	[System.NonSerialized] protected bool mDoInit = true;
-	[System.NonSerialized] protected UIWidget.Pivot mPivot = UIWidget.Pivot.TopLeft;
+	[System.NonSerialized] protected NGUIText.Alignment mAlignment = NGUIText.Alignment.Left;
 	[System.NonSerialized] protected bool mLoadSavedValue = true;
 
 	static protected int mDrawStart = 0;
@@ -211,6 +211,7 @@ public class UIInput : MonoBehaviour
 	[System.NonSerialized] protected string mCached = "";
 	[System.NonSerialized] protected int mSelectMe = -1;
 	[System.NonSerialized] protected int mSelectTime = -1;
+	[System.NonSerialized] protected bool mStarted = false;
 
 	/// <summary>
 	/// Default text used by the input's label.
@@ -228,6 +229,24 @@ public class UIInput : MonoBehaviour
 			if (mDoInit) Init();
 			mDefaultText = value;
 			UpdateLabel();
+		}
+	}
+
+	/// <summary>
+	/// Text's default color when not selected.
+	/// </summary>
+
+	public Color defaultColor
+	{
+		get
+		{
+			if (mDoInit) Init();
+			return mDefaultColor;
+		}
+		set
+		{
+			mDefaultColor = value;
+			if (!isSelected) label.color = value;
 		}
 	}
 
@@ -303,7 +322,7 @@ public class UIInput : MonoBehaviour
 						mSelectionEnd = mSelectionStart;
 					}
 				}
-				else SaveToPlayerPrefs(value);
+				else if (mStarted) SaveToPlayerPrefs(value);
 
 				UpdateLabel();
 				ExecuteOnChange();
@@ -459,6 +478,7 @@ public class UIInput : MonoBehaviour
 
 		if (mLoadSavedValue && !string.IsNullOrEmpty(savedAs)) LoadValue();
 		else value = mValue.Replace("\\n", "\n");
+		mStarted = true;
 	}
 
 	/// <summary>
@@ -481,7 +501,7 @@ public class UIInput : MonoBehaviour
 				Debug.LogWarning("Input fields using labels with justified alignment are not supported at this time", this);
 			}
 
-			mPivot = label.pivot;
+			mAlignment = label.alignment;
 			mPosition = label.cachedTransform.localPosition.x;
 			UpdateLabel();
 		}
@@ -583,7 +603,7 @@ public class UIInput : MonoBehaviour
 			else label.text = mValue;
 
 			Input.imeCompositionMode = IMECompositionMode.Auto;
-			RestoreLabelPivot();
+			label.alignment = mAlignment;
 		}
 
 		selection = null;
@@ -697,8 +717,8 @@ public class UIInput : MonoBehaviour
 					else if (!mKeyboard.done && mKeyboard.active)
 					{
 						DoBackspace();
-						mKeyboard.text = "|";
 					}
+					mKeyboard.text = "|";
 				}
 			}
 			else if (mCached != text)
@@ -771,14 +791,17 @@ public class UIInput : MonoBehaviour
 		// Having this in OnGUI causes issues because Input.inputString gets updated *after* OnGUI, apparently...
 		if (mCam != null)
 		{
-			if (UICamera.GetKeyDown(mCam.submitKey0))
-			{
-				bool newLine = (onReturnKey == OnReturnKey.NewLine) ||
-					(onReturnKey == OnReturnKey.Default &&
-					label.multiLine && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) &&
-					label.overflowMethod != UILabel.Overflow.ClampContent &&
-					validation == Validation.None);
+			bool newLine = false;
 
+			if (label.multiLine)
+			{
+				bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+				if (onReturnKey == OnReturnKey.Submit) newLine = ctrl;
+				else newLine = !ctrl;
+			}
+
+			if (UICamera.GetKeyDown(mCam.submitKey0) || (mCam.submitKey0 == KeyCode.Return && UICamera.GetKeyDown(KeyCode.KeypadEnter)))
+			{
 				if (newLine)
 				{
 					Insert("\n");
@@ -792,14 +815,8 @@ public class UIInput : MonoBehaviour
 				}
 			}
 
-			if (UICamera.GetKeyDown(mCam.submitKey1))
+			if (UICamera.GetKeyDown(mCam.submitKey1) || (mCam.submitKey1 == KeyCode.Return && UICamera.GetKeyDown(KeyCode.KeypadEnter)))
 			{
-				bool newLine = (onReturnKey == OnReturnKey.NewLine) ||
-					(onReturnKey == OnReturnKey.Default &&
-					label.multiLine && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) &&
-					label.overflowMethod != UILabel.Overflow.ClampContent &&
-					validation == Validation.None);
-
 				if (newLine)
 				{
 					Insert("\n");
@@ -826,7 +843,7 @@ public class UIInput : MonoBehaviour
 
 		if (mIgnoreKey == frame) return;
 		
-		if (key == mCam.cancelKey0 || key == mCam.cancelKey1)
+		if (mCam != null && (key == mCam.cancelKey0 || key == mCam.cancelKey1))
 		{
 			mIgnoreKey = frame;
 			isSelected = false;
@@ -1272,7 +1289,7 @@ public class UIInput : MonoBehaviour
 			if (isEmpty)
 			{
 				processed = selected ? "" : mDefaultText;
-				RestoreLabelPivot();
+				label.alignment = mAlignment;
 			}
 			else
 			{
@@ -1308,17 +1325,17 @@ public class UIInput : MonoBehaviour
 					if (offset == 0)
 					{
 						mDrawStart = 0;
-						RestoreLabelPivot();
+						label.alignment = mAlignment;
 					}
 					else if (selPos < mDrawStart)
 					{
 						mDrawStart = selPos;
-						SetPivotToLeft();
+						label.alignment = NGUIText.Alignment.Left;
 					}
 					else if (offset < mDrawStart)
 					{
 						mDrawStart = offset;
-						SetPivotToLeft();
+						label.alignment = NGUIText.Alignment.Left;
 					}
 					else
 					{
@@ -1327,7 +1344,7 @@ public class UIInput : MonoBehaviour
 						if (offset > mDrawStart)
 						{
 							mDrawStart = offset;
-							SetPivotToRight();
+							label.alignment = NGUIText.Alignment.Right;
 						}
 					}
 
@@ -1338,7 +1355,7 @@ public class UIInput : MonoBehaviour
 				else
 				{
 					mDrawStart = 0;
-					RestoreLabelPivot();
+					label.alignment = mAlignment;
 				}
 			}
 
@@ -1418,38 +1435,6 @@ public class UIInput : MonoBehaviour
 			}
 			else Cleanup();
 		}
-	}
-
-	/// <summary>
-	/// Set the label's pivot to the left.
-	/// </summary>
-
-	protected void SetPivotToLeft ()
-	{
-		Vector2 po = NGUIMath.GetPivotOffset(mPivot);
-		po.x = 0f;
-		label.pivot = NGUIMath.GetPivot(po);
-	}
-
-	/// <summary>
-	/// Set the label's pivot to the right.
-	/// </summary>
-
-	protected void SetPivotToRight ()
-	{
-		Vector2 po = NGUIMath.GetPivotOffset(mPivot);
-		po.x = 1f;
-		label.pivot = NGUIMath.GetPivot(po);
-	}
-
-	/// <summary>
-	/// Restore the input label's pivot point.
-	/// </summary>
-
-	protected void RestoreLabelPivot ()
-	{
-		if (label != null && label.pivot != mPivot)
-			label.pivot = mPivot;
 	}
 
 	/// <summary>

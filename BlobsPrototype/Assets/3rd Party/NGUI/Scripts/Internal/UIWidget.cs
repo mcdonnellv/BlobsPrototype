@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2015 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -621,7 +621,7 @@ public class UIWidget : UIRect
 	{
 		get
 		{
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 			BoxCollider box = collider as BoxCollider;
 #else
 			BoxCollider box = GetComponent<Collider>() as BoxCollider;
@@ -751,7 +751,7 @@ public class UIWidget : UIRect
 	}
 
 	/// <summary>
-	/// Set the widget's rectangle.
+	/// Set the widget's rectangle. XY is the bottom-left corner.
 	/// </summary>
 
 	public override void SetRect (float x, float y, float width, float height)
@@ -1042,9 +1042,9 @@ public class UIWidget : UIRect
 	/// Remember whether we're in play mode.
 	/// </summary>
 
-	protected virtual void Awake ()
+	protected override void Awake ()
 	{
-		mGo = gameObject;
+		base.Awake();
 		mPlayMode = Application.isPlaying;
 	}
 
