@@ -3,23 +3,29 @@
 
 namespace BehaviorDesigner.Runtime.Tasks
 {
-	public class IsTargetAlive : Conditional {
-
+	[TaskDescription("Conditional task which determines if the target object is still alive")]
+	public class IsTargetAlive : Conditional
+	{
+		[Tooltip("The target object that we are interested in to determine if it is still alive")]
 		public SharedGameObject target;
-
-		public override TaskStatus OnUpdate () {
-			if(target.Value == null) 
-				return TaskStatus.Failure;
-
-			Actor targetActor = target.Value.gameObject.GetComponent<Actor>();
-
-			if (targetActor == null)
-				return TaskStatus.Failure;
-
-			if(targetActor.health <= 0)
-				return TaskStatus.Failure;
-
-			return TaskStatus.Success;
+		private ActorHealth health;
+		
+		public override void OnStart() {
+			// the target may be null if it has been destoryed. In that case set the health to null and return
+			if (target.Value == null) {
+				health = null;
+				return;
+			}
+			// cache the health component
+			health = target.Value.GetComponent<ActorHealth>();
+		}
+		
+		// OnUpdate will return success if the object is still alive and failure if it not
+		public override TaskStatus OnUpdate() {
+			if (health != null && health.Amount > 0) {
+				return TaskStatus.Success;
+			}
+			return TaskStatus.Failure;
 		}
 	}
 }

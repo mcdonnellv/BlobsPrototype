@@ -51,7 +51,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
                         } else {
                             // prevent the same waypoint from being selected
                             var newWaypointIndex = waypointIndex;
-                            while (newWaypointIndex == waypointIndex) {
+							while (waypoints.Value.Count > 0 && newWaypointIndex == waypointIndex) {
                                 newWaypointIndex = Random.Range(0, waypoints.Value.Count - 1);
                             }
                             waypointIndex = newWaypointIndex;

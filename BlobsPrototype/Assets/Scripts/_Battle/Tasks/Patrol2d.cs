@@ -16,25 +16,11 @@ public class Patrol2d : Patrol {
 
 
 	public override TaskStatus OnUpdate() {
-		if(destTarget != Vector2.zero && !HasArrived()) {
-			bool grounded = Mathf.Abs(rigidBody.velocity.y) <= 0.010f;
+		if( base.waypoints.Value.Count <= 0 )
+			return TaskStatus.Success;
 
-			if(grounded) {
-				Vector2 direction = destTarget - (Vector2)transform.position;
-				direction.y = 0;
-				float distanceLeft = direction.magnitude;
-				Vector2 dNorm = direction.normalized;
-				float curSpeed = rigidBody.velocity.magnitude;
-
-				// distance =  velocity * time
-				if(curSpeed < distanceLeft)
-					rigidBody.AddForce(dNorm * moveForce.Value);
-
-				if(curSpeed > speed.Value)
-					rigidBody.velocity = dNorm * speed.Value;
-			}
-		}
-
+		if(!HasArrived()) 
+			AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, speed.Value, true);
 		return base.OnUpdate();
 	}
 
@@ -70,7 +56,7 @@ public class Patrol2d : Patrol {
 	}
 
 	protected override bool HasArrived() {
-		bool retval =  (((Vector2)transform.position - destTarget).magnitude < .5f);
+		bool retval =  (transform.position.x - destTarget.x) < .5f;
 		return retval;
 	}
 

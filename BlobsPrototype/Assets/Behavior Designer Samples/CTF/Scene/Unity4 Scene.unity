@@ -1,0 +1,3787 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+SceneSettings:
+  m_ObjectHideFlags: 0
+  m_PVSData: 
+  m_PVSObjectsArray: []
+  m_PVSPortalsArray: []
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: .25
+    backfaceThreshold: 100
+--- !u!104 &2
+RenderSettings:
+  m_Fog: 0
+  m_FogColor: {r: .5, g: .5, b: .5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: .00999999978
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
+  m_SkyboxMaterial: {fileID: 0}
+  m_HaloStrength: .5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 0}
+  m_ObjectHideFlags: 0
+--- !u!127 &3
+LevelGameManager:
+  m_ObjectHideFlags: 0
+--- !u!157 &4
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  m_LightProbes: {fileID: 0}
+  m_Lightmaps: []
+  m_LightmapsMode: 1
+  m_BakedColorSpace: 0
+  m_UseDualLightmapsInForward: 0
+  m_LightmapEditorSettings:
+    m_Resolution: 50
+    m_LastUsedResolution: 0
+    m_TextureWidth: 1024
+    m_TextureHeight: 1024
+    m_BounceBoost: 1
+    m_BounceIntensity: 1
+    m_SkyLightColor: {r: .860000014, g: .930000007, b: 1, a: 1}
+    m_SkyLightIntensity: 0
+    m_Quality: 0
+    m_Bounces: 1
+    m_FinalGatherRays: 1000
+    m_FinalGatherContrastThreshold: .0500000007
+    m_FinalGatherGradientThreshold: 0
+    m_FinalGatherInterpolationPoints: 15
+    m_AOAmount: 0
+    m_AOMaxDistance: .100000001
+    m_AOContrast: 1
+    m_LODSurfaceMappingDistance: 1
+    m_Padding: 0
+    m_TextureCompression: 0
+    m_LockAtlas: 0
+--- !u!196 &5
+NavMeshSettings:
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    agentRadius: .5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: .400000006
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    accuratePlacement: 0
+    minRegionArea: 2
+    widthInaccuracy: 16.666666
+    heightInaccuracy: 10
+  m_NavMesh: {fileID: 19400000, guid: 892d4d113d320f047ac69f97fc04b6ab, type: 2}
+--- !u!1 &16095996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 16095997}
+  - 33: {fileID: 16095999}
+  - 23: {fileID: 16095998}
+  - 114: {fileID: 16096006}
+  - 195: {fileID: 16096002}
+  - 65: {fileID: 16096001}
+  - 114: {fileID: 16096005}
+  - 54: {fileID: 16096000}
+  - 114: {fileID: 16096004}
+  m_Layer: 0
+  m_Name: Offense 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &16095997
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -47.4984245, y: 0, z: -17.5322399}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &16095998
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 136e77252c759664fbd2fb2dbfdde1d6, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &16095999
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Mesh: {fileID: 4300002, guid: 192cf0f9d8bc0c24097af14438cba8b3, type: 3}
+--- !u!54 &16096000
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &16096001
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &16096002
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 50
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &16096004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 1
+--- !u!114 &16096005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to capture the flag at the capture point
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,96)\",\n\t\t\t\"Comment\":\"If
+        the unit has the flag then seek the capture point.\\n\\nIf the unit does not
+        have the flag then seek the flag in case the unit carrying the flag drops
+        it.\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-343,133)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.HasFlag\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-235,122)\",\n\t\t\t\t\t\"Comment\":\"Does
+        the current unit have the flag?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Has
+        Flag\",\n\t\t\t\t\"Instant\":true\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-10,120)\",\n\t\t\t\t\t\"Comment\":\"If
+        yes then seek the capture point\"\n\t\t\t\t},\n\t\t\t\t\"ID\":4,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":8\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Celebrate\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(220,118)\",\n\t\t\t\t\t\"Comment\":\"Celebrate
+        once we reach the capture point\"\n\t\t\t\t},\n\t\t\t\t\"ID\":5,\n\t\t\t\t\"Name\":\"Celebrate\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,rotationSpeed\":7\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(224,127)\"\n\t\t\t},\n\t\t\t\"ID\":6,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-127,122)\"\n\t\t\t\t},\n\t\t\t\t\"ID\":7,\n\t\t\t\t\"Name\":\"Inverter\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"Children\":[{\n\t\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\t\"Offset\":\"(-0.5,106)\",\n\t\t\t\t\t\t\"Comment\":\"Did
+        the other unit capture the flag?\"\n\t\t\t\t\t},\n\t\t\t\t\t\"ID\":8,\n\t\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\t\"Instant\":true\n\t\t\t\t}]\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-2.29229736,121.882996)\",\n\t\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t\t},\n\t\t\t\t\"ID\":9,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":8\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":1\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Celebrate\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(130,118)\",\n\t\t\t\t\t\"Comment\":\"And
+        celebrate\"\n\t\t\t\t},\n\t\t\t\t\"ID\":10,\n\t\t\t\t\"Name\":\"Celebrate\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,rotationSpeed\":7\n\t\t\t}]\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"IsGlobal\":false,\n\t\t\"System.Single,mValue\":8\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"IsGlobal\":false,\n\t\t\"System.Single,mValue\":1000\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 795567994}
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &16096006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 16095996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Seek the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(-0.428576946,100.122452)\",\n\t\t\t\"Comment\":\"Seek
+        the flag. If we are within close proximity to an enemy then flee in the opposite
+        direction.\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-168.866974,130.659546)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-89.1330261,126.340454)\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Inverter\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"Children\":[{\n\t\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.WithinDistance\",\n\t\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\t\"Offset\":\"(0.132980347,107.659546)\",\n\t\t\t\t\t\t\"Comment\":\"Return
+        success once an enemy sees us\"\n\t\t\t\t\t},\n\t\t\t\t\t\"ID\":4,\n\t\t\t\t\t\"Name\":\"Within
+        Distance\",\n\t\t\t\t\t\"Instant\":true,\n\t\t\t\t\t\"System.Single,magnitude\":6,\n\t\t\t\t\t\"System.Boolean,lineOfSight\":true,\n\t\t\t\t\t\"UnityEngine.Transform[],targets\":[0,1,2,3,4,5],\n\t\t\t\t\t\"System.String,targetTag\":\"\",\n\t\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\t\"IsShared\":true\n\t\t\t\t\t}\n\t\t\t\t}]\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(80.75003,131.1875)\",\n\t\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t\t},\n\t\t\t\t\"ID\":5,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":7\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":6\n\t\t\t\t}\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Flee\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(143.244141,112.694061)\",\n\t\t\t\t\"Comment\":\"We
+        are within close proximity to an enemy - flee in the opposite direction\"\n\t\t\t},\n\t\t\t\"ID\":6,\n\t\t\t\"Name\":\"Flee\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":7\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Single,fleedDistance\":9,\n\t\t\t\"System.Single,lookAheadDistance\":15,\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,fleeFromTransform\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":7\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 228468629}
+        - {fileID: 863055296}
+        - {fileID: 1447207150}
+        - {fileID: 155277612}
+        - {fileID: 821731979}
+        - {fileID: 1260632438}
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!1 &18488294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 18488295}
+  - 33: {fileID: 18488297}
+  - 65: {fileID: 18488298}
+  - 23: {fileID: 18488296}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &18488295
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 18488294}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 5}
+  m_LocalScale: {x: 10, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &18488296
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 18488294}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &18488297
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 18488294}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &18488298
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 18488294}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &81752749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 81752750}
+  - 33: {fileID: 81752752}
+  - 23: {fileID: 81752751}
+  - 114: {fileID: 81752754}
+  - 65: {fileID: 81752753}
+  m_Layer: 0
+  m_Name: Flag
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &81752750
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 81752749}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: .25, y: 1.5, z: .25}
+  m_Children:
+  - {fileID: 247593549}
+  - {fileID: 1508561370}
+  - {fileID: 1791844943}
+  - {fileID: 216269715}
+  - {fileID: 1164193058}
+  - {fileID: 1780566467}
+  m_Father: {fileID: 0}
+--- !u!23 &81752751
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 81752749}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &81752752
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 81752749}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &81752753
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 81752749}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 5.96046448e-08, y: 0, z: -8.94069672e-08}
+--- !u!114 &81752754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 81752749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe4a80c3369acc479ac36a80b972055, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offenseTag: Offense
+--- !u!1 &117946923
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 117946924}
+  - 33: {fileID: 117946926}
+  - 65: {fileID: 117946927}
+  - 23: {fileID: 117946925}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &117946924
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 117946923}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -35, y: 2, z: 17}
+  m_LocalScale: {x: 1, y: 5, z: 25}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &117946925
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 117946923}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &117946926
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 117946923}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &117946927
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 117946923}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &155277611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 155277612}
+  - 33: {fileID: 155277614}
+  - 23: {fileID: 155277613}
+  - 114: {fileID: 155277618}
+  - 195: {fileID: 155277616}
+  - 65: {fileID: 155277615}
+  - 114: {fileID: 155277620}
+  - 114: {fileID: 155277619}
+  m_Layer: 0
+  m_Name: Patrol 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &155277612
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106829}
+  m_LocalPosition: {x: 10, y: 0, z: -25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &155277613
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &155277614
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!65 &155277615
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.00000024, y: 1, z: 1.00000024}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &155277616
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 50
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &155277618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Patrol the given waypoints for any enemies
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(4.5,96)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Patrol\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-118.5,108)\",\n\t\t\t\t\"Comment\":\"Move
+        from waypoint to waypoint. Patrol will return failure when an enemy comes
+        within sight\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Patrol\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\"System.Single,viewMagnitude\":15,\n\t\t\t\"UnityEngine.Transform[],waypoints\":[0,1,2,3],\n\t\t\t\"UnityEngine.Transform[],targets\":[4,5],\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(134,108)\",\n\t\t\t\t\"Comment\":\"An
+        enemy has crossed the path of patrol so seek that enemy\"\n\t\t\t},\n\t\t\t\"ID\":3,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 366072877}
+        - {fileID: 1371260448}
+        - {fileID: 758322147}
+        - {fileID: 2006320056}
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &155277619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!114 &155277620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 155277611}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(-5,112)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!1 &216269714
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 216269715}
+  - 20: {fileID: 216269716}
+  - 92: {fileID: 216269718}
+  - 124: {fileID: 216269719}
+  - 81: {fileID: 216269717}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &216269715
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 216269714}
+  m_LocalRotation: {x: -9.46087653e-09, y: .976296008, z: -.21643962, w: -4.26752536e-08}
+  m_LocalPosition: {x: 0, y: 2.45983315, z: 19.0410061}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!20 &216269716
+Camera:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 216269714}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: .5
+    y: 0
+    width: .5
+    height: 1
+  near clip plane: .300000012
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 100
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_HDR: 0
+  m_OcclusionCulling: 1
+--- !u!81 &216269717
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 216269714}
+  m_Enabled: 1
+--- !u!92 &216269718
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 216269714}
+  m_Enabled: 1
+--- !u!124 &216269719
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 216269714}
+  m_Enabled: 1
+--- !u!1 &228468628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 228468629}
+  - 33: {fileID: 228468630}
+  - 23: {fileID: 228468631}
+  - 195: {fileID: 228468633}
+  - 65: {fileID: 228468634}
+  - 114: {fileID: 228468636}
+  - 114: {fileID: 228468632}
+  - 114: {fileID: 228468635}
+  m_Layer: 0
+  m_Name: Defend 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &228468629
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 7.5, y: 0, z: 11}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!33 &228468630
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!23 &228468631
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!114 &228468632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Defend the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(-5,112)\",\n\t\t\t\"Comment\":\"If
+        an enemy comes within sight then defend the target. If no enemy is within
+        sight then seek the starting position\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-109.5,106)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.WithinSight\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-113.5,112)\",\n\t\t\t\t\t\"Comment\":\"Is
+        an enemy within sight?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Within
+        Sight\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\t\"System.Single,viewMagnitude\":10,\n\t\t\t\t\"UnityEngine.Transform[],targets\":[0,1],\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Defend\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(123.5,113)\",\n\t\t\t\t\t\"Comment\":\"If
+        yes then defend the flag by chasing the enemy.\"\n\t\t\t\t},\n\t\t\t\t\"ID\":4,\n\t\t\t\t\"Name\":\"Defend\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":6\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"UnityEngine.Transform,defendObject\":2,\n\t\t\t\t\"System.Single,defendRadius\":20,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(138.5,106)\",\n\t\t\t\t\"Comment\":\"Go
+        back to the starting position\"\n\t\t\t},\n\t\t\t\"ID\":5,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":true,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Transform,mValue\":3\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        - {fileID: 81752750}
+        - {fileID: 247593549}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!195 &228468633
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 50
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!65 &228468634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!114 &228468635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(3,122)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &228468636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 228468628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!1 &247593548
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 247593549}
+  m_Layer: 0
+  m_Name: Defend 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &247593549
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 247593548}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
+  m_LocalPosition: {x: 40, y: -.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!1 &366072876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 366072877}
+  m_Layer: 0
+  m_Name: 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &366072877
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 366072876}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30, y: .5, z: -25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377693284}
+--- !u!1 &378566114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 378566115}
+  - 33: {fileID: 378566124}
+  - 23: {fileID: 378566123}
+  - 114: {fileID: 378566122}
+  - 195: {fileID: 378566121}
+  - 65: {fileID: 378566120}
+  - 114: {fileID: 378566119}
+  - 54: {fileID: 378566118}
+  - 114: {fileID: 378566117}
+  m_Layer: 0
+  m_Name: Offense 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &378566115
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 49.2947311, y: 0, z: -17.5322399}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!114 &378566117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 1
+--- !u!54 &378566118
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &378566119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to capture the flag at the capture point
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,96)\",\n\t\t\t\"Comment\":\"If
+        the unit has the flag then seek the capture point.\\n\\nIf the unit does not
+        have the flag then seek the flag in case the unit carrying the flag drops
+        it.\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-343,133)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.HasFlag\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-235,122)\",\n\t\t\t\t\t\"Comment\":\"Does
+        the current unit have the flag?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Has
+        Flag\",\n\t\t\t\t\"Instant\":true\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-10,120)\",\n\t\t\t\t\t\"Comment\":\"If
+        yes then seek the capture point\"\n\t\t\t\t},\n\t\t\t\t\"ID\":4,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":8\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Celebrate\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(220,118)\",\n\t\t\t\t\t\"Comment\":\"Celebrate
+        once we reach the capture point\"\n\t\t\t\t},\n\t\t\t\t\"ID\":5,\n\t\t\t\t\"Name\":\"Celebrate\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,rotationSpeed\":7\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(224,127)\"\n\t\t\t},\n\t\t\t\"ID\":6,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-127,122)\"\n\t\t\t\t},\n\t\t\t\t\"ID\":7,\n\t\t\t\t\"Name\":\"Inverter\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"Children\":[{\n\t\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\t\"Offset\":\"(-0.5,106)\",\n\t\t\t\t\t\t\"Comment\":\"Did
+        the other unit capture the flag?\"\n\t\t\t\t\t},\n\t\t\t\t\t\"ID\":8,\n\t\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\t\"Instant\":true\n\t\t\t\t}]\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-2.29229736,121.882996)\",\n\t\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t\t},\n\t\t\t\t\"ID\":9,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":8\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"IsShared\":false,\n\t\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":1\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Celebrate\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(130,118)\",\n\t\t\t\t\t\"Comment\":\"And
+        celebrate\"\n\t\t\t\t},\n\t\t\t\t\"ID\":10,\n\t\t\t\t\"Name\":\"Celebrate\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,rotationSpeed\":7\n\t\t\t}]\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"IsGlobal\":false,\n\t\t\"System.Single,mValue\":8\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"IsGlobal\":false,\n\t\t\"System.Single,mValue\":1000\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 795567994}
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!65 &378566120
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &378566121
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 50
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &378566122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Seek the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,104)\",\n\t\t\t\"Comment\":\"Seek
+        the flag. If we are within close proximity to an enemy then flee in the opposite
+        direction.\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-98.8669739,120.659546)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-89.1330261,126.340454)\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Inverter\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"Children\":[{\n\t\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.WithinDistance\",\n\t\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\t\"Offset\":\"(0.132980347,107.659546)\",\n\t\t\t\t\t\t\"Comment\":\"Return
+        success once an enemy sees us\"\n\t\t\t\t\t},\n\t\t\t\t\t\"ID\":4,\n\t\t\t\t\t\"Name\":\"Within
+        Distance\",\n\t\t\t\t\t\"Instant\":true,\n\t\t\t\t\t\"System.Single,magnitude\":6,\n\t\t\t\t\t\"System.Boolean,lineOfSight\":true,\n\t\t\t\t\t\"UnityEngine.Transform[],targets\":[0,1,2,3,4,5],\n\t\t\t\t\t\"System.String,targetTag\":\"\",\n\t\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\t\"IsShared\":true\n\t\t\t\t\t}\n\t\t\t\t}]\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(70.75003,131.1875)\",\n\t\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t\t},\n\t\t\t\t\"ID\":5,\n\t\t\t\t\"Name\":\"Seek\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":7\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\t\"System.Boolean,avoidDefeneUnits\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"\",\n\t\t\t\t\t\"UnityEngine.Transform,mValue\":6\n\t\t\t\t}\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Flee\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(147.244141,122.694061)\",\n\t\t\t\t\"Comment\":\"We
+        are within close proximity to an enemy - flee in the opposite direction\"\n\t\t\t},\n\t\t\t\"ID\":6,\n\t\t\t\"Name\":\"Flee\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":7\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Single,fleedDistance\":9,\n\t\t\t\"System.Single,lookAheadDistance\":15,\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,fleeFromTransform\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":7\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 228468629}
+        - {fileID: 863055296}
+        - {fileID: 1447207150}
+        - {fileID: 155277612}
+        - {fileID: 821731979}
+        - {fileID: 1260632438}
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!23 &378566123
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 136e77252c759664fbd2fb2dbfdde1d6, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &378566124
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 378566114}
+  m_Mesh: {fileID: 4300002, guid: 192cf0f9d8bc0c24097af14438cba8b3, type: 3}
+--- !u!1 &546956873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 546956874}
+  - 33: {fileID: 546956876}
+  - 65: {fileID: 546956877}
+  - 23: {fileID: 546956875}
+  m_Layer: 0
+  m_Name: Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &546956874
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 546956873}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: -55}
+  m_LocalScale: {x: 120, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &546956875
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 546956873}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &546956876
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 546956873}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &546956877
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 546956873}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &659223877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 659223878}
+  - 33: {fileID: 659223880}
+  - 65: {fileID: 659223881}
+  - 23: {fileID: 659223879}
+  m_Layer: 0
+  m_Name: Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &659223878
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 659223877}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -60, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 5, z: 110}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &659223879
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 659223877}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &659223880
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 659223877}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &659223881
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 659223877}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &719814694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 719814695}
+  - 33: {fileID: 719814697}
+  - 65: {fileID: 719814698}
+  - 23: {fileID: 719814696}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &719814695
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 719814694}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 35, y: 2, z: 17}
+  m_LocalScale: {x: 1, y: 5, z: 25}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &719814696
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 719814694}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &719814697
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 719814694}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &719814698
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 719814694}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &758322146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 758322147}
+  m_Layer: 0
+  m_Name: 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &758322147
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 758322146}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30, y: .5, z: 25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377693284}
+--- !u!1 &783224660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 783224661}
+  - 33: {fileID: 783224663}
+  - 65: {fileID: 783224664}
+  - 23: {fileID: 783224662}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &783224661
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 783224660}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 30}
+  m_LocalScale: {x: 50, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &783224662
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 783224660}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &783224663
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 783224660}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &783224664
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 783224660}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &795567993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 795567994}
+  - 65: {fileID: 795567995}
+  - 114: {fileID: 795567996}
+  m_Layer: 0
+  m_Name: Capture Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &795567994
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795567993}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: .5, z: 40}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!65 &795567995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795567993}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &795567996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795567993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8c167932009cfa468da7de05bd9cbba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flag: {fileID: 81752749}
+--- !u!1 &821731978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 821731979}
+  - 33: {fileID: 821731981}
+  - 23: {fileID: 821731980}
+  - 114: {fileID: 821731987}
+  - 65: {fileID: 821731982}
+  - 114: {fileID: 821731986}
+  - 114: {fileID: 821731985}
+  - 195: {fileID: 821731983}
+  m_Layer: 0
+  m_Name: Patrol 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &821731979
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 27.6194897, y: 0, z: 13.3889656}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &821731980
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &821731981
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!65 &821731982
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.00000024, y: 1, z: 1.00000024}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &821731983
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &821731985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!114 &821731986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(5,112)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &821731987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821731978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Patrol the given waypoints for any enemies
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(4.5,96)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Patrol\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-116.5,127)\",\n\t\t\t\t\"Comment\":\"Move
+        from waypoint to waypoint. Patrol will return failure when an enemy comes
+        within sight\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Patrol\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\"System.Single,viewMagnitude\":15,\n\t\t\t\"UnityEngine.Transform[],waypoints\":[0,1,2,3],\n\t\t\t\"UnityEngine.Transform[],targets\":[4,5],\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(135,128)\",\n\t\t\t\t\"Comment\":\"An
+        enemy has crossed the path of patrol so seek that enemy\"\n\t\t\t},\n\t\t\t\"ID\":3,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 366072877}
+        - {fileID: 1371260448}
+        - {fileID: 758322147}
+        - {fileID: 2006320056}
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!1 &863055295
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 863055296}
+  - 33: {fileID: 863055298}
+  - 23: {fileID: 863055297}
+  - 65: {fileID: 863055299}
+  - 114: {fileID: 863055302}
+  - 195: {fileID: 863055300}
+  - 114: {fileID: 863055304}
+  - 114: {fileID: 863055303}
+  m_Layer: 0
+  m_Name: Defend 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &863055296
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -7.5, y: 0, z: 11}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &863055297
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &863055298
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!65 &863055299
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &863055300
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &863055302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!114 &863055303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(3,122)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &863055304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863055295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Defend the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(-5,112)\",\n\t\t\t\"Comment\":\"If
+        an enemy comes within sight then defend the target. If no enemy is within
+        sight then seek the starting position\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-59.5,126)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.WithinSight\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-111.5,124)\",\n\t\t\t\t\t\"Comment\":\"Is
+        an enemy within sight?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Within
+        Sight\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\t\"System.Single,viewMagnitude\":10,\n\t\t\t\t\"UnityEngine.Transform[],targets\":[0,1],\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Defend\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(112.5,124)\",\n\t\t\t\t\t\"Comment\":\"If
+        yes then defend the flag by chasing the enemy.\"\n\t\t\t\t},\n\t\t\t\t\"ID\":4,\n\t\t\t\t\"Name\":\"Defend\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":6\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"UnityEngine.Transform,defendObject\":2,\n\t\t\t\t\"System.Single,defendRadius\":20,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(126.5,135)\",\n\t\t\t\t\"Comment\":\"Go
+        back to the starting position\"\n\t\t\t},\n\t\t\t\"ID\":5,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":true,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Transform,mValue\":3\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        - {fileID: 81752750}
+        - {fileID: 1508561370}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!1 &912127890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 912127891}
+  - 33: {fileID: 912127893}
+  - 65: {fileID: 912127894}
+  - 23: {fileID: 912127892}
+  m_Layer: 0
+  m_Name: Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &912127891
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 912127890}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 60, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 5, z: 110}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &912127892
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 912127890}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &912127893
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 912127890}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &912127894
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 912127890}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &958972815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 958972816}
+  - 33: {fileID: 958972818}
+  - 64: {fileID: 958972819}
+  - 23: {fileID: 958972817}
+  m_Layer: 0
+  m_Name: Floor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967263
+  m_IsActive: 1
+--- !u!4 &958972816
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 958972815}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -.00668621063, y: 0, z: 0}
+  m_LocalScale: {x: 12, y: 1, z: 11}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &958972817
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 958972815}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: d6d3c6236dd16a94d80a941cd69d406c, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &958972818
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 958972815}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!64 &958972819
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 958972815}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &973703813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 973703814}
+  - 114: {fileID: 973703815}
+  m_Layer: 0
+  m_Name: Game
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &973703814
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 973703813}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!114 &973703815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 973703813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a71e3bea37f6a429ea57799a1718a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  celebrationTime: 5
+  NPCGroup: {fileID: 1154252836}
+  flag: {fileID: 81752750}
+--- !u!1 &1026717328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1026717329}
+  - 33: {fileID: 1026717331}
+  - 65: {fileID: 1026717332}
+  - 23: {fileID: 1026717330}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1026717329
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1026717328}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: -15}
+  m_LocalScale: {x: 26, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1026717330
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1026717328}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1026717331
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1026717328}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1026717332
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1026717328}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1097539430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1097539431}
+  - 33: {fileID: 1097539433}
+  - 65: {fileID: 1097539434}
+  - 23: {fileID: 1097539432}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1097539431
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1097539430}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -35, y: 2, z: -17}
+  m_LocalScale: {x: 1, y: 5, z: 25}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1097539432
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1097539430}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1097539433
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1097539430}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1097539434
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1097539430}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1154252835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1154252836}
+  m_Layer: 0
+  m_Name: NPCs
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1154252836
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1154252835}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 863055296}
+  - {fileID: 1447207150}
+  - {fileID: 228468629}
+  - {fileID: 16095997}
+  - {fileID: 378566115}
+  - {fileID: 155277612}
+  - {fileID: 821731979}
+  - {fileID: 1260632438}
+  m_Father: {fileID: 0}
+--- !u!1 &1164193057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1164193058}
+  - 33: {fileID: 1164193060}
+  - 23: {fileID: 1164193059}
+  m_Layer: 0
+  m_Name: Plane
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1164193058
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1164193057}
+  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106829}
+  m_LocalPosition: {x: 5.35630083, y: .50876683, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: .10161446}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!23 &1164193059
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1164193057}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: f20fb333129ccfc49baf147b257446a4, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1164193060
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1164193057}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1260632437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1260632438}
+  - 33: {fileID: 1260632440}
+  - 23: {fileID: 1260632439}
+  - 114: {fileID: 1260632444}
+  - 65: {fileID: 1260632441}
+  - 114: {fileID: 1260632445}
+  - 114: {fileID: 1260632446}
+  - 195: {fileID: 1260632442}
+  m_Layer: 0
+  m_Name: Patrol 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1260632438
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.6534786, y: 0, z: 19.9085426}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &1260632439
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1260632440
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!65 &1260632441
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.00000024, y: 1, z: 1.00000024}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &1260632442
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 1
+  m_AutoRepath: 0
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1260632444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Patrol the given waypoints for any enemies
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(4.5,116)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Patrol\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-126.5,127)\",\n\t\t\t\t\"Comment\":\"Move
+        from waypoint to waypoint. Patrol will return failure when an enemy comes
+        within sight\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Patrol\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\"System.Single,viewMagnitude\":15,\n\t\t\t\"UnityEngine.Transform[],waypoints\":[0,1,2,3],\n\t\t\t\"UnityEngine.Transform[],targets\":[4,5],\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(145,128)\",\n\t\t\t\t\"Comment\":\"An
+        enemy has crossed the path of patrol so seek that enemy\"\n\t\t\t},\n\t\t\t\"ID\":3,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\"IsShared\":true\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 366072877}
+        - {fileID: 1371260448}
+        - {fileID: 758322147}
+        - {fileID: 2006320056}
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &1260632445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(3,112)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &1260632446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1260632437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!1 &1321025794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1321025795}
+  - 20: {fileID: 1321025796}
+  m_Layer: 0
+  m_Name: Overview Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1321025795
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1321025794}
+  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106829}
+  m_LocalPosition: {x: 0, y: 101.10807, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!20 &1321025796
+Camera:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1321025794}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: .5
+    height: 1
+  near clip plane: .300000012
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 100
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_HDR: 0
+  m_OcclusionCulling: 1
+--- !u!1 &1362685269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1362685270}
+  m_Layer: 0
+  m_Name: Structure
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1362685270
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1362685269}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1880871351}
+  - {fileID: 18488295}
+  - {fileID: 1026717329}
+  - {fileID: 2146124237}
+  - {fileID: 1726145114}
+  - {fileID: 2072458115}
+  - {fileID: 1097539431}
+  - {fileID: 783224661}
+  - {fileID: 2006419284}
+  - {fileID: 117946924}
+  - {fileID: 2071159174}
+  - {fileID: 719814695}
+  - {fileID: 958972816}
+  - {fileID: 1627218339}
+  - {fileID: 546956874}
+  - {fileID: 912127891}
+  - {fileID: 659223878}
+  - {fileID: 1440422745}
+  m_Father: {fileID: 0}
+--- !u!1 &1371260447
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1371260448}
+  m_Layer: 0
+  m_Name: 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1371260448
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1371260447}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30, y: .5, z: -25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377693284}
+--- !u!1 &1377693283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1377693284}
+  m_Layer: 0
+  m_Name: Patrol Waypoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1377693284
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1377693283}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 366072877}
+  - {fileID: 1371260448}
+  - {fileID: 758322147}
+  - {fileID: 2006320056}
+  m_Father: {fileID: 0}
+--- !u!1 &1440422744
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1440422745}
+  - 33: {fileID: 1440422747}
+  - 65: {fileID: 1440422748}
+  - 23: {fileID: 1440422746}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1440422745
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1440422744}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 5, z: 10}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1440422746
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1440422744}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1440422747
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1440422744}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1440422748
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1440422744}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1447207149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1447207150}
+  - 33: {fileID: 1447207152}
+  - 23: {fileID: 1447207151}
+  - 65: {fileID: 1447207153}
+  - 114: {fileID: 1447207158}
+  - 195: {fileID: 1447207154}
+  - 114: {fileID: 1447207157}
+  - 114: {fileID: 1447207156}
+  m_Layer: 0
+  m_Name: Defend 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1447207150
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 11}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1154252836}
+--- !u!23 &1447207151
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 398697d15a71f2c40a5d8ed522406306, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1447207152
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Mesh: {fileID: 4300002, guid: 885d56c09d2eb8047921525d03066a55, type: 3}
+--- !u!65 &1447207153
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: .5, z: 0}
+--- !u!195 &1447207154
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Enabled: 1
+  m_Radius: .5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: -.100000001
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1447207156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 1
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagTaken Behavior
+    behaviorDescription: Try to recapture the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(3,122)\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Sequence\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"Self\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Inverter\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-62,115)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Inverter\",\n\t\t\t\"Instant\":true,\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.IsFlagCaptured\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(1.5,104)\",\n\t\t\t\t\t\"Comment\":\"Has
+        the flag been captured?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Is
+        Flag Captured\",\n\t\t\t\t\"Instant\":true\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(97,109)\",\n\t\t\t\t\"Comment\":\"Seek
+        the flag\"\n\t\t\t},\n\t\t\t\"ID\":4,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":false,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"IsShared\":false,\n\t\t\t\t\"IsGlobal\":false,\n\t\t\t\t\"UnityEngine.Transform,mValue\":0\n\t\t\t}\n\t\t}]\n\t}\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 81752750}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &1447207157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  pauseWhenDisabled: 0
+  restartWhenComplete: 1
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: FlagNotTaken Behavior
+    behaviorDescription: Defend the flag
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: "{\n\t\"EntryTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.EntryTask\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(0,0)\"\n\t\t},\n\t\t\"ID\":0,\n\t\t\"Name\":\"Entry\",\n\t\t\"Instant\":true\n\t},\n\t\"RootTask\":{\n\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Selector\",\n\t\t\"NodeData\":{\n\t\t\t\"Offset\":\"(-5,112)\",\n\t\t\t\"Comment\":\"If
+        an enemy comes within sight then defend the target. If no enemy is within
+        sight then seek the starting position\"\n\t\t},\n\t\t\"ID\":1,\n\t\t\"Name\":\"Selector\",\n\t\t\"Instant\":true,\n\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\"Children\":[{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Runtime.Tasks.Sequence\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(-79.5,126)\"\n\t\t\t},\n\t\t\t\"ID\":2,\n\t\t\t\"Name\":\"Sequence\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.Tasks.AbortType,abortType\":\"None\",\n\t\t\t\"Children\":[{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.WithinSight\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(-113.5,132)\",\n\t\t\t\t\t\"Comment\":\"Is
+        an enemy within sight?\"\n\t\t\t\t},\n\t\t\t\t\"ID\":3,\n\t\t\t\t\"Name\":\"Within
+        Sight\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"System.Single,fieldOfViewAngle\":45,\n\t\t\t\t\"System.Single,viewMagnitude\":10,\n\t\t\t\t\"UnityEngine.Transform[],targets\":[0,1],\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t},{\n\t\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Defend\",\n\t\t\t\t\"NodeData\":{\n\t\t\t\t\t\"Offset\":\"(110.5,133)\",\n\t\t\t\t\t\"Comment\":\"If
+        yes then defend the flag by chasing the enemy.\"\n\t\t\t\t},\n\t\t\t\t\"ID\":4,\n\t\t\t\t\"Name\":\"Defend\",\n\t\t\t\t\"Instant\":true,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":6\n\t\t\t\t},\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\t\"IsShared\":true,\n\t\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t\t},\n\t\t\t\t\"UnityEngine.Transform,defendObject\":2,\n\t\t\t\t\"System.Single,defendRadius\":20,\n\t\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\t\"Name\":\"Enemy\",\n\t\t\t\t\t\"IsShared\":true\n\t\t\t\t}\n\t\t\t}]\n\t\t},{\n\t\t\t\"ObjectType\":\"BehaviorDesigner.Samples.Seek\",\n\t\t\t\"NodeData\":{\n\t\t\t\t\"Offset\":\"(116.5,125)\",\n\t\t\t\t\"Comment\":\"Go
+        back to the starting position\"\n\t\t\t},\n\t\t\t\"ID\":5,\n\t\t\t\"Name\":\"Seek\",\n\t\t\t\"Instant\":true,\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,moveSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Move
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":6\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedFloat,rotationSpeed\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\t\t\"IsShared\":true,\n\t\t\t\t\"System.Single,mValue\":1000\n\t\t\t},\n\t\t\t\"System.Boolean,rotateToTarget\":true,\n\t\t\t\"System.Boolean,avoidDefeneUnits\":false,\n\t\t\t\"BehaviorDesigner.Runtime.SharedVector3,targetPosition\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedVector3\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Vector3,mValue\":\"(0,0,0)\"\n\t\t\t},\n\t\t\t\"BehaviorDesigner.Runtime.SharedTransform,target\":{\n\t\t\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\t\t\"Name\":\"\",\n\t\t\t\t\"UnityEngine.Transform,mValue\":3\n\t\t\t}\n\t\t}]\n\t},\n\t\"Variables\":[{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Move
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":6\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedFloat\",\n\t\t\"Name\":\"Rotation
+        Speed\",\n\t\t\"IsShared\":true,\n\t\t\"System.Single,mValue\":1000\n\t},{\n\t\t\"Type\":\"BehaviorDesigner.Runtime.SharedTransform\",\n\t\t\"Name\":\"Enemy\",\n\t\t\"IsShared\":true\n\t}]\n}"
+      fieldSerializationData:
+        typeName: []
+        startIndex: 
+        dataPosition: 
+        unityObjects:
+        - {fileID: 378566115}
+        - {fileID: 16095997}
+        - {fileID: 81752750}
+        - {fileID: 1791844943}
+        byteData: 
+        byteDataArray: 
+  unitTestResult: {fileID: 0}
+--- !u!114 &1447207158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447207149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770e25c9c09608845a60576cf374ad6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isOffense: 0
+--- !u!1 &1508561369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1508561370}
+  m_Layer: 0
+  m_Name: Defend 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1508561370
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1508561369}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -40, y: -.5, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!1 &1552477937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1552477938}
+  - 108: {fileID: 1552477939}
+  m_Layer: 0
+  m_Name: Directional light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1552477938
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1552477937}
+  m_LocalRotation: {x: .141851246, y: .853730381, z: -.398101211, w: .304201007}
+  m_LocalPosition: {x: 0, y: 18.7355881, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!108 &1552477939
+Light:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1552477937}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: .129999995
+  m_Range: 10
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_Strength: 1
+    m_Bias: .0500000007
+    m_Softness: 4
+    m_SoftnessFade: 1
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_ActuallyLightmapped: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 1
+  m_ShadowSamples: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_IndirectIntensity: 1
+  m_AreaSize: {x: 1, y: 1}
+--- !u!1 &1627218338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1627218339}
+  - 33: {fileID: 1627218341}
+  - 65: {fileID: 1627218342}
+  - 23: {fileID: 1627218340}
+  m_Layer: 0
+  m_Name: Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1627218339
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627218338}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 55}
+  m_LocalScale: {x: 120, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1627218340
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627218338}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1627218341
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627218338}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1627218342
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627218338}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1726145113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1726145114}
+  - 33: {fileID: 1726145116}
+  - 65: {fileID: 1726145117}
+  - 23: {fileID: 1726145115}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1726145114
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1726145113}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 5, z: 28}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1726145115
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1726145113}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1726145116
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1726145113}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1726145117
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1726145113}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1780566466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1780566467}
+  - 33: {fileID: 1780566469}
+  - 23: {fileID: 1780566468}
+  m_Layer: 0
+  m_Name: Plane
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1780566467
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780566466}
+  m_LocalRotation: {x: -1.95373173e-06, y: .707106829, z: -.707106829, w: -1.95373173e-06}
+  m_LocalPosition: {x: 5.35630083, y: .50876683, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: .10161446}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!23 &1780566468
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780566466}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: f20fb333129ccfc49baf147b257446a4, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1780566469
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780566466}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1791844942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1791844943}
+  m_Layer: 0
+  m_Name: Defend 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1791844943
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1791844942}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: .956001759, y: -.5, z: 35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 81752750}
+--- !u!1 &1880871350
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1880871351}
+  - 33: {fileID: 1880871353}
+  - 65: {fileID: 1880871354}
+  - 23: {fileID: 1880871352}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1880871351
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1880871350}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 5, z: 10}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &1880871352
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1880871350}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &1880871353
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1880871350}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1880871354
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1880871350}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2006320055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2006320056}
+  m_Layer: 0
+  m_Name: 4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2006320056
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2006320055}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30, y: .5, z: 25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377693284}
+--- !u!1 &2006419283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2006419284}
+  - 33: {fileID: 2006419286}
+  - 65: {fileID: 2006419287}
+  - 23: {fileID: 2006419285}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &2006419284
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2006419283}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 15}
+  m_LocalScale: {x: 40, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &2006419285
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2006419283}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &2006419286
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2006419283}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2006419287
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2006419283}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2071159173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2071159174}
+  - 33: {fileID: 2071159176}
+  - 65: {fileID: 2071159177}
+  - 23: {fileID: 2071159175}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &2071159174
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071159173}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 35, y: 2, z: -17}
+  m_LocalScale: {x: 1, y: 5, z: 25}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &2071159175
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071159173}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &2071159176
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071159173}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2071159177
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071159173}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2072458114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2072458115}
+  - 33: {fileID: 2072458117}
+  - 65: {fileID: 2072458118}
+  - 23: {fileID: 2072458116}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &2072458115
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2072458114}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: -30}
+  m_LocalScale: {x: 70, y: 5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &2072458116
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2072458114}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &2072458117
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2072458114}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2072458118
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2072458114}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2114369556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2114369557}
+  - 108: {fileID: 2114369558}
+  m_Layer: 0
+  m_Name: Directional light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2114369557
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2114369556}
+  m_LocalRotation: {x: .408217937, y: -.234569728, z: .109381661, w: .875426114}
+  m_LocalPosition: {x: 0, y: 18.7355881, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!108 &2114369558
+Light:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2114369556}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: .5
+  m_Range: 10
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_Strength: 1
+    m_Bias: .0500000007
+    m_Softness: 4
+    m_SoftnessFade: 1
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_ActuallyLightmapped: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 1
+  m_ShadowSamples: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_IndirectIntensity: 1
+  m_AreaSize: {x: 1, y: 1}
+--- !u!1 &2146124236
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2146124237}
+  - 33: {fileID: 2146124239}
+  - 65: {fileID: 2146124240}
+  - 23: {fileID: 2146124238}
+  m_Layer: 0
+  m_Name: Barrier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &2146124237
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146124236}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 5, z: 28}
+  m_Children: []
+  m_Father: {fileID: 1362685270}
+--- !u!23 &2146124238
+Renderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146124236}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 1112f73791c60fc49b6bebf0e405d452, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+--- !u!33 &2146124239
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146124236}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2146124240
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2146124236}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

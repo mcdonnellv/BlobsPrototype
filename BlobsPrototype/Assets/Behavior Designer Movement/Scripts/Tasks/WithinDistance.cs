@@ -89,7 +89,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
             }
             var oldColor = UnityEditor.Handles.color;
             UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.DrawWireDisc(Owner.transform.position, usePhysics2D ? Owner.transform.forward : Owner.transform.up, magnitude.Value);
+            UnityEditor.Handles.DrawWireDisc(Owner.transform.position, usePhysics2D ? Owner.transform.forward : Owner.transform.right, magnitude.Value);
             UnityEditor.Handles.color = oldColor;
 #endif
         }

@@ -38,7 +38,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
         }
 
         // Return targetPosition if targetTransform is null
-        private Vector3 Target()
+        protected Vector3 Target()
         {
             if (target == null || target.Value == null) {
                 return targetPosition.Value;
