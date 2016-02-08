@@ -16,8 +16,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
         public SharedGameObjectList waypoints;
 
         // The current index that we are heading towards within the waypoints array
-        private int waypointIndex;
-        private float waypointReachedTime;
+        protected int waypointIndex;
+		protected float waypointReachedTime;
 
         public override void OnStart()
         {

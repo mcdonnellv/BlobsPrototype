@@ -5,7 +5,6 @@ public class Enemy : NPC {
 
 	// Use this for initialization
 	public override void Start () {
-		faction = Faction.enemy;
 		base.Start();
 	}
 	

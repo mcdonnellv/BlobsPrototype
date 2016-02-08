@@ -11,27 +11,27 @@ public class Patrol2d : Patrol {
 	private Rigidbody2D rigidBody;
 	private Vector2 destTarget;
 	public SharedFloat moveForce = 100;
-	public SharedFloat slowDownDistance = 10;
 	private Vector2 originalDirection;
 	private Vector2 curDirection;
 
 
 	public override TaskStatus OnUpdate() {
-		if(destTarget != (Vector2)transform.position && !HasArrived()) {
+		if(destTarget != Vector2.zero && !HasArrived()) {
 			bool grounded = Mathf.Abs(rigidBody.velocity.y) <= 0.010f;
 
 			if(grounded) {
 				Vector2 direction = destTarget - (Vector2)transform.position;
 				direction.y = 0;
-				float distance = direction.magnitude;
-				curDirection = direction.normalized;
-				rigidBody.AddForce(curDirection * moveForce.Value);
+				float distanceLeft = direction.magnitude;
+				Vector2 dNorm = direction.normalized;
 				float curSpeed = rigidBody.velocity.magnitude;
-				if(distance < slowDownDistance.Value && curSpeed > 1f)
-					rigidBody.AddForce(-curDirection * moveForce.Value * (1 - (distance / slowDownDistance.Value)));
+
+				// distance =  velocity * time
+				if(curSpeed < distanceLeft)
+					rigidBody.AddForce(dNorm * moveForce.Value);
 
 				if(curSpeed > speed.Value)
-					rigidBody.velocity = curDirection * speed.Value;
+					rigidBody.velocity = dNorm * speed.Value;
 			}
 		}
 
@@ -43,7 +43,25 @@ public class Patrol2d : Patrol {
 	}
 
 	public override void OnStart() {
-		destTarget = transform.position;
+		// initially move towards the closest waypoint
+		float distance = Mathf.Infinity;
+		float localDistance;
+		for (int i = 0; i < waypoints.Value.Count; ++i) {
+			if ((localDistance = Vector3.Magnitude(transform.position - waypoints.Value[i].transform.position)) < distance) {
+				distance = localDistance;
+				base.waypointIndex = i;
+			}
+		}
+		waypointReachedTime = -waypointPauseDuration.Value;
+		SetDestination(Target());
+	}
+
+	// Return the current waypoint index position
+	private Vector3 Target() {
+		if (waypointIndex >= waypoints.Value.Count) {
+			return transform.position;
+		}
+		return waypoints.Value[waypointIndex].transform.position;
 	}
 
 	protected override bool SetDestination(Vector3 target) {
@@ -61,7 +79,7 @@ public class Patrol2d : Patrol {
 	}
 
 	public override void OnEnd() {
-		rigidBody.velocity = Vector3.zero;
-		destTarget = transform.position;
+		//rigidBody.velocity = Vector3.zero;
+		//destTarget = transform.position;
 	}
 }

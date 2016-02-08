@@ -58,15 +58,15 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	public int GetFactionCount(Faction f, bool livingOnly) {
-		return GetActorsOfFaction(f,livingOnly).Count;
+	public int GetFactionCount(string tag, bool livingOnly) {
+		return GetActorsOfTag(tag,livingOnly).Count;
 	}
 
 
-	public List<Actor> GetActorsOfFaction(Faction f, bool livingOnly) {
+	public List<Actor> GetActorsOfTag(string tag, bool livingOnly) {
 		List<Actor> ret = new List<Actor>();
 		foreach(Actor actor in actors) {
-			if(actor.faction == f) {
+			if(actor.tag == tag) {
 				if(livingOnly) {
 					if(actor.health > 0)
 						ret.Add(actor);
@@ -82,7 +82,7 @@ public class CombatManager : MonoBehaviour {
 	void Update() {
 		if(!fighting)
 			return;
-		if(GetFactionCount(Faction.blob, true) == 0 || GetFactionCount(Faction.enemy, true) == 0)
+		if(GetFactionCount("Blob", true) == 0 || GetFactionCount("Enemy", true) == 0)
 			EndFight();
 	}
 

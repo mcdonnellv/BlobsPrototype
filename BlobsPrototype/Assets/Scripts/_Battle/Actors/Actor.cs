@@ -7,13 +7,11 @@ public class Actor : MonoBehaviour {
 	// how fast do we walk
 	public float walkSpeed = 10f;
 
-	public Faction faction;
-
 	public Rigidbody2D rigidBody;
 
-	[HideInInspector] public float health = 0f;
+	public float health = 0f;
 
-	[HideInInspector] public CombatStats combatStats;
+	public CombatStats combatStats;
 
 	// when set will try to go to its position
 	public GameObject moveToTarget;
@@ -22,7 +20,6 @@ public class Actor : MonoBehaviour {
 	protected GameObject aggroTarget;
 	
 	// working health througout this fight
-
 
 
 	public Vector2 myPosition { 
@@ -58,6 +55,7 @@ public class Actor : MonoBehaviour {
 	// Use this for initialization
 	public virtual void Start () {
 		moveToTarget = gameObject;
+		health = combatStats.health.combatValue;
 	}
 
 	
