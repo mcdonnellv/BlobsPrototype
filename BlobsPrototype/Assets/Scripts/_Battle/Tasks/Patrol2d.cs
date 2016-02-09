@@ -8,9 +8,10 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 [TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}PatrolIcon.png")]
 public class Patrol2d : Patrol {
 
+	public SharedFloat moveForce = 100;
+
 	private Rigidbody2D rigidBody;
 	private Vector2 destTarget;
-	public SharedFloat moveForce = 100;
 	private Vector2 originalDirection;
 	private Vector2 curDirection;
 
@@ -56,7 +57,7 @@ public class Patrol2d : Patrol {
 	}
 
 	protected override bool HasArrived() {
-		bool retval =  (transform.position.x - destTarget.x) < .5f;
+		bool retval =  Mathf.Abs(transform.position.x - destTarget.x) < .5f;
 		return retval;
 	}
 

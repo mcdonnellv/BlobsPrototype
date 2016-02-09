@@ -14,6 +14,15 @@ public class BlobActor : Actor {
 		base.Update();
 	}
 
+	// This function is called by the animation system on the frame of the attack 
+	public ActorAttack SpawnAttackBox(float size) {
+		ActorAttack aa = base.SpawnAttackBox(size);
+		aa.damage = combatStats.attack.combatValue / 10f;
+		aa.opposingFactionTags.Add("Enemy");
+		aa.transform.position += new Vector3(0f, .5f, 0f) + (transform.right * 1);
+		return aa;
+	}
+
 	void FixedUpdate ()
 	{
 		// Cache the horizontal input.

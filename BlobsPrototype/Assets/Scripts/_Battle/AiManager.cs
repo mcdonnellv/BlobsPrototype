@@ -64,7 +64,7 @@ public class AiManager : MonoBehaviour {
 			myTransform.localRotation = Quaternion.Euler(0, 180, 0);
 		
 		if(dir.x > 0 && !facingRight)
-			myTransform.localRotation = Quaternion.Euler(0, 180, 0);
+			myTransform.localRotation = Quaternion.Euler(0, 0, 0);
 	}
 
 }

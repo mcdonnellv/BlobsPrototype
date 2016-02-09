@@ -19,12 +19,19 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 
 		public override TaskStatus OnUpdate()
 		{
-			Vector2 destTarget = (Vector2)base.Target();
-			if(transform.position.x - destTarget.x <= arriveDistance.Value)
+			if(base.Target() == Vector3.zero)
 				return TaskStatus.Success;
 
-			AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, speed.Value, lookAtTarget.Value);
+			if(HasArrived())
+				return TaskStatus.Success;
+
+			AiManager.MoveToDestination(transform, rigidBody, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value);
 			return TaskStatus.Running;
+		}
+
+		bool HasArrived() {
+			bool retval =  Mathf.Abs(transform.position.x - base.Target().x) <= arriveDistance.Value;
+			return retval;
 		}
 	}
 }

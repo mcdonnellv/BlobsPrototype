@@ -5,63 +5,31 @@ using System;
 public class Actor : MonoBehaviour {
 
 	// how fast do we walk
-	public float walkSpeed = 10f;
-
-	public Rigidbody2D rigidBody;
-
-	public float health = 0f;
-
+	public float walkSpeed = 2f;
+	public float runSpeed = 4f;
 	public CombatStats combatStats;
-
-	// when set will try to go to its position
-	public GameObject moveToTarget;
-
-	// reference to an opponent
-	protected GameObject aggroTarget;
-	
-	// working health througout this fight
-
-
-	public Vector2 myPosition { 
-		get { return (Vector2)transform.position; }  
-		set { transform.position = (Vector3)value; } 
-	}
-	
-
-	void OnCollisionEnter2D (Collision2D col) {
-		if(col.gameObject == moveToTarget) {
-			moveToTarget = gameObject;
-			rigidBody.velocity = Vector2.zero;
-		}
-	}
-
-	public void Move(Vector2 destination) {
-		if(myPosition == destination)
-			return;
-
-		Vector2 a = destination - myPosition;
-		Vector2 direction = a.normalized;
-		float maxDistanceDelta = walkSpeed;// * Time.deltaTime;
-		rigidBody.velocity = direction * maxDistanceDelta;
-	}
-
-
-	public void Initialize(CombatStats cs) { 
-		combatStats = cs;
-		health = combatStats.health.combatValue;
-	}
-
+	public ActorAttack attackPrefab;
 
 	// Use this for initialization
 	public virtual void Start () {
-		moveToTarget = gameObject;
-		health = combatStats.health.combatValue;
 	}
-
 	
 	// Update is called once per frame
 	public virtual void Update () {
-		if(moveToTarget != null)
-			Move((Vector2)moveToTarget.transform.position);
+	}
+
+	public ActorAttack SpawnAttackBox(float size){
+		ActorAttack attackBox = (ActorAttack)Instantiate(attackPrefab, transform.position, Quaternion.identity);
+		BoxCollider2D b2d = attackBox.GetComponent<BoxCollider2D>();
+		b2d.size = new Vector2(size, size);
+		attackBox.transform.parent = transform;
+		return attackBox;
+	}
+
+	public bool IsAlive() {
+		ActorHealth ac = GetComponent<ActorHealth>();
+		if(ac == null) 
+			return false;
+		return ac.IsAlive();
 	}
 }

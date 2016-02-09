@@ -8,19 +8,27 @@ public class ActorHealth : MonoBehaviour {
 	
 	// how much health the object should start with
 	public float startHealth = 100;
-	
+	public float attackImmunityTime = .5f;
 	public float Amount { get { return health; } }
-	private float health;
-	
+	public float criticalHealthThreshold = .15f;
+	public float health;
+	private float lastHitTime;
+
+
 	public void Start() {
 		Actor actor = gameObject.GetComponent<Actor>();
 		if(actor)
 			startHealth = actor.combatStats.health.combatValue;
 		health = startHealth;
 	}
+
 	
 	// the attached object has been damaged
-	public void takeDamage(float amount) {
+	public void TakeDamage(float amount) {
+		if(Time.time <= lastHitTime + attackImmunityTime)
+			return;
+
+		lastHitTime = Time.time;
 		health -= amount;
 		
 		// don't let the health go below zero
@@ -33,10 +41,8 @@ public class ActorHealth : MonoBehaviour {
 			}
 		}
 	}
-	
-	// reset the variables back to their starting variables
-	public void reset() {
-		health = startHealth;
-		onDeath = null;
-	}
+
+	public bool IsAlive() { return health > 0; }
+
+	public bool IsCriticalHealth() { return IsAlive() && health < (startHealth * criticalHealthThreshold); }
 }

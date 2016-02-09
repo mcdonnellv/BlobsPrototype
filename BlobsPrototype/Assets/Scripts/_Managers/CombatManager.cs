@@ -28,7 +28,6 @@ public class CombatManager : MonoBehaviour {
 		go.transform.parent = root;
 		go.transform.position = (Vector3)spawnPos;
 		Actor actor = go.GetComponent<Actor>();
-		actor.Initialize(cs);
 		actors.Add(actor);
 		return actor;
 	}
@@ -68,7 +67,7 @@ public class CombatManager : MonoBehaviour {
 		foreach(Actor actor in actors) {
 			if(actor.tag == tag) {
 				if(livingOnly) {
-					if(actor.health > 0)
+					if(actor.IsAlive())
 						ret.Add(actor);
 				}
 				else
