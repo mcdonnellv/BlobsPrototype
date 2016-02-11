@@ -105,7 +105,7 @@ public class MonsterManagerInspector : GenericManagerInspector {
 			monster.speed = EditorGUILayout.FloatField("Speed", monster.speed);
 			monster.stamina = EditorGUILayout.FloatField("Stamina", monster.stamina);
 			monster.damageMitigation = Mathf.PingPong(EditorGUILayout.FloatField("DamageMitigation", monster.damageMitigation), 1f);
-			monster.staggerLimit = EditorGUILayout.FloatField("StaggerLimit", monster.staggerLimit);
+			monster.flinchLimit = EditorGUILayout.FloatField("flinchLimit", monster.flinchLimit);
 			monster.walkSpeed = EditorGUILayout.FloatField("WalkSpeed", monster.walkSpeed);
 			monster.runSpeed = EditorGUILayout.FloatField("RunSpeed", monster.runSpeed);
 			monster.perception = EditorGUILayout.FloatField("Perception", monster.perception);

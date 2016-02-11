@@ -17,7 +17,8 @@ public class AiIsCriticalHealth : Conditional {
 		if(health == null)
 			return TaskStatus.Failure;
 
-		if(health.GetHealthPercentage() > criticalHealth.Value)
+		float healthPercentage = health.HealthAmount / health.startHealth;
+		if(healthPercentage > criticalHealth.Value)
 			return TaskStatus.Failure;
 
 		return TaskStatus.Success;

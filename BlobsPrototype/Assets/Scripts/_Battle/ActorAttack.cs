@@ -5,17 +5,20 @@ using System.Collections.Generic;
 
 public class ActorAttack : MonoBehaviour {
 
-	public float damage;
-	public float lifetime;
-	public List<string> opposingFactionTags;
-	private float spawntime;
+	public float damage = 10f;
+	public float flinchPoints = 10f;
+	public float staminaConsumption = 10f;
+	public List<string> validTargetTags;
+	public float hitboxDuration = .3f;
+
+	private float hitboxSpawnTime;
 
 	public void Start() {
-		spawntime = Time.time;
+		hitboxSpawnTime = Time.time;
 	}
 
 	public void Update() {
-		if(Time.time >= spawntime + lifetime)
+		if(Time.time >= hitboxSpawnTime + hitboxDuration)
 			Destroy(gameObject);
 	}
 
@@ -23,9 +26,11 @@ public class ActorAttack : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D (Collider2D col) {
-		foreach(string tag in opposingFactionTags) {
+		foreach(string tag in validTargetTags) {
 			if(col.gameObject.tag == tag) {
-				col.gameObject.GetComponent<ActorHealth>().TakeDamage(damage);
+				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
+				if(damage > 0 && health != null)
+					health.TakeDamage(damage);
 				return;
 			}
 		}

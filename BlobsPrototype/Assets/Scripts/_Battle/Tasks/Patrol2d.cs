@@ -8,7 +8,7 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 [TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}PatrolIcon.png")]
 public class Patrol2d : Patrol {
 
-	public SharedFloat moveForce = 100;
+	public SharedFloat moveForce;
 
 	private Rigidbody2D rigidBody;
 	private Vector2 destTarget;

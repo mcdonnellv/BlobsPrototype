@@ -13,7 +13,7 @@ public class AiInitializeData : Composite {
 	public SharedFloat stamina;
 	public SharedFloat walkSpeed;
 	public SharedFloat runSpeed;
-	public SharedFloat staggerLimit;
+	public SharedFloat flinchLimit;
 	public SharedFloat criticalHealth;
 	public SharedFloat enrageDuration;
 	public SharedFloat enrageAttack;
@@ -39,7 +39,7 @@ public class AiInitializeData : Composite {
 			stamina.Value = m.stamina;
 			walkSpeed.Value = m.walkSpeed;
 			runSpeed.Value = m.runSpeed;
-			staggerLimit.Value = m.staggerLimit;
+			flinchLimit.Value = m.flinchLimit;
 			criticalHealth.Value = m.criticalHealth;
 			enrageDuration.Value = m.enrageDuration;
 			enrageAttack.Value = m.enrageAttack;
