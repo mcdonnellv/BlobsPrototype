@@ -44,5 +44,5 @@ public class ActorHealth : MonoBehaviour {
 
 	public bool IsAlive() { return health > 0; }
 
-	public bool IsCriticalHealth() { return IsAlive() && health < (startHealth * criticalHealthThreshold); }
+	public float GetHealthPercentage() { return health / startHealth; }
 }

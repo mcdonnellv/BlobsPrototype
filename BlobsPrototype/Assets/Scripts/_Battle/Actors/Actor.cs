@@ -1,17 +1,20 @@
 using UnityEngine;
-using System.Collections;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using BehaviorDesigner.Runtime;
 
 public class Actor : MonoBehaviour {
 
-	// how fast do we walk
-	public float walkSpeed = 2f;
-	public float runSpeed = 4f;
+
+
 	public CombatStats combatStats;
 	public ActorAttack attackPrefab;
+	protected BehaviorTree behaviorTree;
 
 	// Use this for initialization
 	public virtual void Start () {
+		behaviorTree = GetComponent<BehaviorTree>();
 	}
 	
 	// Update is called once per frame

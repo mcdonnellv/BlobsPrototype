@@ -3,6 +3,7 @@ using System.Collections;
 
 public class BlobActor : Actor {
 	float moveForce = 100;
+	float walkSpeed = 2f;
 
 	// Use this for initialization
 	public override void Start () {

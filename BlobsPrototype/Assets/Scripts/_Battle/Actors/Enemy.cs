@@ -1,7 +1,15 @@
 using UnityEngine;
 using System.Collections;
+using BehaviorDesigner.Runtime;
 
-public class Enemy : NPC {
+public class Enemy : Actor {
+
+	public int monsterId = 0;
+	public BaseMonster monsterData;
+
+	public void Awake () {
+		monsterData = MonsterManager.monsterManager.GetBaseMonsterByID(monsterId);
+	}
 
 	// Use this for initialization
 	public override void Start () {

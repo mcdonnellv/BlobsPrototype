@@ -31,8 +31,7 @@ public class CheatMenu : GenericGameMenu {
 		combatManager.AddActor(RoomManager.roomManager.currentRoom.blobs[2]);
 		
 		BaseMonster bm = MonsterManager.monsterManager.GetBaseMonsterByID(0);
-		Monster m = new Monster(bm);
-		combatManager.AddActor(m);
+		combatManager.AddActor(bm);
 		combatManager.StartFight();
 	}
 

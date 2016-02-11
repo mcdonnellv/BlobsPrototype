@@ -58,7 +58,6 @@ public class MonsterManagerInspector : GenericManagerInspector {
 						if(newName == "")
 							z.itemName = monster.itemName + " copy";
 						z.iconAtlas = monster.iconAtlas;
-						z.combatStats = new CombatStats(monster.combatStats);
 					}
 					monsterManager.monsters.Add(z);
 					mIndex = monsterManager.monsters.Count - 1;
@@ -100,14 +99,24 @@ public class MonsterManagerInspector : GenericManagerInspector {
 			
 			NGUIEditorTools.DrawSeparator();
 			NGUIEditorTools.SetLabelWidth(100f);
-			EditorGUILayout.LabelField("Combat Stats");
+			monster.health = EditorGUILayout.FloatField("Health", monster.health);
+			monster.criticalHealth = Mathf.PingPong(EditorGUILayout.FloatField("CriticalHealth", monster.criticalHealth), .5f);
+			monster.attack = EditorGUILayout.FloatField("Attack", monster.attack);
+			monster.speed = EditorGUILayout.FloatField("Speed", monster.speed);
+			monster.stamina = EditorGUILayout.FloatField("Stamina", monster.stamina);
+			monster.damageMitigation = Mathf.PingPong(EditorGUILayout.FloatField("DamageMitigation", monster.damageMitigation), 1f);
+			monster.staggerLimit = EditorGUILayout.FloatField("StaggerLimit", monster.staggerLimit);
+			monster.walkSpeed = EditorGUILayout.FloatField("WalkSpeed", monster.walkSpeed);
+			monster.runSpeed = EditorGUILayout.FloatField("RunSpeed", monster.runSpeed);
+			monster.perception = EditorGUILayout.FloatField("Perception", monster.perception);
+			NGUIEditorTools.DrawSeparator();
+			EditorGUILayout.LabelField("Enrage");
 			EditorGUI.indentLevel++;
-			CombatStats cs = monster.combatStats;
-			cs.armor = new Stat(CombatStatType.Armor, EditorGUILayout.IntField("Armor", cs.armor.defaultValue, GUILayout.Width(200f)));
-			cs.attack = new Stat(CombatStatType.Attack, EditorGUILayout.IntField("Attack", cs.attack.defaultValue, GUILayout.Width(200f)));
-			cs.speed = new Stat(CombatStatType.Speed, EditorGUILayout.IntField("Speed", cs.speed.defaultValue, GUILayout.Width(200f)));
+			monster.enrageDuration = EditorGUILayout.FloatField("Duration", monster.enrageDuration);
+			monster.enrageAttack = EditorGUILayout.FloatField("Attack", monster.enrageAttack);
+			monster.enrageSpeed = EditorGUILayout.FloatField("Speed", monster.enrageSpeed);
+			monster.enrageConditionTimer = EditorGUILayout.FloatField("Start Time", monster.enrageConditionTimer);
 			EditorGUI.indentLevel--;
-
 			//SPRITE
 			NGUIEditorTools.DrawSeparator();
 			if(atlas != null && monster.iconAtlas == null) monster.iconAtlas = atlas;

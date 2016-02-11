@@ -229,11 +229,9 @@ public class QuestManager : MonoBehaviour {
 				combatManager.AddActor(blob);
 			}
 
-			foreach(QuestMonster monster in quest.monsters) {
-				BaseMonster bm = monsterManager.GetBaseMonsterByID(monster.id);
-				Monster m = new Monster(bm);
-				m.level = monster.level;
-				combatManager.AddActor(m);
+			foreach(QuestMonster questMonster in quest.monsters) {
+				BaseMonster monster = monsterManager.GetBaseMonsterByID(questMonster.id);
+				combatManager.AddActor(monster);
 			}
 			combatManager.quest = quest;
 			hudManager.combatMenu.Show();

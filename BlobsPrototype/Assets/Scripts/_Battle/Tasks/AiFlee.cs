@@ -3,7 +3,7 @@ using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using BehaviorDesigner.Runtime.Tasks.Movement;
 
-public class EnemyFlee : Movement {
+public class AiFlee : Movement {
 
 	public SharedGameObject target;
 	public SharedFloat fleeSpeed;
@@ -28,7 +28,7 @@ public class EnemyFlee : Movement {
 
 	public override TaskStatus OnUpdate() {
 		if(target.Value == null)
-			return TaskStatus.Failure;
+			return TaskStatus.Success;
 
 		if(HasArrived())
 			return TaskStatus.Success;

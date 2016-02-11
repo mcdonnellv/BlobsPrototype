@@ -33,8 +33,8 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	public Actor AddActor(Monster monster) {
-		return AddActor("Wolf", monster.combatStats, enemySpawner.position);
+	public Actor AddActor(BaseMonster monster) {
+		return AddActor("Wolf", null, enemySpawner.position);
 	}
 
 
