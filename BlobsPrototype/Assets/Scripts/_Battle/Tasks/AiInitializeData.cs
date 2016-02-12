@@ -25,7 +25,7 @@ public class AiInitializeData : Composite {
 		if(initialized.Value == false) {
 			initialized.Value = true;
 
-			Enemy actor = GetComponent<Enemy>();
+			Actor actor = GetComponent<Actor>();
 			if(actor == null) {
 				Debug.LogError("No Actor component to initialize data from");
 				return;

@@ -26,9 +26,8 @@ public class ActorHealth : MonoBehaviour {
 		if(actor)
 			startHealth = actor.combatStats.health.combatValue;
 
-		Enemy enemy = GetComponent<Enemy>();
-		if(enemy)
-			flinchLimit = enemy.monsterData.flinchLimit;
+		if(actor.monsterData != null)
+			flinchLimit = actor.monsterData.flinchLimit;
 
 		flinchPoints = 0f;
 		health = startHealth;

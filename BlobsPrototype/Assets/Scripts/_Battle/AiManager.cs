@@ -29,7 +29,7 @@ public class AiManager : MonoBehaviour {
 	}
 
 
-	public static void MoveToDestination(Transform myTransform, Rigidbody2D myRigidBody, Vector2 destTarget, float moveForce, float maxSpeed, bool lootAtTarget) {
+	public static void MoveToDestination(Transform myTransform, Rigidbody2D myRigidBody, Vector2 destTarget, float moveForce, float maxSpeed, bool lootAtTarget, string animBoolStr) {
 		if(destTarget == Vector2.zero)
 			return;
 
@@ -51,10 +51,12 @@ public class AiManager : MonoBehaviour {
 
 			if(lootAtTarget)
 				LookAtTarget(myTransform, destTarget);
+
+			// trigger traverse animation
+			Animator anim = myTransform.gameObject.GetComponent<Animator>();
+			if(anim != null && !string.IsNullOrEmpty(animBoolStr))
+				anim.SetBool(animBoolStr, true);
 		}
-
-			
-
 	}
 
 	public static void LookAtTarget(Transform myTransform, Vector2 target) {

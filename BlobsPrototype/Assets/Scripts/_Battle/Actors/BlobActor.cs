@@ -15,15 +15,6 @@ public class BlobActor : Actor {
 		base.Update();
 	}
 
-	// This function is called by the animation system on the frame of the attack 
-	public override ActorAttack SpawnAttackBox() {
-		ActorAttack aa = base.SpawnAttackBox();
-		aa.damage = combatStats.attack.combatValue / 10f;
-		aa.flinchPoints = 50f;
-		aa.validTargetTags.Add("Enemy");
-		aa.transform.position += new Vector3(0f, .5f, 0f) + (transform.right * 1);
-		return aa;
-	}
 
 	void FixedUpdate ()
 	{

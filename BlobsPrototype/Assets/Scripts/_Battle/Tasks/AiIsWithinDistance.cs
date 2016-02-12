@@ -9,6 +9,7 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 [TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}WithinDistanceIcon.png")]
 public class AiIsWithinDistance : Conditional {
 
+	public SharedGameObject target;
 	public SharedFloat perception;
 	public SharedBool lineOfSight;
 	public SharedBool aliveOnly;
@@ -26,11 +27,15 @@ public class AiIsWithinDistance : Conditional {
 	public override void OnStart()
 	{
 		sqrMagnitude = perception.Value * perception.Value;
+		objects = new List<GameObject>();
 
-		// if objects is null then find all of the objects using the objectTag
+		if(target.Value != null) {
+			objects.Add(target.Value);
+			return;
+		}
+		// if target is null then find all of the objects using the objectTag
 		if (!string.IsNullOrEmpty(objectTag.Value)) {
 			var gameObjects = GameObject.FindGameObjectsWithTag(objectTag.Value);
-			objects = new List<GameObject>();
 			for (int i = 0; i < gameObjects.Length; ++i) {
 				if(aliveOnly.Value){
 					ActorHealth ac = gameObjects[i].GetComponent<ActorHealth>();

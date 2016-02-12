@@ -27,13 +27,11 @@ public class AiFlee : Movement {
 	}
 
 	public override TaskStatus OnUpdate() {
-		if(target.Value == null)
+		if(target.Value == null || HasArrived()) {
 			return TaskStatus.Success;
+		}
 
-		if(HasArrived())
-			return TaskStatus.Success;
-
-		AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, fleeSpeed.Value, true);
+		AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, fleeSpeed.Value, true, "Walk");
 		return TaskStatus.Running;
 	}
 
