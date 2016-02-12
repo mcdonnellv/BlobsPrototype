@@ -22,8 +22,8 @@ public class Enemy : Actor {
 	}
 
 	// This function is called by the animation system on the frame of the attack 
-	public override ActorAttack SpawnAttackBox(float size) {
-		ActorAttack aa = base.SpawnAttackBox(size);
+	public override ActorAttack SpawnAttackBox() {
+		ActorAttack aa = base.SpawnAttackBox();
 		aa.validTargetTags.Add("Blob");
 		aa.transform.position += new Vector3(0f, .5f, 0f) + (transform.right * 1);
 		return aa;

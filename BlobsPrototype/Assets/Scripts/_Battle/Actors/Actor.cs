@@ -9,7 +9,8 @@ public class Actor : MonoBehaviour {
 
 
 	public CombatStats combatStats;
-	public ActorAttack attackPrefab;
+	public List<ActorAttack> attackPrefabs;
+	public int attackIndex = 0;
 	protected BehaviorTree behaviorTree;
 	protected ActorHealth health;
 	protected Animator anim;
@@ -29,11 +30,11 @@ public class Actor : MonoBehaviour {
 	// Update is called once per frame
 	public virtual void Update () {
 	}
-
-	public virtual ActorAttack SpawnAttackBox(float size) {
-		ActorAttack attackBox = (ActorAttack)Instantiate(attackPrefab, transform.position, Quaternion.identity);
-		BoxCollider2D b2d = attackBox.GetComponent<BoxCollider2D>();
-		b2d.size = new Vector2(size, size);
+		
+	// called via animation event
+	public virtual ActorAttack SpawnAttackBox() {
+		ActorAttack prefab = attackPrefabs[attackIndex];
+		ActorAttack attackBox = (ActorAttack)Instantiate(prefab, transform.position, Quaternion.identity);
 		attackBox.transform.parent = transform;
 		return attackBox;
 	}

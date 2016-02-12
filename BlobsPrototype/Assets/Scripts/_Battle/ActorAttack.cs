@@ -10,10 +10,14 @@ public class ActorAttack : MonoBehaviour {
 	public float staminaConsumption = 10f;
 	public List<string> validTargetTags;
 	public float hitboxDuration = .3f;
+	public Vector2 hitboxSize = Vector2.one;
+	public AnimationClip animationClip;
 
 	private float hitboxSpawnTime;
 
 	public void Start() {
+		BoxCollider2D b2d = GetComponent<BoxCollider2D>();
+		b2d.size = hitboxSize;
 		hitboxSpawnTime = Time.time;
 	}
 
