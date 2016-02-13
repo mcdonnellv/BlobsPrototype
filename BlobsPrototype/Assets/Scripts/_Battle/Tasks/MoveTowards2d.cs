@@ -12,9 +12,13 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 
 		public SharedFloat moveForce = 100;
 		private Rigidbody2D rigidBody;
+		private Actor actor;
 
 		public override void OnAwake() {
 			rigidBody = gameObject.GetComponent<Rigidbody2D>();
+			if(rigidBody == null)
+				rigidBody = gameObject.GetComponent<UnityJellySprite>().CentralPoint.Body2D;
+			actor = gameObject.GetComponent<Actor>();
 		}
 
 		public override TaskStatus OnUpdate()
@@ -23,7 +27,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 				return TaskStatus.Success;
 			}
 
-			AiManager.MoveToDestination(transform, rigidBody, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk");
+			AiManager.MoveToDestination(transform, rigidBody, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk", actor.IsGrounded());
 			return TaskStatus.Running;
 		}
 

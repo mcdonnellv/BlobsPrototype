@@ -12,10 +12,14 @@ public class AiFlee : Movement {
 
 	private Vector2 destTarget;
 	private Rigidbody2D rigidBody;
+	private Actor actor;
 
 
 	public override void OnAwake() {
 		rigidBody = gameObject.GetComponent<Rigidbody2D>();
+		if(rigidBody == null)
+			rigidBody = gameObject.GetComponent<UnityJellySprite>().CentralPoint.Body2D;
+		actor = gameObject.GetComponent<Actor>();
 	}
 
 	public override void OnStart() {
@@ -31,7 +35,7 @@ public class AiFlee : Movement {
 			return TaskStatus.Success;
 		}
 
-		AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, fleeSpeed.Value, true, "Walk");
+		AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, fleeSpeed.Value, true, "Walk", actor.IsGrounded());
 		return TaskStatus.Running;
 	}
 

@@ -14,21 +14,15 @@ public class Patrol2d : Patrol {
 	private Vector2 destTarget;
 	private Vector2 originalDirection;
 	private Vector2 curDirection;
-
-
-	public override TaskStatus OnUpdate() {
-		if( base.waypoints.Value.Count <= 0 )
-			return TaskStatus.Success;
-
-		if(!HasArrived()) 
-			AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, speed.Value, true, "Walk");
-		return base.OnUpdate();
-	}
+	private Actor actor;
 
 	public override void OnAwake() {
 		rigidBody = gameObject.GetComponent<Rigidbody2D>();
+		if(rigidBody == null)
+			rigidBody = gameObject.GetComponent<UnityJellySprite>().CentralPoint.Body2D;
+		actor = GetComponent<Actor>();
 	}
-
+	
 	public override void OnStart() {
 		// initially move towards the closest waypoint
 		float distance = Mathf.Infinity;
@@ -42,6 +36,18 @@ public class Patrol2d : Patrol {
 		waypointReachedTime = -waypointPauseDuration.Value;
 		SetDestination(Target());
 	}
+
+
+	public override TaskStatus OnUpdate() {
+		if( base.waypoints.Value.Count <= 0 )
+			return TaskStatus.Success;
+
+		if(!HasArrived()) 
+			AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, speed.Value, true, "Walk", actor.IsGrounded());
+		return base.OnUpdate();
+	}
+
+
 
 	// Return the current waypoint index position
 	private Vector3 Target() {

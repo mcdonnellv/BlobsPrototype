@@ -14,7 +14,8 @@ public class Actor : MonoBehaviour {
 	protected BehaviorTree behaviorTree;
 	protected ActorHealth health;
 	protected Animator anim;
-	private Dictionary<string, ActorAttack> attacks;
+	protected Rigidbody2D rigidBody;
+	protected float groundDistance = 0.7f;
 
 	public void Awake () {
 		if(monsterId >= 0)
@@ -28,11 +29,16 @@ public class Actor : MonoBehaviour {
 		behaviorTree = GetComponent<BehaviorTree>();
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
-		attacks = new Dictionary<string, ActorAttack>();
 
 		if(health != null) {
 			health.onDeath += Death;
 			health.onFlinch += Flinch;
+		}
+
+		rigidBody = GetComponent<Rigidbody2D>();
+		if(rigidBody == null) {
+			UnityJellySprite ujs = GetComponent<UnityJellySprite>();
+			rigidBody = ujs.CentralPoint.Body2D;
 		}
 	}
 	
@@ -68,15 +74,26 @@ public class Actor : MonoBehaviour {
 	}
 
 	public void ApplyForceY(float y) {
-		Rigidbody2D myRigidBody = GetComponent<Rigidbody2D>();
-		myRigidBody.AddForce(new Vector2(0,y));
+		rigidBody.AddForce(new Vector2(0, y));
 	}
 
 	public void ApplyForceX(float x) {
 		bool facingRight = (transform.localRotation.y == 0);
 		if(!facingRight)
 			x *= -1;
-		Rigidbody2D myRigidBody = GetComponent<Rigidbody2D>();
-		myRigidBody.AddForce(new Vector2(x,0));
+		rigidBody.AddForce(new Vector2(x, 0));
+	}
+
+
+	public bool IsGrounded () {
+		Ray2D ray = new Ray2D(transform.position, -Vector3.up * (groundDistance + 0.1f));
+		Debug.DrawRay(ray.origin, ray.direction, Color.red);
+		RaycastHit2D[] hit = Physics2D.RaycastAll(ray.origin, ray.direction);
+
+		for(int i=0; i < hit.Length; i++) 
+			if(hit[i].collider.tag == "Floor")
+				return true;
+
+		return false;
 	}
 }
