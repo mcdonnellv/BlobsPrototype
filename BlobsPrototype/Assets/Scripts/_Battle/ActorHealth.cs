@@ -13,12 +13,13 @@ public class ActorHealth : MonoBehaviour {
 	public float attackImmunityTime = .5f;
 	public float HealthAmount { get { return health; } }
 	public float criticalHealthThreshold = .15f;
-	private float health;
+	public float health;
 	private float lastHitTime;
 
 	public float flinchLimit = 100f;
 	public float FlinchAmount { get { return flinchPoints; } }
 	private float flinchPoints;
+
 
 
 	public void Start() {
@@ -31,6 +32,17 @@ public class ActorHealth : MonoBehaviour {
 
 		flinchPoints = 0f;
 		health = startHealth;
+	}
+
+	public void Update() {
+		if (health <= 0) {
+			health = 0;
+			// fire an event when the attached object is dead
+			if (onDeath != null) {
+				onDeath();
+				onDeath = null;
+			}
+		}
 	}
 
 	
@@ -47,14 +59,6 @@ public class ActorHealth : MonoBehaviour {
 	public void TakePhysicalDamage(float amount) {
 		health -= amount;
 		// don't let the health go below zero
-		if (health <= 0) {
-			health = 0;
-			// fire an event when the attached object is dead
-			if (onDeath != null) {
-				onDeath();
-				onDeath = null;
-			}
-		}
 	}
 
 	public void TakeFlinchDamage(float amount) {

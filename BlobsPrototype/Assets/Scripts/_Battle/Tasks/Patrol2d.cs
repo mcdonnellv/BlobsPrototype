@@ -43,7 +43,7 @@ public class Patrol2d : Patrol {
 			return TaskStatus.Success;
 
 		if(!HasArrived()) 
-			AiManager.MoveToDestination(transform, rigidBody, destTarget, moveForce.Value, speed.Value, true, "Walk", actor.IsGrounded());
+			AiManager.MoveToDestination(actor, destTarget, moveForce.Value, speed.Value, true, "Walk");
 		return base.OnUpdate();
 	}
 

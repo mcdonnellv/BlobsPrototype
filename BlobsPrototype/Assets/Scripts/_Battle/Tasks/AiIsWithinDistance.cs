@@ -17,6 +17,7 @@ public class AiIsWithinDistance : Conditional {
 	public SharedGameObject returnedObject;
 
 	private List<GameObject> objects;
+	private Actor actor;
 
 	// distance * distance, optimization so we don't have to take the square root
 	private float sqrMagnitude;
@@ -26,6 +27,7 @@ public class AiIsWithinDistance : Conditional {
 
 	public override void OnStart()
 	{
+		actor = GetComponent<Actor>();
 		sqrMagnitude = perception.Value * perception.Value;
 		objects = new List<GameObject>();
 
@@ -62,7 +64,8 @@ public class AiIsWithinDistance : Conditional {
 			if (Vector3.SqrMagnitude(direction) < sqrMagnitude) {
 				// the magnitude is less. If lineOfSight is true do one more check
 				if (lineOfSight.Value) {
-					bool facingObject = transform.right.x * direction.x > 0;
+					bool facingRight = AiManager.IsFacingRight(actor);
+					bool facingObject = (facingRight && direction.x > 0) || (!facingRight && direction.x < 0);
 					if(facingObject) {
 						returnedObject.Value = objects[i];
 						return TaskStatus.Success;

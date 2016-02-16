@@ -29,8 +29,9 @@ public class AiManager : MonoBehaviour {
 	}
 
 
-	public static void MoveDirection(float h, Rigidbody2D rb2d, float moveForce, float maxSpeed, bool grounded) {
-		if(!grounded || h == 0)
+	public static void MoveDirection(Actor actor, float h, float moveForce, float maxSpeed) {
+		Rigidbody2D rb2d = actor.rigidBody;
+		if(h == 0 || rb2d == null || !actor.IsGrounded())
 			return;
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
@@ -45,39 +46,57 @@ public class AiManager : MonoBehaviour {
 	}
 	
 
-	public static void MoveToDestination(Transform myTransform, Rigidbody2D myRigidBody, 
-	                                     Vector2 destTarget, float moveForce, float maxSpeed, 
-	                                     bool lootAtTarget, string animBoolStr, bool grounded) {
-		if(!grounded || destTarget == Vector2.zero)
+	public static void MoveToDestination(Actor actor, Vector2 destTarget, float moveForce, float maxSpeed, bool lootAtTarget, string animBoolStr) {
+		if(!actor.IsGrounded() || destTarget == Vector2.zero || actor.rigidBody == null)
 			return;
-		
-		Vector2 direction = destTarget - (Vector2)myTransform.position;
+
+		Vector2 direction = destTarget - (Vector2)actor.transform.position;
 		direction.y = 0;
 		float distanceLeft = direction.magnitude;
 		Vector2 dNorm = direction.normalized;
-		float curSpeed = myRigidBody.velocity.magnitude;
+		float curSpeed = actor.rigidBody.velocity.magnitude;
 		
 		// distance =  velocity * time (stop moving if it looks like we will arrive with current speed)
 		if(curSpeed < distanceLeft)
-			MoveDirection(dNorm.x, myRigidBody, moveForce, maxSpeed, grounded);
+			MoveDirection(actor, dNorm.x, moveForce, maxSpeed);
 		
 		if(lootAtTarget)
-			LookAtTarget(myTransform, destTarget);
+			LookAtTarget(actor, destTarget);
 		
 		// trigger traverse animation
-		Animator anim = myTransform.gameObject.GetComponent<Animator>();
+		Animator anim = actor.gameObject.GetComponent<Animator>();
 		if(anim != null && !string.IsNullOrEmpty(animBoolStr))
 			anim.SetBool(animBoolStr, true);
 	}
 
-	public static void LookAtTarget(Transform myTransform, Vector2 target) {
-		bool facingRight = (myTransform.localRotation.y == 0);
-		Vector2 dir = target - (Vector2)myTransform.position;
+	public static void LookAtTarget(Actor actor, Vector2 target) {
+		if(IsLookingAt(actor, target))
+			return;
+		bool facingRight = IsFacingRight(actor);
+		// we need to look in the opposite direction
+		if(actor.jellySprite != null)
+			actor.jellySprite.m_FlipX = facingRight;
+		else
+			actor.transform.localRotation = Quaternion.Euler(0, facingRight ? 180 : 0, 0);
+	}
+
+
+	public static bool IsLookingAt(Actor actor, Vector2 target) {
+		Vector2 dir = target - (Vector2)actor.transform.position;
+		bool facingRight = IsFacingRight(actor);
 		if(dir.x < 0 && facingRight)
-			myTransform.localRotation = Quaternion.Euler(0, 180, 0);
-		
+			return false;
 		if(dir.x > 0 && !facingRight)
-			myTransform.localRotation = Quaternion.Euler(0, 0, 0);
+			return false;
+		return true;
+	}
+
+
+	public static bool IsFacingRight(Actor actor) {
+		if(actor.jellySprite == null)
+			return actor.transform.rotation.y == 0;
+		else
+			return !actor.jellySprite.m_FlipX;
 	}
 
 }

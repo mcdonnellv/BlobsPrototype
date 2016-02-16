@@ -24,10 +24,12 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 		public override TaskStatus OnUpdate()
 		{
 			if(base.Target() == Vector3.zero || HasArrived()) {
+				if(AiManager.IsLookingAt(actor, (Vector2)base.Target()) == false)
+					AiManager.LookAtTarget(actor, (Vector2)base.Target());
 				return TaskStatus.Success;
 			}
 
-			AiManager.MoveToDestination(transform, rigidBody, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk", actor.IsGrounded());
+			AiManager.MoveToDestination(actor, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk");
 			return TaskStatus.Running;
 		}
 
