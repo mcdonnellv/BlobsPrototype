@@ -31,8 +31,11 @@ public class AiManager : MonoBehaviour {
 
 	public static void MoveDirection(Actor actor, float h, float moveForce, float maxSpeed) {
 		Rigidbody2D rb2d = actor.rigidBody;
-		if(h == 0 || rb2d == null || !actor.IsGrounded())
+		if(h == 0 || rb2d == null)
 			return;
+
+		//if(!actor.IsGrounded())
+			//return;
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 		if(h * rb2d.velocity.x < maxSpeed)
@@ -72,31 +75,18 @@ public class AiManager : MonoBehaviour {
 	public static void LookAtTarget(Actor actor, Vector2 target) {
 		if(IsLookingAt(actor, target))
 			return;
-		bool facingRight = IsFacingRight(actor);
-		// we need to look in the opposite direction
-		if(actor.jellySprite != null)
-			actor.jellySprite.m_FlipX = facingRight;
-		else
-			actor.transform.localRotation = Quaternion.Euler(0, facingRight ? 180 : 0, 0);
+		actor.FaceOpposite();
 	}
 
 
 	public static bool IsLookingAt(Actor actor, Vector2 target) {
 		Vector2 dir = target - (Vector2)actor.transform.position;
-		bool facingRight = IsFacingRight(actor);
+		bool facingRight = actor.IsFacingRight();
 		if(dir.x < 0 && facingRight)
 			return false;
 		if(dir.x > 0 && !facingRight)
 			return false;
 		return true;
-	}
-
-
-	public static bool IsFacingRight(Actor actor) {
-		if(actor.jellySprite == null)
-			return actor.transform.rotation.y == 0;
-		else
-			return !actor.jellySprite.m_FlipX;
 	}
 
 }

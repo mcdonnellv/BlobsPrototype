@@ -64,7 +64,7 @@ public class AiIsWithinDistance : Conditional {
 			if (Vector3.SqrMagnitude(direction) < sqrMagnitude) {
 				// the magnitude is less. If lineOfSight is true do one more check
 				if (lineOfSight.Value) {
-					bool facingRight = AiManager.IsFacingRight(actor);
+					bool facingRight = actor.IsFacingRight();
 					bool facingObject = (facingRight && direction.x > 0) || (!facingRight && direction.x < 0);
 					if(facingObject) {
 						returnedObject.Value = objects[i];

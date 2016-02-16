@@ -6,33 +6,23 @@ using BehaviorDesigner.Runtime;
 
 public class Actor : MonoBehaviour {
 
-
-
 	public CombatStats combatStats;
 	public int monsterId = -1;
 	public BaseMonster monsterData { get; protected set; }
-	public UnityJellySprite jellySprite { get; protected set; }
-	private Rigidbody2D _rigidBody;
-	public Rigidbody2D rigidBody { 
-		get { 
-			if(jellySprite != null && jellySprite.CentralPoint != null) 
-				return jellySprite.CentralPoint.Body2D;
-			else
-				return _rigidBody;
-		} 
-		protected set { _rigidBody = value; } 
-	}
 	protected BehaviorTree behaviorTree;
 	protected ActorHealth health;
 	protected Animator anim;
-	protected float groundDistance = 0.7f;
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
+	private Rigidbody2D _rigidBody;
+	public virtual Rigidbody2D rigidBody {
+		get { return _rigidBody; }
+		protected set { _rigidBody = value; }
+	}
 
 
 
-	public void Awake () {
-		jellySprite = GetComponent<UnityJellySprite>();
+	public virtual void Awake () {
 		behaviorTree = GetComponent<BehaviorTree>();
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
@@ -89,54 +79,33 @@ public class Actor : MonoBehaviour {
 	}
 
 	public void ApplyForceX(float x) {
-		bool facingRight = AiManager.IsFacingRight(this);
-		if(!facingRight)
+		if(!IsFacingRight())
 			x *= -1;
 		rigidBody.AddForce(new Vector2(x, 0));
 	}
 
 
-	public bool IsGrounded () {
+	public virtual bool IsGrounded () {
 		if(groundCheckDone)
 			return isGrounded;
 		
 		groundCheckDone = true;
-		Ray2D ray = new Ray2D(transform.position, -Vector3.up * (groundDistance + 0.1f));
-		//Debug.DrawRay(ray.origin, ray.direction, Color.red);
-		RaycastHit2D[] hit = Physics2D.RaycastAll(ray.origin, ray.direction);
 		isGrounded = false;
-		for(int i=0; i < hit.Length; i++) {
-				if(hit[i].collider.tag == "Floor") {
-					isGrounded = true;
-				}
-			}
+		Ray2D ray = new Ray2D(transform.position, -Vector3.up);
+		int groundLayer = 11;
+		int layerMask = 1 << groundLayer;
+		float groundDistance = 0.7f;
+		RaycastHit2D[] hit = Physics2D.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f, layerMask);
+		isGrounded = (hit.Length > 0);
 		return isGrounded;
 	}
 
-	public void Jump(float force) {
-		if(jellySprite != null && jellySprite.ReferencePoints.Count >= 3) {
-			jellySprite.ReferencePoints[1].Body2D.AddForce(new Vector2(0, force/2));
-			jellySprite.ReferencePoints[2].Body2D.AddForce(new Vector2(0, force/2));
-		}
+
+	public virtual bool IsFacingRight() {
+		return transform.rotation.y == 0;
 	}
 
-	public void Deflate() {
-		if(jellySprite != null) {
-			jellySprite.ReferencePoints[1].InitialOffset = new Vector2(1,0);
-			jellySprite.ReferencePoints[2].InitialOffset = new Vector2(-1,0);
-			jellySprite.m_Stiffness = 0f;
-			jellySprite.UpdateJoints();
-
-		}
-	}
-
-	public void Inflate() {
-		if(jellySprite != null) {
-			jellySprite.ReferencePoints[1].InitialOffset = new Vector2(.5f,0);
-			jellySprite.ReferencePoints[2].InitialOffset = new Vector2(-.5f,0);
-			jellySprite.m_Stiffness = 2.50f;
-			jellySprite.UpdateJoints();
-
-		}
+	public virtual void FaceOpposite() {
+		transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
 	}
 }
