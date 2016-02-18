@@ -35,12 +35,13 @@ public class AiManager : MonoBehaviour {
 			return;
 
 		//if(!actor.IsGrounded())
+		//	moveForce *=.3f;
 			//return;
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 		if(h * rb2d.velocity.x < maxSpeed)
 			// ... add a force to the player.
-			rb2d.AddForce(Vector2.right * h * moveForce);
+			actor.AddForce(Vector2.right * h * moveForce);
 		
 		// If the player's horizontal velocity is greater than the maxSpeed...
 		if(Mathf.Abs(rb2d.velocity.x) > maxSpeed)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BlobActor : Actor {
+	public bool alwaysUpdateJoints = false;
 	public float jumpForce = 50;
 	public float moveForce = 50;
 	public float walkSpeed = 5;
@@ -30,9 +31,16 @@ public class BlobActor : Actor {
 
 
 	void FixedUpdate () {
-		float h = Input.GetAxis("Horizontal");
-		AiManager.MoveDirection((Actor)this, h, moveForce, walkSpeed);
+		if(alwaysUpdateJoints)
+			jellySprite.UpdateJoints();
 
+		float h = Input.GetAxis("Horizontal");
+
+		if(IsGrounded())
+			AiManager.MoveDirection((Actor)this, h, moveForce, walkSpeed);
+		else
+			AiManager.MoveDirection((Actor)this, h, moveForce / 2f, walkSpeed);
+		
 		float v = Input.GetAxis("Vertical");
 		if(v > 0)
 			Jump(jumpForce);
@@ -43,7 +51,7 @@ public class BlobActor : Actor {
 	public override bool IsGrounded () {
 		int groundLayer = 11;
 		int layerMask = 1 << groundLayer;
-		return jellySprite.IsGrounded(layerMask,2);
+		return jellySprite.IsGrounded(layerMask,1);
 	}
 
 	public override bool IsFacingRight() {
@@ -54,13 +62,12 @@ public class BlobActor : Actor {
 		jellySprite.m_FlipX = !jellySprite.m_FlipX;
 	}
 
-	public void Jump(float force) {
-		if(force <= 0 || IsGrounded() == false || (lastJump + jumpWait) > Time.time)
-			return;
-		lastJump = Time.time;
-		//anim.SetTrigger("Jump");
-		//return;
+	public override void AddForce(Vector2 v) {
+		jellySprite.AddForce(v);
+	}
 
+
+	private List<JellySprite.ReferencePoint> GetRefPointsTouchingGround() {
 		List<JellySprite.ReferencePoint> refPointsTouchingGround = new List<JellySprite.ReferencePoint>();
 		int groundLayer = 11;
 		foreach(JellySprite.ReferencePoint referencePoint in jellySprite.ReferencePoints) {
@@ -72,7 +79,19 @@ public class BlobActor : Actor {
 				}
 			}
 		}
+		return refPointsTouchingGround;
+	}
 
+
+	public void Jump(float force) {
+		if(force <= 0 || IsGrounded() == false || (lastJump + jumpWait) > Time.time)
+			return;
+		lastJump = Time.time;
+		anim.SetTrigger("Jump");
+		return;
+
+
+		List<JellySprite.ReferencePoint> refPointsTouchingGround = GetRefPointsTouchingGround();
 		if(refPointsTouchingGround.Count <= 0)
 			return;
 
@@ -92,7 +111,13 @@ public class BlobActor : Actor {
 	}
 
 	public void SetGravityScale(float val) {
-		jellySprite.m_GravityScale = val;
+		//jellySprite.m_GravityScale = val;
 		jellySprite.UpdateJoints();
 	}
+
+	public void AlwaysUpdateJoints(bool val) {
+		//jellySprite.m_GravityScale = val;
+		alwaysUpdateJoints = val;
+	}
+
 }

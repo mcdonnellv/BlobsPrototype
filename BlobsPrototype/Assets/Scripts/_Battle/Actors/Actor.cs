@@ -74,14 +74,8 @@ public class Actor : MonoBehaviour {
 		Destroy(gameObject);
 	}
 
-	public void ApplyForceY(float y) {
-		rigidBody.AddForce(new Vector2(0, y));
-	}
-
-	public void ApplyForceX(float x) {
-		if(!IsFacingRight())
-			x *= -1;
-		rigidBody.AddForce(new Vector2(x, 0));
+	public virtual void AddForce(Vector2 v) {
+		rigidBody.AddForce(v);
 	}
 
 

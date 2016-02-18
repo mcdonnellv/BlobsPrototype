@@ -1906,6 +1906,7 @@ public abstract class JellySprite : MonoBehaviour
 				{
 					if(referencePoint.Body2D != null)
 					{
+						referencePoint.Body2D.gravityScale = m_GravityScale;
 						SpringJoint2D[] joints = referencePoint.Body2D.gameObject.GetComponents<SpringJoint2D>();
 
 						if(joints != null)
