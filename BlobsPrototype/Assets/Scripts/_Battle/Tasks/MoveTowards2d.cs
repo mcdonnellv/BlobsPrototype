@@ -29,7 +29,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 				return TaskStatus.Success;
 			}
 
-			AiManager.MoveToDestination(actor, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk");
+			AiManager.AiMoveToDestination(actor, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk");
 			return TaskStatus.Running;
 		}
 

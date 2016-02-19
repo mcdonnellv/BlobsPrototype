@@ -42,6 +42,8 @@ public class HudManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		hudRoot.SetActive(false);
+
 		foreach(Transform child in popupCamera.transform.parent) {
 			if(child.GetComponentInChildren<GenericGameMenu>()) 
 				child.gameObject.SetActive(false);

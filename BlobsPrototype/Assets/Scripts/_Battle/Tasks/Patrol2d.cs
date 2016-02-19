@@ -3,23 +3,19 @@ using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using BehaviorDesigner.Runtime.Tasks.Movement;
 
-[TaskDescription("Patrol around the specified waypoints using force on a RrigidBody2D")]
+[TaskDescription("Patrol around the specified waypoints using force on a Rigidbody")]
 [TaskCategory("Movement")]
 [TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}PatrolIcon.png")]
 public class Patrol2d : Patrol {
 
 	public SharedFloat moveForce;
 
-	private Rigidbody2D rigidBody;
 	private Vector2 destTarget;
 	private Vector2 originalDirection;
 	private Vector2 curDirection;
 	private Actor actor;
 
 	public override void OnAwake() {
-		rigidBody = gameObject.GetComponent<Rigidbody2D>();
-		if(rigidBody == null)
-			rigidBody = gameObject.GetComponent<UnityJellySprite>().CentralPoint.Body2D;
 		actor = GetComponent<Actor>();
 	}
 	
@@ -43,7 +39,7 @@ public class Patrol2d : Patrol {
 			return TaskStatus.Success;
 
 		if(!HasArrived()) 
-			AiManager.MoveToDestination(actor, destTarget, moveForce.Value, speed.Value, true, "Walk");
+			AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, speed.Value, true, "Walk");
 		return base.OnUpdate();
 	}
 
@@ -68,7 +64,7 @@ public class Patrol2d : Patrol {
 	}
 
 	protected override Vector3 Velocity() {
-		return rigidBody.velocity;
+		return actor.rigidBody.velocity;
 	}
 
 	public override void OnEnd() {

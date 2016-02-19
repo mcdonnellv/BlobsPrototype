@@ -29,28 +29,27 @@ public class AiManager : MonoBehaviour {
 	}
 
 
-	public static void MoveDirection(Actor actor, float h, float moveForce, float maxSpeed) {
-		Rigidbody2D rb2d = actor.rigidBody;
-		if(h == 0 || rb2d == null)
+	public static void MoveDirection(Rigidbody rb, float h, float moveForce, float maxSpeed) {
+		if(h == 0 || rb == null)
 			return;
-
-		//if(!actor.IsGrounded())
-		//	moveForce *=.3f;
-			//return;
-
-		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-		if(h * rb2d.velocity.x < maxSpeed)
-			// ... add a force to the player.
-			actor.AddForce(Vector2.right * h * moveForce);
 		
+		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
+		if(h * rb.velocity.x < maxSpeed)
+			// ... add a force to the player.
+			rb.AddForce(Vector2.right * h * moveForce);
+
 		// If the player's horizontal velocity is greater than the maxSpeed...
-		if(Mathf.Abs(rb2d.velocity.x) > maxSpeed)
+		if(Mathf.Abs(rb.velocity.x) > maxSpeed)
 			// ... set the player's velocity to the maxSpeed in the x axis.
-			rb2d.velocity = new Vector2(Mathf.Sign(rb2d.velocity.x) * maxSpeed, rb2d.velocity.y);
+			rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * maxSpeed, rb.velocity.y);
+	}
+
+	public static void MoveDirection(Actor actor, float h, float moveForce, float maxSpeed) {
+		MoveDirection(actor.rigidBody, h, moveForce, maxSpeed);
 	}
 	
 
-	public static void MoveToDestination(Actor actor, Vector2 destTarget, float moveForce, float maxSpeed, bool lootAtTarget, string animBoolStr) {
+	public static void AiMoveToDestination(Actor actor, Vector2 destTarget, float moveForce, float maxSpeed, bool lookAtTarget, string animBoolStr) {
 		if(!actor.IsGrounded() || destTarget == Vector2.zero || actor.rigidBody == null)
 			return;
 
@@ -64,7 +63,7 @@ public class AiManager : MonoBehaviour {
 		if(curSpeed < distanceLeft)
 			MoveDirection(actor, dNorm.x, moveForce, maxSpeed);
 		
-		if(lootAtTarget)
+		if(lookAtTarget)
 			LookAtTarget(actor, destTarget);
 		
 		// trigger traverse animation

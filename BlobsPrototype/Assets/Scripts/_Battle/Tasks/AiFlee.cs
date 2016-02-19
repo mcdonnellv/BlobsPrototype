@@ -31,7 +31,7 @@ public class AiFlee : Movement {
 			return TaskStatus.Success;
 		}
 			
-		AiManager.MoveToDestination(actor, destTarget, moveForce.Value, fleeSpeed.Value, true, "Walk");
+		AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, fleeSpeed.Value, true, "Walk");
 		return TaskStatus.Running;
 	}
 

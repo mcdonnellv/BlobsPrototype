@@ -14,11 +14,7 @@ public class Actor : MonoBehaviour {
 	protected Animator anim;
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
-	private Rigidbody2D _rigidBody;
-	public virtual Rigidbody2D rigidBody {
-		get { return _rigidBody; }
-		protected set { _rigidBody = value; }
-	}
+	public Rigidbody rigidBody { get; protected set; }
 
 
 
@@ -26,7 +22,7 @@ public class Actor : MonoBehaviour {
 		behaviorTree = GetComponent<BehaviorTree>();
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
-		rigidBody = GetComponent<Rigidbody2D>();
+		rigidBody = GetComponent<Rigidbody>();
 		
 		if(monsterId >= 0)
 			monsterData = MonsterManager.monsterManager.GetBaseMonsterByID(monsterId);
@@ -44,7 +40,7 @@ public class Actor : MonoBehaviour {
 	
 	// Update is called once per frame
 	public virtual void Update () {
-		anim.SetBool("Walk", false);
+		//anim.SetBool("Walk", false);
 		groundCheckDone = false;
 	}
 
@@ -85,11 +81,11 @@ public class Actor : MonoBehaviour {
 		
 		groundCheckDone = true;
 		isGrounded = false;
-		Ray2D ray = new Ray2D(transform.position, -Vector3.up);
+		Ray ray = new Ray(transform.position, -Vector3.up);
 		int groundLayer = 11;
 		int layerMask = 1 << groundLayer;
 		float groundDistance = 0.7f;
-		RaycastHit2D[] hit = Physics2D.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f, layerMask);
+		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f, layerMask);
 		isGrounded = (hit.Length > 0);
 		return isGrounded;
 	}
