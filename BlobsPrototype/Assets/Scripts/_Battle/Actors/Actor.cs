@@ -40,7 +40,7 @@ public class Actor : MonoBehaviour {
 	
 	// Update is called once per frame
 	public virtual void Update () {
-		//anim.SetBool("Walk", false);
+		anim.SetBool("Walk", false);
 		groundCheckDone = false;
 	}
 
@@ -81,21 +81,30 @@ public class Actor : MonoBehaviour {
 		
 		groundCheckDone = true;
 		isGrounded = false;
-		Ray ray = new Ray(transform.position, -Vector3.up);
+		Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
 		int groundLayer = 11;
 		int layerMask = 1 << groundLayer;
-		float groundDistance = 0.7f;
-		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f, layerMask);
+		float groundDistance = 1.7f;
+		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f);
 		isGrounded = (hit.Length > 0);
+		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * (groundDistance + 0.1f)), Color.red);
 		return isGrounded;
 	}
 
 
 	public virtual bool IsFacingRight() {
-		return transform.rotation.y == 0;
+		Puppet2D_GlobalControl p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
+		if(p2dCtrl != null) 
+			return p2dCtrl.flip == true;
+		else
+			return transform.rotation.y == 0;
 	}
 
 	public virtual void FaceOpposite() {
-		transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
+		Puppet2D_GlobalControl p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
+		if(p2dCtrl != null) 
+			p2dCtrl.flip = !p2dCtrl.flip;
+		else
+			transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
 	}
 }
