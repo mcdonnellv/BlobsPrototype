@@ -10,6 +10,7 @@ public class ActorAttack : MonoBehaviour {
 	public float staminaConsumption = 10f;
 	public List<string> validTargetTags;
 	public Actor actor;
+	public float force = 100f;
 	private float actorAttackValue = 100;
 
 	public void Start() {
@@ -19,15 +20,20 @@ public class ActorAttack : MonoBehaviour {
 		if(actor == null)
 			actor = GetComponentInParent<Actor>();
 		if(actor.monsterData != null)
-			actorAttackValue = actor.monsterData.attack;
+			actorAttackValue = actor.data.attack;
 		else
 			actorAttackValue = actor.combatStats.attack.combatValue;
 	}
 
-	void OnTriggerStay2D (Collider2D col) {
+	void OnTriggerStay (Collider col) {
 		foreach(string tag in validTargetTags) {
 			if(col.gameObject.tag == tag) {
 				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
+
+				if(tag == "Blob") {
+					BlobActor victim = col.gameObject.GetComponent<BlobActor>();
+					victim.AddForce((actor.IsFacingRight() ? new Vector2(.5f, .5f) : new Vector2(-.5f, .5f)) * force);
+				}
 				float modifiedDamage = (damage / 10f) * actorAttackValue; 
 				if(modifiedDamage > 0 && health != null)
 					health.TakeDamage(modifiedDamage);

@@ -28,7 +28,7 @@ public class ActorHealth : MonoBehaviour {
 			startHealth = actor.combatStats.health.combatValue;
 
 		if(actor.monsterData != null)
-			flinchLimit = actor.monsterData.flinchLimit;
+			flinchLimit = actor.data.flinchLimit;
 
 		flinchPoints = 0f;
 		health = startHealth;

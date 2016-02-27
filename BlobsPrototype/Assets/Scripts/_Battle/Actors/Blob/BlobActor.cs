@@ -6,15 +6,18 @@ public class BlobActor : Actor {
 	public bool alwaysUpdateJoints = false;
 	public JellySprite jellySprite;
 	private bool reparantedRefPoints = false;
+	private Rigidbody body;
 
 
 	public override void Awake () {
 		base.Awake();
+		data.opposingFaction = "Enemy";
 	}
 
 	// Use this for initialization
 	public override void Start () {
 		base.Start();
+		body = GetComponent<Rigidbody>();
 	}
 
 	
@@ -52,7 +55,8 @@ public class BlobActor : Actor {
 
 
 	public override void AddForce(Vector2 f) {
-		jellySprite.AddForce(f);
+		//jellySprite.AddForce(f);
+		body.AddForce(f);
 	}
 
 

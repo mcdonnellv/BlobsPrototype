@@ -44,12 +44,13 @@ public class AiManager : MonoBehaviour {
 			rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * maxSpeed, rb.velocity.y);
 	}
 
+
 	public static void MoveDirection(Actor actor, float h, float moveForce, float maxSpeed) {
 		MoveDirection(actor.rigidBody, h, moveForce, maxSpeed);
 	}
 	
 
-	public static void AiMoveToDestination(Actor actor, Vector2 destTarget, float moveForce, float maxSpeed, bool lookAtTarget, string animBoolStr) {
+	public static void AiMoveToDestination(Actor actor, Vector2 destTarget, float moveForce, float maxSpeed, bool lookAtTarget) {
 		if(!actor.IsGrounded() || destTarget == Vector2.zero || actor.rigidBody == null)
 			return;
 
@@ -57,7 +58,7 @@ public class AiManager : MonoBehaviour {
 		direction.y = 0;
 		float distanceLeft = direction.magnitude;
 		Vector2 dNorm = direction.normalized;
-		float curSpeed = actor.rigidBody.velocity.magnitude;
+		float curSpeed = actor.GetCurSpeed();
 		
 		// distance =  velocity * time (stop moving if it looks like we will arrive with current speed)
 		if(curSpeed < distanceLeft)
@@ -65,12 +66,8 @@ public class AiManager : MonoBehaviour {
 		
 		if(lookAtTarget)
 			LookAtTarget(actor, destTarget);
-		
-		// trigger traverse animation
-		Animator anim = actor.gameObject.GetComponent<Animator>();
-		if(anim != null && !string.IsNullOrEmpty(animBoolStr))
-			anim.SetBool(animBoolStr, true);
 	}
+
 
 	public static void LookAtTarget(Actor actor, Vector2 target) {
 		if(IsLookingAt(actor, target))

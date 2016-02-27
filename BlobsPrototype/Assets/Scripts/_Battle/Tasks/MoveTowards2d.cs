@@ -11,13 +11,10 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 	public class MoveTowards2d : MoveTowards {
 
 		public SharedFloat moveForce = 100;
-		private Rigidbody2D rigidBody;
+		public SharedVector3 offset;
 		private Actor actor;
 
 		public override void OnAwake() {
-			rigidBody = gameObject.GetComponent<Rigidbody2D>();
-			if(rigidBody == null)
-				rigidBody = gameObject.GetComponent<UnityJellySprite>().CentralPoint.Body2D;
 			actor = gameObject.GetComponent<Actor>();
 		}
 
@@ -29,13 +26,30 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 				return TaskStatus.Success;
 			}
 
-			AiManager.AiMoveToDestination(actor, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value, "Walk");
+			// check if behind me
+			AiManager.AiMoveToDestination(actor, (Vector2)base.Target(), moveForce.Value, speed.Value, lookAtTarget.Value);
 			return TaskStatus.Running;
 		}
 
 		bool HasArrived() {
-			bool retval =  Mathf.Abs(transform.position.x - base.Target().x) <= arriveDistance.Value;
+			bool retval =  Mathf.Abs(transform.position.x - base.Target().x + offset.Value.x) <= arriveDistance.Value;
 			return retval;
 		}
+
+		// Draw the seeing radius
+		public override void OnDrawGizmos()
+		{
+			#if UNITY_EDITOR
+			if (Owner == null) {
+				return;
+			}
+			var oldColor = UnityEditor.Handles.color;
+			UnityEditor.Handles.color = Color.green;
+			UnityEditor.Handles.DrawWireDisc(Owner.transform.position + offset.Value, Owner.transform.forward, arriveDistance.Value);
+			UnityEditor.Handles.color = oldColor;
+			#endif
+		}
 	}
+
+
 }

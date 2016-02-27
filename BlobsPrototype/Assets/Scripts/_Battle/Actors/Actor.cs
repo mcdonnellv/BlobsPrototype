@@ -4,17 +4,19 @@ using System.Collections;
 using System.Collections.Generic;
 using BehaviorDesigner.Runtime;
 
-public class Actor : MonoBehaviour {
 
+public class Actor : MonoBehaviour {
 	public CombatStats combatStats;
 	public int monsterId = -1;
 	public BaseMonster monsterData { get; protected set; }
+	public Rigidbody rigidBody { get; protected set; }
+	public ActorData data;
+
 	protected BehaviorTree behaviorTree;
 	protected ActorHealth health;
 	protected Animator anim;
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
-	public Rigidbody rigidBody { get; protected set; }
 
 
 
@@ -23,11 +25,11 @@ public class Actor : MonoBehaviour {
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
 		rigidBody = GetComponent<Rigidbody>();
-		
-		if(monsterId >= 0)
+		monsterData = null;
+		if(monsterId != -1) {
 			monsterData = MonsterManager.monsterManager.GetBaseMonsterByID(monsterId);
-		else
-			monsterData = null;
+			data = monsterData.data;
+		}
 	}
 
 	// Use this for initialization
@@ -37,10 +39,12 @@ public class Actor : MonoBehaviour {
 			health.onFlinch += Flinch;
 		}
 	}
+
 	
 	// Update is called once per frame
 	public virtual void Update () {
-		anim.SetBool("Walk", false);
+		anim.SetFloat("Speed", GetCurSpeed());
+		anim.SetBool("Grounded", IsGrounded());
 		groundCheckDone = false;
 	}
 
@@ -53,10 +57,12 @@ public class Actor : MonoBehaviour {
 		anim.SetTrigger("Death");
 	}
 
+
 	public void Flinch() {
 		// trigger the flinch animation
 		anim.SetTrigger("Flinch");
 	}
+
 
 	public bool IsAlive() {
 		ActorHealth ac = GetComponent<ActorHealth>();
@@ -65,13 +71,19 @@ public class Actor : MonoBehaviour {
 		return ac.IsAlive();
 	}
 
+
 	// called by death animation
 	public void DestroySelf() {
 		Destroy(gameObject);
 	}
 
+
 	public virtual void AddForce(Vector2 v) {
-		rigidBody.AddForce(v);
+ 		rigidBody.AddForce(v);
+	}
+
+	public void AnimJumpEvent() {
+		rigidBody.AddForce(Vector3.up * data.jumpForce);
 	}
 
 
@@ -100,11 +112,17 @@ public class Actor : MonoBehaviour {
 			return transform.rotation.y == 0;
 	}
 
+
 	public virtual void FaceOpposite() {
 		Puppet2D_GlobalControl p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
 		if(p2dCtrl != null) 
 			p2dCtrl.flip = !p2dCtrl.flip;
 		else
 			transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
+	}
+
+
+	public float GetCurSpeed() {
+		return rigidBody.velocity.magnitude;
 	}
 }

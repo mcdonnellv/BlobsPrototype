@@ -99,23 +99,24 @@ public class MonsterManagerInspector : GenericManagerInspector {
 			
 			NGUIEditorTools.DrawSeparator();
 			NGUIEditorTools.SetLabelWidth(100f);
-			monster.health = EditorGUILayout.FloatField("Health", monster.health);
-			monster.criticalHealth = Mathf.PingPong(EditorGUILayout.FloatField("CriticalHealth", monster.criticalHealth), .5f);
-			monster.attack = EditorGUILayout.FloatField("Attack", monster.attack);
-			monster.speed = EditorGUILayout.FloatField("Speed", monster.speed);
-			monster.stamina = EditorGUILayout.FloatField("Stamina", monster.stamina);
-			monster.damageMitigation = Mathf.PingPong(EditorGUILayout.FloatField("DamageMitigation", monster.damageMitigation), 1f);
-			monster.flinchLimit = EditorGUILayout.FloatField("flinchLimit", monster.flinchLimit);
-			monster.walkSpeed = EditorGUILayout.FloatField("WalkSpeed", monster.walkSpeed);
-			monster.runSpeed = EditorGUILayout.FloatField("RunSpeed", monster.runSpeed);
-			monster.perception = EditorGUILayout.FloatField("Perception", monster.perception);
+			ActorData data = monster.data;
+			data.health = EditorGUILayout.FloatField("Health", data.health);
+			data.criticalHealth = Mathf.PingPong(EditorGUILayout.FloatField("CriticalHealth", data.criticalHealth), .5f);
+			data.attack = EditorGUILayout.FloatField("Attack", data.attack);
+			data.speed = EditorGUILayout.FloatField("Speed", data.speed);
+			data.stamina = EditorGUILayout.FloatField("Stamina", data.stamina);
+			data.damageMitigation = Mathf.PingPong(EditorGUILayout.FloatField("DamageMitigation", data.damageMitigation), 1f);
+			data.flinchLimit = EditorGUILayout.FloatField("flinchLimit", data.flinchLimit);
+			data.walkSpeed = EditorGUILayout.FloatField("WalkSpeed", data.walkSpeed);
+			data.runSpeed = EditorGUILayout.FloatField("RunSpeed", data.runSpeed);
+			data.perception = EditorGUILayout.FloatField("Perception", data.perception);
 			NGUIEditorTools.DrawSeparator();
 			EditorGUILayout.LabelField("Enrage");
 			EditorGUI.indentLevel++;
-			monster.enrageDuration = EditorGUILayout.FloatField("Duration", monster.enrageDuration);
-			monster.enrageAttack = EditorGUILayout.FloatField("Attack", monster.enrageAttack);
-			monster.enrageSpeed = EditorGUILayout.FloatField("Speed", monster.enrageSpeed);
-			monster.enrageConditionTimer = EditorGUILayout.FloatField("Start Time", monster.enrageConditionTimer);
+			data.enrageDuration = EditorGUILayout.FloatField("Duration", data.enrageDuration);
+			data.enrageAttack = EditorGUILayout.FloatField("Attack", data.enrageAttack);
+			data.enrageSpeed = EditorGUILayout.FloatField("Speed", data.enrageSpeed);
+			data.enrageConditionTimer = EditorGUILayout.FloatField("Start Time", data.enrageConditionTimer);
 			EditorGUI.indentLevel--;
 			//SPRITE
 			NGUIEditorTools.DrawSeparator();

@@ -10,11 +10,11 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 public class AiIsWithinDistance : Conditional {
 
 	public SharedGameObject target;
-	public SharedFloat perception;
+	public SharedFloat distance;
 	public SharedBool lineOfSight;
 	public SharedBool aliveOnly;
-	public SharedString objectTag;
 	public SharedGameObject returnedObject;
+	public SharedVector3 offset;
 
 	private List<GameObject> objects;
 	private Actor actor;
@@ -28,7 +28,7 @@ public class AiIsWithinDistance : Conditional {
 	public override void OnStart()
 	{
 		actor = GetComponent<Actor>();
-		sqrMagnitude = perception.Value * perception.Value;
+		sqrMagnitude = distance.Value * distance.Value;
 		objects = new List<GameObject>();
 
 		if(target.Value != null) {
@@ -36,8 +36,8 @@ public class AiIsWithinDistance : Conditional {
 			return;
 		}
 		// if target is null then find all of the objects using the objectTag
-		if (!string.IsNullOrEmpty(objectTag.Value)) {
-			var gameObjects = GameObject.FindGameObjectsWithTag(objectTag.Value);
+		if (!string.IsNullOrEmpty(actor.data.opposingFaction)) {
+			var gameObjects = GameObject.FindGameObjectsWithTag(actor.data.opposingFaction);
 			for (int i = 0; i < gameObjects.Length; ++i) {
 				if(aliveOnly.Value){
 					ActorHealth ac = gameObjects[i].GetComponent<ActorHealth>();
@@ -59,7 +59,7 @@ public class AiIsWithinDistance : Conditional {
 		Vector3 direction;
 		// check each object. All it takes is one object to be able to return success
 		for (int i = 0; i < objects.Count; ++i) {
-			direction = objects[i].transform.position - transform.position;
+			direction = objects[i].transform.position - (transform.position + offset.Value);
 			// check to see if the square magnitude is less than what is specified
 			if (Vector3.SqrMagnitude(direction) < sqrMagnitude) {
 				// the magnitude is less. If lineOfSight is true do one more check
@@ -85,12 +85,12 @@ public class AiIsWithinDistance : Conditional {
 	public override void OnDrawGizmos()
 	{
 		#if UNITY_EDITOR
-		if (Owner == null || perception == null) {
+		if (Owner == null || distance == null) {
 			return;
 		}
 		var oldColor = UnityEditor.Handles.color;
 		UnityEditor.Handles.color = Color.yellow;
-		UnityEditor.Handles.DrawWireDisc(Owner.transform.position, Owner.transform.forward, perception.Value);
+		UnityEditor.Handles.DrawWireDisc(Owner.transform.position + offset.Value, Owner.transform.forward, distance.Value);
 		UnityEditor.Handles.color = oldColor;
 		#endif
 	}

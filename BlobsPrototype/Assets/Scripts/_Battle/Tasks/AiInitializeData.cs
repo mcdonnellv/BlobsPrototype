@@ -30,7 +30,7 @@ public class AiInitializeData : Composite {
 				Debug.LogError("No Actor component to initialize data from");
 				return;
 			}
-			BaseMonster m = actor.monsterData;
+			ActorData m = actor.data;
 
 			health.Value = m.health;
 			attack.Value = m.attack;

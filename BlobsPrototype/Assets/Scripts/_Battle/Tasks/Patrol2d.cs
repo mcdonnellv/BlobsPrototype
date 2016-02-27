@@ -6,14 +6,19 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 [TaskDescription("Patrol around the specified waypoints using force on a Rigidbody")]
 [TaskCategory("Movement")]
 [TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}PatrolIcon.png")]
-public class Patrol2d : Patrol {
-
+public class Patrol2d : Movement {
+	public SharedBool randomPatrol = false;
+	public SharedFloat waypointPauseDuration = 0;
+	public SharedGameObjectList waypoints;
 	public SharedFloat moveForce;
 
+	protected int waypointIndex;
+	protected float waypointReachedTime;
 	private Vector2 destTarget;
 	private Vector2 originalDirection;
 	private Vector2 curDirection;
 	private Actor actor;
+
 
 	public override void OnAwake() {
 		actor = GetComponent<Actor>();
@@ -26,7 +31,7 @@ public class Patrol2d : Patrol {
 		for (int i = 0; i < waypoints.Value.Count; ++i) {
 			if ((localDistance = Vector3.Magnitude(transform.position - waypoints.Value[i].transform.position)) < distance) {
 				distance = localDistance;
-				base.waypointIndex = i;
+				waypointIndex = i;
 			}
 		}
 		waypointReachedTime = -waypointPauseDuration.Value;
@@ -35,12 +40,37 @@ public class Patrol2d : Patrol {
 
 
 	public override TaskStatus OnUpdate() {
-		if( base.waypoints.Value.Count <= 0 )
+		if( waypoints.Value.Count <= 0 )
 			return TaskStatus.Success;
 
-		if(!HasArrived()) 
-			AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, speed.Value, true, "Walk");
-		return base.OnUpdate();
+		if (HasArrived()) {
+			if (waypointReachedTime == -waypointPauseDuration.Value) {
+				waypointReachedTime = Time.time;
+			}
+			// wait the required duration before switching waypoints.
+			if (waypointReachedTime + waypointPauseDuration.Value <= Time.time) {
+				if (randomPatrol.Value) {
+					if (waypoints.Value.Count == 1) {
+						waypointIndex = 0;
+					} else {
+						// prevent the same waypoint from being selected
+						var newWaypointIndex = waypointIndex;
+						while (waypoints.Value.Count > 0 && newWaypointIndex == waypointIndex) {
+							newWaypointIndex = Random.Range(0, waypoints.Value.Count - 1);
+						}
+						waypointIndex = newWaypointIndex;
+					}
+				} else {
+					waypointIndex = (waypointIndex + 1) % waypoints.Value.Count;
+				}
+				SetDestination(Target());
+				waypointReachedTime = -waypointPauseDuration.Value;
+			}
+		}
+		else
+			AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, actor.data.walkSpeed, true);
+
+		return TaskStatus.Running;
 	}
 
 
@@ -68,7 +98,5 @@ public class Patrol2d : Patrol {
 	}
 
 	public override void OnEnd() {
-		//rigidBody.velocity = Vector3.zero;
-		//destTarget = transform.position;
 	}
 }
