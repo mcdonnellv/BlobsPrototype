@@ -86,4 +86,41 @@ public class AiManager : MonoBehaviour {
 		return true;
 	}
 
+
+	public static void DrawLineOfSight2D(Actor actor, Vector3 positionOffset, float fieldOfViewAngle, float viewDistance)	{
+#if UNITY_EDITOR
+		if(actor == null)
+			return;
+		Transform transform = actor.transform;
+		var oldColor = UnityEditor.Handles.color;
+		var color = Color.yellow;
+		color.a = 0.05f;
+		UnityEditor.Handles.color = color;
+
+		var halfFOV = fieldOfViewAngle * 0.5f;
+		var beginDirection = Quaternion.AngleAxis(-halfFOV, Vector3.forward) * (actor.IsFacingRight() ? transform.up : -transform.right);
+		UnityEditor.Handles.DrawSolidArc(transform.TransformPoint(positionOffset), transform.forward, beginDirection, fieldOfViewAngle, viewDistance);
+
+		UnityEditor.Handles.color = oldColor;
+#endif
+	}
+
+
+	// Determines if the targetObject is within sight of the transform. It will set the angle regardless of whether or not the object is within sight
+	public static GameObject WithinSight2D(Actor actor, Vector3 positionOffset, float fieldOfViewAngle, float viewDistance, GameObject targetObject) {
+		Transform transform = actor.transform;
+		// The target object needs to be within the field of view of the current object
+		var direction = targetObject.transform.position - transform.TransformPoint(positionOffset);
+		float angle = Vector3.Angle(direction, (actor.IsFacingRight() ? transform.right : -transform.right));
+		direction.z = 0;
+
+		if (direction.magnitude < viewDistance && angle < fieldOfViewAngle * 0.5f) {
+			if (targetObject.gameObject.activeSelf)
+				return targetObject;
+			
+		}
+		// return null if the target object is not within sight
+		return null;
+	}
 }
+

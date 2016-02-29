@@ -11,7 +11,6 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 	public class MoveTowards2d : MoveTowards {
 
 		public SharedFloat moveForce = 100;
-		public SharedVector3 offset;
 		private Actor actor;
 
 		public override void OnAwake() {
@@ -32,22 +31,20 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 		}
 
 		bool HasArrived() {
-			bool retval =  Mathf.Abs(transform.position.x - base.Target().x + offset.Value.x) <= arriveDistance.Value;
+			bool retval =  Mathf.Abs(transform.position.x - base.Target().x ) <= arriveDistance.Value;
 			return retval;
 		}
 
 		// Draw the seeing radius
-		public override void OnDrawGizmos()
-		{
-			#if UNITY_EDITOR
-			if (Owner == null) {
+		public override void OnDrawGizmos() {
+#if UNITY_EDITOR
+			if (Owner == null)
 				return;
-			}
 			var oldColor = UnityEditor.Handles.color;
 			UnityEditor.Handles.color = Color.green;
-			UnityEditor.Handles.DrawWireDisc(Owner.transform.position + offset.Value, Owner.transform.forward, arriveDistance.Value);
+			UnityEditor.Handles.DrawWireDisc(Owner.transform.position, Owner.transform.forward, arriveDistance.Value);
 			UnityEditor.Handles.color = oldColor;
-			#endif
+#endif
 		}
 	}
 

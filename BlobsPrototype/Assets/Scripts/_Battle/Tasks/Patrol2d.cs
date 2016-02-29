@@ -11,6 +11,7 @@ public class Patrol2d : Movement {
 	public SharedFloat waypointPauseDuration = 0;
 	public SharedGameObjectList waypoints;
 	public SharedFloat moveForce;
+	public SharedFloat walkSpeed;
 
 	protected int waypointIndex;
 	protected float waypointReachedTime;
@@ -68,7 +69,7 @@ public class Patrol2d : Movement {
 			}
 		}
 		else
-			AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, actor.data.walkSpeed, true);
+			AiManager.AiMoveToDestination(actor, destTarget, moveForce.Value, walkSpeed.Value, true);
 
 		return TaskStatus.Running;
 	}

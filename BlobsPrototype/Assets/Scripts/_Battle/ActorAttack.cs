@@ -30,10 +30,11 @@ public class ActorAttack : MonoBehaviour {
 			if(col.gameObject.tag == tag) {
 				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
 
-				if(tag == "Blob") {
-					BlobActor victim = col.gameObject.GetComponent<BlobActor>();
+				if(health.Immune() == false) {
+					Actor victim = col.gameObject.GetComponent<Actor>();
 					victim.AddForce((actor.IsFacingRight() ? new Vector2(.5f, .5f) : new Vector2(-.5f, .5f)) * force);
 				}
+
 				float modifiedDamage = (damage / 10f) * actorAttackValue; 
 				if(modifiedDamage > 0 && health != null)
 					health.TakeDamage(modifiedDamage);
