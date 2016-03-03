@@ -18,7 +18,10 @@ public class Actor : MonoBehaviour {
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
 
-
+	public void SetTarget(GameObject targetObject) {
+		var targetVariable = (SharedGameObject)behaviorTree.GetVariable("Target");
+		targetVariable.Value = targetObject;
+	}
 
 	public virtual void Awake () {
 		behaviorTree = GetComponent<BehaviorTree>();
@@ -94,7 +97,7 @@ public class Actor : MonoBehaviour {
 		groundCheckDone = true;
 		isGrounded = false;
 		Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
-		int groundLayer = 11;
+		int groundLayer = 14;
 		int layerMask = 1 << groundLayer;
 		float groundDistance = 1.7f;
 		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f);

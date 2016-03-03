@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Com.LuisPedroFonseca.ProCamera2D;
+using BehaviorDesigner.Runtime;
 
 public class CombatManager : MonoBehaviour {
 	private static CombatManager _combatManager;
@@ -16,34 +18,64 @@ public class CombatManager : MonoBehaviour {
 	public Transform enemySpawner;
 	public Camera battleCam;
 
+	private float inputBlockTime = 4f;
+	private float lastInputTime = -4f;
+	private Vector3 lastBlobAnchorPos;
+
 	static int spawnerIndex = 0;
 	bool fighting = false;
 	float fightSpeed = 1f;
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
 
+	public void Start() {
+		SetupLevel();
+	}
 
-	public Actor AddActor(string prefabName, CombatStats cs, Vector2 spawnPos) {
+	public void SetupLevel() {
+		lastInputTime = -4f;
+		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  new Vector3(0.01f,0,0));
+		Transform a = GameObject.Find("BlobAnchorMarker").transform;
+		a.position = new Vector3(0.01f, a.position.y, a.position.z);
+
+		Actor mainBlob = AddActor("AiBlob", null, new Vector3(0,0,0));
+		AddObject("BattleObjectGoal", new Vector3(50,0,0));
+		ProCamera2D.Instance.AddCameraTarget(mainBlob.transform);
+	}
+
+	public void ResetLevel() {
+		root.FindChild("Actors").DestroyChildren();
+		root.FindChild("Objects").DestroyChildren();
+		SetupLevel();
+	}
+
+	public Actor AddActor(string prefabName, CombatStats cs, Vector3 spawnPos) {
 		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
-		go.transform.parent = root;
-		go.transform.position = (Vector3)spawnPos;
+		go.transform.parent = root.FindChild("Actors");
+		go.transform.localPosition = spawnPos;
 		Actor actor = go.GetComponent<Actor>();
 		actors.Add(actor);
+		ActorHealth health = actor.GetComponent<ActorHealth>();
+		if(health != null) {
+			health.onDeath += BlobDied;
+		}
 		return actor;
 	}
 
-
-	public Actor AddActor(BaseMonster monster) {
-		return AddActor("Wolf", null, enemySpawner.position);
+	public GameObject AddObject(string prefabName, Vector3 spawnPos) {
+		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
+		go.transform.parent = root.FindChild("Objects");
+		go.transform.localPosition = spawnPos;
+		return go;
 	}
 
 
-	public Actor AddActor(Blob blob) {
-		spawnerIndex = (spawnerIndex + 1) % blobSpawner.Count;
-		return AddActor("BlobActor", blob.combatStats, blobSpawner[spawnerIndex].position);
-	}
+	public Actor AddActor(BaseMonster monster) { return null;}
 
-	
+
+	public Actor AddActor(Blob blob) { return null; }
+
+
 	public void StartFight() {
 		fighting = true;
 		battleCam.gameObject.SetActive(true);
@@ -78,12 +110,71 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	void Update() {
-		if(!fighting)
-			return;
-		if(GetFactionCount("Blob", true) == 0 || GetFactionCount("Enemy", true) == 0)
-			EndFight();
+	public void BlobDied() {
+		bool aBlobIsStillAlive = false;
+		List<Actor> actorsToRemove = new List<Actor>();
+		foreach(Actor actor in actors) {
+			ActorHealth ah = actor.GetComponent<ActorHealth>();
+			if(ah != null && ah.health > 0)
+				aBlobIsStillAlive = true;
+			else
+				actorsToRemove.Add(actor);
+		}
+
+		foreach(Actor actor in actorsToRemove)
+			actors.Remove(actor);
+
+		if(aBlobIsStillAlive == false)
+			ResetLevel();
 	}
+
+	public void AdvanceBlobAnchorPosition() {
+		TransformBlobAnchorPosition(new Vector3(10f,0,0));
+	}
+
+	public void RevertBlobAnchorPosition() {
+		TransformBlobAnchorPosition(new Vector3(-10f,0,0));
+	}
+
+	private void TransformBlobAnchorPosition(Vector3 offset) {
+		SharedVector3 sharedVar = (SharedVector3)GlobalVariables.Instance.GetVariable("gBlobAnchor");
+		Vector3 anchor = sharedVar.Value + offset;
+		anchor.x = Mathf.Max(0f, anchor.x);
+		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  anchor);
+		Transform a = GameObject.Find("BlobAnchorMarker").transform;
+		a.position = new Vector3(anchor.x, a.position.y, a.position.z);
+	}
+
+	private void InputUpdate() {
+		if(Input.GetKeyDown(KeyCode.K)) {
+			foreach(Actor actor in actors) {
+				ActorHealth ah = actor.GetComponent<ActorHealth>();
+				if(ah != null && ah.health > 0)
+					ah.health = 0;
+			}
+		}
+
+		if(lastInputTime + inputBlockTime > Time.time)
+			return;
+		
+		if(Input.GetButton("Jump")) {
+			AdvanceBlobAnchorPosition();
+			lastInputTime = Time.time;
+		}
+			
+
+	}
+
+	void Update() {
+		
+
+		 
+	}
+
+	void FixedUpdate () {
+		InputUpdate();
+	}
+
 
 	//		combatant.monster = monster;
 //		combatant.id = curId++;

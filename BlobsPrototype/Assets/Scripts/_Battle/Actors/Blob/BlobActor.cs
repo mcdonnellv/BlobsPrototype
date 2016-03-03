@@ -29,6 +29,11 @@ public class BlobActor : Actor {
 			jellySprite.CentralPoint.Body3D.isKinematic = true;
 			Transform refpoints = jellySprite.CentralPoint.transform.parent;
 			refpoints.parent = jellySprite.transform;
+
+			// tag all colliders as blob
+			Collider[] cols = gameObject.GetComponentsInChildren<Collider>();
+			for(int i = 0; i < cols.Length; i++)
+				cols[i].gameObject.tag = "Blob";
 		}
 
 		if(alwaysUpdateJoints)
@@ -37,11 +42,16 @@ public class BlobActor : Actor {
 	}
 
 
-	public override bool IsGrounded () {
-		int groundLayer = 11;
-		int layerMask = (1 << groundLayer);
-		return jellySprite.IsGrounded(layerMask,1);
-	}
+//	public override bool IsGrounded () {
+//		if(groundCheckDone)
+//			return isGrounded;
+//		groundCheckDone = true;
+//		isGrounded = false;
+//		int groundLayer = 14;
+//		int layerMask = (1 << groundLayer);
+//		isGrounded = jellySprite.IsGrounded(layerMask,1);
+//		return isGrounded;
+//	}
 
 
 	public override bool IsFacingRight() {

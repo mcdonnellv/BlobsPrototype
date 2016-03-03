@@ -11,7 +11,6 @@ public class ActorHealth : MonoBehaviour {
 	// how much health the object should start with
 	public float startHealth = 100;
 	public float attackImmunityTime = .5f;
-	public float HealthAmount { get { return health; } }
 	public float criticalHealthThreshold = .15f;
 	public float health;
 	private float lastHitTime;
