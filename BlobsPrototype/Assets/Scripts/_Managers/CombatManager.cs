@@ -27,6 +27,7 @@ public class CombatManager : MonoBehaviour {
 	float fightSpeed = 1f;
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
+	Transform blobAnchorMarker;
 
 	public void Start() {
 		SetupLevel();
@@ -35,8 +36,8 @@ public class CombatManager : MonoBehaviour {
 	public void SetupLevel() {
 		lastInputTime = -4f;
 		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  new Vector3(0.01f,0,0));
-		Transform a = GameObject.Find("BlobAnchorMarker").transform;
-		a.position = new Vector3(0.01f, a.position.y, a.position.z);
+		blobAnchorMarker = GameObject.Find("BlobAnchorMarker").transform;
+		blobAnchorMarker.position = new Vector3(0.01f, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
 
 		Actor mainBlob = AddActor("AiBlob", null, new Vector3(0,0,0));
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
@@ -141,8 +142,7 @@ public class CombatManager : MonoBehaviour {
 		Vector3 anchor = sharedVar.Value + offset;
 		anchor.x = Mathf.Max(0f, anchor.x);
 		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  anchor);
-		Transform a = GameObject.Find("BlobAnchorMarker").transform;
-		a.position = new Vector3(anchor.x, a.position.y, a.position.z);
+		blobAnchorMarker.position = new Vector3(anchor.x, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
 	}
 
 	private void InputUpdate() {
@@ -158,8 +158,22 @@ public class CombatManager : MonoBehaviour {
 			return;
 		
 		if(Input.GetButton("Jump")) {
-			AdvanceBlobAnchorPosition();
-			lastInputTime = Time.time;
+			//cast ray to see if the path is clear
+			Vector3 pos = blobAnchorMarker.position;
+			pos.y = .5f;
+			pos.z = 0f;
+			float checkDistance = 11f;
+			Ray ray = new Ray(pos, Vector3.right);
+			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
+			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
+			bool clearToMove = true;
+			for(int i = 0; i < hit.Length; i++)
+				if( hit[i].collider.tag == "Enemy")
+					clearToMove = false;		
+			if(clearToMove) {
+				AdvanceBlobAnchorPosition();
+				lastInputTime = Time.time;
+			}
 		}
 			
 

@@ -6,6 +6,9 @@ using BehaviorDesigner.Runtime;
 
 
 public class Actor : MonoBehaviour {
+	public delegate void Collided(Collider other);
+	public event Collided onCollided;
+
 	public CombatStats combatStats;
 	public int monsterId = -1;
 	public BaseMonster monsterData { get; protected set; }
@@ -90,6 +93,18 @@ public class Actor : MonoBehaviour {
 	}
 
 
+	public void OnCollisionEnter(Collision collision) {
+		if (onCollided != null) {
+			onCollided(collision.collider);
+		}
+	}
+
+	public void OnTriggerEnter(Collider other) {
+		if (onCollided != null) {
+			onCollided(other);
+		}
+	}
+
 	public virtual bool IsGrounded () {
 		if(groundCheckDone)
 			return isGrounded;
@@ -97,12 +112,13 @@ public class Actor : MonoBehaviour {
 		groundCheckDone = true;
 		isGrounded = false;
 		Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
-		int groundLayer = 14;
-		int layerMask = 1 << groundLayer;
-		float groundDistance = 1.7f;
+		float groundDistance = 1f;
 		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f);
-		isGrounded = (hit.Length > 0);
-		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * (groundDistance + 0.1f)), Color.red);
+		for(int i = 0; i < hit.Length; i++) {
+			if( hit[i].collider.tag == "Ground")
+				isGrounded = true;		
+		}
+		//Debug.DrawLine(ray.origin, ray.origin + (ray.direction * (groundDistance + 0.1f)), Color.red);
 		return isGrounded;
 	}
 

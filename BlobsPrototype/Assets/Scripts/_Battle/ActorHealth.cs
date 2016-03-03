@@ -23,12 +23,13 @@ public class ActorHealth : MonoBehaviour {
 
 	public void Start() {
 		Actor actor = GetComponent<Actor>();
-		if(actor)
+		if(actor) {
 			startHealth = actor.combatStats.health.combatValue;
 
-		if(actor.monsterData != null)
-			flinchLimit = actor.data.flinchLimit;
-
+			if(actor.monsterData != null)
+				flinchLimit = actor.data.flinchLimit;
+		}
+			
 		flinchPoints = 0f;
 		health = startHealth;
 	}

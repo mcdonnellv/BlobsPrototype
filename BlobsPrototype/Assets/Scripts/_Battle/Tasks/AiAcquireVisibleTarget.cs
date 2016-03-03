@@ -51,9 +51,9 @@ public class AiAcquireVisibleTarget : Conditional {
 
 	public override void OnDrawGizmos(){
 		if(showGizmo.Value && Owner != null) {
-			Actor a = Owner.GetComponent<Actor>();
-			if(a != null)
-				AiManager.DrawLineOfSight2D(a, offset.Value, fieldOfViewAngle.Value, viewDistance.Value);
+			Actor actor = Owner.GetComponent<Actor>();
+			if(actor != null)
+				AiManager.DrawLineOfSight2D(actor, offset.Value, fieldOfViewAngle.Value, viewDistance.Value);
 		}
 	}
 }

@@ -25,7 +25,7 @@ public class PlayerControlable : MonoBehaviour {
 
 		float h = Input.GetAxis("Horizontal");
 		if(h != 0) {
-			AiManager.MoveDirection(body, h, actor.IsGrounded() ? moveForce : moveForce / 2f, walkSpeed);
+			//AiManager.MoveDirection(body, h, actor.IsGrounded() ? moveForce : moveForce / 2f, walkSpeed);
 			anim.SetBool("Walk", true);
 		}
 		else anim.SetBool("Walk", false);

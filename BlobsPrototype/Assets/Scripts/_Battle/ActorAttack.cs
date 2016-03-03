@@ -29,10 +29,14 @@ public class ActorAttack : MonoBehaviour {
 		foreach(string tag in validTargetTags) {
 			if(col.gameObject.tag == tag) {
 				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
+				if(health == null)
+					continue;
+				
 
-				if(health.Immune() == false) {
+				if(force > 0 && health.Immune() == false) {
 					Actor victim = col.gameObject.GetComponent<Actor>();
-					victim.AddForce((actor.IsFacingRight() ? new Vector2(.5f, .5f) : new Vector2(-.5f, .5f)) * force);
+					if(victim != null)
+						victim.AddForce((actor.IsFacingRight() ? new Vector2(.5f, .5f) : new Vector2(-.5f, .5f)) * force);
 				}
 
 				float modifiedDamage = (damage / 10f) * actorAttackValue; 
