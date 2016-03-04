@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class HudManager : MonoBehaviour {
 	private static HudManager _hudManager;
 	public static HudManager hudManager { get {if(_hudManager == null) _hudManager = GameObject.Find("HudManager").GetComponent<HudManager>(); return _hudManager; } }
@@ -26,6 +27,7 @@ public class HudManager : MonoBehaviour {
 	public NotificationIndicator notificationIndicator;
 	public CombatMenu combatMenu;
 	public StoreMenu storeMenu;
+	public BattleHud battleHud;
 
 	public bool dragToUi = false;
 	public GameObject dragObjectHelper;
@@ -42,7 +44,10 @@ public class HudManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		hudRoot.SetActive(false);
+		ShowOnlyBattleHud();
+		return;
+
+
 
 		foreach(Transform child in popupCamera.transform.parent) {
 			if(child.GetComponentInChildren<GenericGameMenu>()) 
@@ -50,6 +55,13 @@ public class HudManager : MonoBehaviour {
 		}
 		popupCamera.enabled = false;
 		ShowHud(true);
+	}
+
+	void ShowOnlyBattleHud() {
+		GameObject battleHud = GameObject.Find("Battle Hud");
+		foreach(Transform child in hudRoot.transform)
+			child.gameObject.SetActive(false);
+		battleHud.SetActive(true);
 	}
 
 

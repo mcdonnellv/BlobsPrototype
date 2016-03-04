@@ -31,8 +31,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
                 Debug.LogWarning("Animator is null");
                 return TaskStatus.Failure;
             }
-
-            return animator.GetCurrentAnimatorStateInfo(index.Value).IsName(name.Value) ? TaskStatus.Success : TaskStatus.Failure;
+			AnimatorStateInfo asi = animator.GetCurrentAnimatorStateInfo(index.Value);
+            return asi.IsName(name.Value) ? TaskStatus.Success : TaskStatus.Failure;
         }
 
         public override void OnReset()

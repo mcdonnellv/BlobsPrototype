@@ -74,6 +74,8 @@ public class AiManager : MonoBehaviour {
 
 	// Determines if the targetObject is within sight of the transform. It will set the angle regardless of whether or not the object is within sight
 	public static GameObject WithinSight2D(Actor actor, Vector3 positionOffset, float fieldOfViewAngle, float viewDistance, GameObject targetObject) {
+		if(targetObject == null)
+			return null;
 		Transform transform = actor.transform;
 		// The target object needs to be within the field of view of the current object
 		var direction = targetObject.transform.position - transform.TransformPoint(positionOffset);

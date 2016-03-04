@@ -11,9 +11,16 @@ public class ActorAttack : MonoBehaviour {
 	public List<string> validTargetTags;
 	public Actor actor;
 	public float force = 100f;
+	public bool applyDamageOncePerAttack = false;
+
+	private bool damageApplied = false;
 	private float actorAttackValue = 100;
 
 	public void Start() {
+	}
+
+	void OnEnable() {
+		damageApplied = false;
 	}
 
 	public void Awake() {
@@ -26,13 +33,16 @@ public class ActorAttack : MonoBehaviour {
 	}
 
 	void OnTriggerStay (Collider col) {
+		if(applyDamageOncePerAttack && damageApplied)
+			return;
+		
 		foreach(string tag in validTargetTags) {
 			if(col.gameObject.tag == tag) {
+				damageApplied = true;
 				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
 				if(health == null)
 					continue;
 				
-
 				if(force > 0 && health.Immune() == false) {
 					Actor victim = col.gameObject.GetComponent<Actor>();
 					if(victim != null)

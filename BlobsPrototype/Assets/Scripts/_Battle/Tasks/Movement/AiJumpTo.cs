@@ -7,6 +7,7 @@ using BehaviorDesigner.Runtime.Tasks.Movement;
 
 public class AiJumpTo : Action {
 	public SharedVector3 targetPosition;
+	public SharedGameObject target;
 	public SharedFloat initialAngle;
 
 	private Actor actor;
@@ -27,7 +28,8 @@ public class AiJumpTo : Action {
 	public override TaskStatus OnUpdate() {
 		if(Time.time > jumpTime + pauseTime && actor.IsGrounded()) {
 			// simply snap to exact destination once we land 
-			actor.transform.position = targetPosition.Value;
+			var position = Target();
+			actor.transform.position = position;
 			return TaskStatus.Success;
 		}
 
@@ -37,8 +39,8 @@ public class AiJumpTo : Action {
 
 	public void TriggerUsingForce() {
 		var rigid = actor.rigidBody;
-
-		Vector3 p = targetPosition.Value;
+		var position = Target();
+		Vector3 p = position;
 		float gravity = Physics.gravity.magnitude;
 
 		// Selected angle in radians
@@ -67,5 +69,12 @@ public class AiJumpTo : Action {
 
 		// Alternative way:
 		rigid.AddForce(finalVelocity * rigid.mass, ForceMode.Impulse);
+	}
+
+	protected virtual Vector3 Target() {
+		if (target == null || target.Value == null) {
+			return targetPosition.Value;
+		}
+		return target.Value.transform.position;
 	}
 }

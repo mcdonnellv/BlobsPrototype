@@ -5,6 +5,12 @@ using System.Linq;
 using Com.LuisPedroFonseca.ProCamera2D;
 using BehaviorDesigner.Runtime;
 
+public enum BattleCommand {
+	None,
+	Move,
+	Attack,
+};
+
 public class CombatManager : MonoBehaviour {
 	private static CombatManager _combatManager;
 	public static CombatManager combatManager { get {if(_combatManager == null) _combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>(); return _combatManager; } }
@@ -18,13 +24,15 @@ public class CombatManager : MonoBehaviour {
 	public Transform enemySpawner;
 	public Camera battleCam;
 
-	private float inputBlockTime = 4f;
-	private float lastInputTime = -4f;
-	private Vector3 lastBlobAnchorPos;
+	static float actionFixedTime = 2f;
+	static float moveDistance = 5f;
+	private float actionProgressTime = 0;
 
-	static int spawnerIndex = 0;
-	bool fighting = false;
-	float fightSpeed = 1f;
+
+	private Vector3 lastBlobAnchorPos;
+	private BattleCommand queuedCommand = BattleCommand.None;
+	private BattleCommand currentTask = BattleCommand.None;
+
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
 	Transform blobAnchorMarker;
@@ -34,14 +42,15 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	public void SetupLevel() {
-		lastInputTime = -4f;
 		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  new Vector3(0.01f,0,0));
 		blobAnchorMarker = GameObject.Find("BlobAnchorMarker").transform;
 		blobAnchorMarker.position = new Vector3(0.01f, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
 
-		Actor mainBlob = AddActor("AiBlob", null, new Vector3(0,0,0));
+		ProCamera2D.Instance.AddCameraTarget( AddActor("AiBlobMelee", null, new Vector3(0,0,0)).transform );
+		ProCamera2D.Instance.AddCameraTarget( AddActor("AiBlobRanged", null, new Vector3(0,0,0)).transform );
+		ProCamera2D.Instance.AddCameraTarget(blobAnchorMarker.transform);
+
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
-		ProCamera2D.Instance.AddCameraTarget(mainBlob.transform);
 	}
 
 	public void ResetLevel() {
@@ -77,14 +86,23 @@ public class CombatManager : MonoBehaviour {
 	public Actor AddActor(Blob blob) { return null; }
 
 
+	private void AllowAttacking(float duration) {
+		GlobalVariables.Instance.SetVariableValue("gAttackAllowed", true);
+		Invoke("BanAttacking", duration);
+	}
+
+
+	private void BanAttacking() {
+		GlobalVariables.Instance.SetVariableValue("gAttackAllowed", false);
+	}
+
+
 	public void StartFight() {
-		fighting = true;
 		battleCam.gameObject.SetActive(true);
 	}
 
 
 	public void EndFight() {
-		fighting = false;
 		battleCam.gameObject.SetActive(false);
 		hudManager.combatMenu.CombatDone();
 	}
@@ -130,11 +148,11 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	public void AdvanceBlobAnchorPosition() {
-		TransformBlobAnchorPosition(new Vector3(10f,0,0));
+		TransformBlobAnchorPosition(new Vector3(moveDistance,0,0));
 	}
 
 	public void RevertBlobAnchorPosition() {
-		TransformBlobAnchorPosition(new Vector3(-10f,0,0));
+		TransformBlobAnchorPosition(new Vector3(-moveDistance,0,0));
 	}
 
 	private void TransformBlobAnchorPosition(Vector3 offset) {
@@ -145,6 +163,33 @@ public class CombatManager : MonoBehaviour {
 		blobAnchorMarker.position = new Vector3(anchor.x, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
 	}
 
+
+	private void ExecuteBattlecommand(BattleCommand cmd) {
+		switch(cmd) {
+		case BattleCommand.None: 
+			return;
+		case BattleCommand.Attack: 
+			AllowAttacking(actionFixedTime); 
+			return;
+
+		case BattleCommand.Move:
+			//cast ray to see if the path is clear
+			Vector3 pos = blobAnchorMarker.position;
+			pos.y = .5f;
+			pos.z = 0f;
+			float checkDistance = moveDistance * 2 ;
+			Ray ray = new Ray(pos, Vector3.right);
+			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
+			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
+			for(int i = 0; i < hit.Length; i++)
+				if( hit[i].collider.tag == "Enemy")
+					return; // the way si blocked		
+			AdvanceBlobAnchorPosition();
+			return;
+		}
+	}
+
+
 	private void InputUpdate() {
 		if(Input.GetKeyDown(KeyCode.K)) {
 			foreach(Actor actor in actors) {
@@ -154,35 +199,45 @@ public class CombatManager : MonoBehaviour {
 			}
 		}
 
-		if(lastInputTime + inputBlockTime > Time.time)
+		if(queuedCommand != BattleCommand.None || currentTask != BattleCommand.None)
 			return;
-		
-		if(Input.GetButton("Jump")) {
-			//cast ray to see if the path is clear
-			Vector3 pos = blobAnchorMarker.position;
-			pos.y = .5f;
-			pos.z = 0f;
-			float checkDistance = 11f;
-			Ray ray = new Ray(pos, Vector3.right);
-			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
-			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
-			bool clearToMove = true;
-			for(int i = 0; i < hit.Length; i++)
-				if( hit[i].collider.tag == "Enemy")
-					clearToMove = false;		
-			if(clearToMove) {
-				AdvanceBlobAnchorPosition();
-				lastInputTime = Time.time;
-			}
-		}
-			
 
+		if(Input.GetKeyDown(KeyCode.A)) {
+			queuedCommand = BattleCommand.Attack;
+			actionProgressTime = actionFixedTime;
+		}
+
+		if(Input.GetButton("Jump")) {
+			queuedCommand = BattleCommand.Move;
+			actionProgressTime = actionFixedTime;
+		}
 	}
 
 	void Update() {
 		
+		actionProgressTime -= Time.deltaTime;
+		if(actionProgressTime <= 0){
+			if(currentTask != BattleCommand.None) {
+				currentTask = BattleCommand.None;
+			}
 
-		 
+			if(queuedCommand != BattleCommand.None) {
+				ExecuteBattlecommand(queuedCommand);
+				currentTask = queuedCommand;
+				queuedCommand = BattleCommand.None;
+				actionProgressTime = actionFixedTime;
+			}
+		}
+		
+		BattleHud bh = HudManager.hudManager.battleHud;
+
+		bh.timeBar.value = actionProgressTime / actionFixedTime;
+
+		bh.commandLabel.color = queuedCommand == BattleCommand.None ? Color.gray : Color.green;
+		bh.commandLabel.text = "command: " + queuedCommand.ToString();
+
+		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
+		bh.actionLabel.text = "action: " + currentTask.ToString();
 	}
 
 	void FixedUpdate () {

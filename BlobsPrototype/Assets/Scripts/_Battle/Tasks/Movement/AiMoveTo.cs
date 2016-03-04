@@ -29,6 +29,7 @@ public class AiMoveTo : Action {
 	}
 
 	public override void OnStart() {
+		collided = false;
 		actor.onCollided += Collided;
 	}
 
