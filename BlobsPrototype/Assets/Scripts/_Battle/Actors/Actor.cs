@@ -14,12 +14,17 @@ public class Actor : MonoBehaviour {
 	public BaseMonster monsterData { get; protected set; }
 	public Rigidbody rigidBody { get; protected set; }
 	public ActorData data;
+	public ActorHealth health { get; protected set; }
 
 	protected BehaviorTree behaviorTree;
-	protected ActorHealth health;
 	protected Animator anim;
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
+	protected Puppet2D_GlobalControl p2dCtrl;
+	protected JellySprite jellySprite;
+	protected bool alwaysUpdateJoints = false;
+	protected bool reparantedRefPoints = false;
+
 
 	public void SetTarget(GameObject targetObject) {
 		var targetVariable = (SharedGameObject)behaviorTree.GetVariable("Target");
@@ -31,11 +36,16 @@ public class Actor : MonoBehaviour {
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
 		rigidBody = GetComponent<Rigidbody>();
+		p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
+		jellySprite = GetComponentInChildren<JellySprite>();
+
 		monsterData = null;
 		if(monsterId != -1) {
 			monsterData = MonsterManager.monsterManager.GetBaseMonsterByID(monsterId);
 			data = monsterData.data;
 		}
+		else
+			data.opposingFaction = "Enemy";
 	}
 
 	// Use this for initialization
@@ -52,6 +62,21 @@ public class Actor : MonoBehaviour {
 		anim.SetFloat("Speed", GetCurSpeed());
 		anim.SetBool("Grounded", IsGrounded());
 		groundCheckDone = false;
+
+		if(jellySprite != null && reparantedRefPoints == false && jellySprite.CentralPoint != null) {
+			reparantedRefPoints = true;
+			jellySprite.CentralPoint.Body3D.isKinematic = true;
+			Transform refpoints = jellySprite.CentralPoint.transform.parent;
+			refpoints.parent = jellySprite.transform;
+
+			// tag all colliders as blob
+			Collider[] cols = gameObject.GetComponentsInChildren<Collider>();
+			for(int i = 0; i < cols.Length; i++)
+				cols[i].gameObject.tag = "Blob";
+		}
+
+		if(alwaysUpdateJoints)
+			jellySprite.UpdateJoints();
 	}
 
 
@@ -70,22 +95,18 @@ public class Actor : MonoBehaviour {
 	}
 
 
-	public bool IsAlive() {
-		ActorHealth ac = GetComponent<ActorHealth>();
-		if(ac == null) 
-			return false;
-		return ac.IsAlive();
-	}
-
-
 	// called by death animation
 	public void DestroySelf() {
 		Destroy(gameObject);
 	}
 
 
-	public virtual void AddForce(Vector2 v) {
+	public void AddForce(Vector2 v) {
  		rigidBody.AddForce(v);
+	}
+
+	public void AddVerticalForce(float f) {
+		AddForce(Vector2.up * f);
 	}
 
 	public void AnimJumpEvent() {
@@ -105,7 +126,7 @@ public class Actor : MonoBehaviour {
 		}
 	}
 
-	public virtual bool IsGrounded () {
+	public bool IsGrounded () {
 		if(groundCheckDone)
 			return isGrounded;
 		
@@ -124,18 +145,19 @@ public class Actor : MonoBehaviour {
 
 
 	public virtual bool IsFacingRight() {
-		Puppet2D_GlobalControl p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
 		if(p2dCtrl != null) 
 			return p2dCtrl.flip == true;
-		else
-			return transform.rotation.y == 0;
+		if(jellySprite != null)
+			return jellySprite.m_FlipX == false;
+		return transform.rotation.y == 0;
 	}
 
 
 	public virtual void FaceOpposite() {
-		Puppet2D_GlobalControl p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
 		if(p2dCtrl != null) 
 			p2dCtrl.flip = !p2dCtrl.flip;
+		else if(jellySprite != null)
+			jellySprite.m_FlipX = !jellySprite.m_FlipX;
 		else
 			transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
 	}

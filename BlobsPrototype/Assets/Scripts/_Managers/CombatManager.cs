@@ -100,7 +100,7 @@ public class CombatManager : MonoBehaviour {
 		foreach(Actor actor in actors) {
 			if(actor.tag == tag) {
 				if(livingOnly) {
-					if(actor.IsAlive())
+					if(actor.health != null && actor.health.IsAlive())
 						ret.Add(actor);
 				}
 				else

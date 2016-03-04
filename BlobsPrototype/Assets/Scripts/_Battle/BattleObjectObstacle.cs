@@ -10,11 +10,6 @@ public class BattleObjectObstacle : MonoBehaviour {
 			health.onDeath += Death;
 	}
 
-	public void OnTriggerEnter (Collider other) {
-		if(other.tag == "Blob")
-			CombatManager.combatManager.RevertBlobAnchorPosition();
-	}
-
 	private void Death() {
 		Destroy(gameObject);
 	}
