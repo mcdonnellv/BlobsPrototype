@@ -11,6 +11,7 @@ public enum BattleCommand {
 	Attack,
 };
 
+
 public class CombatManager : MonoBehaviour {
 	private static CombatManager _combatManager;
 	public static CombatManager combatManager { get {if(_combatManager == null) _combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>(); return _combatManager; } }
@@ -25,7 +26,6 @@ public class CombatManager : MonoBehaviour {
 	public Camera battleCam;
 
 	static float actionFixedTime = 2f;
-	static float moveDistance = 5f;
 	private float actionProgressTime = 0;
 
 
@@ -35,22 +35,39 @@ public class CombatManager : MonoBehaviour {
 
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
-	Transform blobAnchorMarker;
+
+	private BlobAnchorHelper blobAnchor;
 
 	public void Start() {
+		blobAnchor = root.GetComponentInChildren<BlobAnchorHelper>();
 		SetupLevel();
 	}
 
-	public void SetupLevel() {
-		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  new Vector3(0.01f,0,0));
-		blobAnchorMarker = GameObject.Find("BlobAnchorMarker").transform;
-		blobAnchorMarker.position = new Vector3(0.01f, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
+	void SetupLevelSpecifics() {
+		Actor actor;
+		actor = AddActor("AiBlobMelee", null, new Vector3(0,0,0));
+		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Near);
 
-		ProCamera2D.Instance.AddCameraTarget( AddActor("AiBlobMelee", null, new Vector3(0,0,0)).transform );
-		ProCamera2D.Instance.AddCameraTarget( AddActor("AiBlobRanged", null, new Vector3(0,0,0)).transform );
-		ProCamera2D.Instance.AddCameraTarget(blobAnchorMarker.transform);
+		actor = AddActor("AiBlobMelee", null, new Vector3(0,0,0));
+		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Near);
+
+		actor = AddActor("AiBlobRanged", null, new Vector3(0,0,0));
+		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Mid);
+
+		actor = AddActor("AiBlobRanged", null, new Vector3(0,0,0));
+		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Far);
 
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
+	}
+
+
+	void SetupLevel() {
+		blobAnchor.Reset();
+		SetupLevelSpecifics();
+
+		Transform actors = root.FindChild("Actors");
+		foreach(Transform child in actors)
+			ProCamera2D.Instance.AddCameraTarget(child);
 	}
 
 	public void ResetLevel() {
@@ -147,21 +164,10 @@ public class CombatManager : MonoBehaviour {
 			ResetLevel();
 	}
 
-	public void AdvanceBlobAnchorPosition() {
-		TransformBlobAnchorPosition(new Vector3(moveDistance,0,0));
-	}
 
-	public void RevertBlobAnchorPosition() {
-		TransformBlobAnchorPosition(new Vector3(-moveDistance,0,0));
-	}
 
-	private void TransformBlobAnchorPosition(Vector3 offset) {
-		SharedVector3 sharedVar = (SharedVector3)GlobalVariables.Instance.GetVariable("gBlobAnchor");
-		Vector3 anchor = sharedVar.Value + offset;
-		anchor.x = Mathf.Max(0f, anchor.x);
-		GlobalVariables.Instance.SetVariableValue("gBlobAnchor",  anchor);
-		blobAnchorMarker.position = new Vector3(anchor.x, blobAnchorMarker.position.y, blobAnchorMarker.position.z);
-	}
+
+
 
 
 	private void ExecuteBattlecommand(BattleCommand cmd) {
@@ -174,17 +180,17 @@ public class CombatManager : MonoBehaviour {
 
 		case BattleCommand.Move:
 			//cast ray to see if the path is clear
-			Vector3 pos = blobAnchorMarker.position;
+			Vector3 pos = blobAnchor.anchorTargetPos;
 			pos.y = .5f;
 			pos.z = 0f;
-			float checkDistance = moveDistance * 2 ;
+			float checkDistance = blobAnchor.moveDistance * 2 ;
 			Ray ray = new Ray(pos, Vector3.right);
 			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
 			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
 			for(int i = 0; i < hit.Length; i++)
 				if( hit[i].collider.tag == "Enemy")
-					return; // the way si blocked		
-			AdvanceBlobAnchorPosition();
+					return; // the way is blocked		
+			blobAnchor.AdvanceBlobAnchorPosition();
 			return;
 		}
 	}
@@ -238,6 +244,8 @@ public class CombatManager : MonoBehaviour {
 
 		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
 		bh.actionLabel.text = "action: " + currentTask.ToString();
+
+		blobAnchor.Update();
 	}
 
 	void FixedUpdate () {

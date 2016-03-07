@@ -25,10 +25,9 @@ public class Actor : MonoBehaviour {
 	protected bool alwaysUpdateJoints = false;
 	protected bool reparantedRefPoints = false;
 
-
-	public void SetTarget(GameObject targetObject) {
-		var targetVariable = (SharedGameObject)behaviorTree.GetVariable("Target");
-		targetVariable.Value = targetObject;
+	public void SetBehaviorSharedVariable(string name, object value) {
+		var sharedVariable = (SharedVariable)behaviorTree.GetVariable(name);
+		sharedVariable.SetValue(value);
 	}
 
 	public virtual void Awake () {
