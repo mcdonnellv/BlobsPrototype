@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
@@ -37,6 +38,8 @@ public class AiAcquireVisibleTarget : Conditional {
 					objects.Add(gameObjects[i]);
 			}
 		}
+
+		objects = objects.OrderBy( x => x.transform.position.x).ToList();
 	}
 
 	public override TaskStatus OnUpdate() {

@@ -21,7 +21,8 @@ public class AiMoveTo : Action {
 	public SharedGameObject target;
 	public SharedVector3 targetPosition;
 	protected Actor actor;
-	protected bool collided = false;
+	protected bool collidedWithSomething = false;
+	protected bool collidedWithTarget = false;
 
 
 	public override void OnAwake() {
@@ -29,14 +30,16 @@ public class AiMoveTo : Action {
 	}
 
 	public override void OnStart() {
-		collided = false;
+		collidedWithSomething = false;
+		collidedWithTarget = false;
 		actor.onCollided += Collided;
 	}
 
 	public void Collided(Collider other) {
+		collidedWithSomething = true;
 		if (target != null && target.Value != null) {
 			if(other.gameObject == target.Value) {
-				collided = true;
+				collidedWithTarget = true;
 			}
 		}
 	}
@@ -44,10 +47,15 @@ public class AiMoveTo : Action {
 	public override TaskStatus OnUpdate() {
 		var position = Target();
 		if (HasArrived()) {
-			actor.onCollided -= Collided;
-			if(!collided)
+			if(!collidedWithTarget)
 				transform.position = position;
+			Cleanup();
 			return TaskStatus.Success;
+		}
+
+		if(collidedWithSomething) {
+			Cleanup();
+			return TaskStatus.Failure;
 		}
 
 		AiManager.MoveToPoint(actor, position, toVel.Value, maxSpeed.Value, maxForce.Value, minForce.Value, gain.Value);
@@ -61,17 +69,25 @@ public class AiMoveTo : Action {
 			return true;
 
 		// also check if we have physical contact with target,
-		if (collided == true) 
+		if (collidedWithTarget == true) 
 			return true;
 		
 		return false;
 	}
 
 	protected virtual Vector3 Target() {
-		if (target == null || target.Value == null) {
-			return targetPosition.Value;
-		}
-		return target.Value.transform.position;
+		Vector3 ret;
+		if (target == null || target.Value == null)
+			ret =  targetPosition.Value;
+		else
+			ret =  target.Value.transform.position;
+
+		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
+		return ret;
+	}
+
+	protected void Cleanup() {
+		actor.onCollided -= Collided;
 	}
 }
 

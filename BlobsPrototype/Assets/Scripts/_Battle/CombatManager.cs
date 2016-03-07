@@ -44,18 +44,10 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	void SetupLevelSpecifics() {
-		Actor actor;
-		actor = AddActor("AiBlobMelee", null, new Vector3(0,0,0));
-		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Near);
-
-		actor = AddActor("AiBlobMelee", null, new Vector3(0,0,0));
-		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Near);
-
-		actor = AddActor("AiBlobRanged", null, new Vector3(0,0,0));
-		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Mid);
-
-		actor = AddActor("AiBlobRanged", null, new Vector3(0,0,0));
-		blobAnchor.SetBlobActorPosition(actor, BlobAnchorPosition.Far);
+		AddActor("AiBlob", null, BlobAnchorPosition.Near);
+		AddActor("AiBlob", null, BlobAnchorPosition.Near);
+		AddActor("AiBlob", null, BlobAnchorPosition.Mid);
+		AddActor("AiBlob", null, BlobAnchorPosition.Far);
 
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
 	}
@@ -65,9 +57,9 @@ public class CombatManager : MonoBehaviour {
 		blobAnchor.Reset();
 		SetupLevelSpecifics();
 
-		Transform actors = root.FindChild("Actors");
-		foreach(Transform child in actors)
-			ProCamera2D.Instance.AddCameraTarget(child);
+		//Transform actors = root.FindChild("Actors");
+		//foreach(Transform child in actors)
+			//ProCamera2D.Instance.AddCameraTarget(child);
 	}
 
 	public void ResetLevel() {
@@ -76,11 +68,12 @@ public class CombatManager : MonoBehaviour {
 		SetupLevel();
 	}
 
-	public Actor AddActor(string prefabName, CombatStats cs, Vector3 spawnPos) {
+	public Actor AddActor(string prefabName, CombatStats cs, BlobAnchorPosition anchorPos) {
 		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
 		go.transform.parent = root.FindChild("Actors");
-		go.transform.localPosition = spawnPos;
+		go.transform.localPosition = Vector3.zero;
 		Actor actor = go.GetComponent<Actor>();
+		blobAnchor.SetBlobActorPosition(actor, anchorPos);
 		actors.Add(actor);
 		ActorHealth health = actor.GetComponent<ActorHealth>();
 		if(health != null) {
@@ -183,7 +176,7 @@ public class CombatManager : MonoBehaviour {
 			Vector3 pos = blobAnchor.anchorTargetPos;
 			pos.y = .5f;
 			pos.z = 0f;
-			float checkDistance = blobAnchor.moveDistance * 2 ;
+			float checkDistance = blobAnchor.marchDistance;
 			Ray ray = new Ray(pos, Vector3.right);
 			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
 			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);

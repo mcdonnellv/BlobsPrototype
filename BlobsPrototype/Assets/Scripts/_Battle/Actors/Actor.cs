@@ -62,17 +62,16 @@ public class Actor : MonoBehaviour {
 		anim.SetBool("Grounded", IsGrounded());
 		groundCheckDone = false;
 
-		if(jellySprite != null && reparantedRefPoints == false && jellySprite.CentralPoint != null) {
-			reparantedRefPoints = true;
-			jellySprite.CentralPoint.Body3D.isKinematic = true;
-			Transform refpoints = jellySprite.CentralPoint.transform.parent;
-			refpoints.parent = jellySprite.transform;
-
-			// tag all colliders as blob
-			Collider[] cols = gameObject.GetComponentsInChildren<Collider>();
-			for(int i = 0; i < cols.Length; i++)
-				cols[i].gameObject.tag = "Blob";
-		}
+//		if(jellySprite != null && reparantedRefPoints == false && jellySprite.CentralPoint != null) {
+//			reparantedRefPoints = true;
+//			Transform refpoints = jellySprite.CentralPoint.transform.parent;
+//			refpoints.parent = jellySprite.transform.parent;
+//
+//			// tag all colliders as blob
+//			Collider[] cols = gameObject.GetComponentsInChildren<Collider>();
+//			for(int i = 0; i < cols.Length; i++)
+//				cols[i].gameObject.tag = "Blob";
+//		}
 
 		if(alwaysUpdateJoints)
 			jellySprite.UpdateJoints();
@@ -113,14 +112,14 @@ public class Actor : MonoBehaviour {
 	}
 
 
-	public void OnCollisionEnter(Collision collision) {
-		if (onCollided != null) {
+	public void OnCollisionStay(Collision collision) {
+		if (onCollided != null && collision.collider.tag != "Ground") {
 			onCollided(collision.collider);
 		}
 	}
 
-	public void OnTriggerEnter(Collider other) {
-		if (onCollided != null) {
+	public void OnTriggerStay(Collider other) {
+		if (onCollided != null && GetComponent<Collider>().tag != "Ground") {
 			onCollided(other);
 		}
 	}
