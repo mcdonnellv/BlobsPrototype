@@ -20,8 +20,8 @@ public class Actor : MonoBehaviour {
 	protected Animator anim;
 	protected bool groundCheckDone = false;
 	protected bool isGrounded = false;
-	protected Puppet2D_GlobalControl p2dCtrl;
-	protected JellySprite jellySprite;
+	public Puppet2D_GlobalControl puppet2d;
+	public JellySprite jellySprite;
 	protected bool alwaysUpdateJoints = false;
 	protected bool reparantedRefPoints = false;
 
@@ -30,13 +30,16 @@ public class Actor : MonoBehaviour {
 		sharedVariable.SetValue(value);
 	}
 
+	public object GetBehaviorSharedVariable(string name) {
+		var sharedVariable = (SharedVariable)behaviorTree.GetVariable(name);
+		return sharedVariable.GetValue();
+	}
+
 	public virtual void Awake () {
 		behaviorTree = GetComponent<BehaviorTree>();
 		health = GetComponent<ActorHealth>();
 		anim = GetComponent<Animator>();
 		rigidBody = GetComponent<Rigidbody>();
-		p2dCtrl = GetComponent<Puppet2D_GlobalControl>();
-		jellySprite = GetComponentInChildren<JellySprite>();
 
 		monsterData = null;
 		if(monsterId != -1) {
@@ -55,24 +58,15 @@ public class Actor : MonoBehaviour {
 		}
 	}
 
-	
-	// Update is called once per frame
-	public virtual void Update () {
-		anim.SetFloat("Speed", GetCurSpeed());
+	void FixedUpdate () {
+		float speed = Mathf.Abs(rigidBody.velocity.x);
+		anim.SetFloat("Speed", speed);
 		anim.SetBool("Grounded", IsGrounded());
+	}
+
+	// Update is called once per frame
+	public void Update () {
 		groundCheckDone = false;
-
-//		if(jellySprite != null && reparantedRefPoints == false && jellySprite.CentralPoint != null) {
-//			reparantedRefPoints = true;
-//			Transform refpoints = jellySprite.CentralPoint.transform.parent;
-//			refpoints.parent = jellySprite.transform.parent;
-//
-//			// tag all colliders as blob
-//			Collider[] cols = gameObject.GetComponentsInChildren<Collider>();
-//			for(int i = 0; i < cols.Length; i++)
-//				cols[i].gameObject.tag = "Blob";
-//		}
-
 		if(alwaysUpdateJoints)
 			jellySprite.UpdateJoints();
 	}
@@ -143,8 +137,8 @@ public class Actor : MonoBehaviour {
 
 
 	public virtual bool IsFacingRight() {
-		if(p2dCtrl != null) 
-			return p2dCtrl.flip == true;
+		if(puppet2d != null) 
+			return puppet2d.flip == true;
 		if(jellySprite != null)
 			return jellySprite.m_FlipX == false;
 		return transform.rotation.y == 0;
@@ -152,16 +146,11 @@ public class Actor : MonoBehaviour {
 
 
 	public virtual void FaceOpposite() {
-		if(p2dCtrl != null) 
-			p2dCtrl.flip = !p2dCtrl.flip;
+		if(puppet2d != null) 
+			puppet2d.flip = !puppet2d.flip;
 		else if(jellySprite != null)
 			jellySprite.m_FlipX = !jellySprite.m_FlipX;
 		else
 			transform.localRotation = Quaternion.Euler(0, IsFacingRight() ? 180 : 0, 0);
-	}
-
-
-	public float GetCurSpeed() {
-		return rigidBody.velocity.magnitude;
 	}
 }
