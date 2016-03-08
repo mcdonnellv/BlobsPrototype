@@ -13,7 +13,8 @@ public class JellyBoxParent : MonoBehaviour
 		// initialize - it'd be neater to do it in Awake(), but you'd also need
 		// to fiddle with the script execution order settings to ensure that this script
 		// always runs after the Jelly Sprite has been configured)
-		if(jellySprite.CentralPoint.transform.parent != this.transform)
+		if(jellySprite != null && jellySprite.CentralPoint != null && 
+			jellySprite.CentralPoint.transform.parent != this.transform)
 		{
 			jellySprite.CentralPoint.transform.parent = this.transform;
 			jellySprite.SetPosition(this.transform.position, true);

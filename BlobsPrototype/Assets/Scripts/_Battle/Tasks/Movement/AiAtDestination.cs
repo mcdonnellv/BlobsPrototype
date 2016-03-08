@@ -20,8 +20,11 @@ public class AiAtDestination : Conditional {
 	}
 
 	protected virtual Vector3 Target() {
-		Vector3 ret = target.Value.transform.position;
-		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
+		Vector3 ret = transform.position;
+		if(target != null && target.Value != null) {
+			ret = target.Value.transform.position;
+			ret = new Vector3(ret.x, 0f, 0f); //prune y and z
+		}
 		return ret;
 	}
 }

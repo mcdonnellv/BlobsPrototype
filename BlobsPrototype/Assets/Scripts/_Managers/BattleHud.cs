@@ -6,4 +6,5 @@ public class BattleHud : MonoBehaviour {
 	public UILabel commandLabel;
 	public UILabel actionLabel;
 	public UIProgressBar timeBar;
+	public List<BattleBlobLifeBar> lifeBars;
 }

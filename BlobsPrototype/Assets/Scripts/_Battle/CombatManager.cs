@@ -45,9 +45,9 @@ public class CombatManager : MonoBehaviour {
 
 	void SetupLevelSpecifics() {
 		AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		AddActor("AiBlob", null, BlobAnchorPosition.Mid);
-		AddActor("AiBlob", null, BlobAnchorPosition.Far);
+		//AddActor("AiBlob", null, BlobAnchorPosition.Near);
+		//AddActor("AiBlob", null, BlobAnchorPosition.Mid);
+		//AddActor("AiBlob", null, BlobAnchorPosition.Far);
 
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
 	}
@@ -56,6 +56,8 @@ public class CombatManager : MonoBehaviour {
 	void SetupLevel() {
 		blobAnchor.Reset();
 		SetupLevelSpecifics();
+		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
+			lifeBar.gameObject.SetActive(lifeBar.health != null);
 
 		//Transform actors = root.FindChild("Actors");
 		//foreach(Transform child in actors)
@@ -63,6 +65,8 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	public void ResetLevel() {
+		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
+			lifeBar.health = null;
 		root.FindChild("Actors").DestroyChildren();
 		root.FindChild("Objects").DestroyChildren();
 		SetupLevel();
@@ -78,6 +82,12 @@ public class CombatManager : MonoBehaviour {
 		ActorHealth health = actor.GetComponent<ActorHealth>();
 		if(health != null) {
 			health.onDeath += BlobDied;
+			foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars) {
+				if(lifeBar.health == null) {
+					lifeBar.health = health;
+					break;
+				}
+			}
 		}
 		return actor;
 	}
@@ -158,11 +168,6 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-
-
-
-
-
 	private void ExecuteBattlecommand(BattleCommand cmd) {
 		switch(cmd) {
 		case BattleCommand.None: 
@@ -190,7 +195,7 @@ public class CombatManager : MonoBehaviour {
 
 
 	private void InputUpdate() {
-		if(Input.GetKeyDown(KeyCode.K)) {
+		if(Input.GetKey(KeyCode.K)) {
 			foreach(Actor actor in actors) {
 				ActorHealth ah = actor.GetComponent<ActorHealth>();
 				if(ah != null && ah.health > 0)
@@ -198,10 +203,30 @@ public class CombatManager : MonoBehaviour {
 			}
 		}
 
+		if (Input.GetButtonDown("Fire1")) {
+			Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			pos.z = 0;
+			float radius = 10f;
+			float force = 500f;
+			Collider[] colliders = Physics.OverlapSphere(pos, radius);
+			foreach (Collider hit in colliders) {
+				Rigidbody rb = hit.GetComponent<Rigidbody>();
+				if (rb != null) {
+				ActorHealth health = rb.GetComponent<ActorHealth>();
+					if (health != null) {// && rb.gameObject.tag == "Blob") {
+						rb.AddExplosionForce(force, pos,  radius, 0f);
+						float dist = (rb.transform.position - pos).magnitude;
+						dist =  (radius - dist) / radius;
+						health.TakeDamage(force / 50f * dist);
+					}
+				}
+			}
+		}
+
 		if(queuedCommand != BattleCommand.None || currentTask != BattleCommand.None)
 			return;
 
-		if(Input.GetKeyDown(KeyCode.A)) {
+		if(Input.GetKey(KeyCode.A)) {
 			queuedCommand = BattleCommand.Attack;
 			actionProgressTime = actionFixedTime;
 		}

@@ -53,9 +53,16 @@ public class AiMoveTo : Action {
 			return TaskStatus.Success;
 		}
 
-		if(collidedWithSomething) {
-			Cleanup();
-			return TaskStatus.Failure;
+		if(collidedWithSomething && !collidedWithTarget) {
+			Ray ray = new Ray(transform.position + Vector3.up * .5f, (position - transform.position).normalized * 1.5f);
+			Debug.DrawRay(ray.origin, ray.direction);
+			var layerMask = ~((1 << 8) | Physics.IgnoreRaycastLayer);
+			if(Physics.Raycast(ray, 5f, layerMask))
+				return TaskStatus.Running; //somehting is blocking my way
+		}
+
+		if(!actor.IsGrounded()) {
+			return TaskStatus.Running;
 		}
 
 		AiManager.MoveToPoint(actor, position, toVel.Value, maxSpeed.Value, maxForce.Value, minForce.Value, gain.Value);

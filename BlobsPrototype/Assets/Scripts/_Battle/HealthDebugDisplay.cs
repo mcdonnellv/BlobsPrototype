@@ -11,6 +11,6 @@ public class HealthDebugDisplay : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		healthLabel.text = health.health.ToString();
+		healthLabel.text = System.Math.Truncate(health.health).ToString();
 	}
 }
