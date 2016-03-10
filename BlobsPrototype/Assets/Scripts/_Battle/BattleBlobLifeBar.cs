@@ -1,18 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleBlobLifeBar : MonoBehaviour {
-	public ActorHealth health;
-	public UIProgressBar lifeBar;
+public class BattleBlobLifeBar : BattleLifeBar {
+	// add code for portrait
 
-	// Use this for initialization
-	void Start () {
-	
+	void Start() {
+		moveWithActor = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if(health != null && lifeBar != null && health.startHealth != 0)
-			lifeBar.value = health.health / health.startHealth;
+
+	protected override void HostDead() {
 	}
 }

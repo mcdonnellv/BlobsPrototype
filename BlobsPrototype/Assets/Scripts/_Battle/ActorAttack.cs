@@ -10,7 +10,6 @@ public class ActorAttack : MonoBehaviour {
 	public float staminaConsumption = 10f;
 	public List<string> validTargetTags;
 	public Actor actor;
-	public float force = 100f;
 	public bool applyDamageOncePerAttack = false;
 
 	private bool damageApplied = false;
@@ -32,28 +31,31 @@ public class ActorAttack : MonoBehaviour {
 			actorAttackValue = actor.combatStats.attack.combatValue;
 	}
 
-	void OnTriggerStay (Collider col) {
+
+	void OnCollisionStay(Collision collision) {
+		Collider col = collision.collider;
+		foreach(string tag in validTargetTags)
+			if(col.gameObject.tag == tag)
+				ApplyDamage(col);
+	}
+
+		void OnTriggerStay (Collider col) {
+		foreach(string tag in validTargetTags) 
+			if(col.gameObject.tag == tag)
+				ApplyDamage(col);
+	}
+
+	void ApplyDamage(Collider col) {
 		if(applyDamageOncePerAttack && damageApplied)
 			return;
-		
-		foreach(string tag in validTargetTags) {
-			if(col.gameObject.tag == tag) {
-				damageApplied = true;
-				ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
-				if(health == null)
-					continue;
-				
-				if(force > 0 && health.Immune() == false) {
-					Actor victim = col.gameObject.GetComponent<Actor>();
-					if(victim != null)
-						victim.AddForce((actor.IsFacingRight() ? new Vector2(.5f, .5f) : new Vector2(-.5f, .5f)) * force);
-				}
 
-				float modifiedDamage = (damage / 10f) * actorAttackValue; 
-				if(modifiedDamage > 0 && health != null)
-					health.TakeDamage(modifiedDamage);
-				return;
-			}
-		}
+		ActorHealth health = col.gameObject.GetComponent<ActorHealth>();
+		if(health == null)
+			return;
+		
+		damageApplied = true;
+		float modifiedDamage = (damage / 10f) * actorAttackValue; 
+		if(modifiedDamage > 0 && health != null)
+			health.TakeDamage(modifiedDamage);
 	}
 }

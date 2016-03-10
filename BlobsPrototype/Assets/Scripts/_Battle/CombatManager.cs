@@ -24,12 +24,16 @@ public class CombatManager : MonoBehaviour {
 	public List <Transform> blobSpawner;
 	public Transform enemySpawner;
 	public Camera battleCam;
+	public float battleBeat;
 
 	static float actionFixedTime = 2f;
 	private float actionProgressTime = 0;
 
+	public delegate void Beat();
+	public event Beat onBeat;
 
 	private Vector3 lastBlobAnchorPos;
+	private BattleCommand inputCommand = BattleCommand.None;
 	private BattleCommand queuedCommand = BattleCommand.None;
 	private BattleCommand currentTask = BattleCommand.None;
 
@@ -45,9 +49,9 @@ public class CombatManager : MonoBehaviour {
 
 	void SetupLevelSpecifics() {
 		AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		//AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		//AddActor("AiBlob", null, BlobAnchorPosition.Mid);
-		//AddActor("AiBlob", null, BlobAnchorPosition.Far);
+		AddActor("AiBlob", null, BlobAnchorPosition.Near);
+		AddActor("AiBlob", null, BlobAnchorPosition.Mid);
+		AddActor("AiBlob", null, BlobAnchorPosition.Far);
 
 		AddObject("BattleObjectGoal", new Vector3(50,0,0));
 	}
@@ -203,47 +207,58 @@ public class CombatManager : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetButtonDown("Fire1")) {
-			Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			pos.z = 0;
-			float radius = 10f;
-			float force = 500f;
-			Collider[] colliders = Physics.OverlapSphere(pos, radius);
-			foreach (Collider hit in colliders) {
-				Rigidbody rb = hit.GetComponent<Rigidbody>();
-				if (rb != null) {
-				ActorHealth health = rb.GetComponent<ActorHealth>();
-					if (health != null) {// && rb.gameObject.tag == "Blob") {
-						rb.AddExplosionForce(force, pos,  radius, 0f);
-						float dist = (rb.transform.position - pos).magnitude;
-						dist =  (radius - dist) / radius;
-						health.TakeDamage(force / 50f * dist);
-					}
-				}
-			}
-		}
+//		if (Input.GetButtonDown("Fire1")) {
+//			Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+//			pos.z = 0;
+//			float radius = 10f;
+//			float force = 500f;
+//			Collider[] colliders = Physics.OverlapSphere(pos, radius);
+//			foreach (Collider hit in colliders) {
+//				Rigidbody rb = hit.GetComponent<Rigidbody>();
+//				if (rb != null) {
+//				ActorHealth health = rb.GetComponent<ActorHealth>();
+//					if (health != null) {// && rb.gameObject.tag == "Blob") {
+//						rb.AddExplosionForce(force, pos,  radius, 0f);
+//						float dist = (rb.transform.position - pos).magnitude;
+//						dist =  (radius - dist) / radius;
+//						health.TakeDamage(force / 50f * dist);
+//					}
+//				}
+//			}
+//		}
 
 		if(queuedCommand != BattleCommand.None || currentTask != BattleCommand.None)
 			return;
 
-		if(Input.GetKey(KeyCode.A)) {
-			queuedCommand = BattleCommand.Attack;
-			actionProgressTime = actionFixedTime;
-		}
+		if(Input.GetKey(KeyCode.A)) 
+			inputCommand = BattleCommand.Attack;
+		
+		if(Input.GetButton("Jump"))
+			inputCommand = BattleCommand.Move;
+	}
 
-		if(Input.GetButton("Jump")) {
-			queuedCommand = BattleCommand.Move;
+	void BeatUpdate() {
+		if (onBeat != null) 
+			onBeat();
+
+		if(inputCommand != BattleCommand.None) {
+			queuedCommand = inputCommand;
+			inputCommand = BattleCommand.None;
 			actionProgressTime = actionFixedTime;
 		}
 	}
 
 	void Update() {
-		
+		battleBeat += Time.deltaTime;
+		if(battleBeat > 1f) {
+			BeatUpdate();
+			battleBeat = 0f;
+		}
+			
 		actionProgressTime -= Time.deltaTime;
 		if(actionProgressTime <= 0){
-			if(currentTask != BattleCommand.None) {
+			if(currentTask != BattleCommand.None)
 				currentTask = BattleCommand.None;
-			}
 
 			if(queuedCommand != BattleCommand.None) {
 				ExecuteBattlecommand(queuedCommand);

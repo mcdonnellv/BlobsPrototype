@@ -24,6 +24,7 @@ public class Actor : MonoBehaviour {
 	public JellySprite jellySprite;
 	protected bool alwaysUpdateJoints = false;
 	protected bool reparantedRefPoints = false;
+	protected bool dead = false;
 
 	public void SetBehaviorSharedVariable(string name, object value) {
 		var sharedVariable = (SharedVariable)behaviorTree.GetVariable(name);
@@ -59,6 +60,8 @@ public class Actor : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
+		if(dead)
+			return;
 		float speed = Mathf.Abs(rigidBody.velocity.x);
 		anim.SetFloat("Speed", speed);
 		anim.SetBool("Grounded", IsGrounded());
@@ -75,7 +78,7 @@ public class Actor : MonoBehaviour {
 	public void Death() {
 		if(behaviorTree)
 			behaviorTree.DisableBehavior();
-
+		dead = true;
 		// trigger the death animation
 		anim.SetTrigger("Death");
 	}

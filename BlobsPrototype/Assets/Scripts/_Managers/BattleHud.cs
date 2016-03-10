@@ -7,4 +7,5 @@ public class BattleHud : MonoBehaviour {
 	public UILabel actionLabel;
 	public UIProgressBar timeBar;
 	public List<BattleBlobLifeBar> lifeBars;
+	public Camera camera;
 }

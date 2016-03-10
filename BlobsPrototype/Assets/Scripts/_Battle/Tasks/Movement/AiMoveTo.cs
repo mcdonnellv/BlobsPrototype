@@ -20,6 +20,8 @@ public class AiMoveTo : Action {
 	public SharedFloat arriveDistance = 0.01f;
 	public SharedGameObject target;
 	public SharedVector3 targetPosition;
+	public SharedBool snapToDestination = true;
+	public SharedBool stopOnCollision = true;
 	protected Actor actor;
 	protected bool collidedWithSomething = false;
 	protected bool collidedWithTarget = false;
@@ -47,16 +49,16 @@ public class AiMoveTo : Action {
 	public override TaskStatus OnUpdate() {
 		var position = Target();
 		if (HasArrived()) {
-			if(!collidedWithTarget)
+			if(snapToDestination.Value && !collidedWithTarget)
 				transform.position = position;
 			Cleanup();
 			return TaskStatus.Success;
 		}
 
-		if(collidedWithSomething && !collidedWithTarget) {
+		if(stopOnCollision.Value && collidedWithSomething) {
 			Ray ray = new Ray(transform.position + Vector3.up * .5f, (position - transform.position).normalized * 1.5f);
 			Debug.DrawRay(ray.origin, ray.direction);
-			var layerMask = ~((1 << 8) | Physics.IgnoreRaycastLayer);
+			var layerMask = ~((1 << 8) | (1 << 9) | (1 << 10) | Physics.IgnoreRaycastLayer);
 			if(Physics.Raycast(ray, 5f, layerMask))
 				return TaskStatus.Running; //somehting is blocking my way
 		}
