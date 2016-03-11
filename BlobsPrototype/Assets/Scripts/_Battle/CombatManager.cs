@@ -244,7 +244,7 @@ public class CombatManager : MonoBehaviour {
 		if(inputCommand != BattleCommand.None) {
 			queuedCommand = inputCommand;
 			inputCommand = BattleCommand.None;
-			actionProgressTime = actionFixedTime;
+			//actionProgressTime = actionFixedTime;
 		}
 	}
 

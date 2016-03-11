@@ -23,7 +23,7 @@ public class AiMoveTo : Action {
 	public SharedBool snapToDestination = true;
 	public SharedBool stopOnCollision = true;
 	protected Actor actor;
-	protected bool collidedWithSomething = false;
+	protected Collider collidedWith;
 	protected bool collidedWithTarget = false;
 
 
@@ -32,13 +32,13 @@ public class AiMoveTo : Action {
 	}
 
 	public override void OnStart() {
-		collidedWithSomething = false;
+		collidedWith = null;
 		collidedWithTarget = false;
 		actor.onCollided += Collided;
 	}
 
 	public void Collided(Collider other) {
-		collidedWithSomething = true;
+		collidedWith = other;
 		if (target != null && target.Value != null) {
 			if(other.gameObject == target.Value) {
 				collidedWithTarget = true;
@@ -55,12 +55,9 @@ public class AiMoveTo : Action {
 			return TaskStatus.Success;
 		}
 
-		if(stopOnCollision.Value && collidedWithSomething) {
-			Ray ray = new Ray(transform.position + Vector3.up * .5f, (position - transform.position).normalized * 1.5f);
-			Debug.DrawRay(ray.origin, ray.direction);
-			var layerMask = ~((1 << 8) | (1 << 9) | (1 << 10) | Physics.IgnoreRaycastLayer);
-			if(Physics.Raycast(ray, 5f, layerMask))
-				return TaskStatus.Running; //somehting is blocking my way
+		if(stopOnCollision.Value && collidedWith != null) {
+			collidedWith = null;
+			return TaskStatus.Failure; //something is blocking my way
 		}
 
 		if(!actor.IsGrounded()) {
