@@ -13,11 +13,12 @@ public class ActorHealth : MonoBehaviour {
 	public float attackImmunityTime = .5f;
 	public float criticalHealthThreshold = .15f;
 	public float health;
-	private float lastHitTime;
 
 	public float flinchLimit = 100f;
 	public float FlinchAmount { get { return flinchPoints; } }
 	private float flinchPoints;
+	private float immuneUntil;
+	private bool immune = false;
 
 
 
@@ -35,6 +36,11 @@ public class ActorHealth : MonoBehaviour {
 	}
 
 	public void Update() {
+
+		if(Time.time > immuneUntil) {
+			removeImmunity();
+		}
+
 		if (health <= 0) {
 			health = 0;
 			// fire an event when the attached object is dead
@@ -48,9 +54,9 @@ public class ActorHealth : MonoBehaviour {
 	
 	// the attached object has been damaged
 	public void TakeDamage(float amount) {
-		if(Immune())
+		if(IsImmune())
 			return;
-		lastHitTime = Time.time;
+		GrantImmunityDuration(attackImmunityTime);
 		TakePhysicalDamage(amount);
 		TakeFlinchDamage(amount);
 	}
@@ -74,5 +80,16 @@ public class ActorHealth : MonoBehaviour {
 
 	public bool IsAlive() { return health > 0; }
 
-	public bool Immune() { return (Time.time <= lastHitTime + attackImmunityTime); }
+	public bool IsImmune() { return immune; }
+
+	public void GrantImmunityDuration(float duration) { 
+		immune = true;
+		Invoke("removeImmunity", duration);
+	}
+
+	private void removeImmunity() {
+		immune = false;
+	}
+
+
 }

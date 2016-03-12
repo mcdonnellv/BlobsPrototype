@@ -39,7 +39,8 @@ public class AiAcquireVisibleTarget : Conditional {
 			}
 		}
 
-		objects = objects.OrderBy( x => x.transform.position.x).ToList();
+		// order closest objects to be first in list
+		objects = objects.OrderBy( x => (transform.position - x.transform.position).sqrMagnitude ).ToList();
 	}
 
 	public override TaskStatus OnUpdate() {

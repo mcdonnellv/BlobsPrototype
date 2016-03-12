@@ -9,6 +9,7 @@ public enum BattleCommand {
 	None,
 	Move,
 	Attack,
+	Defend,
 };
 
 
@@ -19,7 +20,6 @@ public class CombatManager : MonoBehaviour {
 	RoomManager roomManager { get { return RoomManager.roomManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
 
-	public List<Actor> actors = new List<Actor>();
 	public Transform root;
 	public List <Transform> blobSpawner;
 	public Transform enemySpawner;
@@ -34,8 +34,8 @@ public class CombatManager : MonoBehaviour {
 
 	private Vector3 lastBlobAnchorPos;
 	private BattleCommand inputCommand = BattleCommand.None;
-	private BattleCommand queuedCommand = BattleCommand.None;
 	private BattleCommand currentTask = BattleCommand.None;
+	private float blockInputTimer;
 
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
@@ -48,12 +48,16 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	void SetupLevelSpecifics() {
-		AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		AddActor("AiBlob", null, BlobAnchorPosition.Near);
-		AddActor("AiBlob", null, BlobAnchorPosition.Mid);
-		AddActor("AiBlob", null, BlobAnchorPosition.Far);
+		AddActor("AiBlob", BlobAnchorPosition.Near);
+		AddActor("AiBlob", BlobAnchorPosition.Near);
+		AddActor("AiBlob", BlobAnchorPosition.Mid);
+		AddActor("AiBlob", BlobAnchorPosition.Mid);
+		AddActor("AiBlob", BlobAnchorPosition.Far);
+		AddActor("AiBlob", BlobAnchorPosition.Far);
 
-		AddObject("BattleObjectGoal", new Vector3(50,0,0));
+		AddActor("Wolf", new Vector3(30f,0f,0f));
+
+		AddObject("BattleObjectGoal", new Vector3(35,0,0));
 	}
 
 
@@ -62,10 +66,6 @@ public class CombatManager : MonoBehaviour {
 		SetupLevelSpecifics();
 		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
 			lifeBar.gameObject.SetActive(lifeBar.health != null);
-
-		//Transform actors = root.FindChild("Actors");
-		//foreach(Transform child in actors)
-			//ProCamera2D.Instance.AddCameraTarget(child);
 	}
 
 	public void ResetLevel() {
@@ -76,14 +76,11 @@ public class CombatManager : MonoBehaviour {
 		SetupLevel();
 	}
 
-	public Actor AddActor(string prefabName, CombatStats cs, BlobAnchorPosition anchorPos) {
-		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
-		go.transform.parent = root.FindChild("Actors");
-		go.transform.localPosition = Vector3.zero;
-		Actor actor = go.GetComponent<Actor>();
-		blobAnchor.SetBlobActorPosition(actor, anchorPos);
-		actors.Add(actor);
-		ActorHealth health = actor.GetComponent<ActorHealth>();
+	public Actor AddActor(string prefabName, BlobAnchorPosition anchorPos) {
+		Actor a = AddActor(prefabName);
+		ActorHealth health = a.GetComponent<ActorHealth>();
+		if(anchorPos!= null)
+			blobAnchor.SetBlobActorPosition(a, anchorPos);
 		if(health != null) {
 			health.onDeath += BlobDied;
 			foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars) {
@@ -93,6 +90,20 @@ public class CombatManager : MonoBehaviour {
 				}
 			}
 		}
+		return a;
+	}
+
+	public Actor AddActor(string prefabName, Vector3 pos) {
+		Actor a = AddActor(prefabName);
+		a.transform.position = pos;
+		return a;
+	}
+		
+	public Actor AddActor(string prefabName) {
+		GameObject go = (GameObject)GameObject.Instantiate(Resources.Load(prefabName));
+		go.transform.parent = root.FindChild("Actors");
+		go.transform.localPosition = Vector3.zero;
+		Actor actor = go.GetComponent<Actor>();
 		return actor;
 	}
 
@@ -108,17 +119,6 @@ public class CombatManager : MonoBehaviour {
 
 
 	public Actor AddActor(Blob blob) { return null; }
-
-
-	private void AllowAttacking(float duration) {
-		GlobalVariables.Instance.SetVariableValue("gAttackAllowed", true);
-		Invoke("BanAttacking", duration);
-	}
-
-
-	private void BanAttacking() {
-		GlobalVariables.Instance.SetVariableValue("gAttackAllowed", false);
-	}
 
 
 	public void StartFight() {
@@ -139,45 +139,48 @@ public class CombatManager : MonoBehaviour {
 
 	public List<Actor> GetActorsOfTag(string tag, bool livingOnly) {
 		List<Actor> ret = new List<Actor>();
-		foreach(Actor actor in actors) {
-			if(actor.tag == tag) {
-				if(livingOnly) {
-					if(actor.health != null && actor.health.IsAlive())
-						ret.Add(actor);
-				}
-				else
-					ret.Add(actor);
-			}
+		Transform actors = root.FindChild("Actors");
+		foreach(Transform child in actors) {
+			if(child.tag != tag)
+				continue;
+			Actor actor = child.GetComponent<Actor>();
+			if(actor == null)
+				continue;
+			ActorHealth ah = child.GetComponent<ActorHealth>();
+			if(!livingOnly) 
+				ret.Add(actor);
+			else if(ah != null && ah.health > 0)
+				ret.Add(actor);
 		}
 		return ret;
 	}
 
 
 	public void BlobDied() {
-		bool aBlobIsStillAlive = false;
-		List<Actor> actorsToRemove = new List<Actor>();
-		foreach(Actor actor in actors) {
-			ActorHealth ah = actor.GetComponent<ActorHealth>();
-			if(ah != null && ah.health > 0)
-				aBlobIsStillAlive = true;
-			else
-				actorsToRemove.Add(actor);
-		}
-
-		foreach(Actor actor in actorsToRemove)
-			actors.Remove(actor);
-
-		if(aBlobIsStillAlive == false)
+		List<Actor> blobs = GetActorsOfTag("Blob", true);
+		if(blobs.Count == 0)
 			ResetLevel();
 	}
 
 
+
 	private void ExecuteBattlecommand(BattleCommand cmd) {
+		currentTask = inputCommand;
+		inputCommand = BattleCommand.None;
+		actionProgressTime = actionFixedTime;
+
 		switch(cmd) {
 		case BattleCommand.None: 
 			return;
 		case BattleCommand.Attack: 
-			AllowAttacking(actionFixedTime); 
+			GlobalVariables.Instance.SetVariableValue("gAttackAllowed", true);
+			return;
+		case BattleCommand.Defend: 
+			GlobalVariables.Instance.SetVariableValue("gDefendAllowed", true);
+			List<Actor> blobs = GetActorsOfTag("Blob", true);
+			foreach(Actor actor in blobs) {
+				actor.health.GrantImmunityDuration(actionFixedTime);
+			}
 			return;
 
 		case BattleCommand.Move:
@@ -197,10 +200,26 @@ public class CombatManager : MonoBehaviour {
 		}
 	}
 
+	private void EndBattleCommand(BattleCommand cmd) {
+		currentTask = BattleCommand.None;
+		switch(cmd) {
+		case BattleCommand.None: 
+			return;
+		case BattleCommand.Attack: 
+			GlobalVariables.Instance.SetVariableValue("gAttackAllowed", false);
+			return;
+		case BattleCommand.Defend: 
+			GlobalVariables.Instance.SetVariableValue("gDefendAllowed", false);
+			return;
+		}
+	}
+
 
 	private void InputUpdate() {
+		//kill all blobs
 		if(Input.GetKey(KeyCode.K)) {
-			foreach(Actor actor in actors) {
+			List<Actor> blobs = GetActorsOfTag("Blob", true);
+			foreach(Actor actor in blobs) {
 				ActorHealth ah = actor.GetComponent<ActorHealth>();
 				if(ah != null && ah.health > 0)
 					ah.health = 0;
@@ -227,11 +246,14 @@ public class CombatManager : MonoBehaviour {
 //			}
 //		}
 
-		if(queuedCommand != BattleCommand.None || currentTask != BattleCommand.None)
+		if(Time.time <= blockInputTimer)
 			return;
 
 		if(Input.GetKey(KeyCode.A)) 
 			inputCommand = BattleCommand.Attack;
+
+		if(Input.GetKey(KeyCode.D)) 
+			inputCommand = BattleCommand.Defend;
 		
 		if(Input.GetButton("Jump"))
 			inputCommand = BattleCommand.Move;
@@ -241,10 +263,10 @@ public class CombatManager : MonoBehaviour {
 		if (onBeat != null) 
 			onBeat();
 
-		if(inputCommand != BattleCommand.None) {
-			queuedCommand = inputCommand;
+		if(inputCommand != BattleCommand.None && currentTask == BattleCommand.None) {
+			ExecuteBattlecommand(inputCommand);
 			inputCommand = BattleCommand.None;
-			//actionProgressTime = actionFixedTime;
+			blockInputTimer = Time.time + .5f;
 		}
 	}
 
@@ -258,22 +280,15 @@ public class CombatManager : MonoBehaviour {
 		actionProgressTime -= Time.deltaTime;
 		if(actionProgressTime <= 0){
 			if(currentTask != BattleCommand.None)
-				currentTask = BattleCommand.None;
-
-			if(queuedCommand != BattleCommand.None) {
-				ExecuteBattlecommand(queuedCommand);
-				currentTask = queuedCommand;
-				queuedCommand = BattleCommand.None;
-				actionProgressTime = actionFixedTime;
-			}
+				EndBattleCommand(currentTask);
 		}
 		
 		BattleHud bh = HudManager.hudManager.battleHud;
 
 		bh.timeBar.value = actionProgressTime / actionFixedTime;
 
-		bh.commandLabel.color = queuedCommand == BattleCommand.None ? Color.gray : Color.green;
-		bh.commandLabel.text = "command: " + queuedCommand.ToString();
+		bh.commandLabel.color = inputCommand == BattleCommand.None ? Color.gray : Color.green;
+		bh.commandLabel.text = "command: " + inputCommand.ToString();
 
 		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
 		bh.actionLabel.text = "action: " + currentTask.ToString();
