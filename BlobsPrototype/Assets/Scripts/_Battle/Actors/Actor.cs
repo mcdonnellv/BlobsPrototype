@@ -127,7 +127,7 @@ public class Actor : MonoBehaviour {
 		
 		groundCheckDone = true;
 		isGrounded = false;
-		Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
+		Ray ray = new Ray(transform.position + (Vector3.up * .1f), -Vector3.up);
 		float groundDistance = 1f;
 		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, groundDistance + 0.1f);
 		for(int i = 0; i < hit.Length; i++) {

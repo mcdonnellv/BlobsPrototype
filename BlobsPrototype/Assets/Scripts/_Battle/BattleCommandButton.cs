@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleCommandButton : MonoBehaviour {
+public class BattleCommandButton : UIButton {
 
 	public UIProgressBar progressBar;
-	public UIButton button;
 	public BattleCommand command;
 	private float timeToFill = 1f;
+	private bool pressed = false;
 
 	// Use this for initialization
 	void Start () {
@@ -17,13 +17,14 @@ public class BattleCommandButton : MonoBehaviour {
 	void Update () {
 		if(progressBar.value > 0)
 			progressBar.value -= Time.deltaTime * (1 / timeToFill);
+
+		//for continuous button holding
+		if(pressed) {
+			Pressed();
+		}
 	}
 
 	public void OnValuechange() {
-		if(progressBar.value == 0f) {
-			progressBar.alpha = 0f;
-			transform.parent.BroadcastMessage("ButtonActionCompleted", gameObject);
-		}
 	}
 
 	public void Pressed() {
@@ -31,25 +32,30 @@ public class BattleCommandButton : MonoBehaviour {
 		CombatManager.combatManager.inputCommand = command;
 	}
 
-	protected void ButtonPressed(GameObject other) {
-		button.isEnabled = (gameObject != other);
+	void ButtonPressed(GameObject other) {
+		isEnabled = (gameObject != other);
 	}
 
-	protected void ButtonActionCompleted(GameObject other) {
-		button.isEnabled = true;
-	}
-
-	public void BattleCommandExecuted(object[] objs) {
+	void BattleCommandExecuted(object[] objs) {
 		BattleCommand cmd = (BattleCommand)objs[0];
 		float t =  (float)objs[1];
-
-		if(command != cmd) {
-			button.isEnabled = false;
-			return;
+		if(command == cmd) {
+			isEnabled = true;
+			progressBar.alpha = .5f;
+			progressBar.value = 1f;
+			timeToFill = t;
 		}
-		
-		progressBar.alpha = .5f;
-		progressBar.value = 1f;
-		timeToFill = t;
+	}
+
+	void BattleCommandCompleted(object[] objs) {
+		BattleCommand cmd = (BattleCommand)objs[0];
+		isEnabled = true;
+		if(command == cmd)
+			progressBar.alpha = 0f;
+	}
+
+	protected override void OnPress (bool isPressed) {
+		pressed = isPressed;
+		base.OnPress(isPressed);
 	}
 }

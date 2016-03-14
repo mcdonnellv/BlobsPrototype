@@ -163,14 +163,29 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
+	private bool CanInterruptCurrnetBattlecommand(BattleCommand newCommand) {
+
+		if(newCommand == currentTask)
+			return false; // no sense in interrupting self
+		
+		switch(currentTask) {
+		case BattleCommand.Defend: return true; // defending can be interrupted
+		}
+
+		return false; //default to no interruption
+	}
+
 
 	private void ExecuteBattlecommand(BattleCommand cmd) {
 		object[] battleCommandParams = {cmd, actionFixedTime};
 		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandExecuted", battleCommandParams);
 
+		if(currentTask != BattleCommand.None) // if we are interrupting, this will be true
+			EndBattleCommand(currentTask);
+		
 		currentTask = inputCommand;
 		inputCommand = BattleCommand.None;
-		actionProgressTime = actionFixedTime;
+		actionProgressTime = actionFixedTime - .01f; // actionProgressTime cannot be equal to actionFixedTime or else it results in a race condition between BeatUpdate() and EndBattleCommand()
 
 		switch(cmd) {
 		case BattleCommand.None: 
@@ -204,6 +219,8 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	private void EndBattleCommand(BattleCommand cmd) {
+		object[] battleCommandParams = {cmd};
+		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandCompleted", battleCommandParams);
 		currentTask = BattleCommand.None;
 		switch(cmd) {
 		case BattleCommand.None: 
@@ -253,15 +270,17 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	void BeatUpdate() {
+		Invoke("BeatUpdate", battleBeat);
 		if (onBeat != null) 
 			onBeat();
 
-		if(inputCommand != BattleCommand.None && currentTask == BattleCommand.None) {
+		if(inputCommand == BattleCommand.None)
+			return; // no input
+		
+		if(currentTask == BattleCommand.None || CanInterruptCurrnetBattlecommand(inputCommand)) {
 			ExecuteBattlecommand(inputCommand);
 			inputCommand = BattleCommand.None;
 		}
-
-		this.Invoke("BeatUpdate", battleBeat);
 	}
 
 	void Update() {
@@ -276,7 +295,7 @@ public class CombatManager : MonoBehaviour {
 		bh.timeBar.value = actionProgressTime / actionFixedTime;
 
 		bh.commandLabel.color = inputCommand == BattleCommand.None ? Color.gray : Color.green;
-		bh.commandLabel.text = "command: " + inputCommand.ToString();
+		bh.commandLabel.text = "next command: " + inputCommand.ToString();
 
 		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
 		bh.actionLabel.text = "action: " + currentTask.ToString();

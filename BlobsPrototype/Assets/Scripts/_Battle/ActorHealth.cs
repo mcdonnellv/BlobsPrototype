@@ -77,6 +77,8 @@ public class ActorHealth : MonoBehaviour {
 	public bool IsImmune() { return immune; }
 
 	public void GrantImmunityDuration(float duration) { 
+		if(duration <= 0f)
+			return;
 		immune = true;
 		Invoke("removeImmunity", duration);
 	}
@@ -84,6 +86,4 @@ public class ActorHealth : MonoBehaviour {
 	private void removeImmunity() {
 		immune = false;
 	}
-
-
 }
