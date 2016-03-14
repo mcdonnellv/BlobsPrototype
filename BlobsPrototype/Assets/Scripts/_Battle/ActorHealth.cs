@@ -17,7 +17,6 @@ public class ActorHealth : MonoBehaviour {
 	public float flinchLimit = 100f;
 	public float FlinchAmount { get { return flinchPoints; } }
 	private float flinchPoints;
-	private float immuneUntil;
 	private bool immune = false;
 
 
@@ -36,11 +35,6 @@ public class ActorHealth : MonoBehaviour {
 	}
 
 	public void Update() {
-
-		if(Time.time > immuneUntil) {
-			removeImmunity();
-		}
-
 		if (health <= 0) {
 			health = 0;
 			// fire an event when the attached object is dead

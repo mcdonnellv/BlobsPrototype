@@ -24,18 +24,17 @@ public class CombatManager : MonoBehaviour {
 	public List <Transform> blobSpawner;
 	public Transform enemySpawner;
 	public Camera battleCam;
-	public float battleBeat;
+	public float battleBeat = 1f;
 
 	static float actionFixedTime = 2f;
-	private float actionProgressTime = 0;
+	public float actionProgressTime = 0;
 
 	public delegate void Beat();
 	public event Beat onBeat;
 
 	private Vector3 lastBlobAnchorPos;
-	private BattleCommand inputCommand = BattleCommand.None;
+	public BattleCommand inputCommand = BattleCommand.None;
 	private BattleCommand currentTask = BattleCommand.None;
-	private float blockInputTimer;
 
 	[HideInInspector] public Quest quest = null;
 	[HideInInspector] public bool lastCombatSuccessFul = false;
@@ -45,6 +44,7 @@ public class CombatManager : MonoBehaviour {
 	public void Start() {
 		blobAnchor = root.GetComponentInChildren<BlobAnchorHelper>();
 		SetupLevel();
+		BeatUpdate();
 	}
 
 	void SetupLevelSpecifics() {
@@ -165,6 +165,9 @@ public class CombatManager : MonoBehaviour {
 
 
 	private void ExecuteBattlecommand(BattleCommand cmd) {
+		object[] battleCommandParams = {cmd, actionFixedTime};
+		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandExecuted", battleCommandParams);
+
 		currentTask = inputCommand;
 		inputCommand = BattleCommand.None;
 		actionProgressTime = actionFixedTime;
@@ -246,17 +249,7 @@ public class CombatManager : MonoBehaviour {
 //			}
 //		}
 
-		if(Time.time <= blockInputTimer)
-			return;
-
-		if(Input.GetKey(KeyCode.A)) 
-			inputCommand = BattleCommand.Attack;
-
-		if(Input.GetKey(KeyCode.D)) 
-			inputCommand = BattleCommand.Defend;
-		
-		if(Input.GetButton("Jump"))
-			inputCommand = BattleCommand.Move;
+	
 	}
 
 	void BeatUpdate() {
@@ -266,17 +259,12 @@ public class CombatManager : MonoBehaviour {
 		if(inputCommand != BattleCommand.None && currentTask == BattleCommand.None) {
 			ExecuteBattlecommand(inputCommand);
 			inputCommand = BattleCommand.None;
-			blockInputTimer = Time.time + .5f;
 		}
+
+		this.Invoke("BeatUpdate", battleBeat);
 	}
 
 	void Update() {
-		battleBeat += Time.deltaTime;
-		if(battleBeat > 1f) {
-			BeatUpdate();
-			battleBeat = 0f;
-		}
-			
 		actionProgressTime -= Time.deltaTime;
 		if(actionProgressTime <= 0){
 			if(currentTask != BattleCommand.None)
@@ -301,7 +289,8 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	//		combatant.monster = monster;
+
+//		combatant.monster = monster;
 //		combatant.id = curId++;
 //		combatant.combatStats = monster.combatStats;
 //		combatant.combatStats.attack.combatValue *= monster.level;
