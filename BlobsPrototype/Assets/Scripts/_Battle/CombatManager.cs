@@ -12,6 +12,13 @@ public enum BattleCommand {
 	Defend,
 };
 
+public enum BattleState {
+	Setup,
+	Running,
+	Victory,
+	Defeat
+};
+
 
 public class CombatManager : MonoBehaviour {
 	private static CombatManager _combatManager;
@@ -20,14 +27,17 @@ public class CombatManager : MonoBehaviour {
 	RoomManager roomManager { get { return RoomManager.roomManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
 
+	public BattleState battleState { get; private set;}
 	public Transform root;
 	public List <Transform> blobSpawner;
 	public Transform enemySpawner;
 	public Camera battleCam;
-	public float battleBeat = 1f;
+	public const float battleBeatTimeConst = 1f;
+	public const float battleDurationTimeConst = 180f;
+	public const float actionTimeConst = 2f;
 
-	static float actionFixedTime = 2f;
-	public float actionProgressTime = 0;
+	public float battleStartTime;
+	public float actionStartTime;
 
 	public delegate void Beat();
 	public event Beat onBeat;
@@ -66,21 +76,31 @@ public class CombatManager : MonoBehaviour {
 		SetupLevelSpecifics();
 		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
 			lifeBar.gameObject.SetActive(lifeBar.health != null);
+
+		ProCamera2D.Instance.AddCameraTarget(blobAnchor.transform, 1, 1, 0, new Vector2(10,4));
+		battleStartTime = Time.time;
+		battleState = BattleState.Running;
 	}
 
 	public void ResetLevel() {
+		battleState = BattleState.Setup;
 		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
 			lifeBar.health = null;
 		root.FindChild("Actors").DestroyChildren();
 		root.FindChild("Objects").DestroyChildren();
+		Transform anchors = root.FindChild("Anchors");
+		foreach(Transform t in anchors) {
+			if(t == blobAnchor.transform)
+				continue;
+			Destroy(t.gameObject);
+		}
 		SetupLevel();
 	}
 
 	public Actor AddActor(string prefabName, BlobAnchorPosition anchorPos) {
 		Actor a = AddActor(prefabName);
 		ActorHealth health = a.GetComponent<ActorHealth>();
-		if(anchorPos!= null)
-			blobAnchor.SetBlobActorPosition(a, anchorPos);
+		blobAnchor.SetBlobActorPosition(a, anchorPos);
 		if(health != null) {
 			health.onDeath += BlobDied;
 			foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars) {
@@ -158,8 +178,26 @@ public class CombatManager : MonoBehaviour {
 
 	public void BlobDied() {
 		List<Actor> blobs = GetActorsOfTag("Blob", true);
-		if(blobs.Count == 0)
-			ResetLevel();
+		if(blobs.Count == 0 && battleState == BattleState.Running)
+			Defeat();
+	}
+
+
+	void Defeat() {
+		battleState = BattleState.Defeat;
+		BattleHud bh = HudManager.hudManager.battleHud;
+		bh.defeatObject.SetActive(true);
+		Invoke("ResetLevel", 3f);
+		ProCamera2D.Instance.RemoveAllCameraTargets(0);
+	}
+
+	public void Victory() {
+		battleState = BattleState.Victory;
+		BattleHud bh = HudManager.hudManager.battleHud;
+		bh.victoryObject.SetActive(true);
+		Invoke("ResetLevel", 3f);
+		ProCamera2D.Instance.RemoveAllCameraTargets(0);
+		blobAnchor.TranslateBlobAnchorPosition(new Vector3(50f,0,0)); // walk offscreen
 	}
 
 
@@ -177,15 +215,15 @@ public class CombatManager : MonoBehaviour {
 
 
 	private void ExecuteBattlecommand(BattleCommand cmd) {
-		object[] battleCommandParams = {cmd, actionFixedTime};
+		object[] battleCommandParams = {cmd, actionTimeConst};
 		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandExecuted", battleCommandParams);
 
 		if(currentTask != BattleCommand.None) // if we are interrupting, this will be true
-			EndBattleCommand(currentTask);
+			ConlcudeBattleCommand(currentTask);
 		
 		currentTask = inputCommand;
 		inputCommand = BattleCommand.None;
-		actionProgressTime = actionFixedTime - .01f; // actionProgressTime cannot be equal to actionFixedTime or else it results in a race condition between BeatUpdate() and EndBattleCommand()
+		actionStartTime = Time.time;
 
 		switch(cmd) {
 		case BattleCommand.None: 
@@ -197,7 +235,7 @@ public class CombatManager : MonoBehaviour {
 			GlobalVariables.Instance.SetVariableValue("gDefendAllowed", true);
 			List<Actor> blobs = GetActorsOfTag("Blob", true);
 			foreach(Actor actor in blobs) {
-				actor.health.GrantImmunityDuration(actionFixedTime);
+				actor.health.GrantImmunityDuration(actionTimeConst);
 			}
 			return;
 
@@ -218,9 +256,9 @@ public class CombatManager : MonoBehaviour {
 		}
 	}
 
-	private void EndBattleCommand(BattleCommand cmd) {
+	private void ConlcudeBattleCommand(BattleCommand cmd) {
 		object[] battleCommandParams = {cmd};
-		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandCompleted", battleCommandParams);
+		HudManager.hudManager.battleHud.BroadcastMessage("BattleCommandCompleted", battleCommandParams, SendMessageOptions.DontRequireReceiver);
 		currentTask = BattleCommand.None;
 		switch(cmd) {
 		case BattleCommand.None: 
@@ -229,48 +267,29 @@ public class CombatManager : MonoBehaviour {
 			GlobalVariables.Instance.SetVariableValue("gAttackAllowed", false);
 			return;
 		case BattleCommand.Defend: 
-			GlobalVariables.Instance.SetVariableValue("gDefendAllowed", false);
+			if(inputCommand != BattleCommand.Defend)
+				GlobalVariables.Instance.SetVariableValue("gDefendAllowed", false);
 			return;
 		}
 	}
 
 
-	private void InputUpdate() {
-		//kill all blobs
-		if(Input.GetKey(KeyCode.K)) {
-			List<Actor> blobs = GetActorsOfTag("Blob", true);
-			foreach(Actor actor in blobs) {
-				ActorHealth ah = actor.GetComponent<ActorHealth>();
-				if(ah != null && ah.health > 0)
-					ah.health = 0;
-			}
+	void KillAllBlobs() {
+		List<Actor> blobs = GetActorsOfTag("Blob", true);
+		foreach(Actor actor in blobs) {
+			ActorHealth ah = actor.GetComponent<ActorHealth>();
+			if(ah != null && ah.health > 0)
+				ah.health = 0;
 		}
+	}
 
-//		if (Input.GetButtonDown("Fire1")) {
-//			Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-//			pos.z = 0;
-//			float radius = 10f;
-//			float force = 500f;
-//			Collider[] colliders = Physics.OverlapSphere(pos, radius);
-//			foreach (Collider hit in colliders) {
-//				Rigidbody rb = hit.GetComponent<Rigidbody>();
-//				if (rb != null) {
-//				ActorHealth health = rb.GetComponent<ActorHealth>();
-//					if (health != null) {// && rb.gameObject.tag == "Blob") {
-//						rb.AddExplosionForce(force, pos,  radius, 0f);
-//						float dist = (rb.transform.position - pos).magnitude;
-//						dist =  (radius - dist) / radius;
-//						health.TakeDamage(force / 50f * dist);
-//					}
-//				}
-//			}
-//		}
-
-	
+	private void InputUpdate() {
+		if(Input.GetKey(KeyCode.K))
+			KillAllBlobs();
 	}
 
 	void BeatUpdate() {
-		Invoke("BeatUpdate", battleBeat);
+		Invoke("BeatUpdate", battleBeatTimeConst);
 		if (onBeat != null) 
 			onBeat();
 
@@ -284,21 +303,25 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	void Update() {
-		actionProgressTime -= Time.deltaTime;
-		if(actionProgressTime <= 0){
+		if((Time.time + 0.01f) > actionStartTime + actionTimeConst)  //advance time a bit so it conlcudes faster before Beat() updates, to avoid race condition
 			if(currentTask != BattleCommand.None)
-				EndBattleCommand(currentTask);
-		}
+				ConlcudeBattleCommand(currentTask);
+
+		if(Time.time > battleStartTime + battleDurationTimeConst)
+			KillAllBlobs();
 		
 		BattleHud bh = HudManager.hudManager.battleHud;
 
-		bh.timeBar.value = actionProgressTime / actionFixedTime;
+		bh.timeBar.value = (Time.time - actionStartTime) / actionTimeConst;
 
 		bh.commandLabel.color = inputCommand == BattleCommand.None ? Color.gray : Color.green;
 		bh.commandLabel.text = "next command: " + inputCommand.ToString();
 
 		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
 		bh.actionLabel.text = "action: " + currentTask.ToString();
+
+		float battleTimeLeft = battleDurationTimeConst - (Time.time - battleStartTime);
+		bh.battleTimerLabel.text = "Time Left\n" + GlobalDefines.TimeToString(battleTimeLeft, false, 2);
 
 		blobAnchor.Update();
 	}

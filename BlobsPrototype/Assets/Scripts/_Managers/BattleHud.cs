@@ -8,4 +8,7 @@ public class BattleHud : MonoBehaviour {
 	public UIProgressBar timeBar;
 	public List<BattleBlobLifeBar> lifeBars;
 	public Camera camera;
+	public UILabel battleTimerLabel;
+	public GameObject defeatObject;
+	public GameObject victoryObject;
 }

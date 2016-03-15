@@ -57,6 +57,13 @@ public class Actor : MonoBehaviour {
 			health.onDeath += Death;
 			health.onFlinch += Flinch;
 		}
+		CombatManager.combatManager.onBeat += Beat;
+	}
+		
+
+	void Beat() {
+		if(anim!= null)
+			anim.SetTrigger("Beat");
 	}
 
 	void FixedUpdate () {
@@ -65,6 +72,7 @@ public class Actor : MonoBehaviour {
 		float speed = Mathf.Abs(rigidBody.velocity.x);
 		anim.SetFloat("Speed", speed);
 		anim.SetBool("Grounded", IsGrounded());
+		anim.ResetTrigger("Beat");
 	}
 
 	// Update is called once per frame
@@ -81,6 +89,7 @@ public class Actor : MonoBehaviour {
 		dead = true;
 		// trigger the death animation
 		anim.SetTrigger("Death");
+		CombatManager.combatManager.onBeat -= Beat;
 	}
 
 

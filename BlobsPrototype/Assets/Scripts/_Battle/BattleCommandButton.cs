@@ -6,7 +6,6 @@ public class BattleCommandButton : UIButton {
 	public UIProgressBar progressBar;
 	public BattleCommand command;
 	private float timeToFill = 1f;
-	private bool pressed = false;
 
 	// Use this for initialization
 	void Start () {
@@ -17,45 +16,28 @@ public class BattleCommandButton : UIButton {
 	void Update () {
 		if(progressBar.value > 0)
 			progressBar.value -= Time.deltaTime * (1 / timeToFill);
-
-		//for continuous button holding
-		if(pressed) {
-			Pressed();
-		}
-	}
-
-	public void OnValuechange() {
 	}
 
 	public void Pressed() {
-		transform.parent.BroadcastMessage("ButtonPressed", gameObject);
+		transform.parent.BroadcastMessage("ButtonPressed", gameObject); //all buttons go on unified cooldown
 		CombatManager.combatManager.inputCommand = command;
 	}
 
 	void ButtonPressed(GameObject other) {
-		isEnabled = (gameObject != other);
+		isEnabled = false;
+		progressBar.value = 1f;
+		progressBar.alpha = .5f;
+		timeToFill = Mathf.Infinity;
 	}
 
 	void BattleCommandExecuted(object[] objs) {
 		BattleCommand cmd = (BattleCommand)objs[0];
 		float t =  (float)objs[1];
-		if(command == cmd) {
-			isEnabled = true;
-			progressBar.alpha = .5f;
-			progressBar.value = 1f;
-			timeToFill = t;
-		}
+		timeToFill = t;
+		Invoke("EnableButton", t - .2f); //enable early so we can queue a command with no downtime
 	}
 
-	void BattleCommandCompleted(object[] objs) {
-		BattleCommand cmd = (BattleCommand)objs[0];
+	void EnableButton() {
 		isEnabled = true;
-		if(command == cmd)
-			progressBar.alpha = 0f;
-	}
-
-	protected override void OnPress (bool isPressed) {
-		pressed = isPressed;
-		base.OnPress(isPressed);
 	}
 }

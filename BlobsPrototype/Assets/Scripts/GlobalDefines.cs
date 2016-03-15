@@ -183,20 +183,39 @@ public class GlobalDefines : MonoBehaviour {
 	}
 
 
-	public static string TimeToString(TimeSpan ts) { return GlobalDefines.TimeToString(ts, true); }
+	public static string TimeToString(float t, bool verbose, int numDisplay) { return GlobalDefines.TimeToString(new TimeSpan(0,0,(int)t), verbose, numDisplay); }
 
-	public static string TimeToString(TimeSpan ts, bool verbose) {
+	public static string TimeToString(TimeSpan ts) { return GlobalDefines.TimeToString(ts, true, 1); }
+
+	public static string TimeToString(TimeSpan ts, bool verbose, int numDisplay) {
+		numDisplay = Mathf.Max(1, numDisplay);
 		string timeString = "";
-		if(ts.Days > 0)
-			timeString += ts.Days.ToString() + " day";
-		if(ts.Days == 0 && ts.Hours > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + (verbose ? " hr" : "h");
-		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + (verbose ? " min" : "m");
-		if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds > 0)
-			timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + (verbose ? " sec" : "s");
-		if(timeString == "")
-			timeString = (verbose ? "0 sec" : "0s");
+
+		for(int i=0;i<numDisplay;i++) {
+			if(ts.Days > 0) {
+				timeString += ts.Days.ToString() + " day";
+				ts = new TimeSpan(0,0,(int)ts.TotalSeconds - ts.Days * 60 * 60 * 24);
+			}
+
+			if(ts.Days == 0 && ts.Hours > 0) {
+				timeString += (timeString == "" ? "" : "  " ) + ts.Hours.ToString() + (verbose ? " hr" : "h"); 
+				ts = new TimeSpan(0,0,(int)ts.TotalSeconds - ts.Hours * 60 * 60);
+			}
+
+			if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes > 0) {
+				timeString += (timeString == "" ? "" : "  " ) + ts.Minutes.ToString() + (verbose ? " min" : "m");
+				ts = new TimeSpan(0,0,(int)ts.TotalSeconds - ts.Minutes * 60);
+			}
+
+			if(ts.Days == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds > 0) {
+				timeString += (timeString == "" ? "" : "  " ) + ts.Seconds.ToString() + (verbose ? " sec" : "s");
+				ts = new TimeSpan(0,0,(int)ts.TotalSeconds - ts.Seconds);
+			}
+
+			if(timeString == "")
+				timeString = (verbose ? "0 sec" : "0s");
+		}
+
 		return timeString;
 	}
 

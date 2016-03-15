@@ -178,7 +178,7 @@ public class StoreMenu : GenericGameMenu {
 
 	void UpdateTimeForCell(GeneStoreItem g, StoreListCell cell) {
 		TimeSpan ts = g.actionReadyTime - System.DateTime.Now;
-		cell.costLabel.text = GlobalDefines.TimeToString(ts, false);
+		cell.costLabel.text = GlobalDefines.TimeToString(ts, false, 1);
 
 		if(selectedCell == cell) 
 			reserachLabel.text = "Time Left: " + GlobalDefines.TimeToString(ts);

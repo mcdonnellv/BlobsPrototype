@@ -43,6 +43,9 @@ public class BlobAnchorHelper : MonoBehaviour {
 
 	public void Reset() {
 		SetBlobAnchorPosition(new Vector3(0.01f , 0f, 0f));
+		nearAnchor.transform.DestroyChildren();
+		midAnchor.transform.DestroyChildren();
+		farAnchor.transform.DestroyChildren();
 	}
 
 	public void AdvanceBlobAnchorPosition() {
