@@ -38,6 +38,7 @@ public class CombatManager : MonoBehaviour {
 
 	public float battleStartTime;
 	public float actionStartTime;
+	public bool pauseBattleTimer = false;
 
 	public delegate void Beat();
 	public event Beat onBeat;
@@ -80,6 +81,7 @@ public class CombatManager : MonoBehaviour {
 		ProCamera2D.Instance.AddCameraTarget(blobAnchor.transform, 1, 1, 0, new Vector2(10,4));
 		battleStartTime = Time.time;
 		battleState = BattleState.Running;
+		pauseBattleTimer = false;
 	}
 
 	public void ResetLevel() {
@@ -102,7 +104,6 @@ public class CombatManager : MonoBehaviour {
 		ActorHealth health = a.GetComponent<ActorHealth>();
 		blobAnchor.SetBlobActorPosition(a, anchorPos);
 		if(health != null) {
-			health.onDeath += BlobDied;
 			foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars) {
 				if(lifeBar.health == null) {
 					lifeBar.health = health;
@@ -116,6 +117,10 @@ public class CombatManager : MonoBehaviour {
 	public Actor AddActor(string prefabName, Vector3 pos) {
 		Actor a = AddActor(prefabName);
 		a.transform.position = pos;
+		ActorHealth health = a.GetComponent<ActorHealth>();
+		if(health != null)
+			health.onDeath += ActorDied;
+		
 		return a;
 	}
 		
@@ -176,11 +181,16 @@ public class CombatManager : MonoBehaviour {
 	}
 
 
-	public void BlobDied() {
+	public void ActorDied() {
 		List<Actor> blobs = GetActorsOfTag("Blob", true);
 		if(blobs.Count == 0 && battleState == BattleState.Running)
 			Defeat();
+
+		List<Actor> enemies = GetActorsOfTag("Enemy", true);
+		if(enemies.Count == 0 && battleState == BattleState.Running)
+			pauseBattleTimer = true;
 	}
+
 
 
 	void Defeat() {
@@ -307,7 +317,7 @@ public class CombatManager : MonoBehaviour {
 			if(currentTask != BattleCommand.None)
 				ConlcudeBattleCommand(currentTask);
 
-		if(Time.time > battleStartTime + battleDurationTimeConst)
+		if(Time.time > battleStartTime + battleDurationTimeConst && pauseBattleTimer == false)
 			KillAllBlobs();
 		
 		BattleHud bh = HudManager.hudManager.battleHud;
@@ -320,8 +330,10 @@ public class CombatManager : MonoBehaviour {
 		bh.actionLabel.color = currentTask == BattleCommand.None ? Color.gray : Color.green;
 		bh.actionLabel.text = "action: " + currentTask.ToString();
 
-		float battleTimeLeft = battleDurationTimeConst - (Time.time - battleStartTime);
-		bh.battleTimerLabel.text = "Time Left\n" + GlobalDefines.TimeToString(battleTimeLeft, false, 2);
+		if(pauseBattleTimer == false) {
+			float battleTimeLeft = battleDurationTimeConst - (Time.time - battleStartTime);
+			bh.battleTimerLabel.text = "Time Left\n" + GlobalDefines.TimeToString(battleTimeLeft, false, 2);
+		}
 
 		blobAnchor.Update();
 	}
