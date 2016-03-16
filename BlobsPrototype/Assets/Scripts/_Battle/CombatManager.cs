@@ -66,7 +66,7 @@ public class CombatManager : MonoBehaviour {
 		AddActor("AiBlob", BlobAnchorPosition.Far);
 		AddActor("AiBlob", BlobAnchorPosition.Far);
 
-		AddActor("Wolf", new Vector3(30f,0f,0f));
+		//AddActor("Wolf", new Vector3(30f,0f,0f));
 
 		AddObject("BattleObjectGoal", new Vector3(35,0,0));
 	}

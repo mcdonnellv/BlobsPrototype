@@ -5,11 +5,6 @@ using BehaviorDesigner.Runtime.Tasks;
 using BehaviorDesigner.Runtime.Tasks.Movement;
 
 
-[TaskDescription("Move towards the specified position. The position can either be specified by a transform or position. If the transform " +
-	"is used then the position will not be used.")]
-[TaskCategory("Movement")]
-[TaskIcon("Assets/Behavior Designer Movement/Editor/Icons/{SkinColor}MoveTowardsIcon.png")]
-
 public class AiMoveTo : Action {
 
 	public SharedFloat toVel = 5f;
@@ -20,6 +15,7 @@ public class AiMoveTo : Action {
 	public SharedFloat arriveDistance = 0.01f;
 	public SharedGameObject target;
 	public SharedVector3 targetPosition;
+	public SharedVector3 targetOffset;
 	public SharedBool snapToDestination = true;
 	public SharedBool stopOnCollision = true;
 	protected Actor actor;
@@ -87,7 +83,7 @@ public class AiMoveTo : Action {
 			ret =  targetPosition.Value;
 		else
 			ret =  target.Value.transform.position;
-
+		ret += targetOffset.Value;
 		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
 		return ret;
 	}

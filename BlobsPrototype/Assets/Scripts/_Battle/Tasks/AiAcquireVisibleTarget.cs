@@ -16,6 +16,7 @@ public class AiAcquireVisibleTarget : Conditional {
 	public SharedFloat viewDistance;
 	public SharedVector3 offset;
 	public SharedFloat fieldOfViewAngle;
+	public SharedBool requireOnScreen;
 
 	private Actor actor;
 	private List<GameObject> objects;
@@ -24,6 +25,7 @@ public class AiAcquireVisibleTarget : Conditional {
 		actor = GetComponent<Actor>();
 		objects = new List<GameObject>();
 
+		// if target object is spcified then we only care about this current target (sticky targetting)
 		if(targetObject.Value != null) {
 			objects.Add(targetObject.Value);
 			return;
@@ -44,10 +46,24 @@ public class AiAcquireVisibleTarget : Conditional {
 	}
 
 	public override TaskStatus OnUpdate() {
+		// clear returnedObject, the purpose of this task is to set it to something valid given the rules
+		returnedObject.Value = null;
+
 		for (int i = 0; i < objects.Count; ++i) {
-			returnedObject.Value = AiManager.WithinSight2D(actor, offset.Value, fieldOfViewAngle.Value, viewDistance.Value, objects[i]);
-			if(returnedObject.Value != null)
-				return TaskStatus.Success;
+			GameObject candidate = AiManager.WithinSight2D(actor, offset.Value, fieldOfViewAngle.Value, viewDistance.Value, objects[i]);
+			if(candidate != null) {
+				if(requireOnScreen.Value) {
+					Vector3 cameraViwablePosition = Camera.main.WorldToViewportPoint(candidate.transform.position);
+					float x = cameraViwablePosition.x;
+					if(0f <= x && x <= 1f)
+						returnedObject.Value = candidate;
+				}
+				else 
+					returnedObject.Value = candidate;
+				
+				if(returnedObject.Value != null)
+					return TaskStatus.Success;
+			}
 		}
 
 		return TaskStatus.Failure;
