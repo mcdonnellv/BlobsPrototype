@@ -68,7 +68,7 @@ public class CombatManager : MonoBehaviour {
 
 		//AddActor("Wolf", new Vector3(30f,0f,0f));
 
-		AddObject("BattleObjectGoal", new Vector3(35,0,0));
+		//AddObject("BattleObjectGoal", new Vector3(35,0,0));
 	}
 
 

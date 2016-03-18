@@ -39,7 +39,7 @@ public class ActorAttack : MonoBehaviour {
 				ApplyDamage(col);
 	}
 
-		void OnTriggerStay (Collider col) {
+	void OnTriggerStay (Collider col) {
 		foreach(string tag in validTargetTags) 
 			if(col.gameObject.tag == tag)
 				ApplyDamage(col);

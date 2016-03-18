@@ -52,6 +52,16 @@ public class AiManager : MonoBehaviour {
 		return true;
 	}
 
+	public static RaycastHit[] CastRay(Actor actor, Vector2 direction, float checkDistance) {
+		Vector3 pos = actor.transform.position;
+		pos.y = .5f;
+		pos.z = 0f;
+		Ray ray = new Ray(pos, direction);
+		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance); // add a layermask for environment aka "ground"
+		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
+		return hit;
+	}
+
 
 	public static void DrawLineOfSight2D(Actor actor, Vector3 positionOffset, float fieldOfViewAngle, float viewDistance)	{
 #if UNITY_EDITOR

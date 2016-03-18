@@ -67,10 +67,16 @@ public class AiIsWithinDistance : Conditional {
 					bool facingRight = actor.IsFacingRight();
 					bool facingObject = (facingRight && direction.x > 0) || (!facingRight && direction.x < 0);
 					if(facingObject) {
-						returnedObject.Value = objects[i];
-						return TaskStatus.Success;
+						RaycastHit[] hit = AiManager.CastRay(actor, facingRight ? Vector2.right : -Vector2.right, distance.Value);
+						for(int j = 0; j < hit.Length; j++) {
+							if( hit[j].collider.tag == "CamBoundary")
+								break; //we see the boundary before seeing the target, fail
+							if( hit[j].collider.gameObject == objects[i]) {
+								returnedObject.Value = objects[i];
+								return TaskStatus.Success;
+							}
+						}
 					}
-
 				} else { //dont care about line of sight
 					returnedObject.Value = objects[i];
 					return TaskStatus.Success;
@@ -92,6 +98,10 @@ public class AiIsWithinDistance : Conditional {
 		UnityEditor.Handles.color = Color.yellow;
 		UnityEditor.Handles.DrawWireDisc(Owner.transform.position + offset.Value, Owner.transform.forward, distance.Value);
 		UnityEditor.Handles.color = oldColor;
+
+		if (lineOfSight.Value) {
+		
+		}
 		#endif
 	}
 }
