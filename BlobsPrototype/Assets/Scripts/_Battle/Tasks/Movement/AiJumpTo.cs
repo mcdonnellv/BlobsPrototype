@@ -39,6 +39,9 @@ public class AiJumpTo : Action {
 
 	public void TriggerUsingForce() {
 		var rigid = actor.rigidBody;
+		if(rigid == null)
+			return;
+		
 		var position = Target();
 		Vector3 p = position;
 		float gravity = Physics.gravity.magnitude;
@@ -52,6 +55,8 @@ public class AiJumpTo : Action {
 
 		// Planar distance between objects
 		float distance = Vector3.Distance(planarTarget, planarPostion);
+		if(distance == 0)
+			return;
 		
 		// Distance along the y axis between objects
 		float yOffset = transform.position.y - p.y;

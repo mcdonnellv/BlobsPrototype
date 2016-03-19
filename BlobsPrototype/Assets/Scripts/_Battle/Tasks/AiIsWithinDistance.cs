@@ -16,18 +16,17 @@ public class AiIsWithinDistance : Conditional {
 	public SharedVector3 destinationOffset;
 
 	private Actor actor;
-
-	// distance * distance, optimization so we don't have to take the square root
 	private float sqrMagnitude;
 
-	public override void OnStart() {
+
+	public override  void OnStart() {
 		actor = GetComponent<Actor>();
 		sqrMagnitude = distance.Value * distance.Value;
 	}
 
-
 	// returns success if any object is within distance of the current object. Otherwise it will return failure
 	public override TaskStatus OnUpdate() {
+		//DrawDebug();
 		if (transform == null || target == null || target.Value == null)
 			return TaskStatus.Failure;
 
@@ -37,5 +36,16 @@ public class AiIsWithinDistance : Conditional {
 			return TaskStatus.Success;
 
 		return TaskStatus.Failure;
+	}
+
+	public override void OnDrawGizmos() {
+		if (Owner == null || distance == null) 
+			return;
+#if UNITY_EDITOR
+		var oldColor = UnityEditor.Handles.color;
+		UnityEditor.Handles.color = Color.yellow;
+		UnityEditor.Handles.DrawWireDisc(Owner.transform.position + sourceOffset.Value, Vector3.forward, distance.Value);
+		UnityEditor.Handles.color = oldColor;
+#endif
 	}
 }

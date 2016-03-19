@@ -15,13 +15,14 @@ public class AiAcquireVisibleTarget : Conditional {
 	public SharedGameObject currentTarget;
 	public SharedGameObject acquiredTarget;
 	public SharedFloat viewDistance;
-	public SharedBool checkLineOfSight;
-	public SharedBool checkAliveOnly;
-	public SharedBool showGizmo;
+	public bool checkLineOfSight;
+	public bool checkAliveOnly;
+	public bool requireOnScreen;
+	public bool showGizmo;
 	public SharedVector3 sourceOffset;
 	public SharedVector3 destinationOffset;
 	public SharedFloat fieldOfViewAngle;
-	public SharedBool requireOnScreen;
+
 	public LayerMask layerMask = -1;
 
 	private Actor actor;
@@ -36,15 +37,16 @@ public class AiAcquireVisibleTarget : Conditional {
 		objects.Clear();
 
 		// if target object is spcified then we only care about this current target (sticky targetting)
-		if(currentTarget.Value != null)
+		if(currentTarget.Value != null) {
 			objects.Add(currentTarget.Value);
 			return;
+		}
 
 		// if target is null then find all of the objects using the objectTag
 		if (!string.IsNullOrEmpty(actor.data.opposingFaction)) {
 			var gameObjects = GameObject.FindGameObjectsWithTag(actor.data.opposingFaction);
 			for (int i = 0; i < gameObjects.Length; ++i) {
-				if(checkAliveOnly.Value){
+				if(checkAliveOnly){
 					ActorHealth ac = gameObjects[i].GetComponent<ActorHealth>();
 					if(ac != null && ac.IsAlive())
 						objects.Add(gameObjects[i]);
@@ -63,16 +65,18 @@ public class AiAcquireVisibleTarget : Conditional {
 		// clear returnedObject, the purpose of this task is to set it to something valid given the rules
 		acquiredTarget.Value = null;
 
-		if(objects.Count == 0)
-			objects.Add(currentTarget.Value);
-
 		for (int i = 0; i < objects.Count; ++i) {
-			GameObject candidate = AiManager.WithinSight2D(actor, objects[i], sourceOffset.Value, destinationOffset.Value, fieldOfViewAngle.Value, viewDistance.Value, layerMask);
+			GameObject candidate = null;
+
+			if(checkLineOfSight)
+				candidate = AiManager.WithinSight2D(actor, objects[i], sourceOffset.Value, destinationOffset.Value, fieldOfViewAngle.Value, viewDistance.Value, layerMask);
+			else
+				candidate = AiManager.WithinRange2D(actor, objects[i], sourceOffset.Value, destinationOffset.Value, fieldOfViewAngle.Value, viewDistance.Value);
 
 			if(candidate == objects[i])
 				acquiredTarget.Value = candidate;
 			
-			if(requireOnScreen.Value && !AiManager.IsObjectOnScreen(candidate))
+			if(requireOnScreen && !AiManager.IsObjectOnScreen(candidate))
 				acquiredTarget.Value = null;
 				
 			if(acquiredTarget.Value != null)
@@ -83,8 +87,8 @@ public class AiAcquireVisibleTarget : Conditional {
 	}
 
 
-	public override void OnDrawGizmos(){
-		if(showGizmo.Value && Owner != null) {
+	public override void OnDrawGizmos() {
+		if(showGizmo && Owner != null) {
 			Actor actor = Owner.GetComponent<Actor>();
 			if(actor != null)
 				AiManager.DrawLineOfSight2D(actor, sourceOffset.Value, fieldOfViewAngle.Value, viewDistance.Value);

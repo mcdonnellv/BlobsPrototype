@@ -76,6 +76,8 @@ public class AiManager : MonoBehaviour {
 
 
 	public static bool IsObjectOnScreen(GameObject go) {
+		if(go == null)
+			return false;
 		Vector3 cameraViwablePosition = Camera.main.WorldToViewportPoint(go.transform.position);
 		float x = cameraViwablePosition.x;
 		if(0f <= x && x <= 1f)
@@ -83,6 +85,27 @@ public class AiManager : MonoBehaviour {
 		return false;
 	}
 
+
+	public static GameObject WithinRange2D(Actor actor, GameObject targetObject, Vector3 sourceOffset, Vector3 destinationOffset, float fieldOfViewAngle, float viewDistance) {
+		if(targetObject == null)
+			return null;
+
+		if(IsActorFacing(actor, targetObject.transform.position) == false)
+			return null;
+
+		Transform transform = actor.transform;
+		// The target object needs to be within the field of view of the current object
+		var direction = targetObject.transform.TransformPoint(destinationOffset) - transform.TransformPoint(sourceOffset);
+		float angle = Vector3.Angle(direction, (actor.IsFacingRight() ? transform.right : -transform.right));
+		direction.z = 0;
+
+		// is it within the field of vision?
+		if (direction.magnitude < viewDistance && angle < fieldOfViewAngle * 0.5f)
+			if (targetObject.gameObject.activeSelf) 
+			return targetObject;
+		return null;
+	}
+		
 
 	// Determines if the targetObject is within sight of the transform. It will set the angle regardless of whether or not the object is within sight
 	public static GameObject WithinSight2D(Actor actor, GameObject targetObject, Vector3 sourceOffset, Vector3 destinationOffset, float fieldOfViewAngle, float viewDistance, int layerMask) {
@@ -105,7 +128,7 @@ public class AiManager : MonoBehaviour {
 				RaycastHit hit;
 				if(CastRay(transform.TransformPoint(sourceOffset), targetObject.transform.TransformPoint(destinationOffset), viewDistance, layerMask, out hit)) {
 					// the first thing we saw was the object. success!
-					if(hit.collider == targetObject)
+					if(hit.collider.gameObject == targetObject)
 						return targetObject;
 				}
 			}
