@@ -27,22 +27,14 @@ public class AiManager : MonoBehaviour {
 		rigidbody.AddForce(force, ForceMode.Acceleration); //acceleration ignores mass
 	}
 
-	public static bool IsTouching(Actor actor, GameObject gameobject) {
-		return false;
-		//Collider[] col = actor.GetComponentsInChildren<Collider>();
-		//for(int i = 0; i < col.Length; i++) {
-		//	if(col[i].)
-		//}
-	}
-
 
 	public static void LookAtTarget(Actor actor, Vector2 target) {
-		if(!IsLookingAt(actor, target))
+		if(!IsActorFacing(actor, target))
 			actor.FaceOpposite();
 	}
 
 
-	public static bool IsLookingAt(Actor actor, Vector2 target) {
+	public static bool IsActorFacing(Actor actor, Vector2 target) {
 		Vector2 dir = target - (Vector2)actor.transform.position;
 		bool facingRight = actor.IsFacingRight();
 		if(dir.x < 0 && facingRight)
@@ -52,14 +44,15 @@ public class AiManager : MonoBehaviour {
 		return true;
 	}
 
-	public static RaycastHit[] CastRay(Actor actor, Vector2 direction, float checkDistance) {
-		Vector3 pos = actor.transform.position;
-		pos.y = .5f;
-		pos.z = 0f;
-		Ray ray = new Ray(pos, direction);
-		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance); // add a layermask for environment aka "ground"
-		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
-		return hit;
+	public static bool CastRay(Vector3 source, Vector3 destination, float checkDistance, int layerMask, out RaycastHit hit) {
+		Ray ray = new Ray(source, destination - source);
+		if(Physics.Raycast(ray.origin, ray.direction, out hit, checkDistance, layerMask)) {
+			Debug.DrawLine(ray.origin, hit.point, Color.red);
+			return true;
+		}
+			
+		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.green);
+		return false;
 	}
 
 
@@ -82,19 +75,40 @@ public class AiManager : MonoBehaviour {
 	}
 
 
+	public static bool IsObjectOnScreen(GameObject go) {
+		Vector3 cameraViwablePosition = Camera.main.WorldToViewportPoint(go.transform.position);
+		float x = cameraViwablePosition.x;
+		if(0f <= x && x <= 1f)
+			return true;
+		return false;
+	}
+
+
 	// Determines if the targetObject is within sight of the transform. It will set the angle regardless of whether or not the object is within sight
-	public static GameObject WithinSight2D(Actor actor, Vector3 positionOffset, float fieldOfViewAngle, float viewDistance, GameObject targetObject) {
+	public static GameObject WithinSight2D(Actor actor, GameObject targetObject, Vector3 sourceOffset, Vector3 destinationOffset, float fieldOfViewAngle, float viewDistance, int layerMask) {
 		if(targetObject == null)
 			return null;
+		
+		if(IsActorFacing(actor, targetObject.transform.position) == false)
+			return null;
+		
 		Transform transform = actor.transform;
 		// The target object needs to be within the field of view of the current object
-		var direction = targetObject.transform.position - transform.TransformPoint(positionOffset);
+		var direction = targetObject.transform.TransformPoint(destinationOffset) - transform.TransformPoint(sourceOffset);
 		float angle = Vector3.Angle(direction, (actor.IsFacingRight() ? transform.right : -transform.right));
 		direction.z = 0;
 
+		// is it within the field of vision?
 		if (direction.magnitude < viewDistance && angle < fieldOfViewAngle * 0.5f) {
-			if (targetObject.gameObject.activeSelf)
-				return targetObject;
+			if (targetObject.gameObject.activeSelf) {
+				// is there anything blocking our view?
+				RaycastHit hit;
+				if(CastRay(transform.TransformPoint(sourceOffset), targetObject.transform.TransformPoint(destinationOffset), viewDistance, layerMask, out hit)) {
+					// the first thing we saw was the object. success!
+					if(hit.collider == targetObject)
+						return targetObject;
+				}
+			}
 			
 		}
 		return null;

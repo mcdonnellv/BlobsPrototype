@@ -13,6 +13,7 @@ public class AiCanSeeObject : Conditional {
 	public SharedFloat viewDistance;
 	public SharedVector3 offset;
 	public SharedFloat fieldOfViewAngle;
+	public LayerMask layerMask = -1;
 
 	private Actor actor;
 
@@ -21,7 +22,7 @@ public class AiCanSeeObject : Conditional {
 	}
 
 	public override TaskStatus OnUpdate() {
-		GameObject retObj = AiManager.WithinSight2D(actor, offset.Value, fieldOfViewAngle.Value, viewDistance.Value, target.Value);
+		GameObject retObj = AiManager.WithinSight2D(actor, target.Value, offset.Value, Vector3.zero, fieldOfViewAngle.Value, viewDistance.Value, layerMask);
 		if (retObj != null)
 			return TaskStatus.Success;
 		return TaskStatus.Failure;
