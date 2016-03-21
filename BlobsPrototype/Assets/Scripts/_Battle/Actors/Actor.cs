@@ -4,6 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using BehaviorDesigner.Runtime;
 
+[Serializable]
+public struct BoneReferencePoint {
+	public string name;
+	public Transform transform;
+}
 
 public class Actor : MonoBehaviour {
 	public delegate void Collided(Collider other);
@@ -16,6 +21,7 @@ public class Actor : MonoBehaviour {
 	public ActorData data;
 	public ActorHealth health { get; protected set; }
 	public BattleRole battleRole { get; protected set; }
+	public BoneReferencePoint[] boneReferencePoints;
 
 	protected BehaviorTree behaviorTree;
 	protected Animator anim;
@@ -29,10 +35,17 @@ public class Actor : MonoBehaviour {
 
 	public Rigidbody projectile;				// Prefab of the rocket.
 
-	public void ShootProjectile() {
+	public void ShootProjectile(float angle) {
 		GameObject target = (GameObject)GetBehaviorSharedVariable("Target");
-		Vector3 targetPos = transform.position + Vector3.right * 10f;
 		Vector3 startPos = transform.position + Vector3.up * 2f;
+		for (int i = 0; i < boneReferencePoints.Length; i++) {
+			BoneReferencePoint brp = boneReferencePoints[i];
+				if(brp.name == "mouth")
+					startPos = brp.transform.position;
+		}
+
+		Vector3 targetPos = transform.position + Vector3.right * 10f;
+
 		if(target != null) {
 			Collider[] cols = target.GetComponents<Collider>();
 			Collider col = cols[0];
@@ -42,7 +55,7 @@ public class Actor : MonoBehaviour {
 			}
 			targetPos = col.bounds.center;
 		}
-		Projectile p = AiManager.ShootProjectile(projectile, startPos, targetPos, battleRole == BattleRole.Ranged ? 0f : 50f, 30f);
+		Projectile p = AiManager.ShootProjectile(projectile, startPos, targetPos, angle, 30f);
 		p.owner = this;
 	}
 
