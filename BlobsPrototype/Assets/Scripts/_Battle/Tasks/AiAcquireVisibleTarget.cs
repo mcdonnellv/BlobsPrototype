@@ -18,6 +18,7 @@ public class AiAcquireVisibleTarget : Conditional {
 	public bool checkLineOfSight;
 	public bool checkAliveOnly;
 	public bool requireOnScreen;
+	public bool targetFarthest;
 	public bool showGizmo;
 	public SharedVector3 sourceOffset;
 	public SharedVector3 destinationOffset;
@@ -57,7 +58,10 @@ public class AiAcquireVisibleTarget : Conditional {
 		}
 
 		// order closest objects to be first in list
-		objects = objects.OrderBy( x => (transform.position - x.transform.position).sqrMagnitude ).ToList();
+		if(targetFarthest)
+			objects = objects.OrderByDescending( x => (transform.position - x.transform.position).sqrMagnitude ).ToList();
+		else
+			objects = objects.OrderBy( x => (transform.position - x.transform.position).sqrMagnitude ).ToList();
 	}
 	
 

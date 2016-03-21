@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider col) {
-		if(col.tag == owner.tag)
+		if(owner != null && col.tag == owner.tag)
 			return;
 		
 		ActorHealth health = col.gameObject.GetComponent<ActorHealth>();

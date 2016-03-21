@@ -73,7 +73,14 @@ public class CombatManager : MonoBehaviour {
 		AddActor("AiBlob", BattleRole.Spellcaster);
 		AddActor("AiBlob", BattleRole.Spellcaster);
 
-		//AddActor("Wolf", new Vector3(30f,0f,0f));
+		AddActor("WolflingMelee", new Vector3(40f,0f,0f));
+		AddActor("WolflingMelee", new Vector3(39f,0f,0f));
+		AddActor("WolflingMelee", new Vector3(70f,0f,0f));
+		AddActor("WolflingMelee", new Vector3(69f,0f,0f));
+		AddActor("WolflingRanged", new Vector3(79f,0f,0f));
+		AddActor("WolflingRanged", new Vector3(80f,0f,0f));
+
+		AddActor("Wolf", new Vector3(85f,0f,0f));
 
 		//AddObject("BattleObjectGoal", new Vector3(35,0,0));
 	}
