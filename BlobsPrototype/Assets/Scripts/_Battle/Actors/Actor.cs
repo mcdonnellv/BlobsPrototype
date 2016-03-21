@@ -15,6 +15,7 @@ public class Actor : MonoBehaviour {
 	public Rigidbody rigidBody { get; protected set; }
 	public ActorData data;
 	public ActorHealth health { get; protected set; }
+	public BattleRole battleRole { get; protected set; }
 
 	protected BehaviorTree behaviorTree;
 	protected Animator anim;
@@ -25,6 +26,31 @@ public class Actor : MonoBehaviour {
 	protected bool alwaysUpdateJoints = false;
 	protected bool reparantedRefPoints = false;
 	protected bool dead = false;
+
+	public Rigidbody projectile;				// Prefab of the rocket.
+
+	public void ShootProjectile() {
+		GameObject target = (GameObject)GetBehaviorSharedVariable("Target");
+		Vector3 targetPos = transform.position + Vector3.right * 10f;
+		Vector3 startPos = transform.position + Vector3.up * 2f;
+		if(target != null) {
+			Collider[] cols = target.GetComponents<Collider>();
+			Collider col = cols[0];
+			for(int i = 1; i < cols.Length; i++) {
+				if(col.bounds.size.sqrMagnitude < cols[i].bounds.size.sqrMagnitude)
+					col = cols[i];
+			}
+			targetPos = col.bounds.center;
+		}
+		Projectile p = AiManager.ShootProjectile(projectile, startPos, targetPos, battleRole == BattleRole.Ranged ? 0f : 50f, 30f);
+		p.owner = this;
+	}
+
+
+	public void SetBattleRole(BattleRole role) {
+		battleRole = role;
+		SetBehaviorSharedVariable("role", (int)role);
+	}
 
 	public void SetBehaviorSharedVariable(string name, object value) {
 		var sharedVariable = (SharedVariable)behaviorTree.GetVariable(name);

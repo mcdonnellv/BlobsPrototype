@@ -19,6 +19,13 @@ public enum BattleState {
 	Defeat
 };
 
+public enum BattleRole {
+	None,
+	Melee,
+	Ranged,
+	Spellcaster,
+};
+
 
 public class CombatManager : MonoBehaviour {
 	private static CombatManager _combatManager;
@@ -59,12 +66,12 @@ public class CombatManager : MonoBehaviour {
 	}
 
 	void SetupLevelSpecifics() {
-		AddActor("AiBlob", BlobAnchorPosition.Near);
-		AddActor("AiBlob", BlobAnchorPosition.Near);
-		AddActor("AiBlob", BlobAnchorPosition.Mid);
-		AddActor("AiBlob", BlobAnchorPosition.Mid);
-		AddActor("AiBlob", BlobAnchorPosition.Far);
-		AddActor("AiBlob", BlobAnchorPosition.Far);
+		AddActor("AiBlob", BattleRole.Melee);
+		AddActor("AiBlob", BattleRole.Melee);
+		AddActor("AiBlob", BattleRole.Ranged);
+		AddActor("AiBlob", BattleRole.Ranged);
+		AddActor("AiBlob", BattleRole.Spellcaster);
+		AddActor("AiBlob", BattleRole.Spellcaster);
 
 		//AddActor("Wolf", new Vector3(30f,0f,0f));
 
@@ -84,6 +91,7 @@ public class CombatManager : MonoBehaviour {
 		pauseBattleTimer = false;
 	}
 
+
 	public void ResetLevel() {
 		battleState = BattleState.Setup;
 		foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars)
@@ -99,10 +107,22 @@ public class CombatManager : MonoBehaviour {
 		SetupLevel();
 	}
 
-	public Actor AddActor(string prefabName, BlobAnchorPosition anchorPos) {
+
+	static BlobAnchorPosition PositionForRole(BattleRole role) {
+		switch (role) {
+		case BattleRole.Melee: return BlobAnchorPosition.Near;
+		case BattleRole.Ranged: return BlobAnchorPosition.Mid;
+		case BattleRole.Spellcaster: return BlobAnchorPosition.Far;
+		}
+		return BlobAnchorPosition.Mid;
+	}
+
+
+	public Actor AddActor(string prefabName, BattleRole role) {
 		Actor a = AddActor(prefabName);
+		a.SetBattleRole(role);
 		ActorHealth health = a.GetComponent<ActorHealth>();
-		blobAnchor.SetBlobActorPosition(a, anchorPos);
+		blobAnchor.SetBlobActorPosition(a, PositionForRole(role));
 		if(health != null) {
 			foreach(BattleBlobLifeBar lifeBar in HudManager.hudManager.battleHud.lifeBars) {
 				if(lifeBar.health == null) {
@@ -113,6 +133,8 @@ public class CombatManager : MonoBehaviour {
 		}
 		return a;
 	}
+
+
 
 	public Actor AddActor(string prefabName, Vector3 pos) {
 		Actor a = AddActor(prefabName);

@@ -9,6 +9,61 @@ public class AiManager : MonoBehaviour {
 	public List<GameObject> patrolPoints;
 
 
+	public static Projectile ShootProjectile (Rigidbody projectilePrefab, Vector3 startPos, Vector3 target, float angle, float maxforce) {
+		// ... instantiate the rocket facing right and set it's velocity to the right. 
+		Rigidbody projectileInstance = Instantiate(projectilePrefab, startPos, Quaternion.Euler(new Vector3(0,0,0))) as Rigidbody;
+		Projectile p = projectileInstance.GetComponent<Projectile>();
+		//bulletInstance.velocity = new Vector2(speed, 0);
+
+		AiManager.JumpToPoint(projectileInstance, target, angle, maxforce);
+		return p;
+	}
+
+
+	public static void JumpToPoint(Actor actor, Vector3 targetPos, float initialAngle) { JumpToPoint(actor.rigidBody, targetPos, initialAngle, float.PositiveInfinity); }
+
+	public static void JumpToPoint(Rigidbody rigid, Vector3 targetPos, float initialAngle, float maxforce) {
+		
+		float gravity = Physics.gravity.magnitude;
+
+		// Positions of this object and the target on the same plane
+		Vector3 planarTarget = new Vector3(targetPos.x, 0, targetPos.z);
+		Vector3 planarPostion = new Vector3(rigid.transform.position.x, 0, rigid.transform.position.z);
+
+		// Planar distance between objects
+		float distance = Vector3.Distance(planarTarget, planarPostion);
+		if(distance == 0)
+			return;
+
+		// Distance along the y axis between objects
+		float yOffset = rigid.transform.position.y - targetPos.y;
+		float c = 0;
+		float angle = 0;
+		float modifiedAngle = initialAngle;
+		do {
+			// Selected angle in radians
+			angle = initialAngle * Mathf.Deg2Rad;
+			c = distance * Mathf.Tan(angle) + yOffset;
+			if(c <= 0)
+				initialAngle++;
+		}
+		while (c <= 0);
+
+		float initialVelocity =  1 / Mathf.Cos(angle) * Mathf.Sqrt(0.5f * gravity * Mathf.Pow(distance, 2) / c);
+		initialVelocity = Mathf.Min(maxforce, initialVelocity);
+		Vector3 velocity = new Vector3(initialVelocity * Mathf.Cos(angle), initialVelocity * Mathf.Sin(angle), 0);
+
+		// Rotate our velocity to match the direction between the two objects
+		float angleBetweenObjects = Vector3.Angle(Vector3.right, planarTarget - planarPostion);
+		Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
+		// Fire!
+		//rigid.velocity = finalVelocity;
+
+		// Alternative way:
+		rigid.AddForce(finalVelocity * rigid.mass, ForceMode.Impulse);
+	}
+
+
 	public static void MoveToPoint(Actor actor, Vector3 targetPos, float toVel = 5f, float maxVel = 8f, float maxForce = 30f, float minForce = 5f, float gain = 10f) {
 		//toVel - converts the distance remaining to the target velocity - if too low, the rigidbody slows down early and takes a long time to stop; if too high, it may overshoot
 		//maxVel - the max speed the rigidbody will reach when moving; 
