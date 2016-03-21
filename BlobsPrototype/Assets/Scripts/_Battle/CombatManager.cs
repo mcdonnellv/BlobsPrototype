@@ -82,7 +82,10 @@ public class CombatManager : MonoBehaviour {
 
 		AddActor("Wolf", new Vector3(85f,0f,0f));
 
-		//AddObject("BattleObjectGoal", new Vector3(35,0,0));
+		AddObject("BattleObjectObstacle", new Vector3(20,0,0));
+		AddObject("BattleObjectObstacle", new Vector3(30,0,0));
+		AddObject("BattleObjectObstacleLarge", new Vector3(50,0,0));
+		AddObject("BattleObjectGoal", new Vector3(90,0,0));
 	}
 
 
