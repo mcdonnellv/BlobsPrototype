@@ -244,7 +244,6 @@ public class CombatManager : MonoBehaviour {
 
 
 	private bool CanInterruptCurrnetBattlecommand(BattleCommand newCommand) {
-
 		if(newCommand == currentTask)
 			return false; // no sense in interrupting self
 		
@@ -253,6 +252,21 @@ public class CombatManager : MonoBehaviour {
 		}
 
 		return false; //default to no interruption
+	}
+
+
+	public bool CanBlobsMoveForward() {
+		Vector3 pos = blobAnchor.anchorTargetPos;
+		pos.y = .5f;
+		pos.z = 0f;
+		float checkDistance = blobAnchor.marchDistance;
+		Ray ray = new Ray(pos, Vector3.right);
+		RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
+		Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
+		for(int i = 0; i < hit.Length; i++)
+			if( hit[i].collider.tag == "Enemy")
+				return false;
+		return true;
 	}
 
 
@@ -282,18 +296,8 @@ public class CombatManager : MonoBehaviour {
 			return;
 
 		case BattleCommand.Move:
-			//cast ray to see if the path is clear
-			Vector3 pos = blobAnchor.anchorTargetPos;
-			pos.y = .5f;
-			pos.z = 0f;
-			float checkDistance = blobAnchor.marchDistance;
-			Ray ray = new Ray(pos, Vector3.right);
-			RaycastHit[] hit = Physics.RaycastAll(ray.origin, ray.direction, checkDistance);
-			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * checkDistance), Color.red);
-			for(int i = 0; i < hit.Length; i++)
-				if( hit[i].collider.tag == "Enemy")
-					return; // the way is blocked		
-			blobAnchor.AdvanceBlobAnchorPosition();
+			if(CanBlobsMoveForward())		
+				blobAnchor.AdvanceBlobAnchorPosition();
 			return;
 		}
 	}
@@ -328,6 +332,19 @@ public class CombatManager : MonoBehaviour {
 	private void InputUpdate() {
 		if(Input.GetKey(KeyCode.K))
 			KillAllBlobs();
+
+		if(Input.GetKey(KeyCode.S)) {
+			GameObject go = root.FindChild("AiSimulator").gameObject;
+			go.SetActive(!go.activeInHierarchy);
+		}
+
+		if(Input.GetKey(KeyCode.T)) {
+			if(Time.timeScale == 1f)
+				Time.timeScale = 4f;
+			else 
+				Time.timeScale = 1f;
+			Time.fixedDeltaTime = 0.02f * Time.timeScale;
+		}
 	}
 
 	void BeatUpdate() {
