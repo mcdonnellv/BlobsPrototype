@@ -11,4 +11,5 @@ public class BattleHud : MonoBehaviour {
 	public UILabel battleTimerLabel;
 	public GameObject defeatObject;
 	public GameObject victoryObject;
+	public UISprite anchorSprite;
 }

@@ -68,15 +68,29 @@ public class CombatManager : MonoBehaviour {
 	void SetupLevelSpecifics() {
 		AddActor("AiBlob", BattleRole.Melee);
 		AddActor("AiBlob", BattleRole.Melee);
-		AddActor("AiBlob", BattleRole.Ranged);
-		AddActor("AiBlob", BattleRole.Ranged);
-		AddActor("AiBlob", BattleRole.Spellcaster);
-		AddActor("AiBlob", BattleRole.Spellcaster);
+		AddActor("AiBlob", BattleRole.Melee);
+		AddActor("AiBlob", BattleRole.Melee);
+		AddActor("AiBlob", BattleRole.Melee);
+		AddActor("AiBlob", BattleRole.Melee);
 
-		AddActor("WolflingMelee", new Vector3(40f,0f,0f));
-		AddActor("WolflingMelee", new Vector3(39f,0f,0f));
-		AddActor("WolflingMelee", new Vector3(70f,0f,0f));
-		AddActor("WolflingMelee", new Vector3(69f,0f,0f));
+//		AddActor("AiBlob", BattleRole.Ranged);
+//		AddActor("AiBlob", BattleRole.Ranged);
+//		AddActor("AiBlob", BattleRole.Ranged);
+//		AddActor("AiBlob", BattleRole.Ranged);
+//		AddActor("AiBlob", BattleRole.Ranged);
+//		AddActor("AiBlob", BattleRole.Ranged);
+
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+//		AddActor("AiBlob", BattleRole.Spellcaster);
+
+		AddActor("WolflingRanged", new Vector3(40f,0f,0f));
+		AddActor("WolflingRanged", new Vector3(39f,0f,0f));
+		AddActor("WolflingRanged", new Vector3(70f,0f,0f));
+		AddActor("WolflingRanged", new Vector3(69f,0f,0f));
 		AddActor("WolflingRanged", new Vector3(79f,0f,0f));
 		AddActor("WolflingRanged", new Vector3(80f,0f,0f));
 
@@ -369,7 +383,19 @@ public class CombatManager : MonoBehaviour {
 		if(Time.time > battleStartTime + battleDurationTimeConst && pauseBattleTimer == false)
 			KillAllBlobs();
 		
+
+
+		blobAnchor.Update();
+		UIUpdate();
+	}
+
+	void FixedUpdate () {
+		InputUpdate();
+	}
+
+	void UIUpdate() {
 		BattleHud bh = HudManager.hudManager.battleHud;
+		Camera uiCam = HudManager.hudManager.battleHud.camera;
 
 		bh.timeBar.value = (Time.time - actionStartTime) / actionTimeConst;
 
@@ -384,11 +410,8 @@ public class CombatManager : MonoBehaviour {
 			bh.battleTimerLabel.text = "Time Left\n" + GlobalDefines.TimeToString(battleTimeLeft, false, 2);
 		}
 
-		blobAnchor.Update();
-	}
-
-	void FixedUpdate () {
-		InputUpdate();
+		Vector2 anchorScreenPos = Camera.main.WorldToScreenPoint(blobAnchor.transform.position);
+		bh.anchorSprite.transform.position = uiCam.ScreenToWorldPoint(anchorScreenPos);
 	}
 
 

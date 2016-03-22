@@ -133,8 +133,12 @@ public class AiManager : MonoBehaviour {
 	public static bool IsObjectOnScreen(GameObject go) {
 		if(go == null)
 			return false;
-		Vector3 cameraViwablePosition = Camera.main.WorldToViewportPoint(go.transform.position);
-		float x = cameraViwablePosition.x;
+		return IsVectorOnScreen(go.transform.position);
+	}
+
+	public static bool IsVectorOnScreen(Vector3 v) {
+		Vector3 cameraViewablePosition = Camera.main.WorldToViewportPoint(v);
+		float x = cameraViewablePosition.x;
 		if(0f <= x && x <= 1f)
 			return true;
 		return false;

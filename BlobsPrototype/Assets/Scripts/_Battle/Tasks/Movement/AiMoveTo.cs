@@ -18,6 +18,7 @@ public class AiMoveTo : Action {
 	public SharedVector3 targetOffset;
 	public SharedBool snapToDestination = true;
 	public SharedBool stopOnCollision = true;
+	public bool targetMustBeOnScreen = false;
 	protected Actor actor;
 	protected Collider collidedWith;
 	protected bool collidedWithTarget = false;
@@ -85,6 +86,17 @@ public class AiMoveTo : Action {
 			ret =  target.Value.transform.position;
 		ret += targetOffset.Value;
 		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
+
+		while(targetMustBeOnScreen && AiManager.IsVectorOnScreen(ret) == false) {
+			if(AiManager.IsObjectOnScreen(Owner.gameObject) == false)
+				break;
+				
+			if(transform.position.x < ret.x)
+				ret.x--;
+			else
+				ret.x++;
+		}
+
 		return ret;
 	}
 
