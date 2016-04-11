@@ -12,11 +12,13 @@ public class AiJumpTo : Action {
 
 	private Actor actor;
 	private float jumpTime;
-	private float pauseTime = 1f;
+	private float pauseTime = .3f;
+	private Collider myCol;
 
 	// Use this for initialization
 	public override void OnAwake() {
 		actor = GetComponent<Actor>();
+		myCol = transform.GetComponent<Collider>();
 	}
 
 	public override void OnStart() {
@@ -28,8 +30,8 @@ public class AiJumpTo : Action {
 	public override TaskStatus OnUpdate() {
 		if(Time.time > jumpTime + pauseTime && actor.IsGrounded()) {
 			// simply snap to exact destination once we land 
-			var position = Target();
-			actor.transform.position = position;
+			//var position = Target();
+			//actor.transform.position = position;
 			return TaskStatus.Success;
 		}
 
@@ -37,9 +39,20 @@ public class AiJumpTo : Action {
 	}
 
 	protected virtual Vector3 Target() {
-		if (target == null || target.Value == null) {
-			return targetPosition.Value;
+		Vector3 ret;
+		if (target == null || target.Value == null)
+			ret = targetPosition.Value;
+		else {
+			Collider targetCol = target.Value.GetComponent<Collider>();
+			if (targetCol == null || myCol == null)
+				ret = target.Value.transform.position;
+			else {
+				ret = targetCol.ClosestPointOnBounds(transform.position); 
+				ret += (transform.position.x > ret.x) ? myCol.bounds.extents : - myCol.bounds.extents;
+			}
 		}
-		return target.Value.transform.position;
+			
+		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
+		return ret;
 	}
 }

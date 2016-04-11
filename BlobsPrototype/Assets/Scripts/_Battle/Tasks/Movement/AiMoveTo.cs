@@ -22,10 +22,12 @@ public class AiMoveTo : Action {
 	protected Actor actor;
 	protected Collider collidedWith;
 	protected bool collidedWithTarget = false;
+	private Collider myCol;
 
 
 	public override void OnAwake() {
 		actor = gameObject.GetComponent<Actor>();
+		myCol = transform.GetComponent<Collider>();
 	}
 
 	public override void OnStart() {
@@ -81,9 +83,17 @@ public class AiMoveTo : Action {
 	protected virtual Vector3 Target() {
 		Vector3 ret;
 		if (target == null || target.Value == null)
-			ret =  targetPosition.Value;
-		else
-			ret =  target.Value.transform.position;
+			ret = targetPosition.Value;
+		else {
+			Collider targetCol = target.Value.GetComponent<Collider>();
+			if (targetCol == null || myCol == null)
+				ret = target.Value.transform.position;
+			else {
+				ret = targetCol.ClosestPointOnBounds(transform.position);
+				ret += (transform.position.x > ret.x) ? myCol.bounds.extents : - myCol.bounds.extents;
+			}
+		}
+
 		ret += targetOffset.Value;
 		ret = new Vector3(ret.x, 0f, 0f); //prune y and z
 

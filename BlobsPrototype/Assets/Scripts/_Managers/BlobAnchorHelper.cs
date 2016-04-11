@@ -42,7 +42,7 @@ public class BlobAnchorHelper : MonoBehaviour {
 	}
 
 	public void Reset() {
-		SetBlobAnchorPosition(new Vector3(0.01f , 0f, 0f));
+		SetBlobAnchorPosition(new Vector3(0.01f , 0f, 0f), true);
 		nearAnchor.transform.DestroyChildren();
 		midAnchor.transform.DestroyChildren();
 		farAnchor.transform.DestroyChildren();
@@ -57,12 +57,15 @@ public class BlobAnchorHelper : MonoBehaviour {
 	}
 
 	public void TranslateBlobAnchorPosition(Vector3 offset) {
-		SetBlobAnchorPosition(anchorTargetPos + offset);
+		SetBlobAnchorPosition(anchorTargetPos + offset, false);
 	}
 
-	public void SetBlobAnchorPosition(Vector3 pos) {
+	public void SetBlobAnchorPosition(Vector3 pos, bool immediate) {
 		pos.x = Mathf.Max(0f, pos.x);
-		anchorTargetPos = pos;
+		if(immediate) 
+			transform.position = pos;
+		else 
+			anchorTargetPos = pos;
 	}
 
 	public void SetBlobActorPosition(Actor actor, BlobAnchorPosition pos) {
