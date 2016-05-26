@@ -145,6 +145,8 @@ public class BlobDragDropItem : UIDragDropItem {
 			return;
 		}
 
+		// commenting the below out to compile, the code still mahe be useful
+		/*
 		Camera cam = GameManager2.gameManager.roomCamera;
 		Vector3 pos = cam.WorldToScreenPoint(mTrans.position); //0,0 is lower left
 		float threshL= Screen.width * .2f;
@@ -164,6 +166,7 @@ public class BlobDragDropItem : UIDragDropItem {
 		dir.Normalize();
 		roomManager.scrollVector = dir;
 		mTrans.localPosition += (Vector3)delta;
+		*/
 	}
 
 

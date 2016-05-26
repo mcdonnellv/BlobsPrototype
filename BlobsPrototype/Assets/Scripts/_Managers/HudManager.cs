@@ -44,10 +44,8 @@ public class HudManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		ShowOnlyBattleHud();
-		return;
-
-
+		// ShowOnlyBattleHud();
+		// return;
 
 		foreach(Transform child in popupCamera.transform.parent) {
 			if(child.GetComponentInChildren<GenericGameMenu>()) 

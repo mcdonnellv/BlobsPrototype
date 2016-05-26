@@ -25,7 +25,7 @@ public class CheatMenu : GenericGameMenu {
 	}
 
 	public void StartMockFight() {
-		gameManager.roomCamera.gameObject.SetActive(false);
+		// gameManager.roomCamera.gameObject.SetActive(false);
 		combatManager.AddActor(RoomManager.roomManager.currentRoom.blobs[0]);
 		combatManager.AddActor(RoomManager.roomManager.currentRoom.blobs[1]);
 		combatManager.AddActor(RoomManager.roomManager.currentRoom.blobs[2]);

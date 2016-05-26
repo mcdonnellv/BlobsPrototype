@@ -34,6 +34,7 @@ public class CombatManager : MonoBehaviour {
 	RoomManager roomManager { get { return RoomManager.roomManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
 
+	public GameObject aiSimulator;
 	public BattleState battleState { get; private set;}
 	public Transform root;
 	public List <Transform> blobSpawner;

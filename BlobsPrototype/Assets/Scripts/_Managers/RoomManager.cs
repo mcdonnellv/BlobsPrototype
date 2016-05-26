@@ -24,7 +24,7 @@ public class RoomManager : MonoBehaviour {
 
 
 	public Room CreateRoom(int size, Room.RoomType type) {
-		if(worldTransform == null)
+		if(worldTransform == null && scrollView != null)
 			worldTransform = scrollView.transform;
 
 		size = Mathf.Clamp (size, 0, maxSize);
@@ -73,6 +73,8 @@ public class RoomManager : MonoBehaviour {
 
 
 	public void MoveScrollViewToRoom(Room room) {
+		if(scrollView == null)
+			return;
 		GameObject go = scrollView.GetComponent<UICenterOnChild>().centeredObject;
 		Room centeredRoom = null;
 		if(go != null)
@@ -237,11 +239,15 @@ public class RoomManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		worldTransform = scrollView.transform;
+		if(scrollView != null)
+			worldTransform = scrollView.transform;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(scrollView == null)
+			return;
+		
 		if(scrollVector.x != 0 || scrollVector.y != 0)
 			scrollView.MoveRelative(scrollVector * scrollSpeed * Time.deltaTime);
 

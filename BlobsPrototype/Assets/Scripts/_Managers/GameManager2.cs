@@ -18,10 +18,41 @@ public class GameManager2 : MonoBehaviour {
 	public GeneManager geneManager;
 	public ItemManager itemManager;
 	public QuestManager questManager;
-	public Camera roomCamera;
+	public List<GameObject> cameraObjects;
+
+
+	void SelectCamera(int index) {
+		foreach(GameObject camObject in cameraObjects) {
+			if(index == cameraObjects.IndexOf(camObject))
+				camObject.SetActive(true);
+			else
+				camObject.SetActive(false);
+		}
+	}
+
+
+	void CombatMode (bool enable) {
+		if(enable) {
+			// set camera
+			SelectCamera(0);
+			// enable combatmanager
+			CombatManager.combatManager.gameObject.SetActive(true);
+			CombatManager.combatManager.aiSimulator.gameObject.SetActive(true);
+			// enable combatHud
+			HudManager.hudManager.battleHud.gameObject.SetActive(true);
+		}
+		else {
+			SelectCamera(1);
+			CombatManager.combatManager.gameObject.SetActive(false);
+			CombatManager.combatManager.aiSimulator.gameObject.SetActive(false);
+			HudManager.hudManager.battleHud.gameObject.SetActive(false);
+		}
+	}
+
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+		CombatMode(false);
 		bool firstTime = (PlayerPrefs.GetInt("FirstTimeSetup") == 0);
 		if (true) {
 			PlayerPrefs.SetInt("FirstTimeSetup", 1);;
@@ -42,18 +73,28 @@ public class GameManager2 : MonoBehaviour {
 			gameVars = GenericDeSerialize<GameVariables>("GameVariables.dat");
 		}
 
-		roomMan.maxSize = 5;
-		roomMan.minSize = 2;
+
 		hudMan.UpdateGold(gameVars.gold);
 		hudMan.UpdateChocolate(gameVars.chocolate);
+		List<Blob> blobs = CreateInitalBlobs(5);
+		//CreateRoom(blobs);
+		foreach(Blob blob in blobs) 
+			BlobManager.blobManager.blobs.Add(blob);
+	}
+
+	void CreateRoom(List<Blob> blobs) {
+		roomMan.maxSize = 5;
+		roomMan.minSize = 2;
 		Room room = roomMan.CreateRoom(roomMan.minSize + 1, Room.RoomType.Field);
+		foreach(Blob blob in blobs)
+			room.AddBlob(blob);
+	}
 
-		Blob blob = null;
 
-		for(int i=0; i<5; i++) {
-			if(room.IsRoomFull())
-				break;
-
+	List<Blob> CreateInitalBlobs(int num) {
+		List<Blob> blobs = new List<Blob>();
+		for(int i=0; i<num; i++) {
+			Blob blob = null;
 			GameObject go = (GameObject)GameObject.Instantiate(Resources.Load("BlobGameObject"));
 			BlobGameObject blobGameObject = go.GetComponent<BlobGameObject>();
 			blobGameObject.Setup();
@@ -73,10 +114,10 @@ public class GameManager2 : MonoBehaviour {
 			blob.genes.Add(new Gene(geneManager.GetBaseGeneByID(100))); //test
 			blob.dormantGenes.Add(new Gene(geneManager.GetBaseGeneByID(101))); //test
 			blob.dormantGenes.Add(new Gene(geneManager.GetBaseGeneByID(102))); //test
-
 			blob.OnBirth();
-			room.AddBlob(blob);
+			blobs.Add(blob);
 		}
+		return blobs;
 	}
 
 
