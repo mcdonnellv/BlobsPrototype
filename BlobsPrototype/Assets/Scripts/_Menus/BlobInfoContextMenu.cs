@@ -31,7 +31,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	GameManager2 gameManager { get { return GameManager2.gameManager; } }
 	BreedManager breedManager { get { return BreedManager.breedManager; } }
-	RoomManager roomManager  { get { return RoomManager.roomManager; } }
+	BlobManager blobManager  { get { return BlobManager.blobManager; } }
 
 
 	public void ShowHiddenGenes() {
@@ -44,7 +44,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 	public Blob DisplayedBlob() { return blob; }
 
 	public void Show(int blobId) {
-		Blob newBlob = roomManager.GetBlobByID(blobId);
+		Blob newBlob = blobManager.GetBlobByID(blobId);
 		gameObject.SetActive(true);
 		if(IsDisplayed() && newBlob != blob) // We are just changing the displayed blobs
 			FlashChangeAnim();
@@ -58,7 +58,7 @@ public class BlobInfoContextMenu : GenericGameMenu {
 		actionButton2.gameObject.SetActive(true);
 		DisplayBlobInfo();
 		DisplayBlobImage();
-		roomManager.MoveScrollViewToBlob(blob.gameObject.transform, blob.room);
+		//roomManager.MoveScrollViewToBlob(blob.gameObject.transform, blob.room);
 		blob.room.ShowFloatingSprites(null);
 	}
 

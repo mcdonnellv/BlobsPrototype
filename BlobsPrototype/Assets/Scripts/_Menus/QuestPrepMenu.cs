@@ -19,7 +19,7 @@ public class QuestPrepMenu : GenericGameMenu {
 	[HideInInspector] public GenericGameMenu owner = null;
 	HudManager hudManager { get { return HudManager.hudManager; } }
 	QuestManager questManager { get { return QuestManager.questManager; } }
-	RoomManager roomManager  { get { return RoomManager.roomManager; } }
+	BlobManager blobManager  { get { return BlobManager.blobManager; } }
 
 	public void Pressed() {	Show(); }
 
@@ -34,7 +34,7 @@ public class QuestPrepMenu : GenericGameMenu {
 		UpdateBonuses();
 		hudManager.ShowHud(false); 
 		hudManager.dragToUi = true;
-		roomManager.ToggleAllFloatingSprites(true);
+		//roomManager.ToggleAllFloatingSprites(true);
 	}
 
 
@@ -90,7 +90,7 @@ public class QuestPrepMenu : GenericGameMenu {
 			int blobID = quest.blobIds[index];
 			if(blobID == -1)
 				continue;
-			Blob blob = roomManager.GetBlobByID(quest.blobIds[index]);
+			Blob blob = blobManager.GetBlobByID(quest.blobIds[index]);
 			if(blob == null)
 				continue;
 			BlobQuestSlot blobSlot = child.GetComponent<BlobQuestSlot>();
@@ -156,7 +156,7 @@ public class QuestPrepMenu : GenericGameMenu {
 		int i=0;
 		int matchCt = 0;
 		foreach(int blobId in quest.blobIds) {
-			Blob blob = roomManager.GetBlobByID(blobId);
+			Blob blob = blobManager.GetBlobByID(blobId);
 			if(questManager.DoesBlobMatchSlot(quest, blob, i))
 				matchCt++;
 			i++;
@@ -249,7 +249,7 @@ public class QuestPrepMenu : GenericGameMenu {
 
 
 	public override void Cleanup() {
-		roomManager.ToggleAllFloatingSprites(false);
+		//roomManager.ToggleAllFloatingSprites(false);
 		hudManager.ShowHud(true);
 		hudManager.dragToUi = false;
 		hudManager.HidePersistentNotice();

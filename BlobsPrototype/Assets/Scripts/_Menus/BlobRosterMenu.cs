@@ -27,22 +27,30 @@ public class BlobRosterMenu : GenericBlobMenu {
 	void RebuildSlots(int slotCount) {
 		grid.transform.DestroyChildren();
 		for (int i = 0; i < slotCount; i++) {
-			GameObject slot = (GameObject)GameObject.Instantiate(Resources.Load("Blob Roster Slot"));
+			GameObject slot = (GameObject)GameObject.Instantiate(Resources.Load("Blob Roster Cell"));
+
+			BlobRosterCell blobRosterCell = slot.GetComponent<BlobRosterCell>();
+			blobRosterCell.container.SetActive(false);
 			slot.transform.parent = grid.transform;
 			slot.transform.localScale = Vector3.one;
 
 			// add the blob
 			if(i < BlobManager.blobManager.blobs.Count) {
-				Blob blob = BlobManager.blobManager.blobs[i];
-				Transform blobTransform = blob.gameObject.transform;
-				blobTransform.SetParent(slot.transform.FindChild("AttachPt"));
-				blobTransform.localScale = Vector3.one;
-				blobTransform.localPosition = Vector3.zero;
-				Transform trans = slot.transform.FindChild("BG");
-				UISprite colorBG = trans.gameObject.GetComponent<UISprite>();
-				colorBG.color = ColorDefines.ColorForElement(blob.element);
+				blobRosterCell.blob = BlobManager.blobManager.blobs[i];
+				blobRosterCell.DisplayBlobImage();
+				blobRosterCell.SetStarCount((int)blobRosterCell.blob.quality);
+				blobRosterCell.SetSigil();
 			}
 		}
 		grid.Reposition();
+	}
+
+
+	public void BlobCellPressed(BlobRosterCell blobRosterCell) {
+		//blobRosterCell.blob.gameObject.DisplayBlobInfo();
+		BlobDetailsMenu blobDetailsMenu = HudManager.hudManager.blobDetailsMenu;
+		blobDetailsMenu.blob = blobRosterCell.blob;
+		blobDetailsMenu.Show(this);
+		Hide();
 	}
 }

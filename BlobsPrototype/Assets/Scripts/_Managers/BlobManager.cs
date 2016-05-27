@@ -9,4 +9,11 @@ public class BlobManager : MonoBehaviour {
 
 
 	public List<Blob> blobs = new List<Blob>();
+
+	public Blob GetBlobByID(int id) {
+		foreach(Blob b in blobs)
+			if(id == b.id)
+				return b;
+		return null;
+	}
 }

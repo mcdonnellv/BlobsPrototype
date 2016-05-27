@@ -13,6 +13,7 @@ public class HudManager : MonoBehaviour {
 	public UILabel chocolateLabel;
 	public InventoryMenu inventoryMenu;
 	public BlobInfoContextMenu blobInfoContextMenu;
+	public BlobDetailsMenu blobDetailsMenu;
 	public RoomOptionsContextMenu roomOptionsContextMenu;
 	public CheatMenu cheatMenu;
 	public BuildRoomMenu buildRoomMenu;
